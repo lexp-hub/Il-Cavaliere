@@ -24,7 +24,7 @@ const client = new Client({
   ]
 });
 
-async function getAIResponse(messages) {
+async function getAIResponse(messages, systemPrompt = DEFAULT_IDENTITY) {
   try {
     const accountId = process.env.CLOUDFLARE_ACCOUNT_ID?.trim();
     const apiToken = process.env.CLOUDFLARE_API_TOKEN?.trim();
@@ -43,7 +43,7 @@ async function getAIResponse(messages) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          messages: [{ role: 'system', content: DEFAULT_IDENTITY }, ...messages]
+          messages: [{ role: 'system', content: systemPrompt }, ...messages]
         }),
       }
     );
@@ -82,6 +82,38 @@ async function getAIResponse(messages) {
   }
 }
 
+async function performWebSearch(query) {
+  try {
+    const res = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    if (!res.ok) throw new Error(`DuckDuckGo error: ${res.statusText}`);
+    const text = await res.text();
+    const regex = /<a class="result__url"[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>[\s\S]*?<a class="result__snippet"[^>]*>([\s\S]*?)<\/a>/g;
+    const matches = [...text.matchAll(regex)];
+    const results = [];
+    for (let i = 0; i < Math.min(matches.length, 4); i++) {
+      const rawUrl = matches[i][1];
+      let url = rawUrl;
+      if (url.includes('uddg=')) {
+        const match = url.match(/uddg=([^&]+)/);
+        if (match) {
+          url = decodeURIComponent(match[1]);
+        }
+      }
+      const title = matches[i][2].replace(/<[^>]*>/g, '').trim().replace(/&amp;/g, '&').replace(/&#x27;/g, "'").replace(/&quot;/g, '"');
+      const snippet = matches[i][3].replace(/<[^>]*>/g, '').trim().replace(/&amp;/g, '&').replace(/&#x27;/g, "'").replace(/&quot;/g, '"');
+      results.push(`- **${title}**\n  URL: ${url}\n  Snippet: ${snippet}`);
+    }
+    return results.length > 0 ? results.join("\n\n") : "Nessun risultato trovato.";
+  } catch (err) {
+    console.error("Errore nella ricerca web:", err);
+    return `Errore durante la ricerca web: ${err.message}`;
+  }
+}
+
 client.once('ready', () => {
   console.log(`Bot loggato con successo come ${client.user.tag}!`);
 });
@@ -108,14 +140,18 @@ client.on('messageCreate', async (message) => {
     await message.channel.sendTyping();
 
     const creatorId = process.env.CREATOR_ID?.trim();
-    const messages = [];
+    const systemPrompt = `${DEFAULT_IDENTITY}
 
-    if (creatorId && message.author.id === creatorId) {
-      messages.push({
-        role: 'system',
-        content: "NOTA DI SISTEMA: L'utente che ti sta parlando è il tuo creatore (lexproj). Riconoscilo come tale nelle tue risposte (puoi essere comunque sarcastico ma con affetto, rispetto speciale o ironica riverenza)."
-      });
-    }
+INFORMAZIONI E STRUMENTI DISPONIBILI:
+- Puoi cercare sul web in tempo reale. Se la domanda richiede informazioni aggiornate, notizie recenti, fatti specifici che non conosci, o se ritieni sia necessario verificare qualcosa, rispondi ESCLUSIVAMENTE con il tag:
+  [CERCA: termine da cercare]
+  Non aggiungere altro testo o spiegazioni se decidi di cercare. Il sistema effettuerà la ricerca e ti fornirà i risultati, dopodiché potrai formulare la risposta finale.
+
+RUOLI DEGLI UTENTI:
+- Gli utenti con il tag "[Creatore]" di fianco al nome sono i tuoi creatori (lexproj). Riconoscili come tali nelle tue risposte (puoi essere comunque sarcastico ma con affetto, rispetto speciale o ironica riverenza).
+- Gli utenti con il tag "[Beta Tester]" di fianco al nome sono i tuoi beta tester. Riconoscili come tali e prendili in giro per i bug che devono testare.`;
+
+    const messages = [];
 
     // Recupera la data dell'ultimo reset per questo canale
     const resetTime = chatHistory.getResetTimestamp(message.channel.id);
@@ -152,7 +188,15 @@ client.on('messageCreate', async (message) => {
         });
       } else {
         // Messaggio di un utente
-        const authorName = msg.member?.displayName || msg.author.username;
+        const authorId = msg.author.id;
+        let roleTag = "";
+        if (creatorId && authorId === creatorId) {
+          roleTag = " [Creatore]";
+        } else if (authorId === "763104377913212978") {
+          roleTag = " [Beta Tester]";
+        }
+
+        const authorName = `${msg.member?.displayName || msg.author.username}${roleTag}`;
         const botMentionRegExp = new RegExp(`<@!?${client.user.id}>`, 'g');
         const cleanText = (msg.content || "").replace(botMentionRegExp, '').trim();
 
@@ -197,7 +241,27 @@ client.on('messageCreate', async (message) => {
       }
     }
 
-    const reply = await getAIResponse(messages);
+    let reply = await getAIResponse(messages, systemPrompt);
+
+    // Gestione del loop di ricerca ReAct
+    const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
+    if (searchMatch) {
+      const searchQuery = searchMatch[1].trim();
+      console.log(`[ConsiliumAI] Ricerca richiesta per: "${searchQuery}"`);
+
+      const searchResults = await performWebSearch(searchQuery);
+
+      messages.push({
+        role: 'assistant',
+        content: `[CERCA: ${searchQuery}]`
+      });
+      messages.push({
+        role: 'system',
+        content: `Risultati della ricerca web per "${searchQuery}":\n\n${searchResults}\n\nUsa questi risultati per formulare la risposta finale mantenendo lo stile e la personalità originali.`
+      });
+
+      reply = await getAIResponse(messages, systemPrompt);
+    }
 
     // Salva l'interazione corrente nella cronologia locale (come log di archivio)
     chatHistory.addLog(message.channel.id, 'user', `${message.author.username}: ${question}`);
