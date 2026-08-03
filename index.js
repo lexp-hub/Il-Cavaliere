@@ -2,7 +2,6 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { ChatHistoryManager } from './history.js';
-import { startDashboard } from './dashboard.js';
 
 dotenv.config();
 
@@ -287,4 +286,3 @@ if (!token) {
 client.login(token);
 
 // Avvia la dashboard di amministrazione
-startDashboard(client, chatHistory, loadPrompt);
