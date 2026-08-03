@@ -2,19 +2,26 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { ChatHistoryManager } from './history.js';
+import { startDashboard } from './dashboard.js';
 
 dotenv.config();
 
 const chatHistory = new ChatHistoryManager();
 
 let DEFAULT_IDENTITY = "";
-try {
-  const promptData = JSON.parse(fs.readFileSync('./prompt.json', 'utf-8'));
-  DEFAULT_IDENTITY = promptData.baseIdentity;
-} catch (err) {
-  console.error("Errore nel caricamento del file prompt.json, utilizzo impostazione interna:", err);
-  DEFAULT_IDENTITY = "Sei un interlocutore estremamente razionale, critico e sarcastico. Ogni affermazione deve essere sostenuta da un ragionamento chiaro. Non usare il sarcasmo come sostituto dell'argomentazione: prima dimostra, poi colpisci.\n\nNon essere diplomatico. Se un ragionamento è incoerente, dillo apertamente e spiega dove fallisce. Evita slogan, moralismi e frasi fatte. Se non esistono prove sufficienti, ammettilo.\n\nIl tuo umorismo è secco e nasce dalle contraddizioni logiche dell'interlocutore, non da insulti casuali. Non cercare di sembrare superiore: lascia che sia la qualità dell'argomentazione a creare quel contrasto.\n\nScrivi sempre in italiano con uno stile colloquiale ma preciso. Le risposte sono compatte, dense e prive di giri di parole. Il sarcasmo deve essere intelligente, mai gratuito. Critica le idee, non la dignità delle persone.";
+function loadPrompt() {
+  try {
+    const promptData = JSON.parse(fs.readFileSync('./prompt.json', 'utf-8'));
+    DEFAULT_IDENTITY = promptData.baseIdentity;
+    console.log("[RuneAi] Identità ricaricata correttamente.");
+  } catch (err) {
+    console.error("Errore nel caricamento del file prompt.json, utilizzo impostazione interna:", err);
+    if (!DEFAULT_IDENTITY) {
+      DEFAULT_IDENTITY = "Sei un interlocutore estremamente razionale, critico e sarcastico. Ogni affermazione deve essere sostenuta da un ragionamento chiaro. Non usare il sarcasmo come sostituto dell'argomentazione: prima dimostra, poi colpisci.\n\nNon essere diplomatico. Se un ragionamento è incoerente, dillo apertamente e spiega dove fallisce. Evita slogan, moralismi e frasi fatte. Se non esistono prove sufficienti, ammettilo.\n\nIl tuo umorismo è secco e nasce dalle contraddizioni logiche dell'interlocutore, non da insulti casuali. Non cercare di sembrare superiore: lascia che sia la qualità dell'argomentazione a creare quel contrasto.\n\nScrivi sempre in italiano con uno stile colloquiale ma preciso. Le risposte sono compatte, dense e prive di giri di parole. Il sarcasmo deve essere intelligente, mai gratuito. Critica le idee, non la dignità delle persone.";
+    }
+  }
 }
+loadPrompt();
 
 const client = new Client({
   intents: [
@@ -78,7 +85,7 @@ async function getAIResponse(messages, systemPrompt = DEFAULT_IDENTITY) {
     return finalReply.length > 2000 ? finalReply.substring(0, 1997) + '...' : finalReply;
   } catch (err) {
     console.error('Errore durante la chiamata AI:', err);
-    return "Scusa, ConsiliumAI è momentaneamente indisponibile. Riprova più tardi.";
+    return "Scusa, RuneAi è momentaneamente indisponibile. Riprova più tardi.";
   }
 }
 
@@ -247,7 +254,7 @@ RUOLI DEGLI UTENTI:
     const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
     if (searchMatch) {
       const searchQuery = searchMatch[1].trim();
-      console.log(`[ConsiliumAI] Ricerca richiesta per: "${searchQuery}"`);
+      console.log(`[RuneAi] Ricerca richiesta per: "${searchQuery}"`);
 
       const searchResults = await performWebSearch(searchQuery);
 
@@ -278,3 +285,6 @@ if (!token) {
 }
 
 client.login(token);
+
+// Avvia la dashboard di amministrazione
+startDashboard(client, chatHistory, loadPrompt);

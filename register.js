@@ -32,7 +32,7 @@ async function registerCommands() {
       body: JSON.stringify([
         {
           name: 'ask',
-          description: 'Fai una domanda a ConsiliumAI',
+          description: 'Fai una domanda a RuneAi',
           options: [
             { name: 'question', description: 'La tua domanda', type: 3, required: true }
           ],

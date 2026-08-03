@@ -1,4 +1,4 @@
-name = "consilumai"
+name = "runeai"
 main = "index.js"
 compatibility_date = "2024-07-23"
 compatibility_flags = ["nodejs_compat"]
@@ -7,5 +7,5 @@ compatibility_flags = ["nodejs_compat"]
 binding = "AI"
 
 [[kv_namespaces]]
-binding = "CONSILIUM_KV"
+binding = "RUNEAI_KV"
 id = "1d4cea0cbe4844709e31b8c9da3f8d56"
