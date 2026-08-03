@@ -155,7 +155,7 @@ export function startDashboard(client, chatHistory, onConfigUpdate) {
     }
   });
 
-  app.listen(port, () => {
-    console.log(`[RuneAi] Pannello di controllo avviato all'indirizzo http://localhost:${port}`);
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`[RuneAi] Pannello di controllo avviato all'indirizzo http://0.0.0.0:${port}`);
   });
 }
