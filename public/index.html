@@ -89,11 +89,14 @@
       margin-bottom: 24px;
     }
 
-    .logo-emoji {
-      font-size: 48px;
+    .logo-img {
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
       margin-bottom: 12px;
       display: inline-block;
-      animation: pulse 2s infinite;
+      animation: pulse 2.5s infinite;
+      filter: invert(1) drop-shadow(0 0 8px rgba(167, 139, 250, 0.6));
     }
 
     h1 {
@@ -508,7 +511,7 @@
   <div id="login-screen" style="display: none;">
     <div class="glass-card">
       <div class="logo-container">
-        <span class="logo-emoji">🧠</span>
+        <img src="logo.png" alt="RuneAi Logo" class="logo-img">
         <h1>RuneAi</h1>
         <p class="subtitle">Inserisci la password di amministrazione</p>
       </div>
@@ -530,6 +533,7 @@
   <div id="dashboard-screen">
     <header>
       <div class="bot-info">
+        <img src="logo.png" alt="RuneAi Logo" style="width: 32px; height: 32px; object-fit: contain; filter: invert(1) drop-shadow(0 0 4px rgba(167, 139, 250, 0.6)); margin-right: 12px;">
         <div class="status-dot" id="header-status-dot"></div>
         <div>
           <h1 style="font-size: 20px;">RuneAi</h1>
