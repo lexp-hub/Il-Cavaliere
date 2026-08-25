@@ -23,6 +23,7 @@
       loadAutomodData(guildId),
       loadTicketsData(guildId),
       loadGiveawaysAndLeveling(guildId),
+      loadPresentationsData(guildId),
       loadMinigamesData(guildId),
       loadEmojiStats(guildId)
     ]);
@@ -364,29 +365,81 @@
     });
   }
 
+  const btnSendPartnerPanel = document.getElementById('btn-send-partner-panel');
+  if (btnSendPartnerPanel) {
+    btnSendPartnerPanel.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('part-channel')?.value;
+      const title = document.getElementById('part-panel-title')?.value || '🤝 Sistema Partnership & Alleanze';
+      const description = document.getElementById('part-panel-desc')?.value?.trim() || null;
+      const image = document.getElementById('part-panel-image')?.value?.trim() || null;
+
+      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello partnership.', 'error');
+
+      try {
+        btnSendPartnerPanel.disabled = true;
+        btnSendPartnerPanel.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Invio in corso...';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/partnerships/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId, title, description, image, color: '#ea580c' })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Pannello Partnership con pulsante Form inviato su Discord con successo!');
+        } else {
+          window.showToast(`Errore invio pannello: ${data.error || 'Fallito'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnSendPartnerPanel.disabled = false;
+        btnSendPartnerPanel.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5 text-red-600"></i> Invia Pannello nel Canale';
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
   const btnQuickPart = document.getElementById('btn-quick-partner');
   if (btnQuickPart) {
     btnQuickPart.addEventListener('click', async () => {
       const guildId = window.AppState.currentGuildId;
       const invite = document.getElementById('part-quick-invite')?.value?.trim();
+      const banner = document.getElementById('part-quick-banner')?.value?.trim() || null;
       const notes = document.getElementById('part-quick-notes')?.value?.trim();
 
-      if (!invite) return window.showToast('Inserisci un link di invito valido.', 'error');
+      if (!invite) return window.showToast('Inserisci un link o codice di invito valido.', 'error');
 
-      const res = await fetch(`/api/guilds/${guildId}/partnerships/add`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ invite, notes })
-      });
+      try {
+        btnQuickPart.disabled = true;
+        btnQuickPart.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Pubblicazione in corso...';
+        if (window.lucide) lucide.createIcons();
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        window.showToast('Partnership pubblicata con successo!');
-        document.getElementById('part-quick-invite').value = '';
-        document.getElementById('part-quick-notes').value = '';
-        await loadPartnershipData(guildId);
-      } else {
-        window.showToast(data.error || 'Errore nella pubblicazione.', 'error');
+        const res = await fetch(`/api/guilds/${guildId}/partnerships/add`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ invite, notes, banner })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Partnership pubblicata con successo sul canale Discord!');
+          document.getElementById('part-quick-invite').value = '';
+          if (document.getElementById('part-quick-banner')) document.getElementById('part-quick-banner').value = '';
+          document.getElementById('part-quick-notes').value = '';
+          await loadPartnershipData(guildId);
+        } else {
+          window.showToast(data.error || 'Errore nella pubblicazione.', 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnQuickPart.disabled = false;
+        btnQuickPart.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Pubblica Partnership';
+        if (window.lucide) lucide.createIcons();
       }
     });
   }
@@ -1294,6 +1347,110 @@
       if (res.ok) window.showToast(`Giveaway per ${prize} avviato!`);
       else window.showToast('Errore avvio giveaway.', 'error');
     });
+  // === Community Presentations (Presentazioni) Handler ===
+  async function loadPresentationsData(guildId) {
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/presentations`);
+      if (!res.ok) return;
+      const data = await res.json();
+
+      const config = data.config || {};
+      const enabledEl = document.getElementById('pres-enabled');
+      const channelEl = document.getElementById('pres-channel');
+      const roleEl = document.getElementById('pres-role');
+      const xpEl = document.getElementById('pres-xp');
+
+      if (enabledEl) enabledEl.checked = Boolean(config.enabled);
+      if (channelEl && config.channel_id) channelEl.value = config.channel_id;
+      if (roleEl && config.reward_role_id) roleEl.value = config.reward_role_id;
+      if (xpEl) xpEl.value = config.xp_reward !== undefined ? config.xp_reward : 100;
+
+      const tbody = document.getElementById('pres-recent-table');
+      if (tbody) {
+        tbody.innerHTML = '';
+        const list = data.presentations || [];
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-slate-400 italic">Nessuna presentazione ricevuta finora.</td></tr>';
+        } else {
+          list.forEach(p => {
+            const tr = document.createElement('tr');
+            const dateStr = new Date(p.timestamp * 1000).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            tr.innerHTML = `
+              <td class="py-2.5 font-mono text-slate-900 font-bold">&lt;@${p.user_id}&gt;</td>
+              <td class="py-2.5 font-semibold text-indigo-700">${escapeHtml(p.name)}</td>
+              <td class="py-2.5 text-slate-600">${escapeHtml(p.age_pronouns || 'N/A')}</td>
+              <td class="py-2.5 text-slate-600 max-w-xs truncate" title="${escapeHtml(p.hobbies)}">${escapeHtml(p.hobbies)}</td>
+              <td class="py-2.5 text-slate-400 text-[11px]">${dateStr}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Error loading presentations:', e);
+    }
+  }
+
+  const btnSavePresConfig = document.getElementById('btn-save-pres-config');
+  if (btnSavePresConfig) {
+    btnSavePresConfig.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channel_id = document.getElementById('pres-channel')?.value || null;
+      const reward_role_id = document.getElementById('pres-role')?.value || null;
+      const xp_reward = parseInt(document.getElementById('pres-xp')?.value || '100', 10);
+      const enabled = document.getElementById('pres-enabled')?.checked;
+
+      const res = await fetch(`/api/guilds/${guildId}/presentations/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_id, reward_role_id, xp_reward, enabled })
+      });
+
+      if (res.ok) {
+        window.showToast('Configurazione Modulo Presentazioni salvata con successo!');
+        await loadPresentationsData(guildId);
+      } else {
+        window.showToast('Errore durante il salvataggio.', 'error');
+      }
+    });
+  }
+
+  const btnSendPresPanel = document.getElementById('btn-send-pres-panel');
+  if (btnSendPresPanel) {
+    btnSendPresPanel.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('pres-channel')?.value;
+      const title = document.getElementById('pres-panel-title')?.value || '📜 Benvenuto nella Sala delle Presentazioni';
+      const description = document.getElementById('pres-panel-desc')?.value?.trim() || null;
+      const image = document.getElementById('pres-panel-image')?.value?.trim() || null;
+
+      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello presentazioni.', 'error');
+
+      try {
+        btnSendPresPanel.disabled = true;
+        btnSendPresPanel.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Invio in corso...';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/presentations/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId, title, description, image, color: '#6366f1' })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Pannello Presentazioni inviato su Discord con successo!');
+        } else {
+          window.showToast(`Errore invio: ${data.error || 'Fallito'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnSendPresPanel.disabled = false;
+        btnSendPresPanel.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5 text-indigo-600"></i> Invia Pannello nel Canale';
+        if (window.lucide) lucide.createIcons();
+      }
+    });
   }
 
   // === Minigames & Medieval Community Handler ===
@@ -1539,7 +1696,19 @@
         })
       });
 
-      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7]);
+      // 8. Presentations Module Config
+      const p8 = fetch(`/api/guilds/${guildId}/presentations/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled: document.getElementById('pres-enabled')?.checked,
+          channel_id: document.getElementById('pres-channel')?.value || null,
+          reward_role_id: document.getElementById('pres-role')?.value || null,
+          xp_reward: parseInt(document.getElementById('pres-xp')?.value || '100', 10)
+        })
+      });
+
+      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8]);
       window.showToast('🛡️ Tutte le impostazioni del server sono state salvate permanentemente nel database!');
     } catch (err) {
       window.showToast('Errore durante il salvataggio.', 'error');
@@ -1595,6 +1764,10 @@
       // Partnerships Channels & Roles
       window.setupSearchableSelect('part-channel-search', 'part-channel', 'text');
       window.setupSearchableSelect('part-ping-role-search', 'part-ping-role', 'role');
+
+      // Community Presentations Channels & Roles
+      window.setupSearchableSelect('pres-channel-search', 'pres-channel', 'text');
+      window.setupSearchableSelect('pres-role-search', 'pres-role', 'role');
 
       // Reaction Roles Channels & Roles
       window.setupSearchableSelect('rr-channel-search', 'rr-channel', 'text');

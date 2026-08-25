@@ -348,14 +348,31 @@ export const DatabaseHelper = {
       db.prepare('INSERT INTO welcomer_configs (guild_id) VALUES (?)').run(guildId);
       row = db.prepare('SELECT * FROM welcomer_configs WHERE guild_id = ?').get(guildId);
     }
+    let parsedWelcomeEmbed = null;
+    let parsedLeaveEmbed = null;
+    try {
+      if (row.welcome_embed) {
+        parsedWelcomeEmbed = typeof row.welcome_embed === 'string' ? JSON.parse(row.welcome_embed) : row.welcome_embed;
+      }
+    } catch (e) {
+      parsedWelcomeEmbed = null;
+    }
+    try {
+      if (row.leave_embed) {
+        parsedLeaveEmbed = typeof row.leave_embed === 'string' ? JSON.parse(row.leave_embed) : row.leave_embed;
+      }
+    } catch (e) {
+      parsedLeaveEmbed = null;
+    }
+
     return {
       ...row,
       welcome_enabled: Boolean(row.welcome_enabled),
       welcome_dm_enabled: Boolean(row.welcome_dm_enabled),
       leave_enabled: Boolean(row.leave_enabled),
       card_enabled: Boolean(row.card_enabled),
-      welcome_embed: row.welcome_embed ? JSON.parse(row.welcome_embed) : null,
-      leave_embed: row.leave_embed ? JSON.parse(row.leave_embed) : null
+      welcome_embed: parsedWelcomeEmbed,
+      leave_embed: parsedLeaveEmbed
     };
   },
 
@@ -363,6 +380,15 @@ export const DatabaseHelper = {
     const current = this.getWelcomerConfig(guildId);
     const updated = { ...current, ...data };
     
+    let welcomeEmbStr = null;
+    if (updated.welcome_embed) {
+      welcomeEmbStr = typeof updated.welcome_embed === 'string' ? updated.welcome_embed : JSON.stringify(updated.welcome_embed);
+    }
+    let leaveEmbStr = null;
+    if (updated.leave_embed) {
+      leaveEmbStr = typeof updated.leave_embed === 'string' ? updated.leave_embed : JSON.stringify(updated.leave_embed);
+    }
+
     db.prepare(`
       INSERT OR REPLACE INTO welcomer_configs (
         guild_id, welcome_enabled, welcome_channel_id, welcome_message, welcome_embed,
@@ -374,13 +400,13 @@ export const DatabaseHelper = {
       updated.welcome_enabled ? 1 : 0,
       updated.welcome_channel_id || null,
       updated.welcome_message || '',
-      updated.welcome_embed ? JSON.stringify(updated.welcome_embed) : null,
+      welcomeEmbStr,
       updated.welcome_dm_enabled ? 1 : 0,
       updated.welcome_dm_message || '',
       updated.leave_enabled ? 1 : 0,
       updated.leave_channel_id || null,
       updated.leave_message || '',
-      updated.leave_embed ? JSON.stringify(updated.leave_embed) : null,
+      leaveEmbStr,
       updated.card_enabled ? 1 : 0,
       updated.card_bg_color || '#1e1b4b',
       updated.auto_role_user || null,
@@ -854,6 +880,63 @@ export const DatabaseHelper = {
       config.auto_tag_staff !== undefined ? (config.auto_tag_staff ? 1 : 0) : 1,
       config.inactivity_warning_hours || 24
     );
+  },
+
+  // === Community Presentations (Presentazioni) Helpers ===
+  getPresentationConfig(guildId) {
+    let row = db.prepare('SELECT * FROM presentation_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare('INSERT INTO presentation_configs (guild_id) VALUES (?)').run(guildId);
+      row = db.prepare('SELECT * FROM presentation_configs WHERE guild_id = ?').get(guildId);
+    }
+    return {
+      ...row,
+      enabled: Boolean(row.enabled)
+    };
+  },
+
+  updatePresentationConfig(guildId, data) {
+    const current = this.getPresentationConfig(guildId);
+    const updated = { ...current, ...data };
+    db.prepare(`
+      INSERT OR REPLACE INTO presentation_configs (guild_id, channel_id, reward_role_id, xp_reward, title, color, enabled)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      guildId,
+      updated.channel_id || null,
+      updated.reward_role_id || null,
+      updated.xp_reward !== undefined ? updated.xp_reward : 100,
+      updated.title || '📜 Presentazione del Cavaliere',
+      updated.color || '#6366f1',
+      updated.enabled ? 1 : 0
+    );
+    return this.getPresentationConfig(guildId);
+  },
+
+  addPresentation(guildId, data) {
+    const info = db.prepare(`
+      INSERT INTO presentations (guild_id, user_id, name, age_pronouns, hobbies, bio, social_media, message_id, timestamp)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(
+      guildId,
+      data.user_id,
+      data.name,
+      data.age_pronouns || null,
+      data.hobbies,
+      data.bio,
+      data.social_media || null,
+      data.message_id || null,
+      data.timestamp || Math.floor(Date.now() / 1000)
+    );
+    return { id: info.lastInsertRowid, ...data };
+  },
+
+  getPresentations(guildId, limit = 20) {
+    return db.prepare('SELECT * FROM presentations WHERE guild_id = ? ORDER BY timestamp DESC LIMIT ?').all(guildId, limit);
+  },
+
+  getUserPresentation(guildId, userId) {
+    return db.prepare('SELECT * FROM presentations WHERE guild_id = ? AND user_id = ? ORDER BY timestamp DESC LIMIT 1').get(guildId, userId);
   }
 };
 

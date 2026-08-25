@@ -299,4 +299,30 @@ CREATE TABLE IF NOT EXISTS ticket_automations (
   auto_tag_staff INTEGER DEFAULT 1,
   inactivity_warning_hours INTEGER DEFAULT 24
 );
+
+-- ============================================================
+-- PRESENTATIONS / PRESENTAZIONI COMMUNITY MODULE
+-- ============================================================
+CREATE TABLE IF NOT EXISTS presentation_configs (
+  guild_id TEXT PRIMARY KEY,
+  channel_id TEXT,
+  reward_role_id TEXT,
+  xp_reward INTEGER DEFAULT 100,
+  title TEXT DEFAULT '📜 Presentazione del Cavaliere',
+  color TEXT DEFAULT '#6366f1',
+  enabled INTEGER DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS presentations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  age_pronouns TEXT,
+  hobbies TEXT NOT NULL,
+  bio TEXT NOT NULL,
+  social_media TEXT,
+  message_id TEXT,
+  timestamp INTEGER DEFAULT (strftime('%s', 'now'))
+);
 `;

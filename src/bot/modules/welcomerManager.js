@@ -24,7 +24,12 @@ export const WelcomerManager = {
       .replace(/{count}/g, (member.guild?.memberCount || 0).toString());
   },
 
-  buildDiscordEmbed(embData, defaultMessage, member) {
+  buildDiscordEmbed(embDataRaw, defaultMessage, member) {
+    let embData = embDataRaw;
+    if (typeof embData === 'string') {
+      try { embData = JSON.parse(embData); } catch (e) { embData = null; }
+    }
+
     const embed = new EmbedBuilder();
 
     // 1. Color

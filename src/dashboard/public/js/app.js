@@ -264,7 +264,7 @@ function populateDropdowns(channels = [], roles = []) {
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',
     'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel', 'tk-log-channel',
-    'ga-channel', 'lvl-channel', 'cnt-channel'
+    'ga-channel', 'lvl-channel', 'cnt-channel', 'pres-channel'
   ];
 
   channelSelectIds.forEach(id => {
@@ -295,7 +295,7 @@ function populateDropdowns(channels = [], roles = []) {
     });
   }
 
-  const roleSelectIds = ['part-ping-role', 'rr-role', 'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role'];
+  const roleSelectIds = ['part-ping-role', 'rr-role', 'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role', 'pres-role'];
   roleSelectIds.forEach(id => {
     const select = document.getElementById(id);
     if (!select) return;

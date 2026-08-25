@@ -1,6 +1,7 @@
 import express from 'express';
 import { DatabaseHelper } from '../../database/db.js';
 import { PartnershipManager } from '../../bot/modules/partnershipManager.js';
+import { PresentationManager } from '../../bot/modules/presentationManager.js';
 import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
@@ -117,7 +118,7 @@ export function createApiRouter(botClient) {
   });
 
   router.post('/guilds/:guildId/partnerships/add', requireModAuth, async (req, res) => {
-    const { invite, repId, notes } = req.body;
+    const { invite, repId, notes, banner } = req.body;
     const guildId = req.params.guildId;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
@@ -133,12 +134,72 @@ export function createApiRouter(botClient) {
     }
 
     const channel = guild.channels.cache.find(c => c.type === 0);
-    const result = await PartnershipManager.processPartnership(guild, channel, user, invite, notes);
+    const result = await PartnershipManager.processPartnership(guild, channel, user, invite, notes, banner);
     if (!result.success) {
       return res.status(400).json({ error: result.error });
     }
 
     res.json({ success: true, result });
+  });
+
+  router.post('/guilds/:guildId/partnerships/panel', requireModAuth, async (req, res) => {
+    const { channelId, title, description, color, image } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Il bot non è presente in questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getPartnershipConfig(guildId);
+      const targetChannelId = channelId || config.channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Nessun canale partnership selezionato o configurato.' });
+      }
+
+      await PartnershipManager.sendPartnershipPanel(guild, targetChannelId, title, description, color, image);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // === Community Presentations (Presentazioni) Routes ===
+  router.get('/guilds/:guildId/presentations', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.getPresentationConfig(req.params.guildId);
+    const list = DatabaseHelper.getPresentations(req.params.guildId, 25);
+    res.json({ config, presentations: list });
+  });
+
+  router.post('/guilds/:guildId/presentations/config', requireModAuth, (req, res) => {
+    const updated = DatabaseHelper.updatePresentationConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: updated });
+  });
+
+  router.post('/guilds/:guildId/presentations/panel', requireModAuth, async (req, res) => {
+    const { channelId, title, description, color, image } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Il bot non è presente in questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getPresentationConfig(guildId);
+      const targetChannelId = channelId || config.channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Nessun canale presentazioni selezionato o configurato.' });
+      }
+
+      await PresentationManager.sendPresentationPanel(guild, targetChannelId, title, description, color || '#6366f1', image);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   router.get('/guilds/:guildId/embeds', requireModAuth, (req, res) => {

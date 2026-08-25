@@ -74,6 +74,12 @@
           <span>Partnership</span>
         </button>
 
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-presentations">
+          <i data-lucide="book-open" class="w-4 h-4 text-red-600"></i>
+          <span class="flex-grow">Presentazioni</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-semibold uppercase border border-indigo-200">Form</span>
+        </button>
+
         <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-embeds">
           <i data-lucide="scroll" class="w-4 h-4 text-red-600"></i>
           <span class="flex-grow">Embed Builder</span>
@@ -394,38 +400,77 @@
           </div>
         </div>
 
-        <button id="btn-save-partner-config" class="btn-cyber text-xs py-2.5 px-4">
-          <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione Partnership
-        </button>
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="btn-save-partner-config" class="btn-cyber text-xs py-2.5 px-4">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione Partnership
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Generator Card with Form Button -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2 font-medieval">
+              <i data-lucide="layout-template" class="w-4 h-4 text-red-600"></i> Pannello Interattivo con Form su Discord
+            </h4>
+            <p class="text-xs text-slate-500">Invia un messaggio Embed nel canale partnership con un pulsante che apre direttamente il Form modale su Discord</p>
+          </div>
+          <button id="btn-send-partner-panel" class="btn-secondary text-xs py-2 px-4 border-red-300 bg-red-50 hover:bg-red-100 text-red-900 font-bold">
+            <i data-lucide="send" class="w-3.5 h-3.5 text-red-600"></i> Invia Pannello nel Canale
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Pannello</label>
+            <input type="text" id="part-panel-title" class="form-input text-xs" value="🤝 Sistema Partnership & Alleanze">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Banner o Immagine URL (Opzionale)</label>
+            <input type="url" id="part-panel-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Descrizione Personalizzata del Pannello</label>
+            <textarea id="part-panel-desc" class="form-textarea h-16 text-xs" placeholder="Lascia vuoto per il testo automatico con requisiti e statistiche, oppure scrivi un messaggio personalizzato..."></textarea>
+          </div>
+        </div>
       </div>
 
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
-          <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Registra Partnership Rapida dalla Dashboard
+        <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2 font-medieval">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-600"></i> Registra Partnership Rapida dalla Dashboard
         </h4>
-        <div class="space-y-2 mb-3">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <input type="text" id="part-quick-invite" class="form-input text-xs" placeholder="Link o codice invito (es. discord.gg/partner)">
-            <button id="btn-quick-partner" class="btn-secondary text-xs py-2 justify-center">
-              <i data-lucide="send" class="w-3.5 h-3.5"></i> Pubblica Partnership
-            </button>
+        <div class="space-y-3 mb-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Link o Codice Invito</label>
+              <input type="text" id="part-quick-invite" class="form-input text-xs" placeholder="discord.gg/partner">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Banner o Immagine URL (Opzionale)</label>
+              <input type="url" id="part-quick-banner" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+            </div>
           </div>
           <div>
             <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
-              <label class="text-xs font-semibold text-slate-700 block">Descrizione o Note Partnership</label>
+              <label class="text-xs font-semibold text-slate-700 block">Descrizione o Messaggio Pubblicitario</label>
               <div id="part-notes-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
             </div>
-            <textarea id="part-quick-notes" class="form-textarea h-20 text-xs" placeholder="Descrizione o note della partnership (usa **grassetto**, <#canale> o @ruolo)..."></textarea>
+            <textarea id="part-quick-notes" class="form-textarea h-20 text-xs" placeholder="Descrizione o note della partnership (usa grassetto, canali o ruoli)..."></textarea>
           </div>
+          <button id="btn-quick-partner" class="btn-cyber text-xs py-2 px-5">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Pubblica Partnership
+          </button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div class="glass-card p-6 lg:col-span-2">
-          <h4 class="text-sm font-bold text-white mb-3">Ultime Partnership Registrate</h4>
+          <h4 class="text-sm font-bold text-slate-900 mb-3 font-medieval">Ultime Partnership Registrate</h4>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="text-slate-400 border-b border-white/10 uppercase tracking-wider">
+              <thead class="text-slate-500 border-b border-slate-200 uppercase tracking-wider">
                 <tr>
                   <th class="py-2">Server Partner</th>
                   <th class="py-2">Rappresentante</th>
@@ -449,7 +494,110 @@
 
     
     
-    
+    </section>
+
+    <!-- Community Presentations / Presentazioni Section -->
+    <section id="tab-presentations" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+              <i data-lucide="book-open" class="w-5 h-5 text-indigo-600"></i> Modulo Presentazioni con Form
+            </h3>
+            <p class="text-xs text-slate-500">I membri compilano un form modale nativo per presentarsi e ricevono un ruolo speciale ed XP</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="pres-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Pubblicazione</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="pres-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+              </div>
+              <select id="pres-channel" class="form-select text-xs"></select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Ruolo Ricompensa (Opzionale)</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="pres-role-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca ruolo...">
+              </div>
+              <select id="pres-role" class="form-select text-xs"></select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1.5">Punti XP Bonus Assegnati</label>
+            <input type="number" id="pres-xp" class="form-input text-xs" value="100" min="0" step="10">
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="btn-save-pres-config" class="btn-cyber text-xs py-2.5 px-5">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione Presentazioni
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Generator Card -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2 font-medieval">
+              <i data-lucide="layout-template" class="w-4 h-4 text-indigo-600"></i> Pannello Presentazioni per Discord
+            </h4>
+            <p class="text-xs text-slate-500">Invia un messaggio Embed nel canale con un pulsante che apre il Form di presentazione a schermo</p>
+          </div>
+          <button id="btn-send-pres-panel" class="btn-secondary text-xs py-2 px-4 border-indigo-300 bg-indigo-50 hover:bg-indigo-100 text-indigo-900 font-bold">
+            <i data-lucide="send" class="w-3.5 h-3.5 text-indigo-600"></i> Invia Pannello nel Canale
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo del Pannello</label>
+            <input type="text" id="pres-panel-title" class="form-input text-xs" value="📜 Benvenuto nella Sala delle Presentazioni">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Banner o Immagine URL (Opzionale)</label>
+            <input type="url" id="pres-panel-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Descrizione Personalizzata</label>
+            <textarea id="pres-panel-desc" class="form-textarea h-16 text-xs" placeholder="Lascia vuoto per il messaggio predefinito con premi e istruzioni..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Presentations List -->
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-slate-900 mb-3 font-medieval flex items-center gap-2">
+          <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i> Ultime Presentazioni della Community
+        </h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-500 border-b border-slate-200 uppercase tracking-wider">
+              <tr>
+                <th class="py-2">Membro</th>
+                <th class="py-2">Nome / Nick</th>
+                <th class="py-2">Età / Pronomi</th>
+                <th class="py-2">Hobby &amp; Passioni</th>
+                <th class="py-2">Data</th>
+              </tr>
+            </thead>
+            <tbody id="pres-recent-table" class="divide-y divide-slate-100 text-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <section id="tab-embeds" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-7 space-y-4">
@@ -1603,9 +1751,9 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=22"></script>
-  <script src="/js/embedBuilder.js?v=22"></script>
-  <script src="/js/modules.js?v=22"></script>
+  <script src="/js/app.js?v=24"></script>
+  <script src="/js/embedBuilder.js?v=24"></script>
+  <script src="/js/modules.js?v=24"></script>
   <script>
     lucide.createIcons();
   </script>

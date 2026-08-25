@@ -1,16 +1,119 @@
 import { DatabaseHelper } from '../../database/db.js';
-import { EmbedBuilder } from 'discord.js';
+import {
+  EmbedBuilder,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ModalBuilder,
+  TextInputBuilder,
+  TextInputStyle
+} from 'discord.js';
 import { CONFIG } from '../../config.js';
 
 export const PartnershipManager = {
-  async processPartnership(guild, channel, user, inviteCodeOrUrl, customText = '') {
+  /**
+   * Generates the native Discord Modal form for partnership submission
+   */
+  createPartnershipModal() {
+    const modal = new ModalBuilder()
+      .setCustomId('modal_partnership_submit')
+      .setTitle('🤝 Invia Nuova Partnership');
+
+    const inviteInput = new TextInputBuilder()
+      .setCustomId('partner_invite')
+      .setLabel('Link o Codice Invito Server')
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder('es. https://discord.gg/invito oppure solo codice')
+      .setRequired(true)
+      .setMaxLength(100);
+
+    const descInput = new TextInputBuilder()
+      .setCustomId('partner_text')
+      .setLabel('Messaggio Pubblicitario / Descrizione')
+      .setStyle(TextInputStyle.Paragraph)
+      .setPlaceholder('Incolla la presentazione del server partner con emoji e testo...')
+      .setRequired(true)
+      .setMaxLength(4000);
+
+    const repInput = new TextInputBuilder()
+      .setCustomId('partner_rep')
+      .setLabel('Rappresentante / PM (Opzionale)')
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder('Menzione @utente o ID numerico (vuoto = te stesso)')
+      .setRequired(false)
+      .setMaxLength(50);
+
+    const bannerInput = new TextInputBuilder()
+      .setCustomId('partner_banner')
+      .setLabel('Banner o Immagine URL (Opzionale)')
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder('https://i.imgur.com/immagine.png')
+      .setRequired(false)
+      .setMaxLength(255);
+
+    const row1 = new ActionRowBuilder().addComponents(inviteInput);
+    const row2 = new ActionRowBuilder().addComponents(descInput);
+    const row3 = new ActionRowBuilder().addComponents(repInput);
+    const row4 = new ActionRowBuilder().addComponents(bannerInput);
+
+    modal.addComponents(row1, row2, row3, row4);
+    return modal;
+  },
+
+  /**
+   * Sends an interactive Partnership Panel with a button that triggers the Modal Form
+   */
+  async sendPartnershipPanel(guild, channelId, title = '🤝 Sistema Partnership & Alleanze', description = null, color = '#ea580c', image = null) {
+    const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
+    if (!channel) throw new Error('Canale partnership non valido o non trovato.');
+
+    const config = DatabaseHelper.getPartnershipConfig(guild.id);
+    const stats = DatabaseHelper.getPartnershipStats(guild.id);
+
+    const desc = description || 
+      `Vuoi stringere una partnership con il reame **${guild.name}**?\n\n` +
+      `📌 **Requisiti Minimi:** ${config.min_members > 0 ? `Almeno \`${config.min_members}\` membri` : 'Nessun requisito minimo'}\n` +
+      `⏳ **Cooldown:** ${config.cooldown_minutes > 0 ? `\`${config.cooldown_minutes}\` minuti` : 'Nessuno'}\n` +
+      `📊 **Partnership Effettuate:** \`${stats.total}\`\n\n` +
+      `👉 Clicca sul pulsante **Invia Partnership (Form)** qui sotto per compilare il modulo rapido!`;
+
+    const embed = new EmbedBuilder()
+      .setColor(color || CONFIG.EMBED_COLOR || '#ea580c')
+      .setTitle(title)
+      .setDescription(desc)
+      .setThumbnail(guild.iconURL({ dynamic: true, size: 256 }))
+      .setFooter({ text: `${guild.name} • Partnership Ufficiali`, iconURL: guild.iconURL() })
+      .setTimestamp();
+
+    if (image && image.startsWith('http')) {
+      embed.setImage(image);
+    }
+
+    const row = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId('partnership_open_form')
+        .setLabel('🤝 Invia Partnership (Form)')
+        .setStyle(ButtonStyle.Success),
+      new ButtonBuilder()
+        .setCustomId('partnership_view_stats')
+        .setLabel('📊 Statistiche')
+        .setStyle(ButtonStyle.Secondary)
+    );
+
+    return channel.send({ embeds: [embed], components: [row] });
+  },
+
+  /**
+   * Processes the partnership and publishes it to the designated channel
+   */
+  async processPartnership(guild, channel, user, inviteCodeOrUrl, customText = '', bannerUrl = null) {
     const config = DatabaseHelper.getPartnershipConfig(guild.id);
     if (!config.enabled) {
       return { success: false, error: 'Il modulo Partnership è disattivato su questo server.' };
     }
 
-    let code = inviteCodeOrUrl;
-    const match = inviteCodeOrUrl.match(/(?:discord\.gg\/|discord\.com\/invite\/)?([a-zA-Z0-9-]+)/);
+    let code = inviteCodeOrUrl.trim();
+    const match = code.match(/(?:discord\.gg\/|discord\.com\/invite\/)?([a-zA-Z0-9-]+)/);
     if (match && match[1]) {
       code = match[1];
     }
@@ -19,7 +122,7 @@ export const PartnershipManager = {
     try {
       inviteInfo = await guild.client.fetchInvite(code);
     } catch (e) {
-      return { success: false, error: 'Invito non valido o scaduto.' };
+      return { success: false, error: 'Link di invito non valido, scaduto o il bot non riesce a risolverlo.' };
     }
 
     const partnerGuild = inviteInfo.guild;
@@ -28,20 +131,20 @@ export const PartnershipManager = {
     if (config.min_members > 0 && memberCount < config.min_members) {
       return {
         success: false,
-        error: `Il server partner deve avere almeno **${config.min_members}** membri (il server ne ha ${memberCount}).`
+        error: `Il server partner ha **${memberCount}** membri, ma il requisito minimo è di **${config.min_members}** membri.`
       };
     }
 
-    const recentPartnerships = DatabaseHelper.getPartnerships(guild.id, 10);
+    const recentPartnerships = DatabaseHelper.getPartnerships(guild.id, 20);
     const now = Math.floor(Date.now() / 1000);
-    const cooldownSecs = config.cooldown_minutes * 60;
+    const cooldownSecs = (config.cooldown_minutes || 0) * 60;
 
     const lastFromSameGuild = recentPartnerships.find(p => p.partner_guild_id === partnerGuild?.id);
     if (lastFromSameGuild && (now - lastFromSameGuild.timestamp) < cooldownSecs) {
       const remainingMinutes = Math.ceil((cooldownSecs - (now - lastFromSameGuild.timestamp)) / 60);
       return {
         success: false,
-        error: `Questo server ha già una partnership recente. Attendi **${remainingMinutes} minuti** prima di rinnovarla.`
+        error: `Questo server partner ha già una partnership attiva registrata di recente. Attendi **${remainingMinutes} minuti** prima di pubblicarla di nuovo.`
       };
     }
 
@@ -58,12 +161,12 @@ export const PartnershipManager = {
     const stats = DatabaseHelper.getPartnershipStats(guild.id);
 
     const partnerEmbed = new EmbedBuilder()
-      .setColor(CONFIG.EMBED_COLOR)
+      .setColor(CONFIG.EMBED_COLOR || '#dc2626')
       .setTitle(`🤝 Nuova Partnership | ${partnerGuild?.name || 'Partner Server'}`)
       .setURL(inviteInfo.url)
       .setDescription(customText || `Siamo lieti di annunciare la nuova partnership con **${partnerGuild?.name}**!\n\n🔗 **Unisciti al server:** ${inviteInfo.url}`)
       .addFields(
-        { name: '👑 Rappresentante', value: `${user} (\`${user.tag}\`)`, inline: true },
+        { name: '👑 Rappresentante', value: `${user} (\`${user.tag || user.username}\`)`, inline: true },
         { name: '👥 Membri Partner', value: `\`${memberCount.toLocaleString()}\``, inline: true },
         { name: '📊 Partnership Totali', value: `\`#${stats.total}\``, inline: true }
       )
@@ -74,7 +177,15 @@ export const PartnershipManager = {
       partnerEmbed.setThumbnail(`https://cdn.discordapp.com/icons/${partnerGuild.id}/${partnerGuild.icon}.png?size=256`);
     }
 
-    const targetChannel = config.channel_id ? guild.channels.cache.get(config.channel_id) : channel;
+    if (bannerUrl && bannerUrl.startsWith('http')) {
+      partnerEmbed.setImage(bannerUrl);
+    }
+
+    const targetChannelId = config.channel_id;
+    const targetChannel = targetChannelId 
+      ? (guild.channels.cache.get(targetChannelId) || await guild.channels.fetch(targetChannelId).catch(() => null))
+      : channel;
+
     if (!targetChannel) {
       return { success: false, error: 'Canale partnership non trovato o non configurato.' };
     }
@@ -90,17 +201,18 @@ export const PartnershipManager = {
     });
 
     if (config.log_channel_id) {
-      const logChan = guild.channels.cache.get(config.log_channel_id);
+      const logChan = guild.channels.cache.get(config.log_channel_id) || await guild.channels.fetch(config.log_channel_id).catch(() => null);
       if (logChan && logChan.id !== targetChannel.id) {
         const logEmbed = new EmbedBuilder()
-          .setColor(CONFIG.EMBED_SUCCESS_COLOR)
-          .setTitle('🤝 Log Partnership')
+          .setColor(CONFIG.EMBED_SUCCESS_COLOR || '#10b981')
+          .setTitle('🤝 Log Partnership Registrata')
           .addFields(
-            { name: 'Server Partner', value: `${partnerGuild?.name} (${partnerGuild?.id})`, inline: true },
-            { name: 'Rappresentante', value: `${user.tag} (${user.id})`, inline: true },
-            { name: 'Canale', value: `${targetChannel}`, inline: true },
-            { name: 'Membri', value: `${memberCount}`, inline: true },
-            { name: 'Invito', value: `${inviteInfo.url}`, inline: true }
+            { name: 'Server Partner', value: `${partnerGuild?.name} (\`${partnerGuild?.id}\`)`, inline: true },
+            { name: 'Rappresentante', value: `${user} (\`${user.id}\`)`, inline: true },
+            { name: 'Canale Invio', value: `${targetChannel}`, inline: true },
+            { name: 'Membri', value: `\`${memberCount}\``, inline: true },
+            { name: 'Link Invito', value: `[Clicca qui](${inviteInfo.url})`, inline: true },
+            { name: 'Messaggio Inviato', value: `[Visualizza Messaggio](${sentMessage.url})`, inline: true }
           )
           .setTimestamp();
         await logChan.send({ embeds: [logEmbed] }).catch(() => {});
@@ -111,8 +223,58 @@ export const PartnershipManager = {
       success: true,
       partnershipId: saved.id,
       totalCount: stats.total,
-      messageUrl: sentMessage.url
+      messageUrl: sentMessage.url,
+      partnerGuildName: partnerGuild?.name
     };
+  },
+
+  /**
+   * Handles the modal submission from Discord
+   */
+  async handlePartnershipModalSubmit(interaction) {
+    await interaction.deferReply({ ephemeral: true });
+
+    const invite = interaction.fields.getTextInputValue('partner_invite')?.trim();
+    const text = interaction.fields.getTextInputValue('partner_text')?.trim();
+    const repRaw = interaction.fields.getTextInputValue('partner_rep')?.trim();
+    const bannerUrl = interaction.fields.getTextInputValue('partner_banner')?.trim() || null;
+
+    let repUser = interaction.user;
+    if (repRaw) {
+      const idMatch = repRaw.match(/\d{17,20}/);
+      if (idMatch) {
+        try {
+          repUser = await interaction.client.users.fetch(idMatch[0]);
+        } catch (e) {}
+      }
+    }
+
+    const result = await this.processPartnership(
+      interaction.guild,
+      interaction.channel,
+      repUser,
+      invite,
+      text,
+      bannerUrl
+    );
+
+    if (!result.success) {
+      return interaction.editReply({
+        content: `❌ **Impossibile registrare la partnership:** ${result.error}`
+      });
+    }
+
+    const successEmbed = new EmbedBuilder()
+      .setColor(CONFIG.EMBED_SUCCESS_COLOR || '#10b981')
+      .setTitle('✅ Partnership Pubblicata con Successo!')
+      .setDescription(
+        `La partnership con **${result.partnerGuildName || 'il server'}** (Totale: **#${result.totalCount}**) è stata pubblicata!\n\n` +
+        `👑 **Rappresentante:** ${repUser}\n` +
+        `🔗 **Messaggio Pubblicato:** [Clicca per vedere il messaggio](${result.messageUrl})`
+      )
+      .setTimestamp();
+
+    await interaction.editReply({ embeds: [successEmbed] });
   }
 };
 

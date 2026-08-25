@@ -11,11 +11,46 @@ import { CONFIG } from '../../../config.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('partner')
-    .setDescription('Comandi per il sistema di Partnership')
+    .setDescription('Comandi completi per il sistema di Partnership')
+    .addSubcommand(sub =>
+      sub
+        .setName('form')
+        .setDescription('Apre il form modale a schermo per compilare una nuova partnership')
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('panel')
+        .setDescription('Invia un pannello informativo con pulsante per aprire il form di partnership')
+        .addChannelOption(opt =>
+          opt
+            .setName('canale')
+            .setDescription('Canale in cui inviare il pannello (default: canale corrente o canale configurato)')
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('titolo')
+            .setDescription('Titolo personalizzato per il pannello')
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('descrizione')
+            .setDescription('Descrizione personalizzata per il pannello')
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('immagine')
+            .setDescription('URL del banner o immagine del pannello')
+            .setRequired(false)
+        )
+    )
     .addSubcommand(sub =>
       sub
         .setName('add')
-        .setDescription('Registra e pubblica una nuova partnership')
+        .setDescription('Registra una nuova partnership tramite comando diretto')
         .addStringOption(opt =>
           opt
             .setName('invito')
@@ -32,6 +67,12 @@ export default {
           opt
             .setName('descrizione')
             .setDescription('Testo promozionale o note sulla partnership')
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('banner')
+            .setDescription('URL del banner o immagine del server partner')
             .setRequired(false)
         )
     )
@@ -87,6 +128,43 @@ export default {
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
 
+    // 1. OPEN FORM MODAL
+    if (subcommand === 'form') {
+      const modal = PartnershipManager.createPartnershipModal();
+      return interaction.showModal(modal);
+    }
+
+    // 2. SEND PARTNERSHIP PANEL
+    if (subcommand === 'panel') {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild) &&
+          !interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+        return interaction.reply({
+          content: '❌ Non hai i permessi per inviare il pannello partnership.',
+          ephemeral: true
+        });
+      }
+
+      const config = DatabaseHelper.getPartnershipConfig(interaction.guild.id);
+      const targetChannel = interaction.options.getChannel('canale') || 
+        (config.channel_id ? interaction.guild.channels.cache.get(config.channel_id) : interaction.channel);
+
+      if (!targetChannel) {
+        return interaction.reply({ content: '❌ Nessun canale valido specificato o configurato.', ephemeral: true });
+      }
+
+      const title = interaction.options.getString('titolo') || '🤝 Sistema Partnership & Alleanze';
+      const description = interaction.options.getString('descrizione') || null;
+      const image = interaction.options.getString('immagine') || null;
+
+      try {
+        await PartnershipManager.sendPartnershipPanel(interaction.guild, targetChannel.id, title, description, '#ea580c', image);
+        return interaction.reply({ content: `✅ Pannello partnership con form inviato con successo in ${targetChannel}!`, ephemeral: true });
+      } catch (err) {
+        return interaction.reply({ content: `❌ Errore durante l'invio del pannello: ${err.message}`, ephemeral: true });
+      }
+    }
+
+    // 3. DIRECT ADD COMMAND
     if (subcommand === 'add') {
       if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild) &&
           !interaction.member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
@@ -101,13 +179,15 @@ export default {
       const invite = interaction.options.getString('invito');
       const rep = interaction.options.getUser('rappresentante') || interaction.user;
       const text = interaction.options.getString('descrizione') || '';
+      const banner = interaction.options.getString('banner') || null;
 
       const result = await PartnershipManager.processPartnership(
         interaction.guild,
         interaction.channel,
         rep,
         invite,
-        text
+        text,
+        banner
       );
 
       if (!result.success) {
@@ -117,7 +197,7 @@ export default {
       }
 
       const successEmbed = new EmbedBuilder()
-        .setColor(CONFIG.EMBED_SUCCESS_COLOR)
+        .setColor(CONFIG.EMBED_SUCCESS_COLOR || '#10b981')
         .setTitle('✅ Partnership Registrata con Successo!')
         .setDescription(
           `La partnership **#${result.totalCount}** è stata pubblicata!\n` +
