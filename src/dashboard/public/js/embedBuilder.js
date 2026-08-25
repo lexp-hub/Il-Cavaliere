@@ -80,6 +80,20 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
+    const guildName = window.AppState?.currentGuildData?.name || 'Il Cavaliere Realm';
+
+    // 3.1 Resolve Welcomer & Dynamic Placeholders
+    text = text
+      .replace(/{user\.mention}/g, '<span class="discord-mention-pill user">@NuovoCavaliere</span>')
+      .replace(/{user}/g, 'NuovoCavaliere')
+      .replace(/{user\.name}/g, 'NuovoCavaliere')
+      .replace(/{user\.tag}/g, 'NuovoCavaliere#0000')
+      .replace(/{user\.id}/g, '123456789012345678')
+      .replace(/{server\.name}/g, guildName)
+      .replace(/{server\.memberCount}/g, '128')
+      .replace(/{memberCount}/g, '128')
+      .replace(/{count}/g, '128');
+
     // 4. Resolve Discord Channel Mentions: &lt;#ID&gt;
     text = text.replace(/&lt;#([0-9]{15,22})&gt;/g, (match, id) => {
       const name = channelMap.get(id) || 'canale';
@@ -94,7 +108,7 @@
 
     // 6. Resolve Discord User Mentions: &lt;@!?ID&gt;
     text = text.replace(/&lt;@!?([0-9]{15,22})&gt;/g, () => {
-      return `<span class="discord-mention-pill">@utente</span>`;
+      return `<span class="discord-mention-pill user">@NuovoCavaliere</span>`;
     });
 
     // 7. Bold Italic (***text***)
@@ -185,13 +199,16 @@
         <button type="button" class="btn-fmt-s px-2 py-0.5 text-[11px] line-through rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Barrato: ~~testo~~">
           S
         </button>
-        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Codice: \`codice\`">
+        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Codice Inline: \`codice\`">
           &lt;/&gt;
+        </button>
+        <button type="button" class="btn-fmt-cb px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Blocco Codice: \`\`\`...\`\`\`">
+          { }
         </button>
         <button type="button" class="btn-fmt-q px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Citazione: > testo">
           &gt; Quote
         </button>
-        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Link: [titolo](url)">
+        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Link Mascherato: [titolo](url)">
           🔗 Link
         </button>
 
@@ -219,12 +236,18 @@
       </div>
     `;
 
-    container.querySelector('.btn-fmt-b')?.addEventListener('click', () => insertTextAtCursor(textarea, '**', '**'));
-    container.querySelector('.btn-fmt-i')?.addEventListener('click', () => insertTextAtCursor(textarea, '*', '*'));
-    container.querySelector('.btn-fmt-s')?.addEventListener('click', () => insertTextAtCursor(textarea, '~~', '~~'));
-    container.querySelector('.btn-fmt-c')?.addEventListener('click', () => insertTextAtCursor(textarea, '`', '`'));
-    container.querySelector('.btn-fmt-q')?.addEventListener('click', () => insertTextAtCursor(textarea, '> '));
-    container.querySelector('.btn-fmt-l')?.addEventListener('click', () => insertTextAtCursor(textarea, '[Titolo Link](', 'https://...)'));
+    const triggerUpdate = () => {
+      if (window.updateWelcomerPreview) window.updateWelcomerPreview();
+      if (window.updateEmbedPreview) window.updateEmbedPreview();
+    };
+
+    container.querySelector('.btn-fmt-b')?.addEventListener('click', () => { insertTextAtCursor(textarea, '**', '**'); triggerUpdate(); });
+    container.querySelector('.btn-fmt-i')?.addEventListener('click', () => { insertTextAtCursor(textarea, '*', '*'); triggerUpdate(); });
+    container.querySelector('.btn-fmt-s')?.addEventListener('click', () => { insertTextAtCursor(textarea, '~~', '~~'); triggerUpdate(); });
+    container.querySelector('.btn-fmt-c')?.addEventListener('click', () => { insertTextAtCursor(textarea, '`', '`'); triggerUpdate(); });
+    container.querySelector('.btn-fmt-cb')?.addEventListener('click', () => { insertTextAtCursor(textarea, '```\n', '\n```'); triggerUpdate(); });
+    container.querySelector('.btn-fmt-q')?.addEventListener('click', () => { insertTextAtCursor(textarea, '> '); triggerUpdate(); });
+    container.querySelector('.btn-fmt-l')?.addEventListener('click', () => { insertTextAtCursor(textarea, '[Titolo Link](', 'https://...)'); triggerUpdate(); });
 
     const btnCh = container.querySelector('.btn-open-ch-pick');
     const ddCh = container.querySelector('.ch-pick-dropdown');
@@ -253,6 +276,7 @@
         item.addEventListener('click', () => {
           insertTextAtCursor(textarea, `<#${c.id}>`);
           ddCh.classList.add('hidden');
+          triggerUpdate();
           window.showToast(`Inserito canale #${c.name}`);
         });
         listCh.appendChild(item);
@@ -276,6 +300,7 @@
         item.addEventListener('click', () => {
           insertTextAtCursor(textarea, `<@&${r.id}>`);
           ddRole.classList.add('hidden');
+          triggerUpdate();
           window.showToast(`Inserito ruolo @${r.name}`);
         });
         listRole.appendChild(item);
@@ -366,6 +391,8 @@
     const targetEl = document.getElementById(targetId);
     if (targetEl && varText) {
       insertTextAtCursor(targetEl, varText);
+      if (window.updateWelcomerPreview) window.updateWelcomerPreview();
+      if (window.updateEmbedPreview) window.updateEmbedPreview();
       window.showToast(`Inserito ${varText}`);
     }
   });

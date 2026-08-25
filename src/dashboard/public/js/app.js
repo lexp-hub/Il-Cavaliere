@@ -129,7 +129,14 @@ function initTabNavigation() {
         targetContent.classList.add('block');
       }
 
-      lucide.createIcons();
+      if (targetId === 'tab-welcomer' && window.updateWelcomerPreview) {
+        window.updateWelcomerPreview();
+      }
+      if (targetId === 'tab-embeds' && window.updateEmbedPreview) {
+        window.updateEmbedPreview();
+      }
+
+      if (window.lucide) lucide.createIcons();
     });
   });
 }

@@ -615,146 +615,151 @@
   }
 
   function updateWelcomerPreview() {
-    const authorName = document.getElementById('wel-embed-author-name')?.value?.trim();
-    const authorIcon = document.getElementById('wel-embed-author-icon')?.value?.trim();
-    const title = document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!';
-    const titleUrl = document.getElementById('wel-embed-title-url')?.value?.trim();
-    const color = document.getElementById('wel-embed-color')?.value || '#dc2626';
-    const message = document.getElementById('wel-message')?.value || 'Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!';
-    const thumb = document.getElementById('wel-embed-thumbnail')?.value?.trim() || '{user.avatar}';
-    const image = document.getElementById('wel-embed-image')?.value?.trim();
-    const footer = document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}';
-    const footerIcon = document.getElementById('wel-embed-footer-icon')?.value?.trim();
-    const showTimestamp = document.getElementById('wel-embed-timestamp')?.checked ?? true;
-    const guildName = window.AppState.currentGuildData?.name || 'Il Cavaliere Realm';
+    try {
+      const authorName = document.getElementById('wel-embed-author-name')?.value?.trim() || '';
+      const authorIcon = document.getElementById('wel-embed-author-icon')?.value?.trim() || '';
+      const authorUrl = document.getElementById('wel-embed-author-url')?.value?.trim() || '';
+      const title = document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!';
+      const titleUrl = document.getElementById('wel-embed-title-url')?.value?.trim() || '';
+      const color = document.getElementById('wel-embed-color-hex')?.value || document.getElementById('wel-embed-color')?.value || '#dc2626';
+      const message = document.getElementById('wel-message')?.value || 'Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!';
+      const thumb = document.getElementById('wel-embed-thumbnail')?.value?.trim() || '{user.avatar}';
+      const image = document.getElementById('wel-embed-image')?.value?.trim() || '';
+      const footer = document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}';
+      const footerIcon = document.getElementById('wel-embed-footer-icon')?.value?.trim() || '';
+      const showTimestamp = document.getElementById('wel-embed-timestamp')?.checked ?? true;
+      const guildName = window.AppState?.currentGuildData?.name || 'Il Cavaliere Realm';
 
-    const prevBox = document.getElementById('prev-wel-embed-box');
-    const prevAuthor = document.getElementById('prev-wel-author');
-    const prevAuthorText = document.getElementById('prev-wel-author-text');
-    const prevAuthorIcon = document.getElementById('prev-wel-author-icon');
-    const prevTitle = document.getElementById('prev-wel-title');
-    const prevDesc = document.getElementById('prev-wel-desc');
-    const prevFields = document.getElementById('prev-wel-fields');
-    const prevThumb = document.getElementById('prev-wel-thumb');
-    const prevImage = document.getElementById('prev-wel-image');
-    const prevFooter = document.getElementById('prev-wel-footer-text');
-    const prevFooterIcon = document.getElementById('prev-wel-footer-icon');
-    const prevTimestamp = document.getElementById('prev-wel-timestamp');
+      const prevBox = document.getElementById('prev-wel-embed-box');
+      const prevAuthor = document.getElementById('prev-wel-author');
+      const prevAuthorText = document.getElementById('prev-wel-author-text');
+      const prevAuthorIcon = document.getElementById('prev-wel-author-icon');
+      const prevTitle = document.getElementById('prev-wel-title');
+      const prevDesc = document.getElementById('prev-wel-desc');
+      const prevFields = document.getElementById('prev-wel-fields');
+      const prevThumb = document.getElementById('prev-wel-thumb');
+      const prevImage = document.getElementById('prev-wel-image');
+      const prevFooter = document.getElementById('prev-wel-footer-text');
+      const prevFooterIcon = document.getElementById('prev-wel-footer-icon');
+      const prevTimestamp = document.getElementById('prev-wel-timestamp');
 
-    if (prevBox) prevBox.style.borderLeftColor = color;
+      if (prevBox) prevBox.style.borderLeftColor = color;
 
-    // Author
-    if (prevAuthor && prevAuthorText) {
-      if (authorName) {
-        prevAuthorText.textContent = authorName.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
-        if (prevAuthorIcon) {
-          if (authorIcon) {
-            prevAuthorIcon.src = authorIcon.replace(/{user\.avatar}/g, 'https://cdn.discordapp.com/embed/avatars/0.png');
-            prevAuthorIcon.classList.remove('hidden');
-          } else {
-            prevAuthorIcon.classList.add('hidden');
+      // Author
+      if (prevAuthor) {
+        if (authorName) {
+          const fAuthor = authorName.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
+          if (prevAuthorText) prevAuthorText.textContent = fAuthor;
+          if (prevAuthorIcon) {
+            if (authorIcon) {
+              prevAuthorIcon.src = authorIcon.replace(/{user\.avatar}/g, 'https://cdn.discordapp.com/embed/avatars/0.png');
+              prevAuthorIcon.classList.remove('hidden');
+            } else {
+              prevAuthorIcon.classList.add('hidden');
+            }
           }
+          prevAuthor.classList.remove('hidden');
+        } else {
+          prevAuthor.classList.add('hidden');
         }
-        prevAuthor.classList.remove('hidden');
-      } else {
-        prevAuthor.classList.add('hidden');
       }
-    }
 
-    // Title
-    if (prevTitle) {
-      const formattedTitle = title.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
-      if (titleUrl) {
-        prevTitle.innerHTML = `<a href="${titleUrl}" target="_blank" class="hover:underline text-sky-400 font-bold">${escapeHtml(formattedTitle)}</a>`;
-      } else {
-        prevTitle.textContent = formattedTitle;
+      // Title
+      if (prevTitle) {
+        const formattedTitle = title.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
+        if (titleUrl) {
+          prevTitle.innerHTML = `<a href="${titleUrl}" target="_blank" class="hover:underline text-sky-400 font-bold">${escapeHtml(formattedTitle)}</a>`;
+        } else {
+          prevTitle.textContent = formattedTitle;
+        }
+        prevTitle.style.display = formattedTitle ? 'block' : 'none';
       }
-    }
 
-    // Description
-    if (prevDesc) {
-      const formatted = message
-        .replace(/{user\.mention}/g, '@NuovoCavaliere')
-        .replace(/{user}/g, 'NuovoCavaliere')
-        .replace(/{user\.tag}/g, 'NuovoCavaliere#0000')
-        .replace(/{server\.name}/g, guildName)
-        .replace(/{memberCount}/g, '128');
-      prevDesc.innerHTML = window.parseDiscordMarkdown ? window.parseDiscordMarkdown(formatted) : formatted;
-    }
-
-    // Fields
-    if (prevFields) {
-      prevFields.innerHTML = '';
-      const fieldsToRender = welFields.length > 0 ? welFields : [
-        { name: '👤 Utente', value: 'NuovoCavaliere (`NuovoCavaliere#0000`)', inline: true },
-        { name: '🏰 Membro n°', value: '#128', inline: true },
-        { name: '📅 Creazione Account', value: '2 mesi fa', inline: false }
-      ];
-
-      fieldsToRender.forEach(f => {
-        if (!f.name && !f.value) return;
-        const fieldEl = document.createElement('div');
-        fieldEl.className = 'discord-field';
-        if (!f.inline) fieldEl.style.gridColumn = 'span 2';
-
-        const fName = (f.name || '').replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
-        const fVal = (f.value || '').replace(/{user\.mention}/g, '@NuovoCavaliere').replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
-
-        fieldEl.innerHTML = `
-          <div class="discord-field-name">${escapeHtml(fName)}</div>
-          <div class="discord-field-value">${window.parseDiscordMarkdown ? window.parseDiscordMarkdown(fVal) : escapeHtml(fVal)}</div>
-        `;
-        prevFields.appendChild(fieldEl);
-      });
-    }
-
-    // Thumbnail
-    if (prevThumb) {
-      if (thumb === '{user.avatar}') {
-        prevThumb.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
-        prevThumb.classList.remove('hidden');
-      } else if (thumb) {
-        prevThumb.src = thumb;
-        prevThumb.classList.remove('hidden');
-      } else {
-        prevThumb.classList.add('hidden');
+      // Description
+      if (prevDesc) {
+        prevDesc.innerHTML = window.parseDiscordMarkdown ? window.parseDiscordMarkdown(message) : escapeHtml(message);
+        prevDesc.style.display = message ? 'block' : 'none';
       }
-    }
 
-    // Large Banner Image
-    if (prevImage) {
-      if (image) {
-        prevImage.src = image;
-        prevImage.classList.remove('hidden');
-      } else {
-        prevImage.src = '';
-        prevImage.classList.add('hidden');
-      }
-    }
+      // Fields
+      if (prevFields) {
+        prevFields.innerHTML = '';
+        const fieldsToRender = welFields.length > 0 ? welFields : [
+          { name: '👤 Utente', value: 'NuovoCavaliere (`NuovoCavaliere#0000`)', inline: true },
+          { name: '🏰 Membro n°', value: '#128', inline: true },
+          { name: '📅 Creazione Account', value: '2 mesi fa', inline: false }
+        ];
 
-    // Footer & Icon
-    if (prevFooter) {
-      prevFooter.textContent = footer.replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
-    }
-    if (prevFooterIcon) {
-      if (footerIcon) {
-        prevFooterIcon.src = footerIcon;
-        prevFooterIcon.classList.remove('hidden');
-      } else {
-        prevFooterIcon.src = '/logo.svg?v=12';
-        prevFooterIcon.classList.remove('hidden');
-      }
-    }
+        fieldsToRender.forEach(f => {
+          if (!f.name && !f.value) return;
+          const fieldEl = document.createElement('div');
+          fieldEl.className = `discord-field ${f.inline ? 'inline' : ''}`;
+          if (!f.inline) fieldEl.style.gridColumn = 'span 2';
 
-    // Timestamp
-    if (prevTimestamp) {
-      if (showTimestamp) {
-        prevTimestamp.classList.remove('hidden');
-      } else {
-        prevTimestamp.classList.add('hidden');
+          const fName = (f.name || '').replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+          const fVal = (f.value || '');
+
+          fieldEl.innerHTML = `
+            <div class="discord-field-name">${escapeHtml(fName)}</div>
+            <div class="discord-field-value">${window.parseDiscordMarkdown ? window.parseDiscordMarkdown(fVal) : escapeHtml(fVal)}</div>
+          `;
+          prevFields.appendChild(fieldEl);
+        });
+        prevFields.style.display = 'grid';
       }
+
+      // Thumbnail
+      if (prevThumb) {
+        if (thumb === '{user.avatar}' || !thumb) {
+          prevThumb.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+          prevThumb.classList.remove('hidden');
+        } else if (thumb) {
+          prevThumb.src = thumb;
+          prevThumb.classList.remove('hidden');
+        } else {
+          prevThumb.classList.add('hidden');
+        }
+      }
+
+      // Large Banner Image
+      if (prevImage) {
+        if (image) {
+          prevImage.src = image;
+          prevImage.classList.remove('hidden');
+        } else {
+          prevImage.src = '';
+          prevImage.classList.add('hidden');
+        }
+      }
+
+      // Footer & Icon
+      if (prevFooter) {
+        prevFooter.textContent = (footer || '').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+      }
+      if (prevFooterIcon) {
+        if (footerIcon) {
+          prevFooterIcon.src = footerIcon;
+          prevFooterIcon.classList.remove('hidden');
+        } else {
+          prevFooterIcon.src = '/logo.svg?v=12';
+          prevFooterIcon.classList.remove('hidden');
+        }
+      }
+
+      // Timestamp
+      if (prevTimestamp) {
+        if (showTimestamp) {
+          prevTimestamp.classList.remove('hidden');
+        } else {
+          prevTimestamp.classList.add('hidden');
+        }
+      }
+    } catch (e) {
+      console.error('Error updating welcomer preview:', e);
     }
   }
+
+  window.updateWelcomerPreview = updateWelcomerPreview;
 
   [
     'wel-embed-author-name', 'wel-embed-author-icon', 'wel-embed-author-url',
@@ -764,19 +769,18 @@
   ].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
-      el.addEventListener('input', (e) => {
-        if (id === 'wel-embed-color') {
-          const hexEl = document.getElementById('wel-embed-color-hex');
-          if (hexEl) hexEl.value = e.target.value;
-        } else if (id === 'wel-embed-color-hex') {
-          const colEl = document.getElementById('wel-embed-color');
-          if (colEl && /^#[0-9A-Fa-f]{6}$/.test(e.target.value)) colEl.value = e.target.value;
-        }
-        updateWelcomerPreview();
+      ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+        el.addEventListener(evt, (e) => {
+          if (id === 'wel-embed-color') {
+            const hexEl = document.getElementById('wel-embed-color-hex');
+            if (hexEl) hexEl.value = e.target.value;
+          } else if (id === 'wel-embed-color-hex') {
+            const colEl = document.getElementById('wel-embed-color');
+            if (colEl && /^#[0-9A-Fa-f]{6}$/.test(e.target.value)) colEl.value = e.target.value;
+          }
+          updateWelcomerPreview();
+        });
       });
-      if (el.type === 'checkbox') {
-        el.addEventListener('change', updateWelcomerPreview);
-      }
     }
   });
 

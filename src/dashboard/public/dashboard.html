@@ -995,10 +995,12 @@
                   <div id="wel-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
                 </div>
                 <textarea id="wel-message" class="form-textarea h-24 text-xs">Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
-                <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <div class="flex flex-wrap items-center gap-1.5 mt-2">
                   <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.mention}">{user.mention}</button>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-red-100 hover:bg-red-200 font-mono text-red-700 font-bold border border-red-200" data-target="wel-message" data-var="{user.mention}">{user.mention}</button>
                   <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user}">{user}</button>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.tag}">{user.tag}</button>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.id}">{user.id}</button>
                   <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{server.name}">{server.name}</button>
                   <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{memberCount}">{memberCount}</button>
                   <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.avatar}">{user.avatar}</button>
@@ -1751,9 +1753,9 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=24"></script>
-  <script src="/js/embedBuilder.js?v=24"></script>
-  <script src="/js/modules.js?v=24"></script>
+  <script src="/js/app.js?v=25"></script>
+  <script src="/js/embedBuilder.js?v=25"></script>
+  <script src="/js/modules.js?v=25"></script>
   <script>
     lucide.createIcons();
   </script>
