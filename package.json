@@ -2,11 +2,11 @@
   "name": "il-cavaliere-bot",
   "version": "2.0.0",
   "description": "Bot Discord avanzato con AI (Cloudflare Workers / Llama 3.3 70B), Dashboard Web Noctaly-style, partnership, embed builder, reaction roles, welcomer, autoresponder e molto altro.",
-  "main": "src/index.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node src/index.js",
+    "start": "node index.js",
+    "dev": "node index.js",
     "deploy-commands": "node src/bot/deployCommands.js",
     "test": "node test/runTests.js"
   },
@@ -39,4 +39,3 @@
     "ws": "^8.18.0"
   }
 }
-

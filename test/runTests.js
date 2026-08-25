@@ -36,7 +36,7 @@ async function runTests() {
   }
 
   console.log('\n--- 1. Test Database SQLite & Moduli ---');
-  const testGuildId = 'test_guild_123456';
+  const testGuildId = `test_guild_${Date.now()}`;
 
   test('Inizializzazione Guild Settings & Modulo AI', () => {
     const settings = DatabaseHelper.getGuildSettings(testGuildId);
@@ -56,7 +56,7 @@ async function runTests() {
     assert(aiConfig.web_search_enabled === true, 'Web search non attivo');
 
     // Test channel memory
-    const testChannelId = 'chan_ai_test_999';
+    const testChannelId = `chan_ai_test_${Date.now()}`;
     DatabaseHelper.addChannelLog(testChannelId, 'user', 'Ciao Cavaliere');
     DatabaseHelper.addChannelLog(testChannelId, 'assistant', 'Salute guerriero.');
     const mem = DatabaseHelper.getChannelMemory(testChannelId);
@@ -95,7 +95,7 @@ async function runTests() {
   });
 
   test('Salvataggio e Recupero Template Embed', () => {
-    const templateId = 'tpl_test_01';
+    const templateId = `tpl_test_${Date.now()}`;
     const embedData = { title: 'Titolo Test', description: 'Descrizione test', color: 0x8B5CF6 };
     DatabaseHelper.saveEmbedTemplate(testGuildId, templateId, 'Template Test', embedData);
 
