@@ -618,67 +618,160 @@
     
     
     <section id="tab-welcomer" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <i data-lucide="user-plus" class="w-5 h-5 text-emerald-400"></i> Modulo Benvenuto (Welcomer)
-            </h3>
-            <p class="text-xs text-slate-400">Invia messaggi personalizzati e card quando un nuovo utente entra nel server</p>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="wel-enabled" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale di Benvenuto</label>
-            <select id="wel-channel" class="form-select"></select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Auto-Role Utenti</label>
-            <select id="wel-autorole-user" class="form-select"></select>
-          </div>
-          <div class="md:col-span-2">
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Testo Messaggio di Benvenuto</label>
-            <textarea id="wel-message" class="form-textarea h-20">Benvenuto {user.mention} in **{server.name}**! Siamo felicissimi di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
-          </div>
-        </div>
-
-        <div class="pt-4 border-t border-white/5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio Privato (DM) di Benvenuto</span>
-            <label class="switch"><input type="checkbox" id="wel-dm-enabled"><span class="slider"></span></label>
-          </div>
-          <textarea id="wel-dm-message" class="form-textarea h-16 text-xs">Benvenuto in {server.name}! Ricordati di leggere il regolamento.</textarea>
-        </div>
-
-        <div class="pt-4 border-t border-white/5">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio di Addio (Leaver)</span>
-            <label class="switch"><input type="checkbox" id="wel-leave-enabled"><span class="slider"></span></label>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale Addio</label>
-              <select id="wel-leave-channel" class="form-select"></select>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Settings Form Column -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="glass-card p-6">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-lg font-bold text-white flex items-center gap-2 font-medieval">
+                  <i data-lucide="user-plus" class="w-5 h-5 text-amber-400"></i> Modulo Benvenuto Embed
+                </h3>
+                <p class="text-xs text-slate-400">Invia ricchi messaggi Embed personalizzati all'ingresso dei nuovi membri</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="wel-enabled" checked>
+                <span class="slider"></span>
+              </label>
             </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1.5">Testo Addio</label>
-              <input type="text" id="wel-leave-message" class="form-input" value="{user.tag} ha lasciato il server.">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale di Benvenuto</label>
+                <select id="wel-channel" class="form-select text-xs"></select>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Auto-Role Utenti</label>
+                <select id="wel-autorole-user" class="form-select text-xs"></select>
+              </div>
+            </div>
+
+            <div class="space-y-4 pt-3 border-t border-white/5">
+              <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="layout" class="w-3.5 h-3.5"></i> Personalizzazione Card Embed
+              </h4>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="sm:col-span-2">
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Embed</label>
+                  <input type="text" id="wel-embed-title" class="form-input text-xs" value="⚔️ Benvenuto nel Reame, {user}!">
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Barra Embed</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="wel-embed-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#ea580c">
+                    <input type="text" id="wel-embed-color-hex" class="form-input text-xs font-mono" value="#ea580c">
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Messaggio Principale (Descrizione Embed)</label>
+                <textarea id="wel-message" class="form-textarea h-20 text-xs">Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
+                <p class="text-[10px] text-slate-400 mt-1">Variabili disponibili: <code class="text-amber-300">{user.mention}</code>, <code class="text-amber-300">{user}</code>, <code class="text-amber-300">{user.tag}</code>, <code class="text-amber-300">{server.name}</code>, <code class="text-amber-300">{memberCount}</code></p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Immagine / Banner URL (Opzionale)</label>
+                  <input type="url" id="wel-embed-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Footer Embed</label>
+                  <input type="text" id="wel-embed-footer" class="form-input text-xs" value="Membro #{memberCount} • {server.name}">
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio Privato (DM) in Embed</span>
+                <label class="switch"><input type="checkbox" id="wel-dm-enabled"><span class="slider"></span></label>
+              </div>
+              <textarea id="wel-dm-message" class="form-textarea h-16 text-xs">Benvenuto in {server.name}! Ricordati di leggere il regolamento e buona permanenza!</textarea>
+            </div>
+
+            <div class="pt-4 border-t border-white/5 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio di Addio (Leaver Embed)</span>
+                <label class="switch"><input type="checkbox" id="wel-leave-enabled"><span class="slider"></span></label>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Addio</label>
+                  <select id="wel-leave-channel" class="form-select text-xs"></select>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Addio</label>
+                  <input type="text" id="wel-leave-message" class="form-input text-xs" value="{user.tag} ha lasciato il server. Siamo rimasti in {memberCount}.">
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button id="btn-save-welcomer" class="btn-cyber text-xs py-2.5 px-4">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Welcomer
+              </button>
+              <button id="btn-test-welcomer" class="btn-secondary text-xs py-2.5 px-4">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia Embed di Prova nel Canale
+              </button>
             </div>
           </div>
         </div>
 
-        <div class="mt-6 flex items-center gap-3">
-          <button id="btn-save-welcomer" class="btn-cyber text-xs py-2.5 px-4">
-            <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Welcomer
-          </button>
-          <button id="btn-test-welcomer" class="btn-secondary text-xs py-2.5 px-4">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia Messaggio di Prova
-          </button>
+        <!-- Real-Time Discord Welcomer Embed Preview Column -->
+        <div class="lg:col-span-5">
+          <div class="sticky top-6 space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
+              <span>Anteprima Welcomer Discord</span>
+              <span class="text-amber-400 font-mono text-[10px]">Real-time Live Embed</span>
+            </div>
+
+            <div class="discord-chat-container">
+              <div class="discord-message">
+                <img src="/logo.svg?v=10" class="discord-avatar" alt="Avatar">
+                <div class="discord-msg-content">
+                  <div class="discord-header">
+                    <span class="discord-author">Il Cavaliere</span>
+                    <span class="discord-bot-badge">Bot</span>
+                    <span class="discord-timestamp">Oggi alle 12:00</span>
+                  </div>
+
+                  <div class="text-xs text-slate-300 mb-2 font-mono" id="prev-wel-mention">
+                    <span class="bg-[#5865F2]/20 text-[#5865F2] px-1 py-0.5 rounded">@NuovoCavaliere</span>
+                  </div>
+
+                  <div id="prev-wel-embed-box" class="discord-embed-box" style="border-left-color: #ea580c;">
+                    <div>
+                      <div id="prev-wel-title" class="discord-embed-title">⚔️ Benvenuto nel Reame, NuovoCavaliere!</div>
+                      <div id="prev-wel-desc" class="discord-embed-desc">Benvenuto @NuovoCavaliere in Il Cavaliere Realm! Siamo felici di averti tra noi. Sei il membro #128!</div>
+                      
+                      <div class="discord-embed-fields mt-3">
+                        <div class="discord-field">
+                          <div class="discord-field-name">👤 Utente</div>
+                          <div class="discord-field-value">NuovoCavaliere (`NuovoCavaliere#0000`)</div>
+                        </div>
+                        <div class="discord-field">
+                          <div class="discord-field-name">🏰 Membro n°</div>
+                          <div class="discord-field-value">#128</div>
+                        </div>
+                        <div class="discord-field" style="grid-column: span 2;">
+                          <div class="discord-field-name">📅 Creazione Account</div>
+                          <div class="discord-field-value">2 mesi fa</div>
+                        </div>
+                      </div>
+                    </div>
+                    <img id="prev-wel-thumb" class="discord-embed-thumb" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Thumbnail">
+                    <img id="prev-wel-image" class="discord-embed-image hidden" src="" alt="Banner">
+                    <div id="prev-wel-footer" class="discord-embed-footer">
+                      <img src="/logo.svg?v=10" class="w-4 h-4 rounded-full" alt="Icon">
+                      <span id="prev-wel-footer-text">Membro #128 • Il Cavaliere Realm</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

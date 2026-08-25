@@ -1,18 +1,18 @@
 import { DatabaseHelper } from '../../database/db.js';
-import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
 export const WelcomerManager = {
   formatText(template, member) {
     if (!template) return '';
     return template
-      .replace(/{user}/g, member.user.username)
-      .replace(/{user\.tag}/g, member.user.tag)
-      .replace(/{user\.id}/g, member.id)
+      .replace(/{user}/g, member.user?.username || member.displayName || 'Utente')
+      .replace(/{user\.tag}/g, member.user?.tag || member.displayName || 'Utente')
+      .replace(/{user\.id}/g, member.id || '')
       .replace(/{user\.mention}/g, `<@${member.id}>`)
-      .replace(/{server\.name}/g, member.guild.name)
-      .replace(/{server\.memberCount}/g, member.guild.memberCount.toString())
-      .replace(/{memberCount}/g, member.guild.memberCount.toString());
+      .replace(/{server\.name}/g, member.guild?.name || 'Server')
+      .replace(/{server\.memberCount}/g, (member.guild?.memberCount || 0).toString())
+      .replace(/{memberCount}/g, (member.guild?.memberCount || 0).toString());
   },
 
   async handleMemberJoin(member) {
@@ -34,45 +34,43 @@ export const WelcomerManager = {
       try {
         const dmText = this.formatText(config.welcome_dm_message, member);
         const dmEmbed = new EmbedBuilder()
-          .setColor(CONFIG.EMBED_COLOR)
-          .setTitle(`Benvenuto in ${member.guild.name}!`)
+          .setColor(CONFIG.EMBED_COLOR || '#ea580c')
+          .setTitle(`⚔️ Benvenuto in ${member.guild.name}!`)
           .setDescription(dmText)
-          .setThumbnail(member.guild.iconURL())
+          .setThumbnail(member.guild.iconURL({ dynamic: true }) || member.user.displayAvatarURL({ dynamic: true }))
+          .setFooter({ text: member.guild.name, iconURL: member.guild.iconURL() })
           .setTimestamp();
         await member.send({ embeds: [dmEmbed] }).catch(() => {});
-      } catch (e) {
-        
-      }
+      } catch (e) {}
     }
 
     if (config.welcome_enabled && config.welcome_channel_id) {
       const channel = member.guild.channels.cache.get(config.welcome_channel_id);
       if (channel) {
-        const messageText = this.formatText(config.welcome_message, member);
+        const messageText = this.formatText(
+          config.welcome_message || 'Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi.',
+          member
+        );
         
-        let embed = null;
-        if (config.welcome_embed) {
-          const embData = config.welcome_embed;
-          embed = new EmbedBuilder()
-            .setColor(embData.color || CONFIG.EMBED_COLOR)
-            .setTitle(this.formatText(embData.title || `🎉 Benvenuto in ${member.guild.name}!`, member))
-            .setDescription(this.formatText(embData.description || messageText, member))
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
-            .setFooter({ text: `Membro #${member.guild.memberCount}`, iconURL: member.guild.iconURL() })
-            .setTimestamp();
-          if (embData.image) embed.setImage(embData.image);
-        } else {
-          embed = new EmbedBuilder()
-            .setColor(CONFIG.EMBED_COLOR)
-            .setTitle(`🛡️ Nuovo Cavaliere Arrivato!`)
-            .setDescription(messageText)
-            .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
-            .addFields(
-              { name: '👤 Utente', value: `${member.user.tag}`, inline: true },
-              { name: '📊 Membro n°', value: `\`#${member.guild.memberCount}\``, inline: true }
-            )
-            .setFooter({ text: member.guild.name, iconURL: member.guild.iconURL() })
-            .setTimestamp();
+        const embData = config.welcome_embed || {};
+        const titleText = this.formatText(embData.title || `⚔️ Benvenuto nel Reame, {user}!`, member);
+        const footerText = this.formatText(embData.footer || `Membro #${member.guild.memberCount} • ${member.guild.name}`, member);
+
+        const embed = new EmbedBuilder()
+          .setColor(embData.color || CONFIG.EMBED_COLOR || '#ea580c')
+          .setTitle(titleText)
+          .setDescription(this.formatText(embData.description || messageText, member))
+          .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
+          .addFields(
+            { name: '👤 Utente', value: `<@${member.id}> (\`${member.user.tag}\`)`, inline: true },
+            { name: '🏰 Membro n°', value: `\`#${member.guild.memberCount}\``, inline: true },
+            { name: '📅 Creazione Account', value: `<t:${Math.floor(member.user.createdTimestamp / 1000)}:R>`, inline: false }
+          )
+          .setFooter({ text: footerText, iconURL: member.guild.iconURL() })
+          .setTimestamp();
+
+        if (embData.image) {
+          embed.setImage(embData.image);
         }
 
         await channel.send({
@@ -89,14 +87,23 @@ export const WelcomerManager = {
 
     const channel = member.guild.channels.cache.get(config.leave_channel_id);
     if (channel) {
-      const messageText = this.formatText(config.leave_message, member);
+      const messageText = this.formatText(
+        config.leave_message || '{user.tag} ha lasciato il server. Siamo rimasti in {memberCount}.',
+        member
+      );
+
+      const embData = config.leave_embed || {};
       const embed = new EmbedBuilder()
-        .setColor(CONFIG.EMBED_ERROR_COLOR)
-        .setTitle(`👋 Arrivederci`)
-        .setDescription(messageText)
+        .setColor(embData.color || CONFIG.EMBED_ERROR_COLOR || '#dc2626')
+        .setTitle(`👋 Un Cavaliere ha lasciato il Reame`)
+        .setDescription(this.formatText(embData.description || messageText, member))
         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
         .setFooter({ text: `Membri rimasti: ${member.guild.memberCount}`, iconURL: member.guild.iconURL() })
         .setTimestamp();
+
+      if (embData.image) {
+        embed.setImage(embData.image);
+      }
 
       await channel.send({ embeds: [embed] }).catch(() => {});
     }

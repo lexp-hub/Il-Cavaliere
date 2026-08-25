@@ -292,16 +292,29 @@ export function createApiRouter(botClient) {
       if (!channel) return res.status(400).json({ error: 'Nessun canale di benvenuto configurato.' });
 
       const fakeMember = guild.members.me;
-      const text = WelcomerManager.formatText(config.welcome_message || 'Benvenuto {user.mention}!', fakeMember);
+      const embData = config.welcome_embed || {};
+      const titleText = WelcomerManager.formatText(embData.title || `⚔️ Benvenuto nel Reame, {user}!`, fakeMember);
+      const descText = WelcomerManager.formatText(embData.description || config.welcome_message || 'Benvenuto {user.mention} in **{server.name}**!', fakeMember);
+      const footerText = WelcomerManager.formatText(embData.footer || `Membro #${guild.memberCount} • ${guild.name}`, fakeMember);
 
       const embed = new EmbedBuilder()
-        .setColor(CONFIG.EMBED_COLOR)
-        .setTitle('🎉 [Test] Benvenuto nel Reame!')
-        .setDescription(text)
-        .setThumbnail(fakeMember.user.displayAvatarURL())
+        .setColor(embData.color || CONFIG.EMBED_COLOR || '#ea580c')
+        .setTitle(titleText)
+        .setDescription(descText)
+        .setThumbnail(fakeMember.user.displayAvatarURL({ dynamic: true, size: 256 }))
+        .addFields(
+          { name: '👤 Utente', value: `<@${fakeMember.id}> (\`${fakeMember.user.tag}\`)`, inline: true },
+          { name: '🏰 Membro n°', value: `\`#${guild.memberCount}\``, inline: true },
+          { name: '📅 Creazione Account', value: `<t:${Math.floor(fakeMember.user.createdTimestamp / 1000)}:R>`, inline: false }
+        )
+        .setFooter({ text: footerText, iconURL: guild.iconURL() })
         .setTimestamp();
 
-      await channel.send({ embeds: [embed] });
+      if (embData.image) {
+        embed.setImage(embData.image);
+      }
+
+      await channel.send({ content: `<@${fakeMember.id}>`, embeds: [embed] });
       res.json({ success: true });
     } catch (e) {
       res.status(500).json({ error: e.message });
