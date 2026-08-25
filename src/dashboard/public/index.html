@@ -253,13 +253,25 @@
                 </div>
               `;
               lucide.createIcons();
-            }
           }
         }
       } catch (e) {
         console.error('Error loading landing data:', e);
       }
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const authError = urlParams.get('error');
+    if (authError) {
+      let errMsg = 'Errore durante l\'autenticazione Discord.';
+      if (authError === 'missing_client_secret') {
+        errMsg = 'Configurazione incompleta: Inserisci DISCORD_CLIENT_SECRET nelle variabili d\'ambiente di Wispbyte!';
+      } else if (authError === 'token_exchange_failed') {
+        errMsg = 'Autenticazione fallita: Client Secret errato o non corrispondente sul Discord Developer Portal.';
+      }
+      alert('🛡️ [Il Cavaliere] ' + errMsg);
+    }
+
     loadLandingData();
   </script>
 </body>

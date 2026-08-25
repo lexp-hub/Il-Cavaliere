@@ -26,7 +26,7 @@ function getCallbackUrl(req) {
 
 authRouter.get('/login', (req, res) => {
   if (!CONFIG.CLIENT_ID) {
-    return res.status(500).send('Errore: DISCORD_CLIENT_ID non configurato nelle variabili d\'ambiente di Wispbyte.');
+    return res.redirect('/?error=missing_client_id');
   }
 
   const callbackUrl = getCallbackUrl(req);
@@ -43,6 +43,11 @@ const handleCallback = async (req, res) => {
   const code = req.query.code;
   if (!code) {
     return res.redirect('/?error=no_code');
+  }
+
+  if (!CONFIG.CLIENT_SECRET) {
+    console.error('[OAuth2 Error] DISCORD_CLIENT_SECRET is missing! Please configure DISCORD_CLIENT_SECRET in Wispbyte environment variables.');
+    return res.redirect('/?error=missing_client_secret');
   }
 
   const callbackUrl = getCallbackUrl(req);
@@ -64,8 +69,8 @@ const handleCallback = async (req, res) => {
 
     const tokenData = await tokenResponse.json();
     if (!tokenResponse.ok || !tokenData.access_token) {
-      console.error('[OAuth2] Token error:', tokenData);
-      return res.redirect('/?error=token_exchange_failed');
+      console.error('[OAuth2] Token error from Discord:', tokenData);
+      return res.redirect(`/?error=token_exchange_failed&msg=${encodeURIComponent(tokenData.error_description || tokenData.error || 'unknown')}`);
     }
 
     const accessToken = tokenData.access_token;
@@ -93,7 +98,12 @@ const handleCallback = async (req, res) => {
     };
     req.session.accessToken = accessToken;
 
-    res.redirect('/dashboard.html');
+    req.session.save((err) => {
+      if (err) {
+        console.error('[OAuth2] Session save error:', err);
+      }
+      res.redirect('/dashboard.html');
+    });
   } catch (error) {
     console.error('[OAuth2] Auth exception:', error);
     res.redirect('/?error=auth_failed');
