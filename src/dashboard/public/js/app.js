@@ -1,4 +1,3 @@
-
 window.AppState = {
   currentGuildId: null,
   currentGuildData: null,
@@ -36,11 +35,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadGuilds();
   
   const urlParams = new URLSearchParams(window.location.search);
-  const requestedGuild = urlParams.get('guild');
-  if (requestedGuild) {
+  let targetGuild = urlParams.get('guild') || localStorage.getItem('cavaliere_last_guild');
+
+  if (targetGuild && window.AppState.guilds.some(g => g.id === targetGuild)) {
     const select = document.getElementById('server-selector');
-    if (select) select.value = requestedGuild;
-    await switchGuild(requestedGuild);
+    if (select) select.value = targetGuild;
+    await switchGuild(targetGuild);
   }
 });
 
@@ -124,7 +124,7 @@ async function loadGuilds() {
 
     selector.innerHTML = '';
     if (guilds.length === 0) {
-      selector.innerHTML = '<option value="">Nessun Reame Disponibile</option>';
+      selector.innerHTML = '<option value="">Nessun Server Trovato</option>';
       window.showToast('Nessun server trovato in cui possiedi i permessi di Moderatore/Amministratore.', 'error');
       return;
     }
@@ -132,22 +132,25 @@ async function loadGuilds() {
     guilds.forEach(g => {
       const opt = document.createElement('option');
       opt.value = g.id;
-      opt.textContent = `${g.name} (${g.memberCount} abitanti)`;
+      opt.textContent = `${g.name} (${g.memberCount} membri)`;
       selector.appendChild(opt);
     });
 
     selector.addEventListener('change', (e) => switchGuild(e.target.value));
 
-    if (guilds.length > 0) {
-      await switchGuild(guilds[0].id);
-    }
+    const savedGuild = localStorage.getItem('cavaliere_last_guild');
+    const defaultGuild = (savedGuild && guilds.some(g => g.id === savedGuild)) ? savedGuild : guilds[0].id;
+    selector.value = defaultGuild;
+    await switchGuild(defaultGuild);
   } catch (e) {
     console.error('Error loading guilds:', e);
   }
 }
 
 window.switchGuild = async function(guildId) {
+  if (!guildId) return;
   window.AppState.currentGuildId = guildId;
+  localStorage.setItem('cavaliere_last_guild', guildId);
 
   try {
     const res = await fetch(`/api/guilds/${guildId}`);
@@ -162,7 +165,7 @@ window.switchGuild = async function(guildId) {
     if (nameEl) nameEl.innerHTML = `🏰 ${guildData.name}`;
 
     const membersEl = document.getElementById('ov-members');
-    if (membersEl) membersEl.textContent = guildData.memberCount.toLocaleString();
+    if (membersEl) membersEl.textContent = (guildData.memberCount || 0).toLocaleString();
 
     populateDropdowns(guildData.channels, guildData.roles);
 
@@ -177,8 +180,8 @@ window.switchGuild = async function(guildId) {
 };
 
 function populateDropdowns(channels = [], roles = []) {
-  const textChannels = channels.filter(c => c.type === 'text');
-  const categories = channels.filter(c => c.type === 'category');
+  const textChannels = channels.filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+  const categories = channels.filter(c => c.type === 'category' || c.type === 4);
 
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',

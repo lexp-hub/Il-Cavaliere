@@ -92,14 +92,31 @@ export function createGuildsRouter(botClient) {
       }
     }
 
+    try {
+      await guild.channels.fetch();
+      await guild.roles.fetch();
+    } catch (e) {
+      console.warn('[Guilds] Cache refresh notice:', e.message);
+    }
+
     const channels = guild.channels.cache
-      .filter(c => c.type === ChannelType.GuildText || c.type === ChannelType.GuildAnnouncement || c.type === ChannelType.GuildCategory)
-      .map(c => ({
-        id: c.id,
-        name: c.name,
-        type: c.type,
-        parentId: c.parentId
-      }))
+      .map(c => {
+        let normalizedType = 'other';
+        if (c.type === ChannelType.GuildCategory || c.type === 4) {
+          normalizedType = 'category';
+        } else if (c.isTextBased?.() || c.type === ChannelType.GuildText || c.type === ChannelType.GuildAnnouncement || c.type === 0 || c.type === 5) {
+          normalizedType = 'text';
+        }
+
+        return {
+          id: c.id,
+          name: c.name,
+          type: normalizedType,
+          rawType: c.type,
+          parentId: c.parentId
+        };
+      })
+      .filter(c => c.type === 'text' || c.type === 'category')
       .sort((a, b) => a.name.localeCompare(b.name));
 
     const roles = guild.roles.cache
