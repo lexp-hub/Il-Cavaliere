@@ -7,15 +7,18 @@ const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
 function getCallbackUrl(req) {
+  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost')) {
+    return process.env.OAUTH2_CALLBACK_URL;
+  }
+  if (process.env.SUBDOMAIN) {
+    const sub = process.env.SUBDOMAIN.includes('.') ? process.env.SUBDOMAIN : `${process.env.SUBDOMAIN}.wispbyte.app`;
+    return `https://${sub}/auth/callback`;
+  }
   const host = req.get('x-forwarded-host') || req.get('host') || 'il-cavaliere.wispbyte.app';
   let proto = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http') || req.protocol || 'http';
   
   if (host.includes('wispbyte.app') || req.headers['x-forwarded-proto'] === 'https' || host.includes('.app') || host.includes('.com') || host.includes('.it')) {
     proto = 'https';
-  }
-
-  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost')) {
-    return process.env.OAUTH2_CALLBACK_URL;
   }
 
   return `${proto}://${host}/auth/callback`;
