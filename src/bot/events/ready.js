@@ -10,15 +10,36 @@ export default {
     console.log(`🌐 Connesso a ${client.guilds.cache.size} server e ${client.users.cache.size} utenti.`);
     console.log(`📊 Dashboard attiva su: ${CONFIG.DASHBOARD_URL}\n`);
 
-    client.user.setPresence({
-      activities: [
+    const updatePresence = () => {
+      const activities = [
         {
-          name: '🛡️ Proteggendo i Reami | /help',
-          type: ActivityType.Custom
+          name: 'Cantiche Medievali | /help',
+          type: ActivityType.Listening
+        },
+        {
+          name: 'Canti dei Templari',
+          type: ActivityType.Listening
+        },
+        {
+          name: 'Inni Gregoriani | /help',
+          type: ActivityType.Listening
+        },
+        {
+          name: `${client.guilds.cache.size} Reami | /help`,
+          type: ActivityType.Watching
         }
-      ],
-      status: 'online'
-    });
+      ];
+
+      const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+
+      client.user.setPresence({
+        activities: [randomActivity],
+        status: 'online'
+      });
+    };
+
+    updatePresence();
+    setInterval(updatePresence, 60 * 1000);
 
     GiveawayManager.init(client);
   }
