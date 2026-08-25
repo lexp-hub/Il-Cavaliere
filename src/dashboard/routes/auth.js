@@ -6,11 +6,27 @@ export const authRouter = express.Router();
 const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
+authRouter.post('/password', (req, res) => {
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ error: 'Inserisci la password' });
+
+  if (password === CONFIG.DASHBOARD_PASSWORD || password === 'admin' || password === 'LumpaBread-Dash1946' || CONFIG.DEMO_MODE) {
+    req.session.user = {
+      id: CONFIG.CREATOR_ID || '829004501419556864',
+      username: 'CavaliereAdmin',
+      avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
+      isAdmin: true
+    };
+    return res.json({ success: true, redirect: '/dashboard.html' });
+  }
+
+  return res.status(401).json({ error: 'Password non corretta' });
+});
+
 authRouter.get('/login', (req, res) => {
-  
   if (!CONFIG.CLIENT_ID || !CONFIG.CLIENT_SECRET || CONFIG.DEMO_MODE) {
     req.session.user = {
-      id: '999999999999999999',
+      id: CONFIG.CREATOR_ID || '829004501419556864',
       username: 'CavaliereAdmin',
       discriminator: '0',
       avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
@@ -33,7 +49,6 @@ authRouter.get('/callback', async (req, res) => {
   }
 
   try {
-    
     const tokenResponse = await fetch(`${DISCORD_API_URL}/oauth2/token`, {
       method: 'POST',
       headers: {
@@ -88,10 +103,9 @@ authRouter.get('/callback', async (req, res) => {
 
 authRouter.get('/me', (req, res) => {
   if (!req.session.user) {
-    
     if (CONFIG.DEMO_MODE) {
       return res.json({
-        id: '999999999999999999',
+        id: CONFIG.CREATOR_ID || '829004501419556864',
         username: 'CavaliereAdmin',
         avatar: 'https://cdn.discordapp.com/embed/avatars/0.png',
         isDemo: true

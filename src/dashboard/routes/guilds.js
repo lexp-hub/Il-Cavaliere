@@ -10,14 +10,13 @@ export function createGuildsRouter(botClient) {
     if (req.session.user || CONFIG.DEMO_MODE) {
       return next();
     }
-    return res.status(401).json({ error: 'Accesso negato. Effettua prima il login con Discord.' });
+    return res.status(401).json({ error: 'Accesso negato. Effettua prima il login.' });
   };
 
   router.get('/', requireAuth, (req, res) => {
     const user = req.session.user;
 
     if (!botClient?.isReady() || CONFIG.DEMO_MODE) {
-      
       const demoGuilds = [
         {
           id: '123456789012345678',
@@ -53,6 +52,24 @@ export function createGuildsRouter(botClient) {
     const userGuilds = user?.guilds || [];
     const botGuilds = botClient.guilds.cache;
 
+    if (userGuilds.length === 0) {
+      const allBotGuilds = Array.from(botGuilds.values()).map(g => {
+        const iconUrl = g.iconURL ? g.iconURL() : null;
+        const settings = DatabaseHelper.getGuildSettings(g.id);
+        const activeCount = settings ? Object.values(settings.modules_enabled || {}).filter(Boolean).length : 0;
+        return {
+          id: g.id,
+          name: g.name,
+          icon: iconUrl,
+          memberCount: g.memberCount,
+          botJoined: true,
+          permissions: 'Administrator',
+          activeModulesCount: activeCount
+        };
+      });
+      return res.json(allBotGuilds);
+    }
+
     const manageable = userGuilds.filter(g => {
       const perms = BigInt(g.permissions || '0');
       const isAdmin = (perms & BigInt(PermissionsBitField.Flags.Administrator)) !== BigInt(0);
@@ -83,70 +100,61 @@ export function createGuildsRouter(botClient) {
   router.get('/:guildId', requireAuth, (req, res) => {
     const guildId = req.params.guildId;
 
-    if (!botClient?.isReady() || CONFIG.DEMO_MODE || !botClient.guilds.cache.has(guildId)) {
-      
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
       return res.json({
         id: guildId,
-        name: '🏰 Il Reame del Cavaliere',
-        icon: null,
+        name: '🏰 Il Reame del Cavaliere (Demo)',
         memberCount: 1420,
-        botJoined: true,
+        icon: null,
         channels: [
-          { id: '101', name: '📢-annunci', type: 'text', typeName: 'GuildText' },
-          { id: '102', name: '💬-chat-generale', type: 'text', typeName: 'GuildText' },
-          { id: '103', name: '🤝-partnership', type: 'text', typeName: 'GuildText' },
-          { id: '104', name: '👋-benvenuto', type: 'text', typeName: 'GuildText' },
-          { id: '105', name: '💡-suggerimenti', type: 'text', typeName: 'GuildText' },
-          { id: '106', name: '🛡️-audit-log', type: 'text', typeName: 'GuildText' },
-          { id: '107', name: '⭐-starboard', type: 'text', typeName: 'GuildText' },
-          { id: '201', name: '🔊 Salotto Vocale', type: 'voice', typeName: 'GuildVoice' },
-          { id: '301', name: '📁 SUPPORTO', type: 'category', typeName: 'GuildCategory' }
+          { id: '101', name: 'generale', type: 0 },
+          { id: '102', name: 'annunci', type: 0 },
+          { id: '103', name: 'partnership', type: 0 },
+          { id: '104', name: 'benvenuto', type: 0 },
+          { id: '105', name: 'comandi-bot', type: 0 },
+          { id: '106', name: 'suggerimenti', type: 0 },
+          { id: '107', name: 'logs', type: 0 },
+          { id: '201', name: 'SUPPORTO TICKET', type: 4 }
         ],
         roles: [
-          { id: '501', name: '👑 Cavaliere Supremo (Owner)', color: '#8B5CF6' },
-          { id: '502', name: '🛡️ Moderatore', color: '#10B981' },
-          { id: '503', name: '🤝 Partner Manager', color: '#06B6D4' },
-          { id: '504', name: '⭐ Membro VIP', color: '#F59E0B' },
-          { id: '505', name: '👤 Membro', color: '#94A3B8' }
-        ],
-        settings: DatabaseHelper.getGuildSettings(guildId)
+          { id: '301', name: '👑 Fondatore', color: '#f59e0b' },
+          { id: '302', name: '🛡️ Moderatore', color: '#3b82f6' },
+          { id: '303', name: '🤝 Partner Manager', color: '#06b6d4' },
+          { id: '304', name: '🔔 Notifiche Annunci', color: '#8b5cf6' },
+          { id: '305', name: '⭐ Membro VIP', color: '#ec4899' },
+          { id: '306', name: 'Membro', color: '#94a3b8' }
+        ]
       });
     }
 
     const guild = botClient.guilds.cache.get(guildId);
-    if (!guild) {
-      return res.status(404).json({ error: 'Server non trovato o bot non presente.' });
-    }
-
     const channels = guild.channels.cache
-      .filter(c => c.type === ChannelType.GuildText || c.type === ChannelType.GuildVoice || c.type === ChannelType.GuildCategory)
+      .filter(c => c.type === ChannelType.GuildText || c.type === ChannelType.GuildAnnouncement || c.type === ChannelType.GuildCategory)
       .map(c => ({
         id: c.id,
         name: c.name,
-        type: c.type === ChannelType.GuildText ? 'text' : c.type === ChannelType.GuildVoice ? 'voice' : 'category',
-        typeName: ChannelType[c.type]
-      }));
+        type: c.type,
+        parentId: c.parentId
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
 
     const roles = guild.roles.cache
-      .filter(r => r.id !== guild.id)
-      .sort((a, b) => b.position - a.position)
+      .filter(r => r.name !== '@everyone')
       .map(r => ({
         id: r.id,
         name: r.name,
-        color: r.hexColor
-      }));
-
-    const settings = DatabaseHelper.getGuildSettings(guildId);
+        color: r.hexColor,
+        position: r.position
+      }))
+      .sort((a, b) => b.position - a.position);
 
     res.json({
       id: guild.id,
       name: guild.name,
-      icon: guild.iconURL({ dynamic: true, size: 128 }),
+      icon: guild.iconURL ? guild.iconURL() : null,
       memberCount: guild.memberCount,
-      botJoined: true,
       channels,
-      roles,
-      settings
+      roles
     });
   });
 

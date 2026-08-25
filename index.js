@@ -18,11 +18,10 @@ async function main() {
 
   const { server } = createDashboardServer(botClient);
   
-  server.listen(CONFIG.PORT, () => {
-    console.log(`\n🌐 [Dashboard] Web Server attivo con successo!`);
-    console.log(`🔗 URL Dashboard: \x1b[36m${CONFIG.DASHBOARD_URL}\x1b[0m`);
-    console.log(`🎨 Stile UI: Noctaly Cyberpunk & Glassmorphism`);
-    console.log(`📊 Moduli abilitati: Partnerships, Embeds, Reaction Roles, Welcomer, AutoMod, Tickets, Leveling, Starboard, AI Brain\n`);
+  server.listen(CONFIG.PORT, '0.0.0.0', () => {
+    console.log(`\n🌐 [Dashboard] Web Server attivo con successo su Wispbyte!`);
+    console.log(`🔗 In ascolto su: http://0.0.0.0:${CONFIG.PORT}`);
+    console.log(`🎨 Stile UI: Noctaly Cyberpunk & Glassmorphism\n`);
   });
 
   if (CONFIG.BOT_TOKEN && CONFIG.BOT_TOKEN.trim().length > 10) {
@@ -36,9 +35,8 @@ async function main() {
         console.log('[Bot] La dashboard continuerà ad essere attiva in modalità Standalone / Preview.');
       });
   } else {
-    console.log('\x1b[33m[Bot Avviso] DISCORD_BOT_TOKEN non impostato nel file .env o vuoto.\x1b[0m');
-    console.log('\x1b[32m[Dashboard] La Dashboard è pienamente accessibile in modalità Demo all\'indirizzo: \x1b[36m' + CONFIG.DASHBOARD_URL + '\x1b[0m');
-    console.log('\x1b[32m[Config] Per collegare il bot reale a Discord, inserisci il tuo token in .env!\x1b[0m\n');
+    console.log('\x1b[33m[Bot Avviso] DISCORD_BOT_TOKEN non impostato nelle variabili d\'ambiente.\x1b[0m');
+    console.log('\x1b[32m[Dashboard] La Dashboard è pienamente accessibile all\'indirizzo: http://0.0.0.0:' + CONFIG.PORT + '\x1b[0m\n');
   }
 }
 
