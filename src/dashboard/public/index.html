@@ -7,7 +7,7 @@
   <link rel="icon" href="/logo.svg?v=12" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/css/styles.css?v=17">
+  <link rel="stylesheet" href="/css/styles.css?v=18">
 </head>
 <body class="relative min-h-screen text-slate-900 flex flex-col justify-between overflow-x-hidden">
   <div class="bg-glow-orb orb-1"></div>
@@ -28,7 +28,7 @@
       <a href="#servers" class="hover:text-red-600 transition-colors">I Tuoi Server</a>
       <a href="#moduli" class="hover:text-red-600 transition-colors">Moduli</a>
       <a href="/export.html" class="hover:text-red-600 transition-colors">Asset &amp; Loghi</a>
-      <a href="/auth/login" class="hover:text-red-600 transition-colors font-bold text-red-600">Dashboard</a>
+      <a id="nav-dash-link" href="/dashboard.html" class="hover:text-red-600 transition-colors font-bold text-red-600">Dashboard</a>
     </div>
 
     <div class="flex items-center gap-2 sm:gap-3">
@@ -36,7 +36,7 @@
         <div class="pulse-dot"></div>
         <span id="bot-status-text" class="hidden sm:inline">Bot Pronto</span>
       </div>
-      <a href="/auth/login" class="btn-knight text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1.5">
+      <a id="btn-nav-auth" href="/dashboard.html" class="btn-knight text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2 flex items-center gap-1.5">
         <i data-lucide="shield" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
         <span>Accesso Moderatori</span>
       </a>
@@ -44,7 +44,7 @@
   </header>
 
   <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-20 sm:pb-24 text-center">
-    <div class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-red-100 border border-red-200 text-red-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
+    <div id="hero-badge" class="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-red-100 border border-red-200 text-red-700 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-6 shadow-sm">
       <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-600"></i>
       <span>Dashboard Riservata ai Moderatori</span>
     </div>
@@ -59,7 +59,7 @@
     </p>
 
     <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-16">
-      <a href="/auth/login" class="btn-knight text-sm sm:text-base py-3 sm:py-3.5 px-6 sm:px-8 flex items-center gap-2">
+      <a id="btn-hero-auth" href="/dashboard.html" class="btn-knight text-sm sm:text-base py-3 sm:py-3.5 px-6 sm:px-8 flex items-center gap-2">
         <i data-lucide="layout-dashboard" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         <span>Apri Dashboard Moderatori</span>
       </a>
@@ -96,7 +96,7 @@
           </h2>
           <p class="text-xs sm:text-sm text-slate-600">Seleziona un server per accedere alle impostazioni dei moduli</p>
         </div>
-        <a href="/auth/login" class="text-xs sm:text-sm font-bold text-red-600 hover:text-red-700 flex items-center gap-1 font-medieval">
+        <a id="btn-servers-dash" href="/dashboard.html" class="text-xs sm:text-sm font-bold text-red-600 hover:text-red-700 flex items-center gap-1 font-medieval">
           Apri Dashboard <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
         </a>
       </div>
@@ -191,7 +191,80 @@
   </footer>
 
   <script>
+    // Global Fetch Interceptor for Anti-Adblock & Brave-Shields localStorage authentication
+    const originalFetch = window.fetch;
+    window.fetch = async function(url, options = {}) {
+      options = options || {};
+      options.headers = options.headers || {};
+      const token = localStorage.getItem('cavaliere_auth_token');
+      if (token) {
+        if (options.headers instanceof Headers) {
+          if (!options.headers.has('Authorization')) options.headers.set('Authorization', `Bearer ${token}`);
+        } else if (typeof options.headers === 'object') {
+          if (!options.headers['Authorization'] && !options.headers['authorization']) options.headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+      return originalFetch.call(this, url, options);
+    };
+
     lucide.createIcons();
+
+    // Universal Click Interceptor: Any click on a red button or dashboard link opens dashboard directly
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('a.btn-knight, #btn-hero-auth, #btn-nav-auth, #nav-dash-link, #btn-servers-dash, a[href="/dashboard.html"], a[href="/auth/login"]');
+      if (btn) {
+        const token = localStorage.getItem('cavaliere_auth_token');
+        if (token) {
+          e.preventDefault();
+          window.location.href = `/dashboard.html?auth_token=${token}`;
+        }
+      }
+    });
+
+    async function checkAuthState() {
+      try {
+        const res = await fetch('/auth/me');
+        if (res.ok) {
+          const user = await res.json();
+          if (user && user.id) {
+            // User is authenticated! Update buttons & links to direct dashboard navigation
+            const authBtn = document.getElementById('btn-nav-auth');
+            if (authBtn) {
+              authBtn.href = '/dashboard.html';
+              authBtn.innerHTML = `
+                <img src="${user.avatar}" class="w-5 h-5 rounded-full border border-red-400" alt="Avatar">
+                <span>Dashboard</span>
+              `;
+            }
+
+            const heroAuthBtn = document.getElementById('btn-hero-auth');
+            if (heroAuthBtn) {
+              heroAuthBtn.href = '/dashboard.html';
+              heroAuthBtn.innerHTML = `
+                <i data-lucide="layout-dashboard" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                <span>Vai alla Dashboard</span>
+              `;
+            }
+
+            const navDashLink = document.getElementById('nav-dash-link');
+            if (navDashLink) {
+              navDashLink.href = '/dashboard.html';
+            }
+
+            const badge = document.getElementById('hero-badge');
+            if (badge) {
+              badge.className = 'inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-emerald-100 border border-emerald-300 text-emerald-800 text-[11px] sm:text-xs font-bold uppercase tracking-wider mb-6 shadow-sm';
+              badge.innerHTML = `
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600"></i>
+                <span>Connesso come @${user.username}</span>
+              `;
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Auth check skipped:', e);
+      }
+    }
 
     async function loadLandingData() {
       try {
@@ -217,26 +290,26 @@
             grid.innerHTML = '';
             guilds.forEach(g => {
               const card = document.createElement('div');
-              card.className = 'glass-card p-5 sm:p-6 flex flex-col justify-between hover:border-orange-500/60 transition-all cursor-pointer';
+              card.className = 'glass-card p-5 sm:p-6 flex flex-col justify-between hover:border-red-500/60 transition-all cursor-pointer';
               card.onclick = () => window.location.href = `/dashboard.html?guild=${g.id}`;
               
               const iconHtml = g.icon 
-                ? `<img src="${g.icon}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-orange-500/40 shadow-md">`
-                : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-orange-950/80 border border-orange-500/40 flex items-center justify-center text-xl sm:text-2xl shadow-md text-orange-300 font-medieval">🏰</div>`;
+                ? `<img src="${g.icon}" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl object-cover border border-red-500/40 shadow-md">`
+                : `<div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-red-100 border border-red-300 flex items-center justify-center text-xl sm:text-2xl shadow-md text-red-700 font-medieval">🏰</div>`;
 
               card.innerHTML = `
                 <div class="flex items-center gap-3 sm:gap-4 mb-4">
                   ${iconHtml}
                   <div>
-                    <h3 class="font-bold text-white text-base sm:text-lg font-medieval">${g.name}</h3>
-                    <p class="text-xs text-slate-400">${g.memberCount} Membri • ${g.activeModulesCount || 8} Moduli Attivi</p>
+                    <h3 class="font-bold text-slate-900 text-base sm:text-lg font-medieval">${g.name}</h3>
+                    <p class="text-xs text-slate-500">${g.memberCount} Membri • ${g.activeModulesCount || 8} Moduli Attivi</p>
                   </div>
                 </div>
-                <div class="flex items-center justify-between pt-4 border-t border-slate-700/60">
-                  <span class="text-xs font-semibold px-2 py-1 rounded bg-red-500/20 text-red-300 border border-red-500/30">
+                <div class="flex items-center justify-between pt-4 border-t border-slate-200">
+                  <span class="text-xs font-semibold px-2 py-1 rounded bg-red-100 text-red-700 border border-red-200">
                     Moderatore
                   </span>
-                  <span class="text-xs sm:text-sm text-red-400 font-semibold flex items-center gap-1 font-medieval">Gestisci <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i></span>
+                  <span class="text-xs sm:text-sm text-red-600 font-semibold flex items-center gap-1 font-medieval">Gestisci <i data-lucide="chevron-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i></span>
                 </div>
               `;
               grid.appendChild(card);
@@ -246,9 +319,9 @@
             const grid = document.getElementById('guilds-grid');
             if (grid) {
               grid.innerHTML = `
-                <div class="col-span-full text-center py-10 glass-card border-slate-700/60">
-                  <i data-lucide="lock" class="w-8 h-8 text-red-400 mx-auto mb-2"></i>
-                  <p class="text-sm font-semibold text-slate-300">Effettua l'accesso con Discord per visualizzare i server in cui sei Moderatore.</p>
+                <div class="col-span-full text-center py-10 glass-card border-slate-300">
+                  <i data-lucide="lock" class="w-8 h-8 text-red-500 mx-auto mb-2"></i>
+                  <p class="text-sm font-semibold text-slate-700">Effettua l'accesso con Discord per visualizzare i server in cui sei Moderatore.</p>
                   <a href="/auth/login" class="btn-knight text-xs px-4 py-2 mt-4 inline-flex">Accedi con Discord</a>
                 </div>
               `;
@@ -273,7 +346,7 @@
       alert('🛡️ [Il Cavaliere] ' + errMsg);
     }
 
-    loadLandingData();
+    checkAuthState().then(loadLandingData);
   </script>
 </body>
 </html>

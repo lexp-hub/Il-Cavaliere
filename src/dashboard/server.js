@@ -47,6 +47,18 @@ export function createDashboardServer(botClient) {
         req.user = user;
       }
     }
+
+    if (!req.session?.user && req.headers.cookie) {
+      const match = req.headers.cookie.match(/cav_auth_token=([^;]+)/);
+      if (match) {
+        const token = match[1];
+        const user = validateAuthToken(token);
+        if (user) {
+          req.session.user = user;
+          req.user = user;
+        }
+      }
+    }
     next();
   });
 

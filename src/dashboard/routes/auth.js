@@ -51,6 +51,22 @@ function getCallbackUrl(req) {
 }
 
 authRouter.get('/login', (req, res) => {
+  // If user is already logged in, redirect directly to dashboard without going to Discord!
+  if (req.session?.user) {
+    return res.redirect('/dashboard.html');
+  }
+
+  if (req.headers.cookie) {
+    const match = req.headers.cookie.match(/cav_auth_token=([^;]+)/);
+    if (match) {
+      const user = validateAuthToken(match[1]);
+      if (user) {
+        req.session.user = user;
+        return res.redirect('/dashboard.html');
+      }
+    }
+  }
+
   if (!CONFIG.CLIENT_ID) {
     return res.redirect('/?error=missing_client_id');
   }
@@ -128,6 +144,13 @@ const handleCallback = async (req, res) => {
 
     const authToken = createAuthToken(userObj, accessToken);
 
+    res.cookie('cav_auth_token', authToken, {
+      maxAge: 90 * 24 * 60 * 60 * 1000,
+      httpOnly: false,
+      sameSite: 'lax',
+      path: '/'
+    });
+
     req.session.save(() => {
       res.redirect(`/dashboard.html?auth_token=${authToken}`);
     });
@@ -149,6 +172,14 @@ authRouter.get('/me', (req, res) => {
     if (user) req.session.user = user;
   }
 
+  if (!user && req.headers.cookie) {
+    const match = req.headers.cookie.match(/cav_auth_token=([^;]+)/);
+    if (match) {
+      user = validateAuthToken(match[1]);
+      if (user) req.session.user = user;
+    }
+  }
+
   if (!user) {
     return res.status(401).json({ error: 'Non autenticato' });
   }
@@ -160,6 +191,13 @@ authRouter.get('/logout', (req, res) => {
   if (authHeader && authHeader.startsWith('Bearer ')) {
     authTokens.delete(authHeader.substring(7));
   }
+  if (req.headers.cookie) {
+    const match = req.headers.cookie.match(/cav_auth_token=([^;]+)/);
+    if (match) {
+      authTokens.delete(match[1]);
+    }
+  }
+  res.clearCookie('cav_auth_token', { path: '/' });
   req.session.destroy(() => {
     res.redirect('/');
   });
