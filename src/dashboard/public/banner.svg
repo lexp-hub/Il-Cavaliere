@@ -13,13 +13,6 @@
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
-    <!-- Warm Golden-Orange Metallic Gradient for Title (Matching Website) -->
-    <linearGradient id="goldTitleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fde68a" />
-      <stop offset="50%" stop-color="#f97316" />
-      <stop offset="100%" stop-color="#ea580c" />
-    </linearGradient>
-
     <!-- Exact Knights Templar Beauceant Cross -->
     <g id="templarCrossSolo">
       <!-- Top Arm -->
@@ -42,7 +35,7 @@
   <rect width="600" height="240" fill="url(#leftOrangeGlow)" />
   <rect width="600" height="240" fill="url(#rightOrangeGlow)" />
 
-  <!-- Main Lockup (Centered, Noble Cinzel Typography with Golden-Orange Gradient) -->
+  <!-- Main Lockup (Centered, Pure White Typography Matching the Cross) -->
   <g transform="translate(130, 120)">
     
     <!-- Primary Brand Icon: Pure White Templar Cross -->
@@ -50,13 +43,13 @@
       <use href="#templarCrossSolo" />
     </g>
 
-    <!-- Brand Typography: Il Cavaliere (Cinzel Font with Gold/Orange Gradient matching the website) -->
+    <!-- Brand Typography: Pure White Cinzel Text -->
     <text x="58" y="14" 
           font-family="'Cinzel', 'Georgia', 'Times New Roman', serif" 
           font-size="44" 
           font-weight="800" 
           letter-spacing="2" 
-          fill="url(#goldTitleGradient)">
+          fill="#ffffff">
       IL CAVALIERE
     </text>
   </g>
