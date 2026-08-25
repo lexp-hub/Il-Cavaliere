@@ -1,28 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  --bg-primary: #07080b;
-  --bg-secondary: #0d0f15;
-  --bg-tertiary: #131722;
-  --card-bg: rgba(15, 18, 26, 0.85);
-  --card-border: rgba(217, 119, 6, 0.22);
-  --card-border-hover: rgba(245, 158, 11, 0.55);
+  --bg-primary: #000000;
+  --bg-secondary: #08090d;
+  --bg-tertiary: #101218;
+  --card-bg: rgba(10, 12, 17, 0.9);
+  --card-border: rgba(249, 115, 22, 0.22);
+  --card-border-hover: rgba(249, 115, 22, 0.55);
   
-  --gold-primary: #f59e0b;
-  --gold-bright: #fbbf24;
-  --gold-dark: #b45309;
-  --gold-glow: rgba(245, 158, 11, 0.35);
+  --gold-primary: #f97316;
+  --gold-bright: #fb923c;
+  --gold-dark: #c2410c;
+  --gold-glow: rgba(249, 115, 22, 0.35);
 
-  --crimson-primary: #991b1b;
-  --crimson-dark: #450a0a;
-  --crimson-glow: rgba(153, 27, 27, 0.4);
+  --crimson-primary: #ea580c;
+  --crimson-dark: #7c2d12;
+  --crimson-glow: rgba(234, 88, 12, 0.35);
 
   --steel-light: #94a3b8;
   --steel-dark: #1e293b;
   --iron-border: #334155;
 
   --text-main: #f8fafc;
-  --text-gold: #fef3c7;
+  --text-gold: #ffedd5;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
   
@@ -52,9 +52,9 @@ body {
   overflow-x: hidden;
   position: relative;
   background-image: 
-    radial-gradient(at 15% 10%, rgba(217, 119, 6, 0.12) 0px, transparent 50%),
-    radial-gradient(at 85% 90%, rgba(153, 27, 27, 0.15) 0px, transparent 55%),
-    radial-gradient(at 50% 50%, rgba(88, 28, 135, 0.08) 0px, transparent 70%);
+    radial-gradient(at 12% 12%, rgba(234, 88, 12, 0.15) 0px, transparent 50%),
+    radial-gradient(at 88% 85%, rgba(249, 115, 22, 0.15) 0px, transparent 55%),
+    radial-gradient(at 50% 50%, rgba(194, 65, 12, 0.06) 0px, transparent 70%);
   background-attachment: fixed;
 }
 
