@@ -112,10 +112,7 @@
 Il Cavaliere/
 ├── index.js                   # Entry point principale del bot e dashboard (root per Wispbyte/Pterodactyl)
 ├── package.json               # Dipendenze e script di avvio
-├── .env.example               # Template variabili d'ambiente
 ├── README.md                  # Panoramica e documentazione comandi
-├── test/
-│   └── runTests.js            # Suite di test automatici
 ├── src/
 │   ├── config.js              # Parametri globali e temi grafici
 │   ├── database/
