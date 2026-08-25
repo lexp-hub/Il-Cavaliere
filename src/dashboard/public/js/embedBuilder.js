@@ -176,43 +176,43 @@
 
     container.innerHTML = `
       <div class="flex flex-wrap items-center gap-1">
-        <button type="button" class="btn-fmt-b px-2 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Grassetto: **testo**">
+        <button type="button" class="btn-fmt-b px-2 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Grassetto: **testo**">
           <b>B</b>
         </button>
-        <button type="button" class="btn-fmt-i px-2 py-0.5 text-[11px] italic rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Corsivo: *testo*">
+        <button type="button" class="btn-fmt-i px-2 py-0.5 text-[11px] italic rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Corsivo: *testo*">
           <i>I</i>
         </button>
-        <button type="button" class="btn-fmt-s px-2 py-0.5 text-[11px] line-through rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Barrato: ~~testo~~">
+        <button type="button" class="btn-fmt-s px-2 py-0.5 text-[11px] line-through rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Barrato: ~~testo~~">
           S
         </button>
-        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Codice: \`codice\`">
+        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Codice: \`codice\`">
           &lt;/&gt;
         </button>
-        <button type="button" class="btn-fmt-q px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Citazione: > testo">
+        <button type="button" class="btn-fmt-q px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Citazione: > testo">
           &gt; Quote
         </button>
-        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Link: [titolo](url)">
+        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Link: [titolo](url)">
           🔗 Link
         </button>
 
         <!-- Searchable Channel Inserter -->
         <div class="relative inline-block text-left">
-          <button type="button" class="btn-open-ch-pick px-2 py-0.5 text-[11px] font-semibold rounded bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 shadow-sm flex items-center gap-1" title="Cerca e inserisci un canale">
-            <i data-lucide="hash" class="w-3 h-3 text-red-600"></i> Canale
+          <button type="button" class="btn-open-ch-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un canale">
+            <span class="text-red-600 font-extrabold text-xs">#</span> Inserisci Canale
           </button>
           <div class="ch-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-white border border-slate-300 shadow-2xl z-50 p-2 space-y-2">
-            <input type="text" class="ch-pick-search form-input text-xs py-1 px-2" placeholder="🔍 Cerca canale...">
+            <input type="text" class="ch-pick-search form-input text-xs py-1 px-2 bg-white" placeholder="🔍 Cerca canale...">
             <div class="ch-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
           </div>
         </div>
 
         <!-- Searchable Role Inserter -->
         <div class="relative inline-block text-left">
-          <button type="button" class="btn-open-role-pick px-2 py-0.5 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 shadow-sm flex items-center gap-1" title="Cerca e inserisci un ruolo">
-            <i data-lucide="at-sign" class="w-3 h-3 text-slate-600"></i> Ruolo
+          <button type="button" class="btn-open-role-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un ruolo">
+            <span class="text-slate-600 font-extrabold text-xs">@</span> Ruolo
           </button>
           <div class="role-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-white border border-slate-300 shadow-2xl z-50 p-2 space-y-2">
-            <input type="text" class="role-pick-search form-input text-xs py-1 px-2" placeholder="🔍 Cerca ruolo...">
+            <input type="text" class="role-pick-search form-input text-xs py-1 px-2 bg-white" placeholder="🔍 Cerca ruolo...">
             <div class="role-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
           </div>
         </div>
@@ -1003,6 +1003,110 @@
       } finally {
         btnSendEmbed.disabled = false;
         btnSendEmbed.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Invia nel Canale Discord';
+        if (window.lucide) lucide.createIcons();
+      }
+  // Live Embed Fetch & In-Place Editor Handler
+  const fetchInput = document.getElementById('embed-fetch-input');
+  const btnFetchLive = document.getElementById('btn-fetch-live-embed');
+  const btnEditLive = document.getElementById('btn-edit-live-embed');
+  let currentEditingMessage = null;
+
+  if (btnFetchLive && fetchInput) {
+    btnFetchLive.addEventListener('click', async () => {
+      const val = fetchInput.value.trim();
+      if (!val) return window.showToast('Inserisci un link del messaggio Discord o il suo ID.', 'error');
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server.', 'error');
+
+      const channelId = channelSelect?.value;
+
+      try {
+        btnFetchLive.disabled = true;
+        btnFetchLive.innerHTML = '<i data-lucide="loader" class="w-3 h-3 animate-spin"></i>';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/embeds/fetch-message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: val, messageId: val, channelId })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success && data.data) {
+          const emb = data.data.embed;
+          if (emb) {
+            if (titleInput) titleInput.value = emb.title || '';
+            if (titleUrlInput) titleUrlInput.value = emb.url || '';
+            if (descInput) descInput.value = emb.description || '';
+            if (colorInput) colorInput.value = emb.color || '#dc2626';
+            if (colorHexInput) colorHexInput.value = emb.color || '#dc2626';
+            if (imageInput) imageInput.value = emb.image || '';
+            if (thumbInput) thumbInput.value = emb.thumbnail || '';
+            if (footerTextInput) footerTextInput.value = emb.footer || '';
+            fields = emb.fields ? [...emb.fields] : [];
+            renderFieldsList();
+            updatePreview();
+          }
+
+          if (data.data.channelId && channelSelect) {
+            channelSelect.value = data.data.channelId;
+          }
+
+          currentEditingMessage = {
+            channelId: data.data.channelId,
+            messageId: data.data.messageId
+          };
+
+          if (btnEditLive) {
+            btnEditLive.classList.remove('hidden');
+          }
+
+          window.showToast('Embed caricato da Discord! Ora puoi modificarlo e cliccare su "Salva Modifica Live".');
+        } else {
+          window.showToast(`Errore: ${data.error || 'Messaggio non trovato'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore di connessione: ${err.message}`, 'error');
+      } finally {
+        btnFetchLive.disabled = false;
+        btnFetchLive.innerHTML = '<i data-lucide="download" class="w-3.5 h-3.5 text-amber-700"></i> Carica';
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
+  if (btnEditLive) {
+    btnEditLive.addEventListener('click', async () => {
+      if (!currentEditingMessage) return window.showToast('Nessun messaggio live caricato.', 'error');
+      const guildId = window.AppState.currentGuildId;
+      const payload = getEmbedPayload();
+
+      try {
+        btnEditLive.disabled = true;
+        btnEditLive.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Modifica in corso...';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/embeds/edit-message`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            channelId: currentEditingMessage.channelId,
+            messageId: currentEditingMessage.messageId,
+            embed: payload
+          })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Messaggio Discord aggiornato con successo in tempo reale!');
+        } else {
+          window.showToast(`Errore modifica: ${data.error || 'Fallita'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnEditLive.disabled = false;
+        btnEditLive.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifica Live';
         if (window.lucide) lucide.createIcons();
       }
     });

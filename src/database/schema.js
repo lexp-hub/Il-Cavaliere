@@ -246,4 +246,57 @@ CREATE TABLE IF NOT EXISTS emoji_stats (
   last_used INTEGER DEFAULT (strftime('%s', 'now')),
   PRIMARY KEY (guild_id, emoji_id)
 );
+
+
+CREATE TABLE IF NOT EXISTS counting_configs (
+  guild_id TEXT PRIMARY KEY,
+  channel_id TEXT,
+  current_number INTEGER DEFAULT 0,
+  last_user_id TEXT,
+  highest_streak INTEGER DEFAULT 0,
+  allow_ruin_reset INTEGER DEFAULT 1,
+  enabled INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS counting_scores (
+  guild_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  counts INTEGER DEFAULT 0,
+  correct_counts INTEGER DEFAULT 0,
+  ruined_counts INTEGER DEFAULT 0,
+  PRIMARY KEY (guild_id, user_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS fishing_profiles (
+  guild_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  rod_level INTEGER DEFAULT 1,
+  coins INTEGER DEFAULT 100,
+  total_fish_caught INTEGER DEFAULT 0,
+  last_fished INTEGER DEFAULT 0,
+  last_daily INTEGER DEFAULT 0,
+  inventory TEXT DEFAULT '[]',
+  PRIMARY KEY (guild_id, user_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS rpg_duels (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id TEXT NOT NULL,
+  challenger_id TEXT NOT NULL,
+  opponent_id TEXT NOT NULL,
+  bet_coins INTEGER DEFAULT 0,
+  winner_id TEXT,
+  timestamp INTEGER DEFAULT (strftime('%s', 'now'))
+);
+
+
+CREATE TABLE IF NOT EXISTS ticket_automations (
+  guild_id TEXT PRIMARY KEY,
+  auto_close_hours INTEGER DEFAULT 48,
+  auto_transcript_dm INTEGER DEFAULT 1,
+  auto_tag_staff INTEGER DEFAULT 1,
+  inactivity_warning_hours INTEGER DEFAULT 24
+);
 `;

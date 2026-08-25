@@ -7,7 +7,7 @@
   <link rel="icon" href="/logo.svg?v=12" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/css/styles.css?v=18">
+  <link rel="stylesheet" href="/css/styles.css?v=19">
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
   <div class="bg-glow-orb orb-1"></div>
@@ -108,6 +108,12 @@
         <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-giveaways">
           <i data-lucide="trophy" class="w-4 h-4 text-red-600"></i>
           <span>Giveaways &amp; XP</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-minigames">
+          <i data-lucide="gamepad-2" class="w-4 h-4 text-red-600"></i>
+          <span class="flex-grow">Minigiochi &amp; Pesca</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-semibold uppercase border border-emerald-200">Nuovo</span>
         </button>
 
         <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-emojis">
@@ -288,7 +294,10 @@
 
             
             <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1.5">System Prompt / Identità de Il Cavaliere</label>
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                <label class="text-xs font-semibold text-slate-700 block">System Prompt / Identità de Il Cavaliere</label>
+                <div id="ai-prompt-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+              </div>
               <textarea id="ai-system-prompt" class="form-textarea h-44 text-xs font-mono"></textarea>
             </div>
 
@@ -394,12 +403,20 @@
         <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
           <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Registra Partnership Rapida dalla Dashboard
         </h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-          <input type="text" id="part-quick-invite" class="form-input text-xs" placeholder="Link o codice invito (es. discord.gg/partner)">
-          <input type="text" id="part-quick-notes" class="form-input text-xs" placeholder="Descrizione o note (opzionale)">
-          <button id="btn-quick-partner" class="btn-secondary text-xs py-2 justify-center">
-            <i data-lucide="send" class="w-3.5 h-3.5"></i> Pubblica Partnership
-          </button>
+        <div class="space-y-2 mb-3">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input type="text" id="part-quick-invite" class="form-input text-xs" placeholder="Link o codice invito (es. discord.gg/partner)">
+            <button id="btn-quick-partner" class="btn-secondary text-xs py-2 justify-center">
+              <i data-lucide="send" class="w-3.5 h-3.5"></i> Pubblica Partnership
+            </button>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
+              <label class="text-xs font-semibold text-slate-700 block">Descrizione o Note Partnership</label>
+              <div id="part-notes-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+            </div>
+            <textarea id="part-quick-notes" class="form-textarea h-20 text-xs" placeholder="Descrizione o note della partnership (usa **grassetto**, <#canale> o @ruolo)..."></textarea>
+          </div>
         </div>
       </div>
 
@@ -437,12 +454,33 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-7 space-y-4">
           <div class="glass-card p-5 space-y-4">
+            <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-300 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-200 text-amber-900 flex items-center justify-center font-bold text-sm shrink-0">
+                  <i data-lucide="edit-3" class="w-4 h-4 text-amber-800"></i>
+                </div>
+                <div>
+                  <h4 class="text-xs font-bold text-amber-950">Modifica Messaggio / Embed già Inviato</h4>
+                  <p class="text-[11px] text-amber-800">Incolla il link o ID del messaggio del bot per modificarlo live su Discord senza cancellarlo!</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <input type="text" id="embed-fetch-input" class="form-input text-xs py-1.5 px-3 bg-white border-amber-300 w-full sm:w-64" placeholder="Link messaggio Discord o ID...">
+                <button type="button" id="btn-fetch-live-embed" class="btn-secondary text-xs py-1.5 px-3 border-amber-300 bg-white hover:bg-amber-100 text-amber-950 font-bold">
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-amber-700"></i> Carica
+                </button>
+                <button type="button" id="btn-edit-live-embed" class="btn-cyber text-xs py-1.5 px-3 hidden font-bold" style="background: linear-gradient(135deg, #d97706, #b45309);">
+                  <i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifica Live
+                </button>
+              </div>
+            </div>
+
             <div class="flex items-center justify-between pb-3 border-b border-white/5">
-              <h3 class="text-base font-bold text-white flex items-center gap-2">
-                <i data-lucide="sliders" class="w-4 h-4 text-pink-400"></i> Personalizzazione Messaggio Embed
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+                <i data-lucide="sliders" class="w-4 h-4 text-red-600"></i> Personalizzazione Messaggio Embed
               </h3>
               <div class="flex items-center gap-2">
-                <button id="btn-reset-embed" class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-white/5">Reset</button>
+                <button id="btn-reset-embed" class="text-xs text-slate-600 hover:text-slate-900 px-2 py-1 rounded bg-slate-200">Reset</button>
                 <button id="btn-save-template" class="btn-secondary text-xs py-1 px-3">Salva Template</button>
               </div>
             </div>
@@ -656,32 +694,49 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Target</label>
-            <select id="rr-channel" class="form-select text-xs"></select>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Target</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="rr-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+              </div>
+              <select id="rr-channel" class="form-select text-xs"></select>
+            </div>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Ruolo da Assegnare</label>
-            <select id="rr-role" class="form-select text-xs"></select>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Ruolo da Assegnare</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="rr-role-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca ruolo...">
+              </div>
+              <select id="rr-role" class="form-select text-xs"></select>
+            </div>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Stile Colore Pulsante</label>
-            <select id="rr-style" class="form-select text-xs">
-              <option value="Primary">Viola / Blurple (Primary)</option>
-              <option value="Secondary">Grigio Scuro (Secondary)</option>
-              <option value="Success">Verde Smeraldo (Success)</option>
-              <option value="Danger">Rosso Rubino (Danger)</option>
-            </select>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Stile Colore Pulsante</label>
+            <div class="pt-6">
+              <select id="rr-style" class="form-select text-xs">
+                <option value="Primary">Viola / Blurple (Primary)</option>
+                <option value="Secondary">Grigio Scuro (Secondary)</option>
+                <option value="Success">Verde Smeraldo (Success)</option>
+                <option value="Danger">Rosso Rubino (Danger)</option>
+              </select>
+            </div>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Etichetta del Bottone</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Etichetta del Bottone</label>
             <input type="text" id="rr-label" class="form-input text-xs" value="Ruolo Notifiche">
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Emoji sul Bottone</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Emoji sul Bottone</label>
             <input type="text" id="rr-emoji" class="form-input text-xs" value="🔔">
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Embed</label>
+            <div class="flex items-center justify-between gap-1 mb-1">
+              <label class="text-xs font-semibold text-slate-700 block">Titolo Embed</label>
+              <div id="rr-title-toolbar-container" class="flex items-center gap-1"></div>
+            </div>
             <input type="text" id="rr-title" class="form-input text-xs" value="🎭 Selezione Ruoli">
           </div>
         </div>
@@ -917,8 +972,17 @@
             <input type="text" id="ar-reactions" class="form-input text-xs" placeholder="es. 👍, 🔥, 🛡️">
           </div>
           <div class="md:col-span-3">
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Risposta del Bot</label>
-            <input type="text" id="ar-response" class="form-input text-xs" placeholder="La risposta inviata dal bot...">
+            <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+              <label class="text-xs font-semibold text-slate-700 block">Testo Risposta del Bot</label>
+              <div id="ar-response-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+            </div>
+            <textarea id="ar-response" class="form-textarea h-24 text-xs" placeholder="La risposta inviata dal bot... usa **grassetto**, <#canale> o @ruolo"></textarea>
+            <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+              <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
+              <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="ar-response" data-var="{user.mention}">{user.mention}</button>
+              <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="ar-response" data-var="{user}">{user}</button>
+              <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="ar-response" data-var="{server.name}">{server.name}</button>
+            </div>
           </div>
         </div>
 
@@ -932,9 +996,20 @@
           <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i> Canale Auto-Reaction (es. Suggerimenti 👍 👎)
         </h4>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
-          <select id="ar-chan-select" class="form-select text-xs"></select>
-          <input type="text" id="ar-chan-emojis" class="form-input text-xs" value="👍 👎" placeholder="Emoji separate da spazio">
-          <button id="btn-set-autoreact-chan" class="btn-secondary text-xs py-2">Applica al Canale</button>
+          <div class="space-y-1.5">
+            <div class="relative">
+              <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+              <input type="text" id="ar-chan-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+            </div>
+            <select id="ar-chan-select" class="form-select text-xs"></select>
+          </div>
+          <div class="pt-6">
+            <input type="text" id="ar-chan-emojis" class="form-input text-xs" value="👍 👎" placeholder="Emoji separate da spazio">
+          </div>
+          <div class="pt-6">
+            <button id="btn-set-autoreact-chan" class="btn-secondary text-xs py-2 w-full justify-center">Applica al Canale</button>
+          </div>
+        </div>
         </div>
       </div>
 
@@ -1182,9 +1257,15 @@
                 </div>
               </div>
 
-              <div class="pt-2">
-                <button id="btn-create-ticket-panel" class="btn-cyber text-xs py-3 px-6 w-full justify-center">
-                  <i data-lucide="send" class="w-4 h-4"></i> Invia Pannello Ticket nel Canale
+              <input type="hidden" id="tk-active-panel-id" value="">
+              <input type="hidden" id="tk-active-message-id" value="">
+
+              <div class="pt-2 flex flex-col sm:flex-row items-center gap-3">
+                <button id="btn-create-ticket-panel" class="btn-cyber text-xs py-3 px-6 flex-1 w-full justify-center">
+                  <i data-lucide="send" class="w-4 h-4"></i> Invia Nuovo Pannello Ticket
+                </button>
+                <button type="button" id="btn-update-ticket-panel" class="btn-secondary text-xs py-3 px-5 hidden sm:flex items-center gap-2 justify-center border-amber-300 text-amber-900 bg-amber-50 hover:bg-amber-100 font-bold" title="Modifica l'embed del pannello già presente in Discord senza cancellarlo">
+                  <i data-lucide="refresh-cw" class="w-4 h-4 text-amber-600"></i> Modifica Pannello Esistente
                 </button>
               </div>
             </div>
@@ -1250,25 +1331,34 @@
     <section id="tab-giveaways" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="glass-card p-6">
-          <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
-            <i data-lucide="gift" class="w-4 h-4 text-fuchsia-400"></i> Avvia Giveaway Istantaneo
+          <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2 font-medieval">
+            <i data-lucide="gift" class="w-4 h-4 text-red-600"></i> Avvia Giveaway Istantaneo
           </h3>
           <div class="space-y-3">
             <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1">Canale</label>
-              <select id="ga-channel" class="form-select text-xs"></select>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Giveaway</label>
+              <div class="space-y-1.5">
+                <div class="relative">
+                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                  <input type="text" id="ga-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                </div>
+                <select id="ga-channel" class="form-select text-xs"></select>
+              </div>
             </div>
             <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1">Premio in Palio</label>
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
+                <label class="text-xs font-semibold text-slate-700 block">Premio in Palio</label>
+                <div id="ga-prize-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+              </div>
               <input type="text" id="ga-prize" class="form-input text-xs" value="Discord Nitro 1 Mese">
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1">Durata</label>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Durata</label>
                 <input type="text" id="ga-duration" class="form-input text-xs" value="1h">
               </div>
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1">Vincitori</label>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Vincitori</label>
                 <input type="number" id="ga-winners" class="form-input text-xs" value="1" min="1">
               </div>
             </div>
@@ -1279,21 +1369,40 @@
         </div>
 
         <div class="glass-card p-6">
-          <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
-            <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Configurazione XP &amp; Leveling
+          <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2 font-medieval">
+            <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> Configurazione XP &amp; Leveling
           </h3>
           <div class="space-y-3">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-slate-300 font-semibold">Modulo Leveling Attivo</span>
+              <span class="text-xs text-slate-700 font-semibold">Modulo Leveling Attivo</span>
               <label class="switch"><input type="checkbox" id="lvl-enabled" checked><span class="slider"></span></label>
             </div>
             <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1">Moltiplicatore XP</label>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Moltiplicatore XP</label>
               <input type="number" id="lvl-rate" class="form-input text-xs" value="1.0" step="0.1" min="0.1">
             </div>
             <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Annunci Level-Up</label>
-              <select id="lvl-channel" class="form-select text-xs"></select>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Annunci Level-Up</label>
+              <div class="space-y-1.5">
+                <div class="relative">
+                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                  <input type="text" id="lvl-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                </div>
+                <select id="lvl-channel" class="form-select text-xs"></select>
+              </div>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
+                <label class="text-xs font-semibold text-slate-700 block">Messaggio Annuncio Level-Up</label>
+                <div id="lvl-msg-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+              </div>
+              <textarea id="lvl-message" class="form-textarea h-20 text-xs">🎉 Complimenti {user.mention}, hai raggiunto il **Livello {level}** nel reame!</textarea>
+              <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="lvl-message" data-var="{user.mention}">{user.mention}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="lvl-message" data-var="{level}">{level}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="lvl-message" data-var="{server.name}">{server.name}</button>
+              </div>
             </div>
             <button id="btn-save-leveling" class="btn-secondary text-xs py-2 px-4 w-full justify-center">
               <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Leveling
@@ -1304,6 +1413,108 @@
     </section>
 
     
+    <!-- Minigames & Medieval Community Section -->
+    <section id="tab-minigames" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Counting Game Card -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+                <i data-lucide="hash" class="w-4 h-4 text-red-600"></i> Minigioco Counting Reale
+              </h3>
+              <p class="text-xs text-slate-500">I membri contano in sequenza. Chi sbaglia o conta 2 volte azzera lo streak!</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="cnt-enabled" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Dedicato al Conteggio</label>
+              <div class="space-y-1.5">
+                <div class="relative">
+                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                  <input type="text" id="cnt-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                </div>
+                <select id="cnt-channel" class="form-select text-xs"></select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 p-3 rounded-xl bg-white border border-slate-300">
+              <div>
+                <span class="text-[11px] text-slate-500 font-medium block">Numero Attuale</span>
+                <span id="cnt-current-val" class="text-lg font-bold text-slate-900 font-mono">0</span>
+              </div>
+              <div>
+                <span class="text-[11px] text-slate-500 font-medium block">Record Massimo</span>
+                <span id="cnt-highest-val" class="text-lg font-bold text-red-600 font-mono">0</span>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button id="btn-save-counting" class="btn-cyber text-xs py-2 px-4 flex-1 justify-center">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione
+              </button>
+              <button id="btn-reset-counting" type="button" class="btn-secondary text-xs py-2 px-3 text-red-700 hover:bg-red-50 border-red-200">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Azzera a 0
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-300">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="trophy" class="w-3.5 h-3.5 text-amber-500"></i> Top Contatori del Server
+            </h4>
+            <div id="cnt-leaderboard-list" class="space-y-1.5 text-xs">
+              <p class="text-slate-500 italic">Caricamento classifica...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fishing & Medieval Economy Card -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+                <i data-lucide="fish" class="w-4 h-4 text-cyan-600"></i> Pesca &amp; Economia Medievale
+              </h3>
+              <p class="text-xs text-slate-500">Minigioco RPG: cattura pesci rari, raccogli monete e potenzia le canne!</p>
+            </div>
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-200">Attivo</span>
+          </div>
+
+          <div class="space-y-3">
+            <div class="p-3 rounded-xl bg-white border border-slate-300 space-y-2">
+              <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                <i data-lucide="terminal" class="w-3.5 h-3.5 text-red-600"></i> Comandi Slash Minigiochi Attivi
+              </h4>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-700">
+                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/pesca</strong> — Lancia l'amo e pesca bottini</div>
+                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/daily</strong> — Riscatta stipendio giornaliero</div>
+                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/duello</strong> — Sfida membri a singolar tenzone</div>
+                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/moneta</strong> — Testa o croce con puntate</div>
+                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/dado</strong> — Lancia dadi da gioco d6/d20</div>
+                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/counting</strong> — Statistiche e setup conteggio</div>
+              </div>
+            </div>
+
+            <div>
+              <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-500"></i> Pescatori Più Ricchi del Reame
+              </h4>
+              <div id="fish-leaderboard-list" class="space-y-1.5 text-xs">
+                <p class="text-slate-500 italic">Caricamento classifica pescatori...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
     
     
     <section id="tab-emojis" class="tab-content hidden space-y-6">
@@ -1329,9 +1540,9 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=18"></script>
-  <script src="/js/embedBuilder.js?v=18"></script>
-  <script src="/js/modules.js?v=18"></script>
+  <script src="/js/app.js?v=20"></script>
+  <script src="/js/embedBuilder.js?v=20"></script>
+  <script src="/js/modules.js?v=20"></script>
   <script>
     lucide.createIcons();
   </script>

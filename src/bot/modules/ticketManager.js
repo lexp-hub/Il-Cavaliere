@@ -246,6 +246,110 @@ export const TicketManager = {
         console.error('[TicketManager] Error deleting channel:', err.message);
       }
     }, 4000);
+  },
+
+  async handleTicketAddUser(interaction, targetUser) {
+    const { channel } = interaction;
+    const ticket = DatabaseHelper.getTicketByChannel(channel.id);
+    if (!ticket) {
+      return interaction.reply({ content: '❌ Questo canale non è un ticket registrato.', ephemeral: true });
+    }
+
+    try {
+      await channel.permissionOverwrites.edit(targetUser.id, {
+        ViewChannel: true,
+        SendMessages: true,
+        ReadMessageHistory: true,
+        AttachFiles: true,
+        EmbedLinks: true
+      });
+
+      const embed = new EmbedBuilder()
+        .setColor(CONFIG.EMBED_SUCCESS_COLOR || '#10b981')
+        .setDescription(`✅ ${targetUser} è stato aggiunto con successo al ticket da ${interaction.user}.`)
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [embed] });
+    } catch (err) {
+      await interaction.reply({ content: `❌ Errore aggiunta utente: ${err.message}`, ephemeral: true });
+    }
+  },
+
+  async handleTicketRemoveUser(interaction, targetUser) {
+    const { channel } = interaction;
+    const ticket = DatabaseHelper.getTicketByChannel(channel.id);
+    if (!ticket) {
+      return interaction.reply({ content: '❌ Questo canale non è un ticket registrato.', ephemeral: true });
+    }
+
+    if (targetUser.id === ticket.user_id) {
+      return interaction.reply({ content: '❌ Non puoi rimuovere il creatore del ticket dal proprio ticket!', ephemeral: true });
+    }
+
+    try {
+      await channel.permissionOverwrites.delete(targetUser.id);
+
+      const embed = new EmbedBuilder()
+        .setColor(CONFIG.EMBED_COLOR || '#dc2626')
+        .setDescription(`🚫 ${targetUser} è stato rimosso dal ticket da ${interaction.user}.`)
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [embed] });
+    } catch (err) {
+      await interaction.reply({ content: `❌ Errore rimozione utente: ${err.message}`, ephemeral: true });
+    }
+  },
+
+  async editTicketPanel(panelId, newConfig, botClient) {
+    const panel = DatabaseHelper.getTicketPanel(panelId);
+    if (!panel || !panel.channel_id || !panel.message_id) {
+      throw new Error('Pannello non trovato o privo di message_id');
+    }
+
+    const channel = await botClient.channels.fetch(panel.channel_id);
+    if (!channel) throw new Error('Canale non trovato su Discord');
+
+    const message = await channel.messages.fetch(panel.message_id);
+    if (!message) throw new Error('Messaggio del pannello non trovato su Discord');
+
+    const styleMap = {
+      'Primary': ButtonStyle.Primary,
+      'Secondary': ButtonStyle.Secondary,
+      'Success': ButtonStyle.Success,
+      'Danger': ButtonStyle.Danger
+    };
+
+    const openButton = new ButtonBuilder()
+      .setCustomId(`ticket_open_${panel.id}`)
+      .setLabel(newConfig.button_label || panel.button_label || 'Apri Ticket')
+      .setEmoji(newConfig.button_emoji || panel.button_emoji || '📩')
+      .setStyle(styleMap[newConfig.button_style] || ButtonStyle.Primary);
+
+    const row = new ActionRowBuilder().addComponents(openButton);
+
+    const embed = new EmbedBuilder()
+      .setColor(newConfig.color || panel.color || CONFIG.EMBED_COLOR || '#dc2626')
+      .setTitle(newConfig.title || panel.title || '🎫 Centro Supporto & Assistenza')
+      .setDescription(newConfig.description || panel.description || 'Clicca sul pulsante sottostante per aprire una richiesta di supporto.')
+      .setFooter({ text: newConfig.footer || panel.footer || 'Il Cavaliere • Ticket System', iconURL: channel.guild.iconURL() })
+      .setTimestamp();
+
+    if (newConfig.image || panel.image) {
+      embed.setImage(newConfig.image || panel.image);
+    }
+
+    await message.edit({ embeds: [embed], components: [row] });
+
+    DatabaseHelper.saveTicketPanel({
+      ...panel,
+      ...newConfig,
+      id: panel.id,
+      guild_id: panel.guild_id,
+      channel_id: panel.channel_id,
+      message_id: panel.message_id
+    });
+
+    return true;
   }
 };
 

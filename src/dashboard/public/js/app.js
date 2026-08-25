@@ -247,6 +247,10 @@ window.switchGuild = async function(guildId) {
       window.loadModuleData(guildId);
     }
 
+    if (window.initModuleToolbars) {
+      window.initModuleToolbars();
+    }
+
     lucide.createIcons();
   } catch (e) {
     console.error('Error switching guild:', e);

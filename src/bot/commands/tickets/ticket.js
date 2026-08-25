@@ -14,11 +14,11 @@ import { CONFIG } from '../../../config.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('ticket')
-    .setDescription('Gestione del sistema Ticket di supporto')
+    .setDescription('Gestione avanzata del sistema Ticket di supporto')
     .addSubcommand(sub =>
       sub
         .setName('panel')
-        .setDescription('Invia un pannello interattivo per aprire i ticket')
+        .setDescription('Invia o aggiorna un pannello interattivo per aprire i ticket')
         .addChannelOption(opt =>
           opt
             .setName('canale')
@@ -47,8 +47,37 @@ export default {
     .addSubcommand(sub =>
       sub
         .setName('close')
-        .setDescription('Chiude il ticket corrente')
+        .setDescription('Chiude il ticket corrente con transcript e pulizia')
         .addStringOption(opt => opt.setName('motivo').setDescription('Motivo della chiusura').setRequired(false))
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('add')
+        .setDescription('Aggiunge un utente al ticket corrente')
+        .addUserOption(opt => opt.setName('utente').setDescription('L\'utente da aggiungere').setRequired(true))
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('remove')
+        .setDescription('Rimuove un utente dal ticket corrente')
+        .addUserOption(opt => opt.setName('utente').setDescription('L\'utente da rimuovere').setRequired(true))
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('automation')
+        .setDescription('Gestisce le automazioni dei ticket del server')
+        .addStringOption(opt =>
+          opt
+            .setName('azione')
+            .setDescription('Tipo di automazione')
+            .setRequired(true)
+            .addChoices(
+              { name: 'Chiudi per Inattività (48h)', value: 'auto_close' },
+              { name: 'Invia Transcript in DM', value: 'auto_transcript' },
+              { name: 'Notifica Ruolo Staff', value: 'auto_tag' }
+            )
+        )
+        .addBooleanOption(opt => opt.setName('stato').setDescription('Abilita o disabilita').setRequired(true))
     )
     .addSubcommand(sub =>
       sub
@@ -87,7 +116,7 @@ export default {
       const row = new ActionRowBuilder().addComponents(openButton);
 
       const embed = new EmbedBuilder()
-        .setColor(CONFIG.EMBED_COLOR)
+        .setColor(CONFIG.EMBED_COLOR || '#dc2626')
         .setTitle(title)
         .setDescription(desc)
         .setFooter({ text: 'Il Cavaliere • Assistenza Clienti', iconURL: interaction.guild.iconURL() })
@@ -112,6 +141,37 @@ export default {
     } else if (subcommand === 'close') {
       const reason = interaction.options.getString('motivo') || 'Nessun motivo specificato';
       await TicketManager.handleTicketClose(interaction, reason);
+    } else if (subcommand === 'add') {
+      const targetUser = interaction.options.getUser('utente');
+      await TicketManager.handleTicketAddUser(interaction, targetUser);
+    } else if (subcommand === 'remove') {
+      const targetUser = interaction.options.getUser('utente');
+      await TicketManager.handleTicketRemoveUser(interaction, targetUser);
+    } else if (subcommand === 'automation') {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator) &&
+          !interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+        return interaction.reply({ content: '❌ Solo i moderatori e amministratori possono configurare le automazioni.', ephemeral: true });
+      }
+
+      const action = interaction.options.getString('azione');
+      const state = interaction.options.getBoolean('stato');
+
+      const current = DatabaseHelper.getTicketAutomation(interaction.guild.id);
+      const updated = { ...current };
+
+      if (action === 'auto_close') updated.auto_close_hours = state ? 48 : 0;
+      if (action === 'auto_transcript') updated.auto_transcript_dm = state ? 1 : 0;
+      if (action === 'auto_tag') updated.auto_tag_staff = state ? 1 : 0;
+
+      DatabaseHelper.saveTicketAutomation(interaction.guild.id, updated);
+
+      const embed = new EmbedBuilder()
+        .setColor(CONFIG.EMBED_SUCCESS_COLOR || '#10b981')
+        .setTitle('⚙️ Automazione Ticket Aggiornata')
+        .setDescription(`L'opzione **${action}** è stata impostata a: \`${state ? 'ABILITATA' : 'DISABILITATA'}\`.`)
+        .setTimestamp();
+
+      await interaction.reply({ embeds: [embed] });
     } else if (subcommand === 'claim') {
       await TicketManager.handleTicketClaim(interaction);
     }

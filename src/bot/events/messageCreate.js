@@ -1,6 +1,7 @@
 import { AutoModManager } from '../modules/automodManager.js';
 import { XPManager } from '../modules/xpManager.js';
 import { AIManager } from '../modules/aiManager.js';
+import { CountingManager } from '../modules/countingManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 
@@ -8,6 +9,9 @@ export default {
   name: 'messageCreate',
   async execute(message) {
     if (!message.guild || message.author.bot) return;
+
+    // 1. Counting minigame handler
+    await CountingManager.handleMessage(message);
 
     const violated = await AutoModManager.handleMessage(message);
     if (violated) return;

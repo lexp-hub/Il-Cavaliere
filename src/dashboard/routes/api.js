@@ -391,10 +391,28 @@ export function createApiRouter(botClient) {
 
           if (image) embed.setImage(image);
 
-          const sent = await channel.send({ embeds: [embed], components: [row] });
+          // Check if editing existing message
+          let targetMsg = null;
+          if (req.body.panelId || req.body.messageId) {
+            const existingPanel = req.body.panelId ? DatabaseHelper.getTicketPanel(req.body.panelId) : null;
+            const targetMsgId = req.body.messageId || existingPanel?.message_id;
+            if (targetMsgId) {
+              try {
+                targetMsg = await channel.messages.fetch(targetMsgId);
+              } catch (e) {}
+            }
+          }
+
+          let sent = null;
+          if (targetMsg) {
+            await targetMsg.edit({ embeds: [embed], components: [row] });
+            sent = targetMsg;
+          } else {
+            sent = await channel.send({ embeds: [embed], components: [row] });
+          }
 
           const saved = DatabaseHelper.saveTicketPanel({
-            id: panelId,
+            id: req.body.panelId || panelId,
             guild_id: guildId,
             channel_id: channel.id,
             message_id: sent.id,
@@ -413,7 +431,7 @@ export function createApiRouter(botClient) {
             log_channel_id: logChannelId || null
           });
 
-          return res.json({ success: true, panel: saved });
+          return res.json({ success: true, panel: saved, edited: Boolean(targetMsg) });
         }
       } catch (err) {
         return res.status(500).json({ error: err.message });
@@ -421,6 +439,129 @@ export function createApiRouter(botClient) {
     }
 
     res.status(400).json({ error: 'Server non raggiungibile.' });
+  });
+
+  // Universal Live Embed Message Editor: Edit ANY message previously sent by the bot on Discord
+  router.post('/guilds/:guildId/embeds/edit-message', requireModAuth, async (req, res) => {
+    const { channelId, messageId, embed, content } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!channelId || !messageId) {
+      return res.status(400).json({ error: 'ID Canale e ID Messaggio sono obbligatori.' });
+    }
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Bot Discord non connesso o server non trovato.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const channel = await guild.channels.fetch(channelId);
+      if (!channel) return res.status(404).json({ error: 'Canale non trovato su Discord.' });
+
+      const message = await channel.messages.fetch(messageId);
+      if (!message) return res.status(404).json({ error: 'Messaggio non trovato in questo canale.' });
+
+      if (message.author.id !== botClient.user.id) {
+        return res.status(403).json({ error: 'Puoi modificare solo i messaggi inviati da Il Cavaliere.' });
+      }
+
+      const editPayload = {};
+      if (content !== undefined) editPayload.content = content;
+      if (embed) {
+        const discordEmbed = new EmbedBuilder();
+        if (embed.title) discordEmbed.setTitle(embed.title);
+        if (embed.description) discordEmbed.setDescription(embed.description);
+        if (embed.color) discordEmbed.setColor(embed.color);
+        if (embed.url) discordEmbed.setURL(embed.url);
+        if (embed.image) discordEmbed.setImage(embed.image);
+        if (embed.thumbnail) discordEmbed.setThumbnail(embed.thumbnail);
+        if (embed.footer) discordEmbed.setFooter({ text: embed.footer });
+        if (embed.timestamp) discordEmbed.setTimestamp();
+        if (embed.fields && Array.isArray(embed.fields)) {
+          embed.fields.forEach(f => {
+            if (f.name && f.value) discordEmbed.addFields({ name: f.name, value: f.value, inline: Boolean(f.inline) });
+          });
+        }
+        editPayload.embeds = [discordEmbed];
+      }
+
+      await message.edit(editPayload);
+      return res.json({ success: true, messageId: message.id, channelId: channel.id });
+    } catch (err) {
+      return res.status(500).json({ error: `Impossibile modificare il messaggio: ${err.message}` });
+    }
+  });
+
+  // Universal Live Embed Message Fetcher: Load ANY bot message directly into the Embed Builder
+  router.post('/guilds/:guildId/embeds/fetch-message', requireModAuth, async (req, res) => {
+    let { channelId, messageId, url } = req.body;
+    const guildId = req.params.guildId;
+
+    if (url) {
+      const match = url.match(/channels\/(\d+)\/(\d+)\/(\d+)/);
+      if (match) {
+        channelId = match[2];
+        messageId = match[3];
+      }
+    }
+
+    if (!channelId || !messageId) {
+      return res.status(400).json({ error: 'Specifica Canale e Messaggio o un link valido di Discord.' });
+    }
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Bot Discord non connesso.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const channel = await guild.channels.fetch(channelId);
+      if (!channel) return res.status(404).json({ error: 'Canale non trovato.' });
+
+      const message = await channel.messages.fetch(messageId);
+      if (!message) return res.status(404).json({ error: 'Messaggio non trovato.' });
+
+      const firstEmbed = message.embeds[0];
+      const data = {
+        content: message.content || '',
+        channelId: channel.id,
+        messageId: message.id,
+        embed: firstEmbed ? {
+          title: firstEmbed.title || '',
+          description: firstEmbed.description || '',
+          color: firstEmbed.hexColor || '#ea580c',
+          url: firstEmbed.url || '',
+          image: firstEmbed.image?.url || '',
+          thumbnail: firstEmbed.thumbnail?.url || '',
+          footer: firstEmbed.footer?.text || '',
+          timestamp: Boolean(firstEmbed.timestamp),
+          fields: firstEmbed.fields ? firstEmbed.fields.map(f => ({ name: f.name, value: f.value, inline: f.inline })) : []
+        } : null
+      };
+
+      return res.json({ success: true, data });
+    } catch (err) {
+      return res.status(500).json({ error: `Errore recupero messaggio: ${err.message}` });
+    }
+  });
+
+  // Counting Game API Endpoints
+  router.get('/guilds/:guildId/counting', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.getCountingConfig(req.params.guildId);
+    const leaderboard = DatabaseHelper.getCountingLeaderboard(req.params.guildId, 15);
+    res.json({ config, leaderboard });
+  });
+
+  router.post('/guilds/:guildId/counting', requireModAuth, (req, res) => {
+    const saved = DatabaseHelper.saveCountingConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: DatabaseHelper.getCountingConfig(req.params.guildId) });
+  });
+
+  // Fishing Economy API Endpoints
+  router.get('/guilds/:guildId/fishing', requireModAuth, (req, res) => {
+    const leaderboard = DatabaseHelper.getFishingLeaderboard(req.params.guildId, 15);
+    res.json({ leaderboard });
   });
 
   router.get('/guilds/:guildId/giveaways', requireModAuth, (req, res) => {

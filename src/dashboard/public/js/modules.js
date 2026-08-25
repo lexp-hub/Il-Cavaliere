@@ -13,6 +13,7 @@
       loadAutomodData(guildId),
       loadTicketsData(guildId),
       loadGiveawaysAndLeveling(guildId),
+      loadMinigamesData(guildId),
       loadEmojiStats(guildId)
     ]);
   };
@@ -867,6 +868,20 @@
         if (panel.category_id) document.getElementById('tk-category').value = panel.category_id;
         if (panel.support_role_id) document.getElementById('tk-support-role').value = panel.support_role_id;
         if (panel.log_channel_id) document.getElementById('tk-log-channel').value = panel.log_channel_id;
+
+        const panelIdInput = document.getElementById('tk-active-panel-id');
+        const messageIdInput = document.getElementById('tk-active-message-id');
+        const btnUpdate = document.getElementById('btn-update-ticket-panel');
+
+        if (panelIdInput) panelIdInput.value = panel.id;
+        if (messageIdInput) messageIdInput.value = panel.message_id || '';
+        if (btnUpdate) {
+          if (panel.message_id) {
+            btnUpdate.classList.remove('hidden');
+          } else {
+            btnUpdate.classList.add('hidden');
+          }
+        }
       }
 
       updateTicketPreview();
@@ -875,43 +890,32 @@
     }
   }
 
+  function getTicketPanelPayload() {
+    return {
+      channelId: document.getElementById('tk-channel')?.value,
+      categoryId: document.getElementById('tk-category')?.value || null,
+      supportRoleId: document.getElementById('tk-support-role')?.value || null,
+      logChannelId: document.getElementById('tk-log-channel')?.value || null,
+      title: document.getElementById('tk-title')?.value,
+      description: document.getElementById('tk-description')?.value,
+      color: document.getElementById('tk-color')?.value || '#dc2626',
+      image: document.getElementById('tk-image')?.value?.trim() || null,
+      footer: document.getElementById('tk-footer')?.value,
+      buttonLabel: document.getElementById('tk-btn-label')?.value,
+      buttonEmoji: document.getElementById('tk-btn-emoji')?.value,
+      buttonStyle: document.getElementById('tk-btn-style')?.value || 'Primary',
+      namingScheme: document.getElementById('tk-naming')?.value || 'ticket-{user}',
+      welcomeMessage: document.getElementById('tk-welcome-msg')?.value
+    };
+  }
+
   const btnCreateTicketPanel = document.getElementById('btn-create-ticket-panel');
   if (btnCreateTicketPanel) {
     btnCreateTicketPanel.addEventListener('click', async () => {
       const guildId = window.AppState.currentGuildId;
-      const channelId = document.getElementById('tk-channel')?.value;
-      const categoryId = document.getElementById('tk-category')?.value || null;
-      const supportRoleId = document.getElementById('tk-support-role')?.value || null;
-      const logChannelId = document.getElementById('tk-log-channel')?.value || null;
-      const title = document.getElementById('tk-title')?.value;
-      const description = document.getElementById('tk-description')?.value;
-      const color = document.getElementById('tk-color')?.value || '#dc2626';
-      const image = document.getElementById('tk-image')?.value?.trim() || null;
-      const footer = document.getElementById('tk-footer')?.value;
-      const buttonLabel = document.getElementById('tk-btn-label')?.value;
-      const buttonEmoji = document.getElementById('tk-btn-emoji')?.value;
-      const buttonStyle = document.getElementById('tk-btn-style')?.value || 'Primary';
-      const namingScheme = document.getElementById('tk-naming')?.value || 'ticket-{user}';
-      const welcomeMessage = document.getElementById('tk-welcome-msg')?.value;
+      const payload = getTicketPanelPayload();
 
-      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello.', 'error');
-
-      const payload = {
-        channelId,
-        categoryId,
-        supportRoleId,
-        logChannelId,
-        title,
-        description,
-        color,
-        image,
-        footer,
-        buttonLabel,
-        buttonEmoji,
-        buttonStyle,
-        namingScheme,
-        welcomeMessage
-      };
+      if (!payload.channelId) return window.showToast('Seleziona un canale per inviare il pannello.', 'error');
 
       const res = await fetch(`/api/guilds/${guildId}/tickets/panel`, {
         method: 'POST',
@@ -920,10 +924,48 @@
       });
 
       if (res.ok) {
-        window.showToast('Pannello Ticket personalizzato inviato con successo!');
+        window.showToast('Nuovo Pannello Ticket inviato con successo nel canale!');
         await loadTicketsData(guildId);
       } else {
         window.showToast('Errore durante l\'invio del pannello.', 'error');
+      }
+    });
+  }
+
+  const btnUpdateTicketPanel = document.getElementById('btn-update-ticket-panel');
+  if (btnUpdateTicketPanel) {
+    btnUpdateTicketPanel.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const panelId = document.getElementById('tk-active-panel-id')?.value;
+      const messageId = document.getElementById('tk-active-message-id')?.value;
+      const payload = getTicketPanelPayload();
+
+      if (!payload.channelId) return window.showToast('Seleziona un canale.', 'error');
+
+      try {
+        btnUpdateTicketPanel.disabled = true;
+        btnUpdateTicketPanel.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Modifica in corso...';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/tickets/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, panelId, messageId })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Pannello Ticket su Discord aggiornato con successo in tempo reale senza cancellarlo!');
+          await loadTicketsData(guildId);
+        } else {
+          window.showToast(`Errore modifica: ${data.error || 'Fallita'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnUpdateTicketPanel.disabled = false;
+        btnUpdateTicketPanel.innerHTML = '<i data-lucide="refresh-cw" class="w-4 h-4 text-amber-600"></i> Modifica Pannello Esistente';
+        if (window.lucide) lucide.createIcons();
       }
     });
   }
@@ -977,6 +1019,130 @@
 
       if (res.ok) window.showToast(`Giveaway per ${prize} avviato!`);
       else window.showToast('Errore avvio giveaway.', 'error');
+    });
+  }
+
+  // === Minigames & Medieval Community Handler ===
+  async function loadMinigamesData(guildId) {
+    try {
+      const [cntRes, fishRes] = await Promise.allSettled([
+        fetch(`/api/guilds/${guildId}/counting`),
+        fetch(`/api/guilds/${guildId}/fishing`)
+      ]);
+
+      if (cntRes.status === 'fulfilled' && cntRes.value.ok) {
+        const data = await cntRes.value.json();
+        const cfg = data.config || {};
+        const enabledEl = document.getElementById('cnt-enabled');
+        const channelEl = document.getElementById('cnt-channel');
+        const curEl = document.getElementById('cnt-current-val');
+        const highEl = document.getElementById('cnt-highest-val');
+
+        if (enabledEl) enabledEl.checked = Boolean(cfg.enabled);
+        if (channelEl && cfg.channel_id) channelEl.value = cfg.channel_id;
+        if (curEl) curEl.textContent = cfg.current_number || 0;
+        if (highEl) highEl.textContent = cfg.highest_streak || 0;
+
+        const lbList = document.getElementById('cnt-leaderboard-list');
+        if (lbList) {
+          lbList.innerHTML = '';
+          const lb = data.leaderboard || [];
+          if (lb.length === 0) {
+            lbList.innerHTML = '<p class="text-slate-400 italic">Nessun punteggio conteggio registrato finora.</p>';
+          } else {
+            lb.forEach((item, idx) => {
+              const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+              const div = document.createElement('div');
+              div.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs';
+              div.innerHTML = `
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-700">${medal}</span>
+                  <span class="font-mono text-slate-900">&lt;@${item.user_id}&gt;</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="font-bold text-emerald-600">${item.correct_counts} corretti</span>
+                  <span class="text-slate-400 text-[10px]">(${item.ruined_counts} errori)</span>
+                </div>
+              `;
+              lbList.appendChild(div);
+            });
+          }
+        }
+      }
+
+      if (fishRes.status === 'fulfilled' && fishRes.value.ok) {
+        const data = await fishRes.value.json();
+        const lbList = document.getElementById('fish-leaderboard-list');
+        if (lbList) {
+          lbList.innerHTML = '';
+          const lb = data.leaderboard || [];
+          if (lb.length === 0) {
+            lbList.innerHTML = '<p class="text-slate-400 italic">Nessun pescatore registrato.</p>';
+          } else {
+            lb.forEach((item, idx) => {
+              const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+              const div = document.createElement('div');
+              div.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs';
+              div.innerHTML = `
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-700">${medal}</span>
+                  <span class="font-mono text-slate-900">&lt;@${item.user_id}&gt;</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="font-bold text-amber-600">🪙 ${item.coins} Monete</span>
+                  <span class="text-slate-500 text-[10px]">🎣 ${item.total_fish_caught} pescati</span>
+                </div>
+              `;
+              lbList.appendChild(div);
+            });
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error loading minigames:', e);
+    }
+  }
+
+  const btnSaveCounting = document.getElementById('btn-save-counting');
+  if (btnSaveCounting) {
+    btnSaveCounting.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('cnt-channel')?.value;
+      const enabled = document.getElementById('cnt-enabled')?.checked;
+
+      const res = await fetch(`/api/guilds/${guildId}/counting`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_id: channelId, enabled })
+      });
+
+      if (res.ok) {
+        window.showToast('Configurazione Minigioco Counting salvata!');
+        await loadMinigamesData(guildId);
+      } else {
+        window.showToast('Errore durante il salvataggio.', 'error');
+      }
+    });
+  }
+
+  const btnResetCounting = document.getElementById('btn-reset-counting');
+  if (btnResetCounting) {
+    btnResetCounting.addEventListener('click', async () => {
+      if (!confirm('Sei sicuro di voler azzerare il conteggio attuale a 0?')) return;
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('cnt-channel')?.value;
+      const enabled = document.getElementById('cnt-enabled')?.checked;
+
+      const res = await fetch(`/api/guilds/${guildId}/counting`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_id: channelId, enabled, current_number: 0, last_user_id: null })
+      });
+
+      if (res.ok) {
+        window.showToast('Conteggio azzerato a 0!');
+        await loadMinigamesData(guildId);
+      }
     });
   }
 
@@ -1119,27 +1285,67 @@
     }
   }
 
-  // Initialize Markdown Toolbars for Welcomer & Ticket System
+  // Initialize Markdown Toolbars & Searchable Selects for ALL Modules across the entire Dashboard
   function initModuleToolbars() {
     if (window.setupMarkdownToolbar) {
+      // AI Module
+      window.setupMarkdownToolbar('ai-prompt-toolbar-container', 'ai-system-prompt');
+      
+      // Partnerships Module
+      window.setupMarkdownToolbar('part-notes-toolbar-container', 'part-quick-notes');
+
+      // Welcomer Module
       window.setupMarkdownToolbar('wel-toolbar-container', 'wel-message');
       window.setupMarkdownToolbar('wel-dm-toolbar-container', 'wel-dm-message');
       window.setupMarkdownToolbar('wel-leave-toolbar-container', 'wel-leave-message');
+
+      // Reaction Roles Module
+      window.setupMarkdownToolbar('rr-title-toolbar-container', 'rr-title');
+
+      // Auto-Responder Module
+      window.setupMarkdownToolbar('ar-response-toolbar-container', 'ar-response');
+
+      // Ticket System Module
       window.setupMarkdownToolbar('tk-desc-toolbar-container', 'tk-description');
       window.setupMarkdownToolbar('tk-welcome-toolbar-container', 'tk-welcome-msg');
+
+      // Giveaways & Leveling Module
+      window.setupMarkdownToolbar('ga-prize-toolbar-container', 'ga-prize');
+      window.setupMarkdownToolbar('lvl-msg-toolbar-container', 'lvl-message');
     }
 
     if (window.setupSearchableSelect) {
+      // Welcomer Channels
       window.setupSearchableSelect('wel-channel-search', 'wel-channel', 'text');
       window.setupSearchableSelect('wel-leave-channel-search', 'wel-leave-channel', 'text');
+
+      // Ticket System Channels, Categories & Roles
       window.setupSearchableSelect('tk-channel-search', 'tk-channel', 'text');
       window.setupSearchableSelect('tk-category-search', 'tk-category', 'category');
       window.setupSearchableSelect('tk-support-role-search', 'tk-support-role', 'role');
       window.setupSearchableSelect('tk-log-channel-search', 'tk-log-channel', 'text');
+
+      // Partnerships Channels & Roles
       window.setupSearchableSelect('part-channel-search', 'part-channel', 'text');
       window.setupSearchableSelect('part-ping-role-search', 'part-ping-role', 'role');
+
+      // Reaction Roles Channels & Roles
+      window.setupSearchableSelect('rr-channel-search', 'rr-channel', 'text');
+      window.setupSearchableSelect('rr-role-search', 'rr-role', 'role');
+
+      // Auto-Responder Channel
+      window.setupSearchableSelect('ar-chan-search', 'ar-chan-select', 'text');
+
+      // Giveaways & Leveling Channels
+      window.setupSearchableSelect('ga-channel-search', 'ga-channel', 'text');
+      window.setupSearchableSelect('lvl-channel-search', 'lvl-channel', 'text');
+
+      // Minigames & Counting Channel
+      window.setupSearchableSelect('cnt-channel-search', 'cnt-channel', 'text');
     }
   }
+
+  window.initModuleToolbars = initModuleToolbars;
 
   // Run on DOM Ready
   if (document.readyState === 'loading') {

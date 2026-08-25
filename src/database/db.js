@@ -712,6 +712,148 @@ export const DatabaseHelper = {
 
   getEmojiStats(guildId, limit = 20) {
     return db.prepare('SELECT * FROM emoji_stats WHERE guild_id = ? ORDER BY use_count DESC LIMIT ?').all(guildId, limit);
+  },
+
+  // === Counting Game Helpers ===
+  getCountingConfig(guildId) {
+    const row = db.prepare('SELECT * FROM counting_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare('INSERT INTO counting_configs (guild_id, current_number, highest_streak, enabled) VALUES (?, 0, 0, 0)').run(guildId);
+      return { guild_id: guildId, channel_id: null, current_number: 0, last_user_id: null, highest_streak: 0, allow_ruin_reset: 1, enabled: 0 };
+    }
+    return row;
+  },
+
+  saveCountingConfig(guildId, config) {
+    return db.prepare(`
+      INSERT INTO counting_configs (guild_id, channel_id, current_number, last_user_id, highest_streak, allow_ruin_reset, enabled)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id) DO UPDATE SET
+        channel_id = excluded.channel_id,
+        current_number = excluded.current_number,
+        last_user_id = excluded.last_user_id,
+        highest_streak = excluded.highest_streak,
+        allow_ruin_reset = excluded.allow_ruin_reset,
+        enabled = excluded.enabled
+    `).run(
+      guildId,
+      config.channel_id ?? null,
+      config.current_number ?? 0,
+      config.last_user_id ?? null,
+      config.highest_streak ?? 0,
+      config.allow_ruin_reset !== undefined ? (config.allow_ruin_reset ? 1 : 0) : 1,
+      config.enabled !== undefined ? (config.enabled ? 1 : 0) : 0
+    );
+  },
+
+  recordCountSuccess(guildId, userId, nextNumber) {
+    const cfg = this.getCountingConfig(guildId);
+    const newStreak = Math.max(cfg.highest_streak || 0, nextNumber);
+    
+    db.prepare(`
+      UPDATE counting_configs SET
+        current_number = ?,
+        last_user_id = ?,
+        highest_streak = ?
+      WHERE guild_id = ?
+    `).run(nextNumber, userId, newStreak, guildId);
+
+    db.prepare(`
+      INSERT INTO counting_scores (guild_id, user_id, counts, correct_counts, ruined_counts)
+      VALUES (?, ?, 1, 1, 0)
+      ON CONFLICT(guild_id, user_id) DO UPDATE SET
+        counts = counts + 1,
+        correct_counts = correct_counts + 1
+    `).run(guildId, userId);
+  },
+
+  recordCountRuin(guildId, userId) {
+    db.prepare(`
+      UPDATE counting_configs SET
+        current_number = 0,
+        last_user_id = NULL
+      WHERE guild_id = ?
+    `).run(guildId);
+
+    db.prepare(`
+      INSERT INTO counting_scores (guild_id, user_id, counts, correct_counts, ruined_counts)
+      VALUES (?, ?, 1, 0, 1)
+      ON CONFLICT(guild_id, user_id) DO UPDATE SET
+        counts = counts + 1,
+        ruined_counts = ruined_counts + 1
+    `).run(guildId, userId);
+  },
+
+  getCountingLeaderboard(guildId, limit = 10) {
+    return db.prepare('SELECT * FROM counting_scores WHERE guild_id = ? ORDER BY correct_counts DESC LIMIT ?').all(guildId, limit);
+  },
+
+  // === Fishing & Medieval Economy Helpers ===
+  getFishingProfile(guildId, userId) {
+    let row = db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? AND user_id = ?').get(guildId, userId);
+    if (!row) {
+      db.prepare('INSERT INTO fishing_profiles (guild_id, user_id, rod_level, coins, total_fish_caught, last_fished, last_daily, inventory) VALUES (?, ?, 1, 100, 0, 0, 0, ?)').run(guildId, userId, JSON.stringify([]));
+      row = { guild_id: guildId, user_id: userId, rod_level: 1, coins: 100, total_fish_caught: 0, last_fished: 0, last_daily: 0, inventory: '[]' };
+    }
+    return {
+      ...row,
+      inventory: typeof row.inventory === 'string' ? JSON.parse(row.inventory || '[]') : (row.inventory || [])
+    };
+  },
+
+  saveFishingProfile(guildId, userId, profile) {
+    return db.prepare(`
+      INSERT INTO fishing_profiles (guild_id, user_id, rod_level, coins, total_fish_caught, last_fished, last_daily, inventory)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id, user_id) DO UPDATE SET
+        rod_level = excluded.rod_level,
+        coins = excluded.coins,
+        total_fish_caught = excluded.total_fish_caught,
+        last_fished = excluded.last_fished,
+        last_daily = excluded.last_daily,
+        inventory = excluded.inventory
+    `).run(
+      guildId,
+      userId,
+      profile.rod_level || 1,
+      profile.coins ?? 100,
+      profile.total_fish_caught || 0,
+      profile.last_fished || 0,
+      profile.last_daily || 0,
+      JSON.stringify(profile.inventory || [])
+    );
+  },
+
+  getFishingLeaderboard(guildId, limit = 10) {
+    return db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? ORDER BY coins DESC, total_fish_caught DESC LIMIT ?').all(guildId, limit);
+  },
+
+  // === Ticket Automation Helpers ===
+  getTicketAutomation(guildId) {
+    const row = db.prepare('SELECT * FROM ticket_automations WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare('INSERT INTO ticket_automations (guild_id) VALUES (?)').run(guildId);
+      return { guild_id: guildId, auto_close_hours: 48, auto_transcript_dm: 1, auto_tag_staff: 1, inactivity_warning_hours: 24 };
+    }
+    return row;
+  },
+
+  saveTicketAutomation(guildId, config) {
+    return db.prepare(`
+      INSERT INTO ticket_automations (guild_id, auto_close_hours, auto_transcript_dm, auto_tag_staff, inactivity_warning_hours)
+      VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id) DO UPDATE SET
+        auto_close_hours = excluded.auto_close_hours,
+        auto_transcript_dm = excluded.auto_transcript_dm,
+        auto_tag_staff = excluded.auto_tag_staff,
+        inactivity_warning_hours = excluded.inactivity_warning_hours
+    `).run(
+      guildId,
+      config.auto_close_hours || 48,
+      config.auto_transcript_dm !== undefined ? (config.auto_transcript_dm ? 1 : 0) : 1,
+      config.auto_tag_staff !== undefined ? (config.auto_tag_staff ? 1 : 0) : 1,
+      config.inactivity_warning_hours || 24
+    );
   }
 };
 
