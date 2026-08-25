@@ -61,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   initTabNavigation();
+  initMobileDrawer();
   initWebSocket();
   await loadUserData();
   await loadGuilds();
@@ -72,6 +73,42 @@ document.addEventListener('DOMContentLoaded', async () => {
     await switchGuild(targetGuild);
   }
 });
+
+function initMobileDrawer() {
+  const btnToggle = document.getElementById('btn-toggle-drawer');
+  const drawer = document.getElementById('sidebar-drawer');
+  const backdrop = document.getElementById('drawer-backdrop');
+  const btnCloseDrawer = document.getElementById('btn-close-drawer');
+  const btnSaveMobile = document.getElementById('btn-save-all-mobile');
+  const btnSaveDesktop = document.getElementById('btn-save-all');
+
+  function toggleDrawer(open) {
+    if (!drawer || !backdrop) return;
+    if (open) {
+      drawer.classList.remove('-translate-x-full');
+      backdrop.classList.remove('hidden');
+    } else {
+      drawer.classList.add('-translate-x-full');
+      backdrop.classList.add('hidden');
+    }
+  }
+
+  if (btnToggle) btnToggle.addEventListener('click', () => toggleDrawer(true));
+  if (btnCloseDrawer) btnCloseDrawer.addEventListener('click', () => toggleDrawer(false));
+  if (backdrop) backdrop.addEventListener('click', () => toggleDrawer(false));
+
+  if (btnSaveMobile && btnSaveDesktop) {
+    btnSaveMobile.addEventListener('click', () => btnSaveDesktop.click());
+  }
+
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      if (window.innerWidth < 768) {
+        toggleDrawer(false);
+      }
+    });
+  });
+}
 
 function initTabNavigation() {
   const tabs = document.querySelectorAll('.nav-tab');

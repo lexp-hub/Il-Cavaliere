@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Esporta Logo &amp; Banner PNG | Il Cavaliere</title>
+  <link rel="icon" href="/logo.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-black text-slate-100 min-h-screen flex flex-col items-center justify-center p-6">
+  <div class="max-w-3xl w-full text-center space-y-8">
+    <div>
+      <h1 class="text-3xl font-bold text-orange-400 mb-2">Esporta Asset Ufficiali in PNG</h1>
+      <p class="text-slate-400 text-sm">Clicca sui pulsanti per scaricare i file PNG in alta risoluzione per Discord.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <!-- Logo Card -->
+      <div class="bg-slate-900/80 border border-orange-500/30 rounded-2xl p-6 flex flex-col items-center gap-4 shadow-2xl">
+        <h2 class="text-lg font-bold text-white">Logo Ufficiale (1024x1024 px)</h2>
+        <div class="w-48 h-48 rounded-full overflow-hidden border border-orange-400/40 shadow-lg">
+          <img id="logo-preview" src="/logo.svg" alt="Logo Preview" class="w-full h-full object-cover">
+        </div>
+        <button onclick="downloadPng('/logo.svg', 'il-cavaliere-logo.png', 1024, 1024)" 
+                class="w-full py-3 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 shadow-lg shadow-orange-600/30 transition-all">
+          Scarica Logo PNG (1024x1024)
+        </button>
+      </div>
+
+      <!-- Banner Card -->
+      <div class="bg-slate-900/80 border border-orange-500/30 rounded-2xl p-6 flex flex-col items-center gap-4 shadow-2xl">
+        <h2 class="text-lg font-bold text-white">Banner Ufficiale (1200x480 px)</h2>
+        <div class="w-full h-48 rounded-2xl overflow-hidden border border-orange-400/40 shadow-lg flex items-center justify-center bg-black">
+          <img id="banner-preview" src="/banner.svg" alt="Banner Preview" class="w-full h-full object-contain">
+        </div>
+        <button onclick="downloadPng('/banner.svg', 'il-cavaliere-banner.png', 1200, 480)" 
+                class="w-full py-3 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 shadow-lg shadow-orange-600/30 transition-all">
+          Scarica Banner PNG (1200x480)
+        </button>
+      </div>
+    </div>
+
+    <div class="text-xs text-slate-500">
+      <a href="/" class="text-orange-400 hover:underline">← Torna alla Home del Cavaliere</a>
+    </div>
+  </div>
+
+  <canvas id="export-canvas" class="hidden"></canvas>
+
+  <script>
+    async function downloadPng(svgUrl, filename, width, height) {
+      try {
+        const svgRes = await fetch(svgUrl + '?t=' + Date.now());
+        const svgText = await svgRes.text();
+
+        const canvas = document.getElementById('export-canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+
+        const img = new Image();
+        const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(svgBlob);
+
+        img.onload = () => {
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+          URL.revokeObjectURL(url);
+
+          const pngUrl = canvas.toDataURL('image/png');
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = pngUrl;
+          link.click();
+        };
+        img.src = url;
+      } catch (e) {
+        console.error('Error generating PNG:', e);
+        alert('Errore durante la generazione del file PNG.');
+      }
+    }
+  </script>
+</body>
+</html>
+

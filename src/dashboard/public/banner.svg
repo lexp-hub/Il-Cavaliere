@@ -1,47 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
   <defs>
-    <!-- Warm Ambient Atmospheric Central & Side Glows -->
-    <radialGradient id="centerOrangeHalo" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.35" />
-      <stop offset="45%" stop-color="#f97316" stop-opacity="0.15" />
-      <stop offset="85%" stop-color="#000000" stop-opacity="0" />
-    </radialGradient>
-
-    <radialGradient id="sideOrangeGlowLeft" cx="10%" cy="50%" r="60%">
-      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.2" />
+    <!-- Ultra-Smooth Feathered Widescreen Background Glow -->
+    <radialGradient id="bannerBackgroundGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#3d1403" stop-opacity="0.85" />
+      <stop offset="25%" stop-color="#240c02" stop-opacity="0.65" />
+      <stop offset="55%" stop-color="#120501" stop-opacity="0.4" />
+      <stop offset="80%" stop-color="#050100" stop-opacity="0.2" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
-    <radialGradient id="sideOrangeGlowRight" cx="90%" cy="50%" r="60%">
-      <stop offset="0%" stop-color="#f97316" stop-opacity="0.2" />
-      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
-    </radialGradient>
-
-    <!-- Exact Knights Templar Beauceant Cross -->
-    <g id="templarCrossSolo">
-      <!-- Top Arm -->
-      <path d="M -3.5 -3.5 C -4 -12 -9 -22 -18 -32 C -8 -27 8 -27 18 -32 C 9 -22 4 -12 3.5 -3.5 Z" />
-      <!-- Right Arm (Rotated 90) -->
-      <path d="M -3.5 -3.5 C -4 -12 -9 -22 -18 -32 C -8 -27 8 -27 18 -32 C 9 -22 4 -12 3.5 -3.5 Z" transform="rotate(90)" />
-      <!-- Bottom Arm (Rotated 180) -->
-      <path d="M -3.5 -3.5 C -4 -12 -9 -22 -18 -32 C -8 -27 8 -27 18 -32 C 9 -22 4 -12 3.5 -3.5 Z" transform="rotate(180)" />
-      <!-- Left Arm (Rotated 270) -->
-      <path d="M -3.5 -3.5 C -4 -12 -9 -22 -18 -32 C -8 -27 8 -27 18 -32 C 9 -22 4 -12 3.5 -3.5 Z" transform="rotate(270)" />
-      <!-- Central Core Square -->
-      <rect x="-3.5" y="-3.5" width="7" height="7" />
-    </g>
+    <!-- Fiery Golden-Orange Metallic Gradient for the Centered Templar Cross -->
+    <linearGradient id="bannerCrossGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="25%" stop-color="#fbbf24" />
+      <stop offset="65%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#ea580c" />
+    </linearGradient>
   </defs>
 
-  <!-- Pure AMOLED Black Background -->
+  <!-- Pure AMOLED Black Base -->
   <rect width="600" height="240" fill="#000000" />
 
-  <!-- Ambient Glow Halos -->
-  <rect width="600" height="240" fill="url(#centerOrangeHalo)" />
-  <rect width="600" height="240" fill="url(#sideOrangeGlowLeft)" />
-  <rect width="600" height="240" fill="url(#sideOrangeGlowRight)" />
+  <!-- Ultra-Smooth Atmosphere Glow Layer -->
+  <rect width="600" height="240" fill="url(#bannerBackgroundGlow)" />
 
-  <!-- Centered, Large Knights Templar Cross Icon in Pure White -->
-  <g transform="translate(300, 120) scale(2.6)" fill="#ffffff">
-    <use href="#templarCrossSolo" />
+  <!-- Centered, Knights Templar Cross (Single Unified Path, Zero Seams/Squares) -->
+  <g transform="translate(300, 120) scale(0.55)" fill="url(#bannerCrossGradient)">
+    <path d="M -15 -15 
+             C -20 -55 -45 -115 -92 -165 
+             C -40 -140 40 -140 92 -165 
+             C 45 -115 20 -55 15 -15 
+             C 55 -20 115 -45 165 -92 
+             C 140 -40 140 40 165 92 
+             C 115 45 55 20 15 15 
+             C 20 55 45 115 92 165 
+             C 40 140 -40 140 -92 165 
+             C -45 115 -20 55 -15 15 
+             C -55 20 -115 45 -165 92 
+             C -140 40 -140 -40 -165 -92 
+             C -115 -45 -55 -20 -15 -15 Z" />
   </g>
 </svg>
