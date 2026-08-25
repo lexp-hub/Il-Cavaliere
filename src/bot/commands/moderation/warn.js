@@ -27,7 +27,6 @@ export default {
 
     const totalWarns = DatabaseHelper.getModerationCases(interaction.guild.id, targetUser.id).filter(c => c.action_type === 'WARN').length;
 
-    // Send DM notification
     try {
       const dmEmbed = new EmbedBuilder()
         .setColor(CONFIG.EMBED_WARN_COLOR)
@@ -51,4 +50,3 @@ export default {
     await interaction.reply({ embeds: [embed] });
   }
 };
-

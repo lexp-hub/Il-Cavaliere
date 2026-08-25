@@ -41,7 +41,7 @@ export function createBotClient() {
 }
 
 export async function loadCommandsAndEvents(client) {
-  // 1. Recursively load all commands from src/bot/commands/
+  
   const commandsPath = path.join(__dirname, 'commands');
   const commandFolders = fs.readdirSync(commandsPath);
 
@@ -69,7 +69,6 @@ export async function loadCommandsAndEvents(client) {
 
   console.log(`[Commands] Caricati ${client.commands.size} comandi slash.`);
 
-  // 2. Load all events from src/bot/events/
   const eventsPath = path.join(__dirname, 'events');
   const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'));
 
@@ -111,4 +110,3 @@ export async function registerSlashCommands(client) {
     console.error('[Commands Deploy] Errore durante la registrazione dei comandi slash:', error);
   }
 }
-

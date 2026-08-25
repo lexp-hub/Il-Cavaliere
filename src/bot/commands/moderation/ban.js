@@ -37,7 +37,6 @@ export default {
       }
     }
 
-    // Try sending DM to user before ban
     try {
       const dmEmbed = new EmbedBuilder()
         .setColor(CONFIG.EMBED_ERROR_COLOR)
@@ -73,4 +72,3 @@ export default {
     await interaction.reply({ embeds: [embed] });
   }
 };
-

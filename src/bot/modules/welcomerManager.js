@@ -18,7 +18,6 @@ export const WelcomerManager = {
   async handleMemberJoin(member) {
     const config = DatabaseHelper.getWelcomerConfig(member.guild.id);
 
-    // 1. Auto-Role assignment
     try {
       if (member.user.bot && config.auto_role_bot) {
         const botRole = member.guild.roles.cache.get(config.auto_role_bot);
@@ -31,7 +30,6 @@ export const WelcomerManager = {
       console.error('[Welcomer] Error adding auto-role:', e.message);
     }
 
-    // 2. Direct Message Welcome
     if (config.welcome_dm_enabled && config.welcome_dm_message && !member.user.bot) {
       try {
         const dmText = this.formatText(config.welcome_dm_message, member);
@@ -43,11 +41,10 @@ export const WelcomerManager = {
           .setTimestamp();
         await member.send({ embeds: [dmEmbed] }).catch(() => {});
       } catch (e) {
-        // DM closed
+        
       }
     }
 
-    // 3. Channel Welcome
     if (config.welcome_enabled && config.welcome_channel_id) {
       const channel = member.guild.channels.cache.get(config.welcome_channel_id);
       if (channel) {
@@ -107,4 +104,3 @@ export const WelcomerManager = {
 };
 
 export default WelcomerManager;
-

@@ -4,7 +4,7 @@ import { DatabaseHelper } from '../../database/db.js';
 export default {
   name: 'interactionCreate',
   async execute(interaction) {
-    // 1. Handle Slash Commands
+    
     if (interaction.isChatInputCommand()) {
       const command = interaction.client.commands.get(interaction.commandName);
       if (!command) {
@@ -30,11 +30,9 @@ export default {
       return;
     }
 
-    // 2. Handle Button Interactions
     if (interaction.isButton()) {
       const customId = interaction.customId;
 
-      // 2a. Reaction Roles Button (rr_btn_<role_id>)
       if (customId.startsWith('rr_btn_')) {
         const roleId = customId.replace('rr_btn_', '');
         const role = interaction.guild.roles.cache.get(roleId);
@@ -62,28 +60,23 @@ export default {
         }
       }
 
-      // 2b. Ticket Open Button (ticket_open_<panel_id>)
       if (customId.startsWith('ticket_open_')) {
         const panelId = customId.replace('ticket_open_', '');
         return TicketManager.handleTicketCreate(interaction, panelId);
       }
 
-      // 2c. Ticket Close Button (ticket_close_<channel_id>)
       if (customId.startsWith('ticket_close_')) {
         return TicketManager.handleTicketClose(interaction, 'Chiusura richiesta tramite pulsante');
       }
 
-      // 2d. Ticket Claim Button (ticket_claim_<channel_id>)
       if (customId.startsWith('ticket_claim_')) {
         return TicketManager.handleTicketClaim(interaction);
       }
     }
 
-    // 3. Handle Select Menu Interactions
     if (interaction.isStringSelectMenu()) {
       const customId = interaction.customId;
 
-      // Reaction Roles Select Menu
       if (customId.startsWith('rr_select_')) {
         const selectedRoleId = interaction.values[0];
         const role = interaction.guild.roles.cache.get(selectedRoleId);
@@ -110,4 +103,3 @@ export default {
     }
   }
 };
-

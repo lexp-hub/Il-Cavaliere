@@ -43,7 +43,7 @@ body {
   position: relative;
 }
 
-/* Background Glowing Orbs */
+
 .bg-glow-orb {
   position: fixed;
   border-radius: 50%;
@@ -74,7 +74,7 @@ body {
   background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, rgba(0,0,0,0) 70%);
 }
 
-/* Glassmorphic Panels */
+
 .glass-card {
   background: var(--card-bg);
   backdrop-filter: blur(16px);
@@ -94,7 +94,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Cyberpunk Glow Text & Buttons */
+
 .text-gradient {
   background: linear-gradient(135deg, #a78bfa 0%, #38bdf8 50%, #f472b6 100%);
   -webkit-background-clip: text;
@@ -166,7 +166,7 @@ body {
   border-color: rgba(239, 68, 68, 0.5);
 }
 
-/* Custom Toggle Switches */
+
 .switch {
   position: relative;
   display: inline-block;
@@ -209,7 +209,7 @@ input:checked + .slider:before {
   transform: translateX(22px);
 }
 
-/* Form Controls */
+
 .form-input, .form-select, .form-textarea {
   width: 100%;
   background: rgba(15, 23, 42, 0.8);
@@ -230,7 +230,7 @@ input:checked + .slider:before {
   resize: vertical;
 }
 
-/* Custom Scrollbar */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -246,7 +246,7 @@ input:checked + .slider:before {
   background: #334155;
 }
 
-/* Discord Mockup Container */
+
 .discord-chat-container {
   background-color: var(--discord-dark);
   border-radius: 12px;
@@ -295,7 +295,7 @@ input:checked + .slider:before {
   color: #949ba4;
 }
 
-/* Discord Embed Visual Styling */
+
 .discord-embed-box {
   background-color: var(--discord-embed);
   border-left: 4px solid var(--accent-purple);
@@ -383,7 +383,7 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-/* Discord Buttons Mockup */
+
 .discord-buttons-row {
   display: flex;
   gap: 8px;
@@ -406,7 +406,7 @@ input:checked + .slider:before {
 .btn-style-Success { background-color: #248046; }
 .btn-style-Danger { background-color: #da373c; }
 
-/* Status Badges */
+
 .badge-online {
   display: inline-flex;
   align-items: center;
@@ -444,7 +444,7 @@ input:checked + .slider:before {
   50% { opacity: 0.4; }
 }
 
-/* Toast Notifications */
+
 #toast-container {
   position: fixed;
   bottom: 24px;

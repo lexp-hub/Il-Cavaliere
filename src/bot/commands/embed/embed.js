@@ -73,13 +73,12 @@ export default {
       let embedData = null;
       let componentsData = [];
 
-      // Check if input is a saved template ID
       const template = DatabaseHelper.getEmbedTemplate(input);
       if (template && template.guild_id === interaction.guild.id) {
         embedData = template.embed_data;
         componentsData = template.components_data || [];
       } else {
-        // Try parsing as JSON
+        
         try {
           const parsed = JSON.parse(input);
           if (parsed.embed) {
@@ -172,4 +171,3 @@ export default {
     }
   }
 };
-

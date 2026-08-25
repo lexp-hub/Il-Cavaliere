@@ -1,4 +1,4 @@
-// Global Dashboard State
+
 window.AppState = {
   currentGuildId: null,
   currentGuildData: null,
@@ -8,7 +8,6 @@ window.AppState = {
   roles: []
 };
 
-// Toast notification helper
 window.showToast = function(message, type = 'success') {
   const container = document.getElementById('toast-container');
   if (!container) return;
@@ -36,7 +35,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadUserData();
   await loadGuilds();
   
-  // URL query parameter check (e.g. ?guild=123)
   const urlParams = new URLSearchParams(window.location.search);
   const requestedGuild = urlParams.get('guild');
   if (requestedGuild) {
@@ -46,7 +44,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-// Tab Navigation Logic
 function initTabNavigation() {
   const tabs = document.querySelectorAll('.nav-tab');
   tabs.forEach(tab => {
@@ -71,7 +68,6 @@ function initTabNavigation() {
   });
 }
 
-// WebSocket Status Connection
 function initWebSocket() {
   try {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -92,7 +88,6 @@ function initWebSocket() {
   } catch (e) {}
 }
 
-// User Profile Loader
 async function loadUserData() {
   try {
     const res = await fetch('/auth/me');
@@ -110,7 +105,6 @@ async function loadUserData() {
   }
 }
 
-// Guilds Loader
 async function loadGuilds() {
   try {
     const res = await fetch('/api/guilds');
@@ -140,7 +134,6 @@ async function loadGuilds() {
   }
 }
 
-// Switch Active Guild
 window.switchGuild = async function(guildId) {
   window.AppState.currentGuildId = guildId;
 
@@ -159,10 +152,8 @@ window.switchGuild = async function(guildId) {
     const membersEl = document.getElementById('ov-members');
     if (membersEl) membersEl.textContent = guildData.memberCount.toLocaleString();
 
-    // Populate all channel and role dropdowns in the UI
     populateDropdowns(guildData.channels, guildData.roles);
 
-    // Trigger modules data load for this guild
     if (window.loadModuleData) {
       window.loadModuleData(guildId);
     }
@@ -173,12 +164,10 @@ window.switchGuild = async function(guildId) {
   }
 };
 
-// Helper: Populate select options across all tabs
 function populateDropdowns(channels = [], roles = []) {
   const textChannels = channels.filter(c => c.type === 'text');
   const categories = channels.filter(c => c.type === 'category');
 
-  // Channel Selectors IDs
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',
     'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel',
@@ -202,7 +191,6 @@ function populateDropdowns(channels = [], roles = []) {
     if (currentVal) select.value = currentVal;
   });
 
-  // Category Selector for Tickets
   const catSelect = document.getElementById('tk-category');
   if (catSelect) {
     catSelect.innerHTML = '<option value="">-- Nessuna Categoria --</option>';
@@ -214,7 +202,6 @@ function populateDropdowns(channels = [], roles = []) {
     });
   }
 
-  // Role Selectors IDs
   const roleSelectIds = ['part-ping-role', 'rr-role', 'wel-autorole-user', 'tk-support-role'];
   roleSelectIds.forEach(id => {
     const select = document.getElementById(id);
@@ -233,4 +220,3 @@ function populateDropdowns(channels = [], roles = []) {
     if (currentVal) select.value = currentVal;
   });
 }
-

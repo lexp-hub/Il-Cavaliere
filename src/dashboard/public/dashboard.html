@@ -5,24 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Il Cavaliere</title>
   <link rel="icon" href="https://cdn.discordapp.com/embed/avatars/0.png">
-  <!-- Tailwind CSS CDN -->
+  
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Lucide Icons -->
+  
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="bg-[#07090e] text-slate-100 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
-  <!-- Background Glow Orbs -->
+  
   <div class="bg-glow-orb orb-1"></div>
   <div class="bg-glow-orb orb-2"></div>
 
-  <!-- Toast Notification Container -->
+  
   <div id="toast-container"></div>
 
-  <!-- Sidebar Navigation -->
+  
   <aside class="w-full md:w-64 bg-[#0a0e17]/90 backdrop-blur-2xl border-r border-white/5 flex flex-col justify-between shrink-0 z-30 sticky top-0 md:h-screen">
     <div>
-      <!-- Brand & Server Switcher -->
+      
       <div class="p-4 border-b border-white/5">
         <div class="flex items-center gap-3 mb-4">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-md">
@@ -34,21 +34,21 @@
           </div>
         </div>
 
-        <!-- Server Selector Dropdown -->
+        
         <label class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block mb-1.5">Server Selezionato</label>
         <select id="server-selector" class="form-select text-xs py-2 px-3 bg-slate-900 border-white/10">
           <option value="loading">Caricamento server...</option>
         </select>
       </div>
 
-      <!-- Navigation Tabs -->
+      
       <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]">
         <button class="nav-tab active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-overview">
           <i data-lucide="layout-grid" class="w-4 h-4 text-purple-400"></i>
           <span>Panoramica</span>
         </button>
 
-        <!-- AI Tab -->
+        
         <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-ai">
           <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i>
           <span class="flex-grow">Il Cavaliere AI</span>
@@ -103,7 +103,7 @@
       </nav>
     </div>
 
-    <!-- User Profile & Back Button Footer -->
+    
     <div class="p-3 border-t border-white/5 bg-slate-950/40">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -120,9 +120,9 @@
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  
   <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
-    <!-- Top Header Bar -->
+    
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-white/5">
       <div>
         <h2 id="current-guild-name" class="text-2xl font-bold text-white flex items-center gap-2">
@@ -142,9 +142,9 @@
       </div>
     </div>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 1: PANORAMICA (OVERVIEW) -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-overview" class="tab-content block space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="glass-card p-5">
@@ -184,7 +184,7 @@
         </div>
       </div>
 
-      <!-- Modules Master Toggle Switcher -->
+      
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
           <i data-lucide="sliders" class="w-5 h-5 text-purple-400"></i> Gestione Attivazione Moduli
@@ -194,7 +194,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modules-toggle-grid"></div>
       </div>
 
-      <!-- General Server Settings -->
+      
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
           <i data-lucide="settings" class="w-5 h-5 text-cyan-400"></i> Impostazioni Generali & Canali di Log
@@ -214,12 +214,12 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB: IL CAVALIERE AI (BRAIN & PLAYGROUND) -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-ai" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- AI Settings & Persona Editor (Left 7 Cols) -->
+        
         <div class="lg:col-span-7 space-y-6">
           <div class="glass-card p-6 space-y-4">
             <div class="flex items-center justify-between pb-3 border-b border-white/5">
@@ -235,7 +235,7 @@
               </label>
             </div>
 
-            <!-- Model & Web Search -->
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="text-xs font-semibold text-slate-300 block mb-1.5">Modello AI (Cloudflare Workers)</label>
@@ -254,7 +254,7 @@
               </div>
             </div>
 
-            <!-- Style Presets Quick Buttons -->
+            
             <div>
               <label class="text-xs font-semibold text-slate-300 block mb-2">Preset di Personalità Rapidi</label>
               <div class="flex flex-wrap gap-2">
@@ -270,7 +270,7 @@
               </div>
             </div>
 
-            <!-- System Prompt / Persona Textarea -->
+            
             <div>
               <label class="text-xs font-semibold text-slate-300 block mb-1.5">System Prompt / Identità de Il Cavaliere</label>
               <textarea id="ai-system-prompt" class="form-textarea h-44 text-xs font-mono"></textarea>
@@ -282,7 +282,7 @@
           </div>
         </div>
 
-        <!-- Live AI Chat Playground (Right 5 Cols) -->
+        
         <div class="lg:col-span-5">
           <div class="glass-card p-5 h-full flex flex-col justify-between">
             <div>
@@ -295,7 +295,7 @@
                 </button>
               </div>
 
-              <!-- Chat Message History Box -->
+              
               <div id="ai-chat-history" class="space-y-3 overflow-y-auto max-h-[380px] p-2 pr-1">
                 <div class="flex gap-2.5">
                   <div class="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs shrink-0 font-bold">🛡️</div>
@@ -306,7 +306,7 @@
               </div>
             </div>
 
-            <!-- Chat Input Box -->
+            
             <div class="pt-4 border-t border-white/5 mt-4">
               <form id="ai-chat-form" class="flex gap-2">
                 <input type="text" id="ai-chat-input" class="form-input text-xs" placeholder="Scrivi un messaggio a Il Cavaliere...">
@@ -320,9 +320,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 2: PARTNERSHIPS -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-partnerships" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <div class="flex items-center justify-between mb-4">
@@ -402,9 +402,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 3: LIVE EMBED BUILDER -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-embeds" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-7 space-y-4">
@@ -545,9 +545,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 4: REACTION ROLES -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-reactionroles" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
@@ -598,9 +598,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 5: WELCOMER & LEAVER -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-welcomer" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <div class="flex items-center justify-between mb-4">
@@ -667,9 +667,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 6: AUTO-RESPONDER & REACTION MESSAGES -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-autoresponder" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
@@ -722,9 +722,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 7: AUTOMOD & MODERATION -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-automod" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
@@ -795,9 +795,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 8: TICKET SYSTEM -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-tickets" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
@@ -843,9 +843,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 9: GIVEAWAYS & LEVELING -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-giveaways" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div class="glass-card p-6">
@@ -902,9 +902,9 @@
       </div>
     </section>
 
-    <!-- ==================================================================== -->
-    <!-- TAB 10: EMOJI TRACKER -->
-    <!-- ==================================================================== -->
+    
+    
+    
     <section id="tab-emojis" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
         <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">

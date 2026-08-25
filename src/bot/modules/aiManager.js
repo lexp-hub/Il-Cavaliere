@@ -33,7 +33,6 @@ export const AIManager = {
     const accountId = CONFIG.CLOUDFLARE_ACCOUNT_ID;
     const apiToken = CONFIG.CLOUDFLARE_API_TOKEN;
 
-    // 1. Try Cloudflare Workers AI
     if (accountId && apiToken) {
       try {
         const response = await fetch(
@@ -65,7 +64,6 @@ export const AIManager = {
       }
     }
 
-    // 2. Fallback: Gemini API if key is present
     if (CONFIG.GEMINI_API_KEY) {
       try {
         const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
@@ -95,7 +93,6 @@ export const AIManager = {
       }
     }
 
-    // 3. Fallback standard message
     return "Sono Il Cavaliere. I miei canali neurali sono temporaneamente sovraccarichi di banalità. Riprova tra poco.";
   },
 
@@ -307,4 +304,3 @@ Utilizza questi dati per rispondere all'utente. Esprimi la tua opinione cinica, 
 };
 
 export default AIManager;
-

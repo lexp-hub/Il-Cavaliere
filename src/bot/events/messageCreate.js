@@ -9,11 +9,9 @@ export default {
   async execute(message) {
     if (!message.guild || message.author.bot) return;
 
-    // 1. AutoMod Checks (returns true if message was deleted/violated)
     const violated = await AutoModManager.handleMessage(message);
     if (violated) return;
 
-    // 2. Track Custom Emoji Usages
     const emojiMatches = message.content.matchAll(/<(a?):([a-zA-Z0-9_]+):([0-9]+)>/g);
     for (const match of emojiMatches) {
       const isAnimated = match[1] === 'a';
@@ -22,19 +20,17 @@ export default {
       DatabaseHelper.trackEmojiUse(message.guild.id, emojiId, emojiName, isAnimated);
     }
 
-    // 3. AI Mention Chat (@Il Cavaliere)
     const isBotMentioned = message.mentions.has(message.client.user) && !message.mentions.everyone;
     if (isBotMentioned) {
       try {
         await AIManager.handleMention(message);
-        // Do not process regular auto-responders if the user was talking directly to the AI
+        
         return;
       } catch (err) {
         console.error('[MessageCreate] Errore gestione menzione AI:', err);
       }
     }
 
-    // 4. Auto-Reaction Channels (e.g. Suggestions)
     const autoReactChannels = DatabaseHelper.getAutoreactionChannels(message.guild.id);
     const channelConfig = autoReactChannels.find(c => c.channel_id === message.channel.id && c.enabled);
     if (channelConfig && channelConfig.emojis && channelConfig.emojis.length > 0) {
@@ -45,7 +41,6 @@ export default {
       }
     }
 
-    // 5. Auto-Responders & Reaction Triggers
     const autoresponders = DatabaseHelper.getAutoresponders(message.guild.id);
     const content = message.content.trim();
     const lowerContent = content.toLowerCase();
@@ -92,7 +87,6 @@ export default {
       }
     }
 
-    // 6. XP & Leveling
     await XPManager.handleMessage(message);
   }
 };

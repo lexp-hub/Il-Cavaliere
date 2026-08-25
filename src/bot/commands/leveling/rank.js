@@ -19,11 +19,9 @@ export default {
     const xpNeededInLevel = Math.max(1, nextLevelXp - curLevelXp);
     const progressPercent = Math.min(100, Math.floor((xpInLevel / xpNeededInLevel) * 100));
 
-    // Determine user leaderboard position
     const allUsers = DatabaseHelper.getLeaderboard(interaction.guild.id, 1000);
     const rankPos = allUsers.findIndex(u => u.user_id === target.id) + 1 || allUsers.length + 1;
 
-    // Progress bar visualization
     const barLength = 15;
     const filledLength = Math.round((progressPercent / 100) * barLength);
     const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
@@ -45,4 +43,3 @@ export default {
     await interaction.reply({ embeds: [embed] });
   }
 };
-

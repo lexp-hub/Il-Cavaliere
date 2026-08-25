@@ -3,13 +3,11 @@ import { CONFIG } from '../../config.js';
 
 export const authRouter = express.Router();
 
-// Discord OAuth2 URLs
 const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
-// 1. Start OAuth2 Login
 authRouter.get('/login', (req, res) => {
-  // If client ID is missing or demo mode is active, allow instant mock login
+  
   if (!CONFIG.CLIENT_ID || !CONFIG.CLIENT_SECRET || CONFIG.DEMO_MODE) {
     req.session.user = {
       id: '999999999999999999',
@@ -28,7 +26,6 @@ authRouter.get('/login', (req, res) => {
   res.redirect(discordAuthUrl);
 });
 
-// 2. OAuth2 Callback
 authRouter.get('/callback', async (req, res) => {
   const code = req.query.code;
   if (!code) {
@@ -36,7 +33,7 @@ authRouter.get('/callback', async (req, res) => {
   }
 
   try {
-    // Exchange code for access token
+    
     const tokenResponse = await fetch(`${DISCORD_API_URL}/oauth2/token`, {
       method: 'POST',
       headers: {
@@ -59,13 +56,11 @@ authRouter.get('/callback', async (req, res) => {
 
     const accessToken = tokenData.access_token;
 
-    // Fetch user info
     const userResponse = await fetch(`${DISCORD_API_URL}/users/@me`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
     const userData = await userResponse.json();
 
-    // Fetch user guilds
     const guildsResponse = await fetch(`${DISCORD_API_URL}/users/@me/guilds`, {
       headers: { Authorization: `Bearer ${accessToken}` }
     });
@@ -75,7 +70,6 @@ authRouter.get('/callback', async (req, res) => {
       ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`
       : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-    // Store in session
     req.session.user = {
       id: userData.id,
       username: userData.username,
@@ -92,10 +86,9 @@ authRouter.get('/callback', async (req, res) => {
   }
 });
 
-// 3. Current User Endpoint
 authRouter.get('/me', (req, res) => {
   if (!req.session.user) {
-    // Return demo user if demo mode
+    
     if (CONFIG.DEMO_MODE) {
       return res.json({
         id: '999999999999999999',
@@ -109,11 +102,9 @@ authRouter.get('/me', (req, res) => {
   res.json(req.session.user);
 });
 
-// 4. Logout
 authRouter.get('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/');
 });
 
 export default authRouter;
-

@@ -5,10 +5,6 @@ import { XPManager } from '../src/bot/modules/xpManager.js';
 import { WelcomerManager } from '../src/bot/modules/welcomerManager.js';
 import { AIManager } from '../src/bot/modules/aiManager.js';
 
-console.log('🧪 ====================================================');
-console.log('🧪 AVVIO TEST AUTOMATICI - IL CAVALIERE (AI INTEGRATO) ');
-console.log('🧪 ====================================================');
-
 async function runTests() {
   let passed = 0;
   let failed = 0;
@@ -16,10 +12,10 @@ async function runTests() {
   function test(name, fn) {
     try {
       fn();
-      console.log(`  ✅ [PASS] ${name}`);
+      console.log(`  [PASS] ${name}`);
       passed++;
     } catch (e) {
-      console.error(`  ❌ [FAIL] ${name}:`, e.message);
+      console.error(`  [FAIL] ${name}:`, e.message);
       failed++;
     }
   }
@@ -27,15 +23,14 @@ async function runTests() {
   async function asyncTest(name, fn) {
     try {
       await fn();
-      console.log(`  ✅ [PASS] ${name}`);
+      console.log(`  [PASS] ${name}`);
       passed++;
     } catch (e) {
-      console.error(`  ❌ [FAIL] ${name}:`, e.message);
+      console.error(`  [FAIL] ${name}:`, e.message);
       failed++;
     }
   }
 
-  console.log('\n--- 1. Test Database SQLite & Moduli ---');
   const testGuildId = `test_guild_${Date.now()}`;
 
   test('Inizializzazione Guild Settings & Modulo AI', () => {
@@ -55,7 +50,6 @@ async function runTests() {
     assert(aiConfig.model.includes('llama'), 'Modello AI non aggiornato');
     assert(aiConfig.web_search_enabled === true, 'Web search non attivo');
 
-    // Test channel memory
     const testChannelId = `chan_ai_test_${Date.now()}`;
     DatabaseHelper.addChannelLog(testChannelId, 'user', 'Ciao Cavaliere');
     DatabaseHelper.addChannelLog(testChannelId, 'assistant', 'Salute guerriero.');
@@ -148,7 +142,6 @@ async function runTests() {
     assert(neededXp === 400, `XP per livello 2 devono essere 400, ottenuto: ${neededXp}`);
   });
 
-  console.log('\n--- 2. Test Caricamento Discord Client & Comandi Slash ---');
   await asyncTest('Caricamento dinamico dei comandi ed eventi (incluso /ai)', async () => {
     const client = createBotClient();
     await loadCommandsAndEvents(client);
@@ -159,17 +152,11 @@ async function runTests() {
     assert(client.commands.has('embed'), 'Comando /embed non trovato');
   });
 
-  console.log('\n====================================================');
-  console.log(`📊 RISULTATO TEST: ${passed} superati, ${failed} falliti.`);
-  console.log('====================================================\n');
-
-  if (failed > 0) {
-    process.exit(1);
-  }
+  console.log(`\nTEST COMPLETATI: ${passed} passati, ${failed} falliti.`);
+  if (failed > 0) process.exit(1);
 }
 
 runTests().catch(err => {
   console.error('Crash durante l\'esecuzione dei test:', err);
   process.exit(1);
 });
-

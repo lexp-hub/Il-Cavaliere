@@ -46,7 +46,6 @@ export default {
     let url = '';
     let name = customName || 'stolen_emoji';
 
-    // Check if input is a custom discord emoji (e.g. <:pepe:123456789> or <a:dance:123456789>)
     const parsed = parseEmoji(input);
     if (parsed && parsed.id) {
       const ext = parsed.animated ? 'gif' : 'png';
@@ -82,4 +81,3 @@ export default {
     }
   }
 };
-

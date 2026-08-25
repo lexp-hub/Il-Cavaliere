@@ -13,7 +13,6 @@ export const TicketManager = {
   async handleTicketCreate(interaction, panelId = null) {
     const { guild, user } = interaction;
 
-    // Check if user already has an open ticket
     const existingTicket = DatabaseHelper.db.prepare(
       "SELECT * FROM tickets WHERE guild_id = ? AND user_id = ? AND status = 'OPEN'"
     ).get(guild.id, user.id);
@@ -38,7 +37,6 @@ export const TicketManager = {
     const supportRoleId = panel?.support_role_id;
     const categoryId = panel?.category_id;
 
-    // Permission overwrites for ticket channel
     const permissionOverwrites = [
       {
         id: guild.id,
@@ -86,10 +84,8 @@ export const TicketManager = {
         topic: `Ticket di ${user.tag} (${user.id}) | Creato: ${new Date().toLocaleString('it-IT')}`
       });
 
-      // Save ticket in DB
       DatabaseHelper.createTicket(guild.id, ticketChannel.id, user.id, panelId);
 
-      // Create ticket control buttons
       const closeBtn = new ButtonBuilder()
         .setCustomId(`ticket_close_${ticketChannel.id}`)
         .setLabel('Chiudi Ticket')
@@ -169,7 +165,6 @@ export const TicketManager = {
       content: `🔒 Chiusura del ticket in corso da parte di ${user}... Il canale verrà eliminato tra 5 secondi.`
     });
 
-    // Fetch message history for transcript
     let transcript = `=== TRANSCRIPT TICKET ${channel.name} ===\nGuild: ${guild.name} (${guild.id})\nAutore: ${ticket.user_id}\nChiuso da: ${user.tag} (${user.id})\nMotivo: ${reason}\n\n`;
 
     try {
@@ -190,7 +185,6 @@ export const TicketManager = {
 
     DatabaseHelper.closeTicket(channel.id, transcript);
 
-    // Send DM transcript to ticket owner if possible
     try {
       const ticketOwner = await guild.client.users.fetch(ticket.user_id);
       if (ticketOwner) {
@@ -214,4 +208,3 @@ export const TicketManager = {
 };
 
 export default TicketManager;
-

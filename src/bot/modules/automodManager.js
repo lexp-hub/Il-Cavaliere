@@ -2,14 +2,12 @@ import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
-// Anti-spam memory cache: Map<`${guildId}_${userId}`, Array<timestamp>>
 const messageTimestamps = new Map();
 
 export const AutoModManager = {
   async handleMessage(message) {
     if (!message.guild || message.author.bot) return false;
 
-    // Skip administrators and users with Manage Messages
     if (message.member?.permissions.has(PermissionsBitField.Flags.Administrator) ||
         message.member?.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
       return false;
@@ -18,14 +16,12 @@ export const AutoModManager = {
     const config = DatabaseHelper.getAutomodConfig(message.guild.id);
     const content = message.content;
 
-    // Check ignored channels and roles
     if (config.ignored_channels.includes(message.channel.id)) return false;
     if (message.member && message.member.roles.cache.some(r => config.ignored_roles.includes(r.id))) return false;
 
     let violated = false;
     let reason = '';
 
-    // 1. Anti-Invite
     if (config.anti_invite) {
       const inviteRegex = /(discord\.(gg|io|me|li)|discordapp\.com\/invite|discord\.com\/invite)\/[a-zA-Z0-9-]+/gi;
       if (inviteRegex.test(content)) {
@@ -34,7 +30,6 @@ export const AutoModManager = {
       }
     }
 
-    // 2. Anti-Link
     if (!violated && config.anti_link) {
       const linkRegex = /(https?:\/\/[^\s]+)/gi;
       if (linkRegex.test(content)) {
@@ -43,7 +38,6 @@ export const AutoModManager = {
       }
     }
 
-    // 3. Bad Words
     if (!violated && config.bad_words && config.bad_words.length > 0) {
       const lowerContent = content.toLowerCase();
       for (const word of config.bad_words) {
@@ -55,7 +49,6 @@ export const AutoModManager = {
       }
     }
 
-    // 4. Anti-Caps (Messages over 10 chars with > 70% uppercase)
     if (!violated && config.anti_caps && content.length > 10) {
       const letters = content.replace(/[^a-zA-Z]/g, '');
       if (letters.length > 8) {
@@ -67,13 +60,11 @@ export const AutoModManager = {
       }
     }
 
-    // 5. Anti-Spam (Rate limiting: max 5 messages in 3 seconds)
     if (!violated && config.anti_spam) {
       const key = `${message.guild.id}_${message.author.id}`;
       const now = Date.now();
       const userLogs = messageTimestamps.get(key) || [];
       
-      // Filter out messages older than 3 seconds
       const recentLogs = userLogs.filter(t => now - t < 3000);
       recentLogs.push(now);
       messageTimestamps.set(key, recentLogs);
@@ -84,7 +75,6 @@ export const AutoModManager = {
       }
     }
 
-    // 6. Max Mentions
     if (!violated && config.max_mentions > 0) {
       const mentionsCount = message.mentions.users.size + message.mentions.roles.size;
       if (mentionsCount > config.max_mentions) {
@@ -97,10 +87,9 @@ export const AutoModManager = {
       try {
         await message.delete();
       } catch (e) {
-        // Missing delete permission
+        
       }
 
-      // Log moderation case
       DatabaseHelper.addModerationCase(
         message.guild.id,
         message.author.id,
@@ -109,7 +98,6 @@ export const AutoModManager = {
         reason
       );
 
-      // Send warning notification in channel
       const warnEmbed = new EmbedBuilder()
         .setColor(CONFIG.EMBED_WARN_COLOR)
         .setTitle('🛡️ AutoMod | Il Cavaliere')
@@ -122,7 +110,6 @@ export const AutoModManager = {
         setTimeout(() => warnMsg.delete().catch(() => {}), 6000);
       }
 
-      // Log to server audit log channel if configured
       const guildSettings = DatabaseHelper.getGuildSettings(message.guild.id);
       if (guildSettings.log_channel_id) {
         const logChannel = message.guild.channels.cache.get(guildSettings.log_channel_id);
@@ -149,4 +136,3 @@ export const AutoModManager = {
 };
 
 export default AutoModManager;
-

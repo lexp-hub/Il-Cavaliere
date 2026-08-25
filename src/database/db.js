@@ -4,32 +4,22 @@ import fs from 'fs';
 import { CONFIG } from '../config.js';
 import { SCHEMA } from './schema.js';
 
-// Ensure data directory exists
 const dbDir = path.dirname(CONFIG.DB_PATH);
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
-// Initialize SQLite database with WAL mode for high performance
 export const db = new Database(CONFIG.DB_PATH);
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
-// Initialize Schema
 db.exec(SCHEMA);
 
 console.log(`[Database] Connected to SQLite database at ${CONFIG.DB_PATH}`);
 
-// ============================================================================
-// HELPER METHODS
-// ============================================================================
-
 export const DatabaseHelper = {
   db,
 
-  // --------------------------------------------------------------------------
-  // GUILD SETTINGS
-  // --------------------------------------------------------------------------
   getGuildSettings(guildId) {
     const row = db.prepare('SELECT * FROM guild_settings WHERE guild_id = ?').get(guildId);
     if (!row) {
@@ -88,9 +78,6 @@ export const DatabaseHelper = {
     return this.getGuildSettings(guildId);
   },
 
-  // --------------------------------------------------------------------------
-  // AI MODULE (IL CAVALIERE BRAIN)
-  // --------------------------------------------------------------------------
   getAIConfig(guildId) {
     let row = db.prepare('SELECT * FROM ai_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
@@ -161,9 +148,6 @@ export const DatabaseHelper = {
     );
   },
 
-  // --------------------------------------------------------------------------
-  // PARTNERSHIPS
-  // --------------------------------------------------------------------------
   getPartnershipConfig(guildId) {
     let row = db.prepare('SELECT * FROM partnership_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
@@ -236,9 +220,6 @@ export const DatabaseHelper = {
     return { total, leaderboard };
   },
 
-  // --------------------------------------------------------------------------
-  // EMBED TEMPLATES
-  // --------------------------------------------------------------------------
   saveEmbedTemplate(guildId, templateId, name, embedData, componentsData = [], createdBy = null) {
     db.prepare(`
       INSERT OR REPLACE INTO embed_templates (id, guild_id, name, created_by, embed_data, components_data, created_at)
@@ -278,9 +259,6 @@ export const DatabaseHelper = {
     return db.prepare('DELETE FROM embed_templates WHERE id = ?').run(templateId);
   },
 
-  // --------------------------------------------------------------------------
-  // REACTION ROLES & BUTTON ROLES
-  // --------------------------------------------------------------------------
   addReactionRole(guildId, channelId, messageId, type, roleId, emoji, label = null, style = 'SECONDARY', groupName = 'default') {
     const info = db.prepare(`
       INSERT INTO reaction_roles (guild_id, channel_id, message_id, type, role_id, emoji, label, style, group_name)
@@ -305,9 +283,6 @@ export const DatabaseHelper = {
     return db.prepare('DELETE FROM reaction_roles WHERE message_id = ?').run(messageId);
   },
 
-  // --------------------------------------------------------------------------
-  // WELCOMER & LEAVER
-  // --------------------------------------------------------------------------
   getWelcomerConfig(guildId) {
     let row = db.prepare('SELECT * FROM welcomer_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
@@ -355,9 +330,6 @@ export const DatabaseHelper = {
     return this.getWelcomerConfig(guildId);
   },
 
-  // --------------------------------------------------------------------------
-  // AUTO-RESPONDER & REACTION MESSAGES
-  // --------------------------------------------------------------------------
   getAutoresponders(guildId) {
     const rows = db.prepare('SELECT * FROM autoresponders WHERE guild_id = ?').all(guildId);
     return rows.map(r => ({
@@ -426,9 +398,6 @@ export const DatabaseHelper = {
     return db.prepare('DELETE FROM autoreaction_channels WHERE id = ?').run(id);
   },
 
-  // --------------------------------------------------------------------------
-  // AUTOMOD & MODERATION
-  // --------------------------------------------------------------------------
   getAutomodConfig(guildId) {
     let row = db.prepare('SELECT * FROM automod_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
@@ -493,9 +462,6 @@ export const DatabaseHelper = {
     return db.prepare('SELECT * FROM moderation_cases WHERE guild_id = ? ORDER BY timestamp DESC LIMIT ?').all(guildId, limit);
   },
 
-  // --------------------------------------------------------------------------
-  // TICKETS
-  // --------------------------------------------------------------------------
   getTicketPanels(guildId) {
     return db.prepare('SELECT * FROM ticket_panels WHERE guild_id = ?').all(guildId);
   },
@@ -552,9 +518,6 @@ export const DatabaseHelper = {
     `).run(staffId, channelId);
   },
 
-  // --------------------------------------------------------------------------
-  // GIVEAWAYS
-  // --------------------------------------------------------------------------
   createGiveaway(guildId, channelId, messageId, prize, winnerCount, endTime, hostId) {
     const info = db.prepare(`
       INSERT INTO giveaways (guild_id, channel_id, message_id, prize, winner_count, end_time, host_id)
@@ -584,9 +547,6 @@ export const DatabaseHelper = {
     `).run(JSON.stringify(winners), messageId);
   },
 
-  // --------------------------------------------------------------------------
-  // LEVELING & XP
-  // --------------------------------------------------------------------------
   getLevelConfig(guildId) {
     let row = db.prepare('SELECT * FROM level_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
@@ -667,9 +627,6 @@ export const DatabaseHelper = {
     return db.prepare('DELETE FROM level_rewards WHERE id = ?').run(id);
   },
 
-  // --------------------------------------------------------------------------
-  // EMOJI STATS
-  // --------------------------------------------------------------------------
   trackEmojiUse(guildId, emojiId, emojiName, isAnimated = false) {
     db.prepare(`
       INSERT INTO emoji_stats (guild_id, emoji_id, emoji_name, is_animated, use_count, last_used)

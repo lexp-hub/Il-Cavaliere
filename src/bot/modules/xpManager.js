@@ -2,7 +2,6 @@ import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
-// Cooldown map: Map<`${guildId}_${userId}`, timestamp>
 const xpCooldowns = new Map();
 
 export const XPManager = {
@@ -15,7 +14,6 @@ export const XPManager = {
 
     if (!config.enabled) return;
 
-    // 60-second cooldown between XP gains
     const key = `${guildId}_${userId}`;
     const now = Date.now();
     const lastGain = xpCooldowns.get(key) || 0;
@@ -23,14 +21,13 @@ export const XPManager = {
     if (now - lastGain < 60000) return;
     xpCooldowns.set(key, now);
 
-    // Random base XP: 15 to 25
     const baseAmount = Math.floor(Math.random() * 11) + 15;
     const xpToAdd = Math.floor(baseAmount * (config.xp_rate || 1.0));
 
     const result = DatabaseHelper.addXp(guildId, userId, xpToAdd);
 
     if (result.leveledUp) {
-      // Check for role rewards
+      
       const rewards = DatabaseHelper.getLevelRewards(guildId);
       for (const reward of rewards) {
         if (result.newLevel >= reward.level) {
@@ -41,7 +38,6 @@ export const XPManager = {
         }
       }
 
-      // Send Level Up Announcement
       const levelEmbed = new EmbedBuilder()
         .setColor(CONFIG.EMBED_COLOR)
         .setTitle('⭐ Level Up!')
@@ -62,7 +58,7 @@ export const XPManager = {
   },
 
   getXpNeededForLevel(level) {
-    // Inverse of level = floor(0.1 * sqrt(xp)) => xp = (level / 0.1)^2 = (level * 10)^2
+    
     return Math.pow(level * 10, 2);
   },
 
@@ -72,4 +68,3 @@ export const XPManager = {
 };
 
 export default XPManager;
-

@@ -7,7 +7,6 @@ async function main() {
   console.log('🛡️  IL CAVALIERE - DISCORD BOT & NOCTALY DASHBOARD  🛡️');
   console.log('====================================================');
 
-  // 1. Initialize Discord Bot Client
   const botClient = createBotClient();
 
   try {
@@ -17,7 +16,6 @@ async function main() {
     console.error('[System] Errore nel caricamento dei comandi:', error);
   }
 
-  // 2. Start Web Dashboard Server (Express + WebSockets)
   const { server } = createDashboardServer(botClient);
   
   server.listen(CONFIG.PORT, () => {
@@ -27,7 +25,6 @@ async function main() {
     console.log(`📊 Moduli abilitati: Partnerships, Embeds, Reaction Roles, Welcomer, AutoMod, Tickets, Leveling, Starboard, AI Brain\n`);
   });
 
-  // 3. Connect Discord Bot if Token is provided
   if (CONFIG.BOT_TOKEN && CONFIG.BOT_TOKEN.trim().length > 10) {
     console.log('[Bot] Connessione al gateway Discord in corso...');
     botClient.login(CONFIG.BOT_TOKEN)
@@ -45,7 +42,6 @@ async function main() {
   }
 }
 
-// Global Exception Handlers
 process.on('unhandledRejection', (reason) => {
   console.error('[Unhandled Rejection]', reason);
 });
@@ -55,4 +51,3 @@ process.on('uncaughtException', (err) => {
 });
 
 main();
-

@@ -1,8 +1,7 @@
-// Live Discord Embed Builder Engine
+
 (function () {
   const fields = [];
 
-  // DOM Elements
   const colorInput = document.getElementById('embed-color');
   const colorHexInput = document.getElementById('embed-color-hex');
   const authorNameInput = document.getElementById('embed-author-name');
@@ -15,7 +14,6 @@
   const footerTextInput = document.getElementById('embed-footer-text');
   const footerIconInput = document.getElementById('embed-footer-icon');
 
-  // Preview DOM Elements
   const prevEmbedBox = document.getElementById('preview-embed-box');
   const prevAuthor = document.getElementById('prev-author');
   const prevAuthorName = document.getElementById('prev-author-name');
@@ -29,7 +27,6 @@
   const prevFooterText = document.getElementById('prev-footer-text');
   const prevFooterIcon = document.getElementById('prev-footer-icon');
 
-  // Helper: Simple Markdown to HTML parser for Discord preview
   function parseDiscordMarkdown(text) {
     if (!text) return '';
     return text
@@ -343,4 +340,3 @@
   // Initial Preview Render
   updatePreview();
 })();
-

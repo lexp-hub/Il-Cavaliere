@@ -1,5 +1,5 @@
 export const SCHEMA = `
--- Configurazione del Server
+
 CREATE TABLE IF NOT EXISTS guild_settings (
   guild_id TEXT PRIMARY KEY,
   prefix TEXT DEFAULT '!',
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS guild_settings (
   modules_enabled TEXT DEFAULT '{"partnerships":true,"embeds":true,"reaction_roles":true,"welcomer":true,"autoresponder":true,"moderation":true,"tickets":true,"giveaways":true,"leveling":true,"starboard":true,"ai":true}'
 );
 
--- Modulo AI (Il Cavaliere Brain)
+
 CREATE TABLE IF NOT EXISTS ai_configs (
   guild_id TEXT PRIMARY KEY,
   enabled INTEGER DEFAULT 1,
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS ai_channel_memories (
   logs TEXT DEFAULT '[]'
 );
 
--- Modulo Partnerships
+
 CREATE TABLE IF NOT EXISTS partnership_configs (
   guild_id TEXT PRIMARY KEY,
   channel_id TEXT,
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS partnerships (
   notes TEXT
 );
 
--- Modulo Embed Builder & Templates
+
 CREATE TABLE IF NOT EXISTS embed_templates (
   id TEXT PRIMARY KEY,
   guild_id TEXT NOT NULL,
@@ -64,13 +64,13 @@ CREATE TABLE IF NOT EXISTS embed_templates (
   created_at INTEGER DEFAULT (strftime('%s', 'now'))
 );
 
--- Modulo Reaction Roles & Button Roles
+
 CREATE TABLE IF NOT EXISTS reaction_roles (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   guild_id TEXT NOT NULL,
   channel_id TEXT NOT NULL,
   message_id TEXT NOT NULL,
-  type TEXT DEFAULT 'BUTTON', -- 'BUTTON', 'SELECT', 'REACTION'
+  type TEXT DEFAULT 'BUTTON', 
   role_id TEXT NOT NULL,
   emoji TEXT,
   label TEXT,
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS reaction_roles (
   group_name TEXT DEFAULT 'default'
 );
 
--- Modulo Welcomer & Leaver
+
 CREATE TABLE IF NOT EXISTS welcomer_configs (
   guild_id TEXT PRIMARY KEY,
   welcome_enabled INTEGER DEFAULT 0,
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS welcomer_configs (
   auto_role_bot TEXT
 );
 
--- Modulo Auto-Responder & Reaction Messages
+
 CREATE TABLE IF NOT EXISTS autoresponders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   guild_id TEXT NOT NULL,
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS autoresponders (
   enabled INTEGER DEFAULT 1
 );
 
--- Canali Auto-Reaction
+
 CREATE TABLE IF NOT EXISTS autoreaction_channels (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   guild_id TEXT NOT NULL,
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS autoreaction_channels (
   enabled INTEGER DEFAULT 1
 );
 
--- Modulo Starboard
+
 CREATE TABLE IF NOT EXISTS starboards (
   guild_id TEXT PRIMARY KEY,
   channel_id TEXT,
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS starboard_messages (
   PRIMARY KEY (guild_id, original_message_id)
 );
 
--- Modulo AutoMod & Moderazione
+
 CREATE TABLE IF NOT EXISTS automod_configs (
   guild_id TEXT PRIMARY KEY,
   anti_invite INTEGER DEFAULT 1,
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS moderation_cases (
   timestamp INTEGER DEFAULT (strftime('%s', 'now'))
 );
 
--- Modulo Ticket System
+
 CREATE TABLE IF NOT EXISTS ticket_panels (
   id TEXT PRIMARY KEY,
   guild_id TEXT NOT NULL,
@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS tickets (
   transcript_text TEXT
 );
 
--- Modulo Giveaways
+
 CREATE TABLE IF NOT EXISTS giveaways (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   guild_id TEXT NOT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS giveaways (
   ended INTEGER DEFAULT 0
 );
 
--- Modulo Leveling & XP
+
 CREATE TABLE IF NOT EXISTS level_configs (
   guild_id TEXT PRIMARY KEY,
   enabled INTEGER DEFAULT 1,
@@ -230,7 +230,7 @@ CREATE TABLE IF NOT EXISTS level_rewards (
   role_id TEXT NOT NULL
 );
 
--- Modulo Emoji Tracker
+
 CREATE TABLE IF NOT EXISTS emoji_stats (
   guild_id TEXT NOT NULL,
   emoji_id TEXT NOT NULL,

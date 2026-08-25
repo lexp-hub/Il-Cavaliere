@@ -6,10 +6,9 @@ import { CONFIG } from '../../config.js';
 export default {
   name: 'guildMemberRemove',
   async execute(member) {
-    // 1. Process Leaver goodbye message
+    
     await WelcomerManager.handleMemberLeave(member);
 
-    // 2. Audit log
     const settings = DatabaseHelper.getGuildSettings(member.guild.id);
     if (settings.log_channel_id) {
       const logChan = member.guild.channels.cache.get(settings.log_channel_id);
@@ -28,4 +27,3 @@ export default {
     }
   }
 };
-

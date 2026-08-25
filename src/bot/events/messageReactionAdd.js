@@ -18,7 +18,6 @@ export default {
     const { message } = reaction;
     if (!message.guild) return;
 
-    // 1. Classic Emoji Reaction Roles
     const emojiIdentifier = reaction.emoji.id ? `<:${reaction.emoji.name}:${reaction.emoji.id}>` : reaction.emoji.name;
     const rRoles = DatabaseHelper.getReactionRolesForMessage(message.id);
     const matched = rRoles.find(r => r.type === 'REACTION' && (r.emoji === emojiIdentifier || r.emoji === reaction.emoji.name));
@@ -33,7 +32,6 @@ export default {
       }
     }
 
-    // 2. Starboard System
     if (reaction.emoji.name === '⭐') {
       const starConfig = DatabaseHelper.db.prepare('SELECT * FROM starboards WHERE guild_id = ? AND enabled = 1').get(message.guild.id);
       if (starConfig && starConfig.channel_id && message.channel.id !== starConfig.channel_id) {
@@ -44,7 +42,7 @@ export default {
             const existing = DatabaseHelper.db.prepare('SELECT * FROM starboard_messages WHERE guild_id = ? AND original_message_id = ?').get(message.guild.id, message.id);
 
             const starEmbed = new EmbedBuilder()
-              .setColor('#EAB308') // Gold yellow
+              .setColor('#EAB308') 
               .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
               .setDescription(message.content || '[Allegato / Embed]')
               .addFields(
@@ -83,4 +81,3 @@ export default {
     }
   }
 };
-

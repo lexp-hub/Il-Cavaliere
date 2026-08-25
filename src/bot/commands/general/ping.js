@@ -25,4 +25,3 @@ export default {
     await interaction.editReply({ embeds: [embed] });
   }
 };
-

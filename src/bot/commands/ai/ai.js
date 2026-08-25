@@ -77,7 +77,6 @@ export default {
       const messages = [{ role: 'user', content: userPrompt }];
       let reply = await AIManager.getAIResponse(messages, systemPrompt, guildAI.model);
 
-      // Web search trigger check
       const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
       if (searchMatch) {
         const query = searchMatch[1].trim();
@@ -153,4 +152,3 @@ export default {
     }
   }
 };
-

@@ -6,7 +6,6 @@ import { CONFIG } from '../../config.js';
 export function createGuildsRouter(botClient) {
   const router = express.Router();
 
-  // Middleware: Check authentication
   const requireAuth = (req, res, next) => {
     if (req.session.user || CONFIG.DEMO_MODE) {
       return next();
@@ -14,12 +13,11 @@ export function createGuildsRouter(botClient) {
     return res.status(401).json({ error: 'Accesso negato. Effettua prima il login con Discord.' });
   };
 
-  // 1. Get List of Manageable Guilds
   router.get('/', requireAuth, (req, res) => {
     const user = req.session.user;
 
     if (!botClient?.isReady() || CONFIG.DEMO_MODE) {
-      // Return realistic mock guilds for preview/demo
+      
       const demoGuilds = [
         {
           id: '123456789012345678',
@@ -55,7 +53,6 @@ export function createGuildsRouter(botClient) {
     const userGuilds = user?.guilds || [];
     const botGuilds = botClient.guilds.cache;
 
-    // Filter user's guilds where user has Administrator (0x8) or Manage Server (0x20)
     const manageable = userGuilds.filter(g => {
       const perms = BigInt(g.permissions || '0');
       const isAdmin = (perms & BigInt(PermissionsBitField.Flags.Administrator)) !== BigInt(0);
@@ -83,12 +80,11 @@ export function createGuildsRouter(botClient) {
     res.json(result);
   });
 
-  // 2. Get Single Guild Details (Channels, Roles, Settings)
   router.get('/:guildId', requireAuth, (req, res) => {
     const guildId = req.params.guildId;
 
     if (!botClient?.isReady() || CONFIG.DEMO_MODE || !botClient.guilds.cache.has(guildId)) {
-      // Mock data for demo/preview
+      
       return res.json({
         id: guildId,
         name: '🏰 Il Reame del Cavaliere',
@@ -158,4 +154,3 @@ export function createGuildsRouter(botClient) {
 }
 
 export default createGuildsRouter;
-

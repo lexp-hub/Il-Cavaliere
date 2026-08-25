@@ -18,7 +18,6 @@ export function createDashboardServer(botClient) {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: '/ws' });
 
-  // Middleware
   app.use(cors({ origin: true, credentials: true }));
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -32,15 +31,12 @@ export function createDashboardServer(botClient) {
     })
   );
 
-  // Static Assets
   app.use(express.static(path.join(__dirname, 'public')));
 
-  // Routes
   app.use('/auth', authRouter);
   app.use('/api/guilds', createGuildsRouter(botClient));
   app.use('/api', createApiRouter(botClient));
 
-  // WebSocket connection for real-time live events to dashboard
   wss.on('connection', (ws) => {
     ws.send(JSON.stringify({
       type: 'INIT',
@@ -54,4 +50,3 @@ export function createDashboardServer(botClient) {
 }
 
 export default createDashboardServer;
-

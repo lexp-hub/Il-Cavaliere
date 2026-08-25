@@ -30,4 +30,3 @@ export default {
     await logChan.send({ embeds: [embed] }).catch(() => {});
   }
 };
-

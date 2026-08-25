@@ -10,7 +10,6 @@ export default {
     console.log(`🌐 Connesso a ${client.guilds.cache.size} server e ${client.users.cache.size} utenti.`);
     console.log(`📊 Dashboard attiva su: ${CONFIG.DASHBOARD_URL}\n`);
 
-    // Set custom rich activity
     client.user.setPresence({
       activities: [
         {
@@ -21,8 +20,6 @@ export default {
       status: 'online'
     });
 
-    // Initialize giveaway timers
     GiveawayManager.init(client);
   }
 };
-

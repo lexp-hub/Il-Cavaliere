@@ -9,7 +9,6 @@ export const PartnershipManager = {
       return { success: false, error: 'Il modulo Partnership è disattivato su questo server.' };
     }
 
-    // Extract invite code
     let code = inviteCodeOrUrl;
     const match = inviteCodeOrUrl.match(/(?:discord\.gg\/|discord\.com\/invite\/)?([a-zA-Z0-9-]+)/);
     if (match && match[1]) {
@@ -26,7 +25,6 @@ export const PartnershipManager = {
     const partnerGuild = inviteInfo.guild;
     const memberCount = inviteInfo.memberCount || 0;
 
-    // Check minimum members requirement
     if (config.min_members > 0 && memberCount < config.min_members) {
       return {
         success: false,
@@ -34,7 +32,6 @@ export const PartnershipManager = {
       };
     }
 
-    // Check cooldown for the user/server if applicable
     const recentPartnerships = DatabaseHelper.getPartnerships(guild.id, 10);
     const now = Math.floor(Date.now() / 1000);
     const cooldownSecs = config.cooldown_minutes * 60;
@@ -48,7 +45,6 @@ export const PartnershipManager = {
       };
     }
 
-    // Record partnership in DB
     const saved = DatabaseHelper.addPartnership(guild.id, {
       partner_guild_id: partnerGuild?.id || null,
       partner_name: partnerGuild?.name || 'Server Partner',
@@ -61,7 +57,6 @@ export const PartnershipManager = {
 
     const stats = DatabaseHelper.getPartnershipStats(guild.id);
 
-    // Build partnership embed
     const partnerEmbed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR)
       .setTitle(`🤝 Nuova Partnership | ${partnerGuild?.name || 'Partner Server'}`)
@@ -79,7 +74,6 @@ export const PartnershipManager = {
       partnerEmbed.setThumbnail(`https://cdn.discordapp.com/icons/${partnerGuild.id}/${partnerGuild.icon}.png?size=256`);
     }
 
-    // Target channel: configured partnership channel or current channel
     const targetChannel = config.channel_id ? guild.channels.cache.get(config.channel_id) : channel;
     if (!targetChannel) {
       return { success: false, error: 'Canale partnership non trovato o non configurato.' };
@@ -95,7 +89,6 @@ export const PartnershipManager = {
       embeds: [partnerEmbed]
     });
 
-    // Send log if log channel is set
     if (config.log_channel_id) {
       const logChan = guild.channels.cache.get(config.log_channel_id);
       if (logChan && logChan.id !== targetChannel.id) {
@@ -124,4 +117,3 @@ export const PartnershipManager = {
 };
 
 export default PartnershipManager;
-

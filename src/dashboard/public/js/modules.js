@@ -1,4 +1,4 @@
-// Modules Management & AJAX Handlers
+
 (function () {
   window.loadModuleData = async function (guildId) {
     if (!guildId) return;
@@ -17,9 +17,6 @@
     ]);
   };
 
-  // ==========================================================================
-  // 1. MASTER MODULES TOGGLE
-  // ==========================================================================
   async function loadMasterModules(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/settings`);
@@ -84,9 +81,6 @@
     }
   }
 
-  // ==========================================================================
-  // 2. IL CAVALIERE AI (BRAIN & PLAYGROUND)
-  // ==========================================================================
   async function loadAIData(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/ai`);
@@ -113,7 +107,6 @@
     }
   }
 
-  // Preset Buttons
   document.querySelectorAll('.btn-preset').forEach(btn => {
     btn.addEventListener('click', () => {
       const preset = btn.getAttribute('data-preset');
@@ -131,7 +124,6 @@
     });
   });
 
-  // Save AI Config
   const btnSaveAI = document.getElementById('btn-save-ai-config');
   if (btnSaveAI) {
     btnSaveAI.addEventListener('click', async () => {
@@ -159,7 +151,6 @@
     });
   }
 
-  // AI Live Chat Playground
   const aiChatForm = document.getElementById('ai-chat-form');
   const aiChatInput = document.getElementById('ai-chat-input');
   const aiChatHistory = document.getElementById('ai-chat-history');
@@ -173,7 +164,6 @@
       const guildId = window.AppState.currentGuildId || '123456789012345678';
       aiChatInput.value = '';
 
-      // Append User message bubble
       const userBubble = document.createElement('div');
       userBubble.className = 'flex justify-end';
       userBubble.innerHTML = `
@@ -184,7 +174,6 @@
       aiChatHistory.appendChild(userBubble);
       aiChatHistory.scrollTop = aiChatHistory.scrollHeight;
 
-      // Append Bot Loading indicator
       const botLoading = document.createElement('div');
       botLoading.className = 'flex gap-2.5';
       botLoading.innerHTML = `
@@ -241,9 +230,6 @@
     });
   }
 
-  // ==========================================================================
-  // 3. PARTNERSHIPS
-  // ==========================================================================
   async function loadPartnershipData(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/partnerships`);
@@ -369,9 +355,6 @@
     });
   }
 
-  // ==========================================================================
-  // 4. REACTION ROLES
-  // ==========================================================================
   async function loadReactionRoles(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/reaction-roles`);
@@ -447,9 +430,6 @@
     });
   }
 
-  // ==========================================================================
-  // 5. WELCOMER & LEAVER
-  // ==========================================================================
   async function loadWelcomerData(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/welcomer`);
@@ -518,9 +498,6 @@
     });
   }
 
-  // ==========================================================================
-  // 6. AUTO-RESPONDER & REACTIONS
-  // ==========================================================================
   async function loadAutoresponders(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/autoresponders`);
@@ -594,9 +571,6 @@
     });
   }
 
-  // ==========================================================================
-  // 7. AUTOMOD & AUDIT LOGS
-  // ==========================================================================
   async function loadAutomodData(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/automod`);
@@ -669,9 +643,6 @@
     });
   }
 
-  // ==========================================================================
-  // 8. TICKETS
-  // ==========================================================================
   async function loadTicketsData(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/tickets`);
@@ -737,9 +708,6 @@
     });
   }
 
-  // ==========================================================================
-  // 9. GIVEAWAYS & LEVELING
-  // ==========================================================================
   async function loadGiveawaysAndLeveling(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/leveling`);
@@ -792,9 +760,6 @@
     });
   }
 
-  // ==========================================================================
-  // 10. EMOJI STATS
-  // ==========================================================================
   async function loadEmojiStats(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/emoji-stats`);

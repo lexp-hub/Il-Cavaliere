@@ -6,7 +6,7 @@ export const GiveawayManager = {
   activeTimers: new Map(),
 
   init(client) {
-    // Check and resume active giveaways on startup
+    
     const activeGiveaways = DatabaseHelper.getActiveGiveaways();
     const now = Math.floor(Date.now() / 1000);
 
@@ -78,7 +78,7 @@ export const GiveawayManager = {
       const winnerCount = Math.min(ga.winner_count, users.length);
 
       if (users.length > 0) {
-        // Pick random winners
+        
         const pool = [...users];
         for (let i = 0; i < winnerCount; i++) {
           const randomIndex = Math.floor(Math.random() * pool.length);
@@ -136,4 +136,3 @@ export const GiveawayManager = {
 };
 
 export default GiveawayManager;
-

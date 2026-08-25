@@ -17,9 +17,6 @@ export function createApiRouter(botClient) {
     return res.status(401).json({ error: 'Non autorizzato' });
   };
 
-  // ==========================================================================
-  // BOT SYSTEM STATUS
-  // ==========================================================================
   router.get('/status', (req, res) => {
     const isReady = Boolean(botClient?.isReady());
     res.json({
@@ -35,9 +32,6 @@ export function createApiRouter(botClient) {
     });
   });
 
-  // ==========================================================================
-  // GUILD SETTINGS
-  // ==========================================================================
   router.get('/guilds/:guildId/settings', requireAuth, (req, res) => {
     const settings = DatabaseHelper.getGuildSettings(req.params.guildId);
     res.json(settings);
@@ -48,9 +42,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true, settings: updated });
   });
 
-  // ==========================================================================
-  // AI MODULE & LIVE CHAT PLAYGROUND
-  // ==========================================================================
   router.get('/guilds/:guildId/ai', requireAuth, (req, res) => {
     const config = DatabaseHelper.getAIConfig(req.params.guildId);
     const defaultPrompt = AIManager.loadPrompt();
@@ -89,9 +80,6 @@ export function createApiRouter(botClient) {
     }
   });
 
-  // ==========================================================================
-  // PARTNERSHIPS
-  // ==========================================================================
   router.get('/guilds/:guildId/partnerships', requireAuth, (req, res) => {
     const config = DatabaseHelper.getPartnershipConfig(req.params.guildId);
     const stats = DatabaseHelper.getPartnershipStats(req.params.guildId);
@@ -136,9 +124,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true, result });
   });
 
-  // ==========================================================================
-  // EMBED BUILDER
-  // ==========================================================================
   router.get('/guilds/:guildId/embeds', requireAuth, (req, res) => {
     const templates = DatabaseHelper.getEmbedTemplates(req.params.guildId);
     res.json(templates);
@@ -204,9 +189,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true });
   });
 
-  // ==========================================================================
-  // REACTION ROLES
-  // ==========================================================================
   router.get('/guilds/:guildId/reaction-roles', requireAuth, (req, res) => {
     const list = DatabaseHelper.getReactionRoles(req.params.guildId);
     res.json(list);
@@ -279,9 +261,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true });
   });
 
-  // ==========================================================================
-  // WELCOMER & LEAVER
-  // ==========================================================================
   router.get('/guilds/:guildId/welcomer', requireAuth, (req, res) => {
     const config = DatabaseHelper.getWelcomerConfig(req.params.guildId);
     res.json(config);
@@ -322,9 +301,6 @@ export function createApiRouter(botClient) {
     }
   });
 
-  // ==========================================================================
-  // AUTO-RESPONDER & REACTION MESSAGES
-  // ==========================================================================
   router.get('/guilds/:guildId/autoresponders', requireAuth, (req, res) => {
     const list = DatabaseHelper.getAutoresponders(req.params.guildId);
     const channels = DatabaseHelper.getAutoreactionChannels(req.params.guildId);
@@ -347,9 +323,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true, id });
   });
 
-  // ==========================================================================
-  // AUTOMOD & AUDIT LOGS
-  // ==========================================================================
   router.get('/guilds/:guildId/automod', requireAuth, (req, res) => {
     const config = DatabaseHelper.getAutomodConfig(req.params.guildId);
     const cases = DatabaseHelper.getModerationCases(req.params.guildId, null, 25);
@@ -361,9 +334,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true, config: updated });
   });
 
-  // ==========================================================================
-  // TICKETS
-  // ==========================================================================
   router.get('/guilds/:guildId/tickets', requireAuth, (req, res) => {
     const panels = DatabaseHelper.getTicketPanels(req.params.guildId);
     const tickets = DatabaseHelper.db.prepare('SELECT * FROM tickets WHERE guild_id = ? ORDER BY created_at DESC LIMIT 20').all(req.params.guildId);
@@ -431,9 +401,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true, panel: saved, demo: true });
   });
 
-  // ==========================================================================
-  // GIVEAWAYS & LEVELING
-  // ==========================================================================
   router.get('/guilds/:guildId/giveaways', requireAuth, (req, res) => {
     const list = DatabaseHelper.db.prepare('SELECT * FROM giveaways WHERE guild_id = ? ORDER BY id DESC LIMIT 20').all(req.params.guildId);
     res.json(list);
@@ -482,9 +449,6 @@ export function createApiRouter(botClient) {
     res.json({ success: true });
   });
 
-  // ==========================================================================
-  // EMOJI STATS
-  // ==========================================================================
   router.get('/guilds/:guildId/emoji-stats', requireAuth, (req, res) => {
     const stats = DatabaseHelper.getEmojiStats(req.params.guildId, 30);
     res.json(stats);
