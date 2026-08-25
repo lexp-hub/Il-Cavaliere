@@ -1,6 +1,12 @@
-# 🛡️ Il Cavaliere — Discord Bot & Dashboard
+<div align="center">
+  <img src="src/dashboard/public/banner.svg" alt="Il Cavaliere Banner" width="100%" />
+</div>
 
-> **Bot Discord multifunzione all-in-one di nuova generazione** sviluppato in **JavaScript / Node.js (Discord.js v14 + Express + Tailwind Glassmorphism)** con **Intelligenza Artificiale (Cloudflare Workers AI - Llama 3.3 70B)** e **Dashboard Web avanzata in stile Noctaly** (tema scuro cyberpunk, vetro smerigliato, anteprima live dei messaggi in tempo reale e gestione modulare dei server).
+<br>
+
+# 🛡️ Il Cavaliere — Discord Bot & Tavola di Comando Medievale
+
+> **Bot Discord multifunzione di nuova generazione** sviluppato in **JavaScript / Node.js (Discord.js v14 + Express + Tailwind)** con **Intelligenza Artificiale (Cloudflare Workers AI - Llama 3.3 70B)** e **Tavola di Comando Medievale Dark Fantasy** per i moderatori del Reame.
 
 ---
 
