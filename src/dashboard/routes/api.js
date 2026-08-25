@@ -12,11 +12,11 @@ export function createApiRouter(botClient) {
 
   const requireModAuth = async (req, res, next) => {
     const user = req.session.user;
-    if (!user && !CONFIG.DEMO_MODE) {
+    if (!user) {
       return res.status(401).json({ error: 'Accesso negato. Effettua il login con Discord.' });
     }
 
-    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin || CONFIG.DEMO_MODE;
+    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin;
     const guildId = req.params.guildId;
 
     if (!isCreator && guildId && botClient?.isReady() && botClient.guilds.cache.has(guildId)) {

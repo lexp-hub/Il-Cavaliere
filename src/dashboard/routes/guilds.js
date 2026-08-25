@@ -7,7 +7,7 @@ export function createGuildsRouter(botClient) {
   const router = express.Router();
 
   const requireModAuth = async (req, res, next) => {
-    if (!req.session.user && !CONFIG.DEMO_MODE) {
+    if (!req.session.user) {
       return res.status(401).json({ error: 'Accesso negato. Effettua prima il login con Discord.' });
     }
     next();
@@ -21,7 +21,7 @@ export function createGuildsRouter(botClient) {
     }
 
     const botGuilds = botClient.guilds.cache;
-    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin || CONFIG.DEMO_MODE;
+    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin;
     const accessibleGuilds = [];
 
     for (const [id, guild] of botGuilds.entries()) {
@@ -55,7 +55,7 @@ export function createGuildsRouter(botClient) {
         icon: iconUrl,
         memberCount: g.memberCount,
         botJoined: true,
-        permissions: 'Moderatore del Reame',
+        permissions: 'Moderatore',
         activeModulesCount: activeCount
       };
     });
@@ -68,11 +68,11 @@ export function createGuildsRouter(botClient) {
     const user = req.session.user;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
-      return res.status(404).json({ error: 'Reame non trovato nel bot' });
+      return res.status(404).json({ error: 'Server non trovato nel bot' });
     }
 
     const guild = botClient.guilds.cache.get(guildId);
-    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin || CONFIG.DEMO_MODE;
+    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin;
 
     if (!isCreator && user?.id) {
       try {
@@ -85,10 +85,10 @@ export function createGuildsRouter(botClient) {
                       guild.ownerId === user.id;
 
         if (!isMod) {
-          return res.status(403).json({ error: 'Accesso riservato esclusivamente ai Moderatori e Amministratori di questo Reame.' });
+          return res.status(403).json({ error: 'Accesso riservato esclusivamente ai Moderatori e Amministratori di questo server.' });
         }
       } catch (e) {
-        return res.status(403).json({ error: 'Non fai parte di questo server o non possiedi il rango di Moderatore.' });
+        return res.status(403).json({ error: 'Non fai parte di questo server o non possiedi i permessi di moderatore.' });
       }
     }
 

@@ -31,6 +31,13 @@ export function createDashboardServer(botClient) {
     })
   );
 
+  app.get('/dashboard.html', (req, res, next) => {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+    next();
+  });
+
   app.use(express.static(path.join(__dirname, 'public')));
 
   app.use('/auth', authRouter);
