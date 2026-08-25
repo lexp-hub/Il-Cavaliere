@@ -6,23 +6,35 @@ export const authRouter = express.Router();
 const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
+function getCallbackUrl(req) {
+  if (process.env.OAUTH2_CALLBACK_URL) {
+    return process.env.OAUTH2_CALLBACK_URL;
+  }
+  const host = req.get('x-forwarded-host') || req.get('host');
+  const proto = req.get('x-forwarded-proto') || req.protocol || 'http';
+  return `${proto}://${host}/auth/callback`;
+}
+
 authRouter.get('/login', (req, res) => {
   if (!CONFIG.CLIENT_ID) {
     return res.status(500).send('Errore: DISCORD_CLIENT_ID non configurato nelle variabili d\'ambiente di Wispbyte.');
   }
 
-  const redirectUri = encodeURIComponent(CONFIG.OAUTH2_CALLBACK_URL);
+  const callbackUrl = getCallbackUrl(req);
+  const redirectUri = encodeURIComponent(callbackUrl);
   const scope = encodeURIComponent(OAUTH_SCOPES.join(' '));
   const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CONFIG.CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
   
   res.redirect(discordAuthUrl);
 });
 
-authRouter.get('/callback', async (req, res) => {
+const handleCallback = async (req, res) => {
   const code = req.query.code;
   if (!code) {
     return res.redirect('/?error=no_code');
   }
+
+  const callbackUrl = getCallbackUrl(req);
 
   try {
     const tokenResponse = await fetch(`${DISCORD_API_URL}/oauth2/token`, {
@@ -35,7 +47,7 @@ authRouter.get('/callback', async (req, res) => {
         client_secret: CONFIG.CLIENT_SECRET,
         grant_type: 'authorization_code',
         code: code.toString(),
-        redirect_uri: CONFIG.OAUTH2_CALLBACK_URL
+        redirect_uri: callbackUrl
       })
     });
 
@@ -75,7 +87,10 @@ authRouter.get('/callback', async (req, res) => {
     console.error('[OAuth2] Auth exception:', error);
     res.redirect('/?error=auth_failed');
   }
-});
+};
+
+authRouter.get('/callback', handleCallback);
+authRouter.get('/discord/callback', handleCallback);
 
 authRouter.get('/me', (req, res) => {
   if (!req.session.user) {

@@ -23,8 +23,8 @@ export const CONFIG = {
   PORT,
   DASHBOARD_PASSWORD: process.env.DASHBOARD_PASSWORD || 'LumpaBread-Dash1946',
   SESSION_SECRET: process.env.SESSION_SECRET || 'il_cavaliere_secret_key_change_me_123456789',
-  DASHBOARD_URL: process.env.DASHBOARD_URL || `http://0.0.0.0:${PORT}`,
-  OAUTH2_CALLBACK_URL: process.env.OAUTH2_CALLBACK_URL || `http://0.0.0.0:${PORT}/auth/discord/callback`,
+  DASHBOARD_URL: process.env.DASHBOARD_URL || `http://localhost:${PORT}`,
+  OAUTH2_CALLBACK_URL: process.env.OAUTH2_CALLBACK_URL || `http://localhost:${PORT}/auth/callback`,
   
   DEFAULT_PREFIX: '!',
   BOT_NAME: 'Il Cavaliere',
