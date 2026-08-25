@@ -23,11 +23,11 @@ export function createApiRouter(botClient) {
       online: isReady,
       botName: botClient?.user?.tag || CONFIG.BOT_NAME,
       avatar: botClient?.user?.displayAvatarURL() || null,
-      guildsCount: isReady ? botClient.guilds.cache.size : 3,
-      usersCount: isReady ? botClient.guilds.cache.reduce((acc, g) => acc + g.memberCount, 0) : 4840,
-      ping: isReady ? Math.round(botClient.ws.ping) : 24,
+      guildsCount: isReady ? botClient.guilds.cache.size : 0,
+      usersCount: isReady ? botClient.guilds.cache.reduce((acc, g) => acc + (g.memberCount || 0), 0) : 0,
+      ping: isReady ? Math.round(botClient.ws.ping) : 0,
       uptime: process.uptime(),
-      demoMode: CONFIG.DEMO_MODE || !isReady,
+      demoMode: !isReady,
       aiModel: CONFIG.CLOUDFLARE_MODEL
     });
   });

@@ -5,19 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Il Cavaliere | Discord Bot & Dashboard All-in-One</title>
   <link rel="icon" href="https://cdn.discordapp.com/embed/avatars/0.png">
-  
   <script src="https://cdn.tailwindcss.com"></script>
-  
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body class="relative min-h-screen text-slate-100 flex flex-col justify-between">
-  
   <div class="bg-glow-orb orb-1"></div>
   <div class="bg-glow-orb orb-2"></div>
   <div class="bg-glow-orb orb-3"></div>
 
-  
   <header class="glass-nav sticky top-0 z-50 w-full px-6 py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-purple-500/30">
@@ -25,7 +21,7 @@
       </div>
       <div>
         <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-          Il Cavaliere <span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">v1.0</span>
+          Il Cavaliere <span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">v2.0</span>
         </h1>
         <p class="text-xs text-slate-400">Proteggendo i tuoi Reami Discord</p>
       </div>
@@ -34,7 +30,7 @@
     <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
       <a href="#features" class="hover:text-purple-400 transition-colors">Funzionalità</a>
       <a href="#modules" class="hover:text-purple-400 transition-colors">Moduli</a>
-      <a href="#partnership" class="hover:text-purple-400 transition-colors">Partnership</a>
+      <a href="#ai" class="hover:text-purple-400 transition-colors">Il Cavaliere AI</a>
       <a href="/dashboard.html" class="hover:text-purple-400 transition-colors">Dashboard Live</a>
     </div>
 
@@ -50,11 +46,10 @@
     </div>
   </header>
 
-  
   <main class="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24 text-center">
     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-500/30 text-purple-300 text-xs font-semibold uppercase tracking-wider mb-6 shadow-inner">
       <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
-      <span>Bot Discord Multifunzione di Nuova Generazione</span>
+      <span>Bot Discord Multifunzione con AI Neurale</span>
     </div>
 
     <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
@@ -63,7 +58,7 @@
     </h1>
 
     <p class="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-10 leading-relaxed">
-      Automatizza <strong>Partnership</strong> con verifica immediata, crea <strong>Embed live</strong> con anteprima real-time, gestisci <strong>Reaction Roles</strong>, accogli i membri con <strong>Card di Benvenuto</strong>, e proteggi il server con <strong>AutoMod</strong>.
+      Automatizza <strong>Partnership</strong> con verifica immediata, crea <strong>Embed live</strong> in tempo reale, usa <strong>Il Cavaliere AI</strong> per rispondere ed effettuare ricerche, gestisci <strong>Reaction Roles</strong>, <strong>Benvenuto</strong> e proteggi il server con <strong>AutoMod</strong>.
     </p>
 
     <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
@@ -71,25 +66,24 @@
         <i data-lucide="zap" class="w-5 h-5"></i>
         <span>Gestisci i Tuoi Server</span>
       </a>
-      <a href="https://discord.com" target="_blank" class="btn-secondary text-base py-3 px-6">
+      <a href="https://discord.com/developers/applications" target="_blank" class="btn-secondary text-base py-3 px-6">
         <i data-lucide="plus-circle" class="w-5 h-5"></i>
         <span>Invita Il Cavaliere</span>
       </a>
     </div>
 
-    
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-20">
       <div class="glass-card p-5 text-center">
-        <div class="text-3xl font-extrabold text-white mb-1" id="stat-servers">3+</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Server Protetti</div>
+        <div class="text-3xl font-extrabold text-white mb-1" id="stat-servers">1</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Server Connessi</div>
       </div>
       <div class="glass-card p-5 text-center">
-        <div class="text-3xl font-extrabold text-cyan-400 mb-1" id="stat-users">4,840+</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Utenti Serviti</div>
+        <div class="text-3xl font-extrabold text-cyan-400 mb-1" id="stat-users">584</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Utenti Discord</div>
       </div>
       <div class="glass-card p-5 text-center">
-        <div class="text-3xl font-extrabold text-purple-400 mb-1" id="stat-partnerships">100%</div>
-        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Auto-Partnership</div>
+        <div class="text-3xl font-extrabold text-purple-400 mb-1" id="stat-ai">Llama 70B</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Cloudflare AI</div>
       </div>
       <div class="glass-card p-5 text-center">
         <div class="text-3xl font-extrabold text-emerald-400 mb-1" id="stat-ping">24ms</div>
@@ -97,7 +91,6 @@
       </div>
     </div>
 
-    
     <section class="max-w-5xl mx-auto text-left mb-24">
       <div class="flex items-center justify-between mb-8">
         <div>
@@ -111,59 +104,9 @@
         </a>
       </div>
 
-      <div id="guilds-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        <div class="glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer" onclick="window.location.href='/dashboard.html?guild=123456789012345678'">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-purple-900/60 border border-purple-500/30 flex items-center justify-center text-2xl shadow-md">
-              🏰
-            </div>
-            <div>
-              <h3 class="font-bold text-white text-lg">Il Reame del Cavaliere</h3>
-              <p class="text-xs text-slate-400">1,420 Membri • 8 Moduli Attivi</p>
-            </div>
-          </div>
-          <div class="flex items-center justify-between pt-4 border-t border-white/5">
-            <span class="text-xs font-semibold px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">Bot Configurato</span>
-            <span class="text-sm text-purple-400 font-semibold flex items-center gap-1">Gestisci <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
-          </div>
-        </div>
-
-        <div class="glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer" onclick="window.location.href='/dashboard.html?guild=987654321098765432'">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-cyan-900/60 border border-cyan-500/30 flex items-center justify-center text-2xl shadow-md">
-              ⚔️
-            </div>
-            <div>
-              <h3 class="font-bold text-white text-lg">Gilda dei Guerrieri</h3>
-              <p class="text-xs text-slate-400">530 Membri • 6 Moduli Attivi</p>
-            </div>
-          </div>
-          <div class="flex items-center justify-between pt-4 border-t border-white/5">
-            <span class="text-xs font-semibold px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">Bot Configurato</span>
-            <span class="text-sm text-purple-400 font-semibold flex items-center gap-1">Gestisci <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
-          </div>
-        </div>
-
-        <div class="glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer" onclick="window.location.href='/dashboard.html?guild=555555555555555555'">
-          <div class="flex items-center gap-4 mb-4">
-            <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-2xl shadow-md">
-              🎮
-            </div>
-            <div>
-              <h3 class="font-bold text-white text-lg">Community Gaming</h3>
-              <p class="text-xs text-slate-400">2,890 Membri • Da Invitate</p>
-            </div>
-          </div>
-          <div class="flex items-center justify-between pt-4 border-t border-white/5">
-            <span class="text-xs font-semibold px-2 py-1 rounded bg-amber-500/20 text-amber-400">Invita Bot</span>
-            <span class="text-sm text-slate-400 font-semibold flex items-center gap-1">Aggiungi <i data-lucide="plus" class="w-4 h-4"></i></span>
-          </div>
-        </div>
-      </div>
+      <div id="guilds-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
     </section>
 
-    
     <section id="modules" class="max-w-6xl mx-auto text-left">
       <div class="text-center max-w-2xl mx-auto mb-16">
         <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
@@ -177,11 +120,11 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="glass-card p-6">
           <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-4 text-purple-400">
-            <i data-lucide="handshake" class="w-6 h-6"></i>
+            <i data-lucide="bot" class="w-6 h-6"></i>
           </div>
-          <h3 class="text-lg font-bold text-white mb-2">🤝 Sistema Partnership</h3>
+          <h3 class="text-lg font-bold text-white mb-2">🤖 Il Cavaliere AI</h3>
           <p class="text-sm text-slate-400 leading-relaxed">
-            Verifica automatica del link di invito, controllo del numero minimo di membri, cooldown intelligente, ping ruoli e classifica dei partner manager.
+            Chat neurale avanzata potenziata da Cloudflare Workers AI (Llama 3.3 70B), ricerca web integrata e memoria contestuale per canale.
           </p>
         </div>
 
@@ -197,6 +140,16 @@
 
         <div class="glass-card p-6">
           <div class="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center mb-4 text-pink-400">
+            <i data-lucide="handshake" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">🤝 Sistema Partnership</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Verifica automatica del link di invito, controllo del numero minimo di membri, cooldown intelligente, ping ruoli e classifica dei partner manager.
+          </p>
+        </div>
+
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-4 text-amber-400">
             <i data-lucide="layers" class="w-6 h-6"></i>
           </div>
           <h3 class="text-lg font-bold text-white mb-2">🎭 Reaction & Button Roles</h3>
@@ -216,16 +169,6 @@
         </div>
 
         <div class="glass-card p-6">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-4 text-amber-400">
-            <i data-lucide="zap" class="w-6 h-6"></i>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2">⚡ Auto-Responder & Emoji</h3>
-          <p class="text-sm text-slate-400 leading-relaxed">
-            Risposte automatiche su parole chiave, auto-reactions per i canali suggerimenti (👍 👎) e comando steal emoji da altri server.
-          </p>
-        </div>
-
-        <div class="glass-card p-6">
           <div class="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center mb-4 text-rose-400">
             <i data-lucide="shield-alert" class="w-6 h-6"></i>
           </div>
@@ -238,7 +181,6 @@
     </section>
   </main>
 
-  
   <footer class="relative z-10 border-t border-white/5 bg-slate-950/80 px-6 py-8 text-center text-xs text-slate-500">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
@@ -246,14 +188,70 @@
         <span class="font-semibold text-slate-300">Il Cavaliere</span> — Bot Discord e Dashboard Noctaly-Style
       </div>
       <div>
-        Realizzato con Node.js & Discord.js v14 • Sistema ad alte prestazioni SQLite WAL
+        Realizzato con Node.js & Discord.js v14 • Sistema ad alte prestazioni SQLite
       </div>
     </div>
   </footer>
 
   <script>
     lucide.createIcons();
+
+    async function loadLandingData() {
+      try {
+        const res = await fetch('/api/status');
+        if (res.ok) {
+          const data = await res.json();
+          const statServers = document.getElementById('stat-servers');
+          const statUsers = document.getElementById('stat-users');
+          const statPing = document.getElementById('stat-ping');
+          const botStatusText = document.getElementById('bot-status-text');
+
+          if (statServers) statServers.textContent = data.guildsCount;
+          if (statUsers) statUsers.textContent = data.usersCount.toLocaleString();
+          if (statPing) statPing.textContent = data.ping + 'ms';
+          if (botStatusText) botStatusText.textContent = data.online ? 'Bot Online' : 'In attesa di connessione';
+        }
+
+        const guildsRes = await fetch('/api/guilds');
+        if (guildsRes.ok) {
+          const guilds = await guildsRes.json();
+          const grid = document.getElementById('guilds-grid');
+          if (grid && guilds && guilds.length > 0) {
+            grid.innerHTML = '';
+            guilds.forEach(g => {
+              const card = document.createElement('div');
+              card.className = 'glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer';
+              card.onclick = () => window.location.href = `/dashboard.html?guild=${g.id}`;
+              
+              const iconHtml = g.icon 
+                ? `<img src="${g.icon}" class="w-14 h-14 rounded-2xl object-cover border border-purple-500/30 shadow-md">`
+                : `<div class="w-14 h-14 rounded-2xl bg-purple-900/60 border border-purple-500/30 flex items-center justify-center text-2xl shadow-md">🏰</div>`;
+
+              card.innerHTML = `
+                <div class="flex items-center gap-4 mb-4">
+                  ${iconHtml}
+                  <div>
+                    <h3 class="font-bold text-white text-lg">${g.name}</h3>
+                    <p class="text-xs text-slate-400">${g.memberCount} Membri • ${g.activeModulesCount || 8} Moduli Attivi</p>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t border-white/5">
+                  <span class="text-xs font-semibold px-2 py-1 rounded ${g.botJoined ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+                    ${g.botJoined ? 'Bot Connesso' : 'Invita Bot'}
+                  </span>
+                  <span class="text-sm text-purple-400 font-semibold flex items-center gap-1">Gestisci <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+                </div>
+              `;
+              grid.appendChild(card);
+            });
+            lucide.createIcons();
+          }
+        }
+      } catch (e) {
+        console.error('Error loading landing data:', e);
+      }
+    }
+    loadLandingData();
   </script>
 </body>
 </html>
-
