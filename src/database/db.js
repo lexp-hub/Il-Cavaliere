@@ -1,4 +1,3 @@
-import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
 import { CONFIG } from '../config.js';
@@ -9,13 +8,65 @@ if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
-export const db = new Database(CONFIG.DB_PATH);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+let rawDb = null;
+let isNodeSqlite = false;
 
+try {
+  const { DatabaseSync } = await import('node:sqlite');
+  rawDb = new DatabaseSync(CONFIG.DB_PATH);
+  rawDb.exec('PRAGMA foreign_keys = ON;');
+  rawDb.exec('PRAGMA journal_mode = WAL;');
+  isNodeSqlite = true;
+  console.log(`[Database] Connected using built-in node:sqlite (Node 22+) to ${CONFIG.DB_PATH}`);
+} catch (e1) {
+  try {
+    const BetterSqlite3 = (await import('better-sqlite3')).default;
+    rawDb = new BetterSqlite3(CONFIG.DB_PATH);
+    rawDb.pragma('journal_mode = WAL');
+    rawDb.pragma('foreign_keys = ON');
+    console.log(`[Database] Connected using better-sqlite3 to ${CONFIG.DB_PATH}`);
+  } catch (e2) {
+    console.error('[Database Error] Failed to initialize SQLite database:', e2.message);
+  }
+}
+
+class UniversalDatabase {
+  constructor(instance, isNode) {
+    this.raw = instance;
+    this.isNode = isNode;
+  }
+
+  pragma(str) {
+    if (this.raw?.pragma) {
+      return this.raw.pragma(str);
+    }
+    return this.raw?.exec(`PRAGMA ${str}`);
+  }
+
+  exec(sql) {
+    return this.raw?.exec(sql);
+  }
+
+  prepare(sql) {
+    const stmt = this.raw.prepare(sql);
+    if (!this.isNode) return stmt;
+
+    return {
+      get: (...args) => stmt.get(...args),
+      all: (...args) => stmt.all(...args),
+      run: (...args) => {
+        const res = stmt.run(...args);
+        return {
+          changes: Number(res?.changes || 0),
+          lastInsertRowid: Number(res?.lastInsertRowid || 0)
+        };
+      }
+    };
+  }
+}
+
+export const db = new UniversalDatabase(rawDb, isNodeSqlite);
 db.exec(SCHEMA);
-
-console.log(`[Database] Connected to SQLite database at ${CONFIG.DB_PATH}`);
 
 export const DatabaseHelper = {
   db,
