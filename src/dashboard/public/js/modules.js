@@ -928,6 +928,38 @@
     });
   }
 
+  const btnResetWelcomer = document.getElementById('btn-reset-welcomer');
+  if (btnResetWelcomer) {
+    btnResetWelcomer.addEventListener('click', () => {
+      document.getElementById('wel-embed-author-name').value = '';
+      document.getElementById('wel-embed-author-icon').value = '';
+      document.getElementById('wel-embed-author-url').value = '';
+      document.getElementById('wel-embed-title').value = '⚔️ Benvenuto nel Reame, {user}!';
+      document.getElementById('wel-embed-title-url').value = '';
+      document.getElementById('wel-embed-color').value = '#dc2626';
+      document.getElementById('wel-embed-color-hex').value = '#DC2626';
+      document.getElementById('wel-message').value = 'Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!';
+      document.getElementById('wel-embed-image').value = '';
+      document.getElementById('wel-embed-thumbnail').value = '{user.avatar}';
+      document.getElementById('wel-embed-footer').value = 'Membro #{memberCount} • {server.name}';
+      document.getElementById('wel-embed-footer-icon').value = '';
+      welFields = [];
+      renderWelFieldsList();
+      updateWelcomerPreview();
+      window.showToast('Welcomer ripristinato ai valori predefiniti.');
+    });
+  }
+
+  const btnCopyWelJson = document.getElementById('btn-copy-wel-json');
+  if (btnCopyWelJson) {
+    btnCopyWelJson.addEventListener('click', () => {
+      const payload = getWelcomerPayload();
+      navigator.clipboard.writeText(JSON.stringify(payload.welcome_embed, null, 2))
+        .then(() => window.showToast('JSON Embed copiato negli appunti!'))
+        .catch(() => window.showToast('Impossibile copiare negli appunti.', 'error'));
+    });
+  }
+
   async function loadAutoresponders(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/autoresponders`);

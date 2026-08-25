@@ -905,209 +905,184 @@
     
     <section id="tab-welcomer" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <!-- Settings Form Column -->
-        <div class="lg:col-span-7 space-y-6">
-          <div class="glass-card p-6 space-y-5">
+        <!-- Editor Column (Exact 1:1 with Embed Builder) -->
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-card p-5 space-y-4">
+            
+            <!-- Header with Switches -->
             <div class="flex items-center justify-between pb-3 border-b border-slate-300">
-              <div>
-                <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
-                  <i data-lucide="user-plus" class="w-5 h-5 text-red-600"></i> Modulo Benvenuto Embed Completo
-                </h3>
-                <p class="text-xs text-slate-500">Invia ricchi messaggi Embed personalizzati in tempo reale all'ingresso di ogni nuovo membro</p>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+                <i data-lucide="user-plus" class="w-4 h-4 text-red-600"></i> Personalizzazione Welcomer Embed
+              </h3>
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-semibold text-slate-600">Attivo:</span>
+                  <label class="switch">
+                    <input type="checkbox" id="wel-enabled" checked>
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <button type="button" id="btn-reset-welcomer" class="text-xs text-slate-600 hover:text-slate-900 px-2 py-1 rounded bg-slate-200 font-medium">Reset</button>
               </div>
-              <label class="switch">
-                <input type="checkbox" id="wel-enabled" checked>
-                <span class="slider"></span>
-              </label>
             </div>
 
-            <!-- Channels & Auto-Roles -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <!-- Row 1: Channel & Color -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="text-xs font-semibold text-slate-700 block mb-1">Canale di Benvenuto</label>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Canale di Invio Discord</label>
                 <div class="space-y-1.5">
                   <div class="relative">
                     <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                    <input type="text" id="wel-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                    <input type="text" id="wel-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale per nome...">
                   </div>
                   <select id="wel-channel" class="form-select text-xs"></select>
                 </div>
               </div>
               <div>
-                <label class="text-xs font-semibold text-slate-700 block mb-1">Auto-Role Utenti</label>
-                <div class="pt-6">
-                  <select id="wel-autorole-user" class="form-select text-xs"></select>
-                </div>
-              </div>
-              <div>
-                <label class="text-xs font-semibold text-slate-700 block mb-1">Auto-Role Bot</label>
-                <div class="pt-6">
-                  <select id="wel-autorole-bot" class="form-select text-xs"></select>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Colore Barra Laterale</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="wel-embed-color" value="#dc2626" class="w-10 h-9 rounded cursor-pointer bg-transparent border-0">
+                  <input type="text" id="wel-embed-color-hex" value="#DC2626" class="form-input text-xs uppercase" maxlength="7">
                 </div>
               </div>
             </div>
 
-            <!-- Full Embed Customization Area -->
-            <div class="space-y-4 pt-3 border-t border-slate-300">
-              <h4 class="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-1.5 font-medieval">
-                <i data-lucide="scroll" class="w-4 h-4 text-red-600"></i> Costruttore Embed Benvenuto
-              </h4>
-
-              <!-- Author Info -->
-              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Nome Autore</label>
-                  <input type="text" id="wel-embed-author-name" class="form-input text-xs" placeholder="es. {server.name} Welcome">
-                </div>
-                <div>
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Icona Autore URL</label>
-                  <input type="url" id="wel-embed-author-icon" class="form-input text-xs" placeholder="https://... o {user.avatar}">
-                </div>
-                <div>
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Link Autore URL</label>
-                  <input type="url" id="wel-embed-author-url" class="form-input text-xs" placeholder="https://...">
-                </div>
-              </div>
-
-              <!-- Title & Color -->
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                <div class="sm:col-span-6">
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Embed</label>
-                  <input type="text" id="wel-embed-title" class="form-input text-xs" value="⚔️ Benvenuto nel Reame, {user}!">
-                </div>
-                <div class="sm:col-span-3">
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Link del Titolo (URL)</label>
-                  <input type="url" id="wel-embed-title-url" class="form-input text-xs" placeholder="https://...">
-                </div>
-                <div class="sm:col-span-3">
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Colore Barra Laterale</label>
-                  <div class="flex items-center gap-2">
-                    <input type="color" id="wel-embed-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#dc2626">
-                    <input type="text" id="wel-embed-color-hex" class="form-input text-xs uppercase font-mono" value="#DC2626" maxlength="7">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Description with Markdown Toolbar -->
+            <!-- Row 1.5: Auto-Roles -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
-                  <label class="text-xs font-semibold text-slate-700 block">Descrizione Principale dell'Embed</label>
-                  <div id="wel-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
-                </div>
-                <textarea id="wel-message" class="form-textarea h-24 text-xs">Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
-                <div class="flex flex-wrap items-center gap-1.5 mt-2">
-                  <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-red-100 hover:bg-red-200 font-mono text-red-700 font-bold border border-red-200" data-target="wel-message" data-var="{user.mention}">{user.mention}</button>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user}">{user}</button>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.tag}">{user.tag}</button>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.id}">{user.id}</button>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{server.name}">{server.name}</button>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{memberCount}">{memberCount}</button>
-                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.avatar}">{user.avatar}</button>
-                </div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Auto-Role Utenti (Ruolo assegnato ai nuovi membri)</label>
+                <select id="wel-autorole-user" class="form-select text-xs"></select>
               </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Auto-Role Bot (Ruolo assegnato ai bot invitati)</label>
+                <select id="wel-autorole-bot" class="form-select text-xs"></select>
+              </div>
+            </div>
 
-              <!-- Dynamic Custom Fields Section -->
-              <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            <!-- Row 2: Author Name & Icon -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Nome Autore</label>
+                <input type="text" id="wel-embed-author-name" class="form-input text-xs" placeholder="es. {server.name} Welcome">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">URL Icona Autore</label>
+                <input type="text" id="wel-embed-author-icon" class="form-input text-xs" placeholder="https://... o {user.avatar}">
+              </div>
+            </div>
+
+            <!-- Row 3: Title & Title URL -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Embed</label>
+                <input type="text" id="wel-embed-title" class="form-input text-xs" value="⚔️ Benvenuto nel Reame, {user}!">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">URL Titolo</label>
+                <input type="text" id="wel-embed-title-url" class="form-input text-xs" placeholder="https://...">
+              </div>
+            </div>
+
+            <!-- Row 4: Description & Markdown Toolbar -->
+            <div>
+              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                <label class="text-xs font-semibold text-slate-700 block">Descrizione (Markdown Discord)</label>
+                <div id="wel-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+              </div>
+              <textarea id="wel-message" class="form-textarea text-xs h-28" placeholder="Scrivi il messaggio di benvenuto... usa {user.mention}, **grassetto**, *corsivo*, <#canale> o i pulsanti sopra.">Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
+              
+              <!-- Quick Variable Tags -->
+              <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-red-100 hover:bg-red-200 font-mono text-red-700 font-bold border border-red-200" data-target="wel-message" data-var="{user.mention}">{user.mention}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user}">{user}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.tag}">{user.tag}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.id}">{user.id}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{server.name}">{server.name}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{memberCount}">{memberCount}</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.avatar}">{user.avatar}</button>
+              </div>
+            </div>
+
+            <!-- Row 5: Large Image & Thumbnail -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">URL Immagine Grande</label>
+                <input type="text" id="wel-embed-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">URL Miniatura (Thumbnail)</label>
+                <input type="text" id="wel-embed-thumbnail" class="form-input text-xs" placeholder="https://... o {user.avatar}" value="{user.avatar}">
+              </div>
+            </div>
+
+            <!-- Row 6: Footer Text & Footer Icon -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Testo Footer</label>
+                <input type="text" id="wel-embed-footer" class="form-input text-xs" value="Membro #{memberCount} • {server.name}">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">URL Icona Footer</label>
+                <input type="text" id="wel-embed-footer-icon" class="form-input text-xs" placeholder="https://...">
+              </div>
+            </div>
+
+            <!-- Row 7: Fields -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700">Campi Aggiuntivi (Fields)</label>
+                <button type="button" id="btn-wel-add-field" class="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Campo
+                </button>
+              </div>
+              <div id="wel-fields-list" class="space-y-2"></div>
+            </div>
+
+            <!-- Optional DM & Leaver Sub-Settings -->
+            <div class="pt-3 border-t border-slate-300 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                    <i data-lucide="list-plus" class="w-3.5 h-3.5 text-red-600"></i> Campi Personalizzati (Fields)
-                  </span>
-                  <button type="button" id="btn-wel-add-field" class="btn-secondary text-xs py-1 px-3">
-                    <i data-lucide="plus" class="w-3 h-3"></i> Aggiungi Campo
-                  </button>
+                  <span class="text-xs font-bold text-slate-800">Messaggio DM Privato</span>
+                  <label class="switch"><input type="checkbox" id="wel-dm-enabled"><span class="slider"></span></label>
                 </div>
-                <div id="wel-fields-list" class="space-y-2.5"></div>
+                <textarea id="wel-dm-message" class="form-textarea text-xs h-16" placeholder="Messaggio di benvenuto nei DM...">Benvenuto in **{server.name}**! Leggi le regole e buona permanenza!</textarea>
               </div>
 
-              <!-- Media: Thumbnail & Large Image Banner -->
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Thumbnail (Miniatura a Destra)</label>
-                  <input type="text" id="wel-embed-thumbnail" class="form-input text-xs" placeholder="URL immagine o lascia {user.avatar}" value="{user.avatar}">
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold text-slate-800">Messaggio di Addio (Leave)</span>
+                  <label class="switch"><input type="checkbox" id="wel-leave-enabled"><span class="slider"></span></label>
                 </div>
-                <div>
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Immagine / Banner Grande (Sotto)</label>
-                  <input type="url" id="wel-embed-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
-                </div>
-              </div>
-
-              <!-- Footer & Timestamp -->
-              <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                <div class="sm:col-span-6">
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Testo Footer</label>
-                  <input type="text" id="wel-embed-footer" class="form-input text-xs" value="Membro #{memberCount} • {server.name}">
-                </div>
-                <div class="sm:col-span-4">
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Icona Footer URL</label>
-                  <input type="url" id="wel-embed-footer-icon" class="form-input text-xs" placeholder="https://...">
-                </div>
-                <div class="sm:col-span-2">
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Timestamp</label>
-                  <div class="pt-2">
-                    <label class="switch"><input type="checkbox" id="wel-embed-timestamp" checked><span class="slider"></span></label>
-                  </div>
-                </div>
+                <select id="wel-leave-channel" class="form-select text-xs mb-1"></select>
+                <input type="text" id="wel-leave-message" class="form-input text-xs" value="{user.tag} ha lasciato il server. Siamo in {memberCount}.">
               </div>
             </div>
 
-            <!-- Welcome DM -->
-            <div class="pt-4 border-t border-slate-300 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Messaggio Privato (DM) in Embed</span>
-                <label class="switch"><input type="checkbox" id="wel-dm-enabled"><span class="slider"></span></label>
-              </div>
-              <div class="flex flex-wrap items-center justify-between gap-1.5">
-                <label class="text-xs font-semibold text-slate-700">Testo DM</label>
-                <div id="wel-dm-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
-              </div>
-              <textarea id="wel-dm-message" class="form-textarea h-18 text-xs">Benvenuto in **{server.name}**! Ricordati di leggere il regolamento e buona permanenza!</textarea>
-            </div>
-
-            <!-- Leave Message -->
-            <div class="pt-4 border-t border-slate-300 space-y-3">
-              <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Messaggio di Addio (Leaver Embed)</span>
-                <label class="switch"><input type="checkbox" id="wel-leave-enabled"><span class="slider"></span></label>
-              </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Addio</label>
-                  <div class="space-y-1.5">
-                    <div class="relative">
-                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                      <input type="text" id="wel-leave-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
-                    </div>
-                    <select id="wel-leave-channel" class="form-select text-xs"></select>
-                  </div>
-                </div>
-                <div>
-                  <div class="flex items-center justify-between gap-1 mb-1">
-                    <label class="text-xs font-semibold text-slate-700 block">Testo Addio</label>
-                    <div id="wel-leave-toolbar-container" class="flex items-center gap-1"></div>
-                  </div>
-                  <input type="text" id="wel-leave-message" class="form-input text-xs" value="{user.tag} ha lasciato il server. Siamo rimasti in {memberCount}.">
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-6 flex flex-wrap items-center gap-3">
-              <button id="btn-save-welcomer" class="btn-cyber text-xs py-2.5 px-5">
-                <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Welcomer
+            <!-- Row 8: Action Buttons (Exact match to screenshot!) -->
+            <div class="pt-3 border-t border-slate-300 flex flex-wrap items-center justify-between gap-3">
+              <button type="button" id="btn-copy-wel-json" class="btn-secondary text-xs py-2 px-3 flex items-center gap-1.5">
+                <i data-lucide="code" class="w-3.5 h-3.5"></i> Copia JSON
               </button>
-              <button id="btn-test-welcomer" class="btn-secondary text-xs py-2.5 px-5 border-red-300 bg-red-50 hover:bg-red-100 text-red-900 font-bold">
-                <i data-lucide="send" class="w-3.5 h-3.5 text-red-600"></i> Invia Embed di Prova nel Canale
-              </button>
+              <div class="flex flex-wrap items-center gap-2.5">
+                <button type="button" id="btn-test-welcomer" class="btn-knight text-xs py-2 px-5 flex items-center gap-1.5" style="background: linear-gradient(135deg, #dc2626, #991b1b);">
+                  <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia Embed di Prova nel Canale
+                </button>
+                <button type="button" id="btn-save-welcomer" class="btn-cyber text-xs py-2 px-5 flex items-center gap-1.5">
+                  <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Welcomer
+                </button>
+              </div>
             </div>
+
           </div>
         </div>
 
-        <!-- Real-Time Discord Welcomer Embed Preview Column -->
+        <!-- Real-Time Discord Live Preview Column (Exact 1:1 with Embed Builder) -->
         <div class="lg:col-span-5">
           <div class="sticky top-6 space-y-3">
-            <div class="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
-              <span>Anteprima Welcomer Discord</span>
-              <span class="text-amber-400 font-mono text-[10px]">Real-time Live Embed</span>
+            <div class="flex items-center justify-between text-xs text-slate-600 font-bold uppercase tracking-wider">
+              <span>Anteprima Live Discord</span>
+              <span class="text-red-600 font-mono text-[10px]">Real-time DOM</span>
             </div>
 
             <div class="discord-chat-container">
@@ -1117,36 +1092,36 @@
                   <div class="discord-header">
                     <span class="discord-author">Il Cavaliere</span>
                     <span class="discord-bot-badge">Bot</span>
-                    <span class="discord-timestamp">Oggi alle 12:00</span>
+                    <span class="discord-timestamp">Oggi alle 15:30</span>
                   </div>
 
-                  <div class="text-xs text-slate-300 mb-2 font-mono" id="prev-wel-mention">
-                    <span class="bg-[#5865F2]/20 text-[#5865F2] px-1 py-0.5 rounded">@NuovoCavaliere</span>
+                  <!-- Simulated User Mention Ping -->
+                  <div class="text-xs mb-1.5 font-mono" id="prev-wel-mention">
+                    <span class="discord-mention-pill user">@NuovoCavaliere</span>
                   </div>
 
                   <div id="prev-wel-embed-box" class="discord-embed-box" style="border-left-color: #dc2626;">
                     <div>
                       <!-- Author preview -->
                       <div id="prev-wel-author" class="discord-embed-author hidden">
-                        <img id="prev-wel-author-icon" src="" class="discord-author-icon hidden" alt="Author Icon">
-                        <span id="prev-wel-author-text"></span>
+                        <img id="prev-wel-author-icon" src="" class="hidden" alt="Author Icon">
+                        <span id="prev-wel-author-name"></span>
                       </div>
 
                       <!-- Title preview -->
                       <div id="prev-wel-title" class="discord-embed-title">⚔️ Benvenuto nel Reame, NuovoCavaliere!</div>
                       
                       <!-- Description preview -->
-                      <div id="prev-wel-desc" class="discord-embed-desc">Benvenuto @NuovoCavaliere in Il Cavaliere Realm! Siamo felici di averti tra noi. Sei il membro #128!</div>
+                      <div id="prev-wel-desc" class="discord-embed-desc">Benvenuto @NuovoCavaliere in **Il Cavaliere Realm**! Siamo felici di averti tra noi. Sei il membro **#128**!</div>
                       
                       <!-- Dynamic Fields Grid preview -->
-                      <div id="prev-wel-fields" class="discord-embed-fields mt-3"></div>
+                      <div id="prev-wel-fields" class="discord-embed-fields"></div>
                     </div>
-                    <img id="prev-wel-thumb" class="discord-embed-thumb" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Thumbnail">
-                    <img id="prev-wel-image" class="discord-embed-image hidden" src="" alt="Banner">
+                    <img id="prev-wel-thumb" class="discord-embed-thumb hidden" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Thumbnail">
+                    <img id="prev-wel-image" class="discord-embed-image hidden" src="" alt="Image">
                     <div id="prev-wel-footer" class="discord-embed-footer">
-                      <img id="prev-wel-footer-icon" src="/logo.svg?v=12" class="w-4 h-4 rounded-full" alt="Icon">
+                      <img id="prev-wel-footer-icon" class="hidden" src="/logo.svg?v=12" alt="Footer Icon">
                       <span id="prev-wel-footer-text">Membro #128 • Il Cavaliere Realm</span>
-                      <span id="prev-wel-timestamp" class="text-[10px] text-slate-500 font-mono hidden">• Oggi alle 12:00</span>
                     </div>
                   </div>
                 </div>
@@ -1753,9 +1728,9 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=25"></script>
-  <script src="/js/embedBuilder.js?v=25"></script>
-  <script src="/js/modules.js?v=25"></script>
+  <script src="/js/app.js?v=26"></script>
+  <script src="/js/embedBuilder.js?v=26"></script>
+  <script src="/js/modules.js?v=26"></script>
   <script>
     lucide.createIcons();
   </script>
