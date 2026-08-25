@@ -48,7 +48,7 @@
         const isEnabled = enabledMap[key] !== false;
 
         const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between';
+        card.className = 'p-3.5 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
         card.innerHTML = `
           <div>
             <p class="font-bold text-xs text-white">${info.name}</p>
@@ -73,9 +73,34 @@
             body: JSON.stringify({ modules_enabled: enabledMap })
           });
 
-          window.showToast(`Modulo ${moduleLabels[modKey].name} ${e.target.checked ? 'attivato' : 'disattivato'}.`);
+      const prefixEl = document.getElementById('gen-prefix');
+      const logEl = document.getElementById('gen-log-channel');
+      if (prefixEl && settings.prefix) prefixEl.value = settings.prefix;
+      if (logEl && settings.log_channel_id) logEl.value = settings.log_channel_id;
+
+      if (prefixEl && !prefixEl.hasAttribute('data-bound')) {
+        prefixEl.setAttribute('data-bound', 'true');
+        prefixEl.addEventListener('change', async () => {
+          await fetch(`/api/guilds/${guildId}/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prefix: prefixEl.value })
+          });
+          window.showToast('Prefisso comandi salvato!');
         });
-      });
+      }
+
+      if (logEl && !logEl.hasAttribute('data-bound')) {
+        logEl.setAttribute('data-bound', 'true');
+        logEl.addEventListener('change', async () => {
+          await fetch(`/api/guilds/${guildId}/settings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ log_channel_id: logEl.value })
+          });
+          window.showToast('Canale Audit Log salvato!');
+        });
+      }
     } catch (e) {
       console.error('Error loading master modules:', e);
     }
@@ -280,7 +305,7 @@
           lb.forEach((entry, idx) => {
             const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
             const item = document.createElement('div');
-            item.className = 'p-2.5 rounded-lg bg-slate-900/60 border border-white/5 flex items-center justify-between';
+            item.className = 'p-2.5 rounded-lg bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
             item.innerHTML = `
               <div class="flex items-center gap-2">
                 <span class="font-bold text-sm">${medal}</span>
@@ -370,7 +395,7 @@
       } else {
         list.forEach(item => {
           const card = document.createElement('div');
-          card.className = 'p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between';
+          card.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
           card.innerHTML = `
             <div class="flex items-center gap-3">
               <span class="text-base">${item.emoji || '🔘'}</span>
@@ -446,7 +471,10 @@
 
     if (prevBox) prevBox.style.borderLeftColor = color;
     if (prevTitle) prevTitle.textContent = title.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
-    if (prevDesc) prevDesc.textContent = message.replace(/{user\.mention}/g, '@NuovoCavaliere').replace(/{user}/g, 'NuovoCavaliere').replace(/{user\.tag}/g, 'NuovoCavaliere#0000').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+    if (prevDesc) {
+      const formatted = message.replace(/{user\.mention}/g, '@NuovoCavaliere').replace(/{user}/g, 'NuovoCavaliere').replace(/{user\.tag}/g, 'NuovoCavaliere#0000').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+      prevDesc.innerHTML = window.parseDiscordMarkdown ? window.parseDiscordMarkdown(formatted) : formatted;
+    }
     
     if (prevImage) {
       if (image) {
@@ -585,7 +613,7 @@
       } else {
         list.forEach(ar => {
           const card = document.createElement('div');
-          card.className = 'p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between';
+          card.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
           card.innerHTML = `
             <div>
               <p class="font-bold text-xs text-white">Trigger: <code class="text-purple-300 font-mono">${ar.trigger}</code> <span class="text-[10px] text-slate-400 font-normal">(${ar.match_type})</span></p>
@@ -734,7 +762,9 @@
 
     if (prevBox) prevBox.style.borderLeftColor = color;
     if (prevTitle) prevTitle.textContent = title;
-    if (prevDesc) prevDesc.textContent = desc;
+    if (prevDesc) {
+      prevDesc.innerHTML = window.parseDiscordMarkdown ? window.parseDiscordMarkdown(desc) : desc;
+    }
 
     if (prevImage) {
       if (image) {
@@ -802,7 +832,7 @@
             const card = document.createElement('div');
             const dateStr = new Date(tk.created_at * 1000).toLocaleString('it-IT');
             const badgeClass = tk.status === 'OPEN' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300';
-            card.className = 'p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between';
+            card.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
             card.innerHTML = `
               <div>
                 <div class="flex items-center gap-2">
@@ -981,12 +1011,127 @@
     }
   }
 
+  async function saveAllServerSettings(guildId) {
+    if (!guildId) return;
+
+    try {
+      const btn = document.getElementById('btn-save-all');
+      const btnMob = document.getElementById('btn-save-all-mobile');
+      if (btn) btn.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Salvataggio...';
+      if (btnMob) btnMob.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Salvataggio...';
+      lucide.createIcons();
+
+      // 1. General Settings
+      const p1 = fetch(`/api/guilds/${guildId}/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prefix: document.getElementById('gen-prefix')?.value || '!',
+          log_channel_id: document.getElementById('gen-log-channel')?.value || null
+        })
+      });
+
+      // 2. AI Config
+      const p2 = fetch(`/api/guilds/${guildId}/ai`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled: document.getElementById('ai-enabled')?.checked,
+          model: document.getElementById('ai-model')?.value,
+          web_search_enabled: document.getElementById('ai-web-search')?.checked,
+          system_prompt: document.getElementById('ai-system-prompt')?.value
+        })
+      });
+
+      // 3. Welcomer Config
+      const p3 = fetch(`/api/guilds/${guildId}/welcomer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          welcome_enabled: document.getElementById('wel-enabled')?.checked,
+          welcome_channel_id: document.getElementById('wel-channel')?.value || null,
+          auto_role_user: document.getElementById('wel-autorole-user')?.value || null,
+          welcome_message: document.getElementById('wel-message')?.value,
+          welcome_embed: {
+            title: document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!',
+            color: document.getElementById('wel-embed-color')?.value || '#dc2626',
+            description: document.getElementById('wel-message')?.value,
+            image: document.getElementById('wel-embed-image')?.value?.trim() || null,
+            footer: document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}'
+          },
+          welcome_dm_enabled: document.getElementById('wel-dm-enabled')?.checked,
+          welcome_dm_message: document.getElementById('wel-dm-message')?.value,
+          leave_enabled: document.getElementById('wel-leave-enabled')?.checked,
+          leave_channel_id: document.getElementById('wel-leave-channel')?.value || null,
+          leave_message: document.getElementById('wel-leave-message')?.value
+        })
+      });
+
+      // 4. Partnership Config
+      const p4 = fetch(`/api/guilds/${guildId}/partnerships/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled: document.getElementById('part-enabled')?.checked,
+          channel_id: document.getElementById('part-channel')?.value || null,
+          ping_role_id: document.getElementById('part-ping-role')?.value || null,
+          min_members: parseInt(document.getElementById('part-min-members')?.value || '50', 10),
+          cooldown_minutes: parseInt(document.getElementById('part-cooldown')?.value || '60', 10)
+        })
+      });
+
+      // 5. AutoMod Config
+      const p5 = fetch(`/api/guilds/${guildId}/automod`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          anti_invites: document.getElementById('am-anti-invites')?.checked,
+          anti_links: document.getElementById('am-anti-links')?.checked,
+          anti_spam: document.getElementById('am-anti-spam')?.checked,
+          anti_caps: document.getElementById('am-anti-caps')?.checked,
+          banned_words: document.getElementById('am-banned-words')?.value?.split(',').map(w => w.trim()).filter(Boolean) || [],
+          action: document.getElementById('am-action')?.value || 'WARN',
+          log_channel_id: document.getElementById('am-log-channel')?.value || null
+        })
+      });
+
+      // 6. Leveling Config
+      const p6 = fetch(`/api/guilds/${guildId}/leveling`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled: document.getElementById('lvl-enabled')?.checked,
+          channel_id: document.getElementById('lvl-channel')?.value || null,
+          xp_rate: parseFloat(document.getElementById('lvl-rate')?.value || '1.0')
+        })
+      });
+
+      await Promise.allSettled([p1, p2, p3, p4, p5, p6]);
+      window.showToast('🛡️ Tutte le impostazioni del server sono state salvate permanentemente nel database!');
+    } catch (err) {
+      window.showToast('Errore durante il salvataggio.', 'error');
+    } finally {
+      const btn = document.getElementById('btn-save-all');
+      const btnMob = document.getElementById('btn-save-all-mobile');
+      if (btn) btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifiche';
+      if (btnMob) btnMob.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Salva';
+      lucide.createIcons();
+    }
+  }
+
   const btnSaveAll = document.getElementById('btn-save-all');
   if (btnSaveAll) {
     btnSaveAll.addEventListener('click', () => {
       const guildId = window.AppState.currentGuildId;
-      if (guildId) window.loadModuleData(guildId);
-      window.showToast('Impostazioni sincronizzate!');
+      if (guildId) saveAllServerSettings(guildId);
+    });
+  }
+
+  const btnSaveAllMobile = document.getElementById('btn-save-all-mobile');
+  if (btnSaveAllMobile) {
+    btnSaveAllMobile.addEventListener('click', () => {
+      const guildId = window.AppState.currentGuildId;
+      if (guildId) saveAllServerSettings(guildId);
     });
   }
 })();

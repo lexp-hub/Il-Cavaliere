@@ -237,6 +237,12 @@ window.switchGuild = async function(guildId) {
 
     populateDropdowns(guildData.channels, guildData.roles);
 
+    if (window.loadEmbedBuilderData) {
+      window.loadEmbedBuilderData(guildId);
+    } else if (window.updateEmbedPreview) {
+      window.updateEmbedPreview();
+    }
+
     if (window.loadModuleData) {
       window.loadModuleData(guildId);
     }
