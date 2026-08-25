@@ -1,15 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
   <defs>
-    <!-- Warm Ambient Atmospheric Glows -->
-    <radialGradient id="leftOrangeGlow" cx="15%" cy="20%" r="55%">
-      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.4" />
-      <stop offset="60%" stop-color="#ea580c" stop-opacity="0.08" />
+    <!-- Warm Ambient Atmospheric Central & Side Glows -->
+    <radialGradient id="centerOrangeHalo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.35" />
+      <stop offset="45%" stop-color="#f97316" stop-opacity="0.15" />
+      <stop offset="85%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <radialGradient id="sideOrangeGlowLeft" cx="10%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.2" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
-    <radialGradient id="rightOrangeGlow" cx="88%" cy="75%" r="55%">
-      <stop offset="0%" stop-color="#f97316" stop-opacity="0.35" />
-      <stop offset="60%" stop-color="#c2410c" stop-opacity="0.08" />
+    <radialGradient id="sideOrangeGlowRight" cx="90%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.2" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
@@ -26,41 +30,18 @@
       <!-- Central Core Square -->
       <rect x="-3.5" y="-3.5" width="7" height="7" />
     </g>
-
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Metamorphous&amp;display=swap');
-      .metamorphous-bold {
-        font-family: 'Metamorphous', serif, sans-serif;
-        font-size: 50px;
-        font-weight: 900;
-        letter-spacing: 1px;
-      }
-    </style>
   </defs>
 
   <!-- Pure AMOLED Black Background -->
   <rect width="600" height="240" fill="#000000" />
 
-  <!-- Ambient Glow Illumination -->
-  <rect width="600" height="240" fill="url(#leftOrangeGlow)" />
-  <rect width="600" height="240" fill="url(#rightOrangeGlow)" />
+  <!-- Ambient Glow Halos -->
+  <rect width="600" height="240" fill="url(#centerOrangeHalo)" />
+  <rect width="600" height="240" fill="url(#sideOrangeGlowLeft)" />
+  <rect width="600" height="240" fill="url(#sideOrangeGlowRight)" />
 
-  <!-- Main Lockup (Centered: Pure White Templar Cross + Extra Bold Metamorphous Text) -->
-  <g transform="translate(115, 120)">
-    
-    <!-- Primary Brand Icon: Pure White Templar Cross -->
-    <g transform="translate(0, 0) scale(1.08)" fill="#ffffff">
-      <use href="#templarCrossSolo" />
-    </g>
-
-    <!-- Brand Typography in Extra Bold -->
-    <text x="68" y="17" 
-          class="metamorphous-bold" 
-          fill="#ffffff"
-          stroke="#ffffff"
-          stroke-width="1.2"
-          stroke-linejoin="round">
-      Il Cavaliere
-    </text>
+  <!-- Centered, Large Knights Templar Cross Icon in Pure White -->
+  <g transform="translate(300, 120) scale(2.6)" fill="#ffffff">
+    <use href="#templarCrossSolo" />
   </g>
 </svg>
