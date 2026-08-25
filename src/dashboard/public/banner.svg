@@ -1,37 +1,69 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
   <defs>
-    <!-- Deep Cinematic Ember Bloom -->
-    <radialGradient id="relicBloom" cx="50%" cy="50%" r="55%">
-      <stop offset="0%" stop-color="#4a1804" stop-opacity="0.9" />
-      <stop offset="25%" stop-color="#2d0e02" stop-opacity="0.7" />
-      <stop offset="55%" stop-color="#140501" stop-opacity="0.45" />
-      <stop offset="80%" stop-color="#050100" stop-opacity="0.2" />
+    <!-- Import Metamorphous Font directly inside SVG -->
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Metamorphous&amp;display=swap');
+      .banner-title {
+        font-family: 'Metamorphous', 'Cinzel', 'Cinzel Decorative', serif;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+      .banner-sub {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-weight: 700;
+        letter-spacing: 3.5px;
+      }
+      .banner-tags {
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+      }
+    </style>
+
+    <!-- Edge Ambient Glows (Corner & Border Lighting) -->
+    <radialGradient id="edgeGlowTopLeft" cx="0%" cy="0%" r="65%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.38" />
+      <stop offset="35%" stop-color="#ea580c" stop-opacity="0.18" />
+      <stop offset="70%" stop-color="#7c2d12" stop-opacity="0.04" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
-    <!-- Fiery Golden-Orange Metallic Gradient for the Relic Cross -->
-    <linearGradient id="relicCrossGold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fffbeb" />
-      <stop offset="15%" stop-color="#fef08a" />
-      <stop offset="35%" stop-color="#fbbf24" />
-      <stop offset="70%" stop-color="#f97316" />
-      <stop offset="100%" stop-color="#ea580c" />
-    </linearGradient>
-
-    <!-- Sword Steel-Gold Metallic Gradient -->
-    <linearGradient id="swordBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#d97706" stop-opacity="0.5" />
-      <stop offset="100%" stop-color="#78350f" stop-opacity="0.2" />
-    </linearGradient>
-
-    <!-- Soft Gold Ring Glow -->
-    <radialGradient id="ringGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="90%" stop-color="#f59e0b" stop-opacity="0.25" />
+    <radialGradient id="edgeGlowBottomRight" cx="100%" cy="100%" r="65%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.32" />
+      <stop offset="35%" stop-color="#ea580c" stop-opacity="0.15" />
+      <stop offset="70%" stop-color="#7c2d12" stop-opacity="0.03" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
-    <!-- Templar Cross Geometry -->
+    <linearGradient id="edgeBorderGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.6" />
+      <stop offset="25%" stop-color="#f97316" stop-opacity="0.2" />
+      <stop offset="50%" stop-color="#ea580c" stop-opacity="0.05" />
+      <stop offset="75%" stop-color="#f97316" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ea580c" stop-opacity="0.6" />
+    </linearGradient>
+
+    <!-- Luxury Metallic Platinum-Gold-Orange Gradient for Cross & Text -->
+    <linearGradient id="crossMetallicGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="20%" stop-color="#ffedd5" />
+      <stop offset="45%" stop-color="#fb923c" />
+      <stop offset="80%" stop-color="#ea580c" />
+      <stop offset="100%" stop-color="#c2410c" />
+    </linearGradient>
+
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="60%" stop-color="#fed7aa" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </linearGradient>
+
+    <!-- Subtle Noctaly Tech Grid -->
+    <pattern id="noctalyGrid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.025" />
+    </pattern>
+
+    <!-- Pure Seamless Knights Templar Cross Path -->
     <g id="templarCrossSingle">
       <path d="M -15 -15 
                C -20 -55 -45 -115 -92 -165 
@@ -47,78 +79,63 @@
                C -140 40 -140 -40 -165 -92 
                C -115 -45 -55 -20 -15 -15 Z" />
     </g>
-
-    <!-- Medieval Crusader Sword -->
-    <g id="crusaderSword">
-      <!-- Blade -->
-      <path d="M 0 -130 L 4 -120 L 3.5 40 L 0 45 L -3.5 40 L -4 -120 Z" fill="url(#swordBladeGrad)" />
-      <!-- Fuller (Blade Center Groove) -->
-      <line x1="0" y1="-120" x2="0" y2="35" stroke="#fef08a" stroke-width="0.8" stroke-opacity="0.7" />
-      <!-- Guard (Crossguard) -->
-      <path d="M -22 42 Q 0 45 22 42 Q 22 48 20 48 Q 0 47 -20 48 Z" fill="#fbbf24" fill-opacity="0.8" />
-      <!-- Grip / Handle -->
-      <rect x="-2" y="48" width="4" height="24" rx="1" fill="#451a03" />
-      <line x1="-2" y1="54" x2="2" y2="54" stroke="#fbbf24" stroke-width="0.6" stroke-opacity="0.6" />
-      <line x1="-2" y1="60" x2="2" y2="60" stroke="#fbbf24" stroke-width="0.6" stroke-opacity="0.6" />
-      <line x1="-2" y1="66" x2="2" y2="66" stroke="#fbbf24" stroke-width="0.6" stroke-opacity="0.6" />
-      <!-- Pommel (Ring/Disk Pommel) -->
-      <circle cx="0" cy="76" r="5.5" fill="#fbbf24" fill-opacity="0.85" />
-      <circle cx="0" cy="76" r="2.5" fill="#1c1917" />
-    </g>
   </defs>
 
   <!-- Pure AMOLED Black Canvas Base -->
   <rect width="600" height="240" fill="#000000" />
 
-  <!-- Center Atmospheric Warm Relic Glow -->
-  <rect width="600" height="240" fill="url(#relicBloom)" />
+  <!-- Ultra-Subtle Noctaly Tech Grid -->
+  <rect width="600" height="240" fill="url(#noctalyGrid)" />
 
-  <!-- Sacred Geometry: Ancient Astrological & Halo Rings in Faint Gold -->
-  <g transform="translate(300, 120)">
-    <!-- Outer Delicate Orbit Ring -->
-    <circle cx="0" cy="0" r="96" fill="none" stroke="#f59e0b" stroke-width="0.6" stroke-opacity="0.18" stroke-dasharray="4 6" />
-    <!-- Secondary Sacred Ring -->
-    <circle cx="0" cy="0" r="82" fill="none" stroke="#fbbf24" stroke-width="0.8" stroke-opacity="0.25" />
-    <!-- Inner Radiant Ring -->
-    <circle cx="0" cy="0" r="68" fill="none" stroke="#f59e0b" stroke-width="0.5" stroke-opacity="0.2" stroke-dasharray="2 4" />
-    <!-- Center Halo Glow -->
-    <circle cx="0" cy="0" r="75" fill="url(#ringGlow)" />
+  <!-- Edge & Corner Ambient Lighting (Top-Left & Bottom-Right) -->
+  <rect width="600" height="240" fill="url(#edgeGlowTopLeft)" />
+  <rect width="600" height="240" fill="url(#edgeGlowBottomRight)" />
 
-    <!-- 4 Cardinal Ray Ticks -->
-    <line x1="0" y1="-102" x2="0" y2="-90" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4" />
-    <line x1="0" y1="90" x2="0" y2="102" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4" />
-    <line x1="-102" y1="0" x2="-90" y2="0" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4" />
-    <line x1="90" y1="0" x2="102" y2="0" stroke="#fbbf24" stroke-width="1.2" stroke-opacity="0.4" />
+  <!-- Subtle Glowing Top & Bottom Horizon Lines -->
+  <line x1="0" y1="1" x2="600" y2="1" stroke="url(#edgeBorderGlow)" stroke-width="1.5" />
+  <line x1="0" y1="239" x2="600" y2="239" stroke="url(#edgeBorderGlow)" stroke-width="1.5" />
+
+  <!-- Left: Glowing Templar Cross Emblem -->
+  <g transform="translate(130, 120)">
+    <!-- Delicate Modern Accent Rings -->
+    <circle cx="0" cy="0" r="76" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.08" />
+    <circle cx="0" cy="0" r="92" fill="none" stroke="#f97316" stroke-width="0.6" stroke-opacity="0.15" stroke-dasharray="4 6" />
     
-    <!-- 4 Diagonal Diamond Stars -->
-    <g transform="rotate(45)" stroke="#fbbf24" stroke-opacity="0.3" stroke-width="0.8">
-      <line x1="0" y1="-96" x2="0" y2="-90" />
-      <line x1="0" y1="90" x2="0" y2="96" />
-      <line x1="-96" y1="0" x2="-90" y2="0" />
-      <line x1="90" y1="0" x2="96" y2="0" />
+    <!-- Hero Cross -->
+    <g transform="scale(0.46)" fill="url(#crossMetallicGrad)" filter="drop-shadow(0 4px 18px rgba(234, 88, 12, 0.4))">
+      <use href="#templarCrossSingle" />
+    </g>
+  </g>
+
+  <!-- Right: Luxury Typography & Subtitle -->
+  <g transform="translate(250, 120)">
+    <!-- Version Tag Pill (Shifted Higher Up) -->
+    <g transform="translate(0, -65)">
+      <rect x="0" y="0" width="62" height="18" rx="9" fill="rgba(249, 115, 22, 0.15)" stroke="rgba(249, 115, 22, 0.4)" stroke-width="0.75" />
+      <text x="31" y="12.5" fill="#fdba74" font-size="9" font-family="'Inter', sans-serif" font-weight="700" text-anchor="middle" letter-spacing="1.5px">v2.0</text>
     </g>
 
-    <!-- Crossed Crusader Broadswords Behind the Cross -->
-    <g transform="rotate(-42)">
-      <use href="#crusaderSword" />
-    </g>
-    <g transform="rotate(42) scale(-1, 1)">
-      <use href="#crusaderSword" />
-    </g>
+    <!-- Main Title: IL CAVALIERE -->
+    <text x="0" y="-12" fill="url(#textGrad)" font-size="34" class="banner-title" filter="drop-shadow(0 2px 10px rgba(234, 88, 12, 0.25))">
+      Il Cavaliere
+    </text>
 
-    <!-- Floating Atmosphere Embers & Sparks -->
-    <circle cx="-130" cy="-45" r="1.2" fill="#fef08a" opacity="0.6" />
-    <circle cx="-90" cy="55" r="0.9" fill="#fb923c" opacity="0.5" />
-    <circle cx="120" cy="-50" r="1" fill="#fef08a" opacity="0.65" />
-    <circle cx="140" cy="40" r="1.4" fill="#f97316" opacity="0.45" />
-    <circle cx="-50" cy="-80" r="0.8" fill="#fbbf24" opacity="0.7" />
-    <circle cx="60" cy="85" r="0.8" fill="#fbbf24" opacity="0.7" />
+    <!-- Subtitle / Tagline -->
+    <text x="0" y="16" fill="#fb923c" font-size="10.5" class="banner-sub" text-transform="uppercase">
+      Bot Discord &amp; Dashboard Moderatori
+    </text>
 
-    <!-- Centerpiece: The Grand Golden Knights Templar Cross -->
-    <g scale="1" fill="url(#relicCrossGold)" filter="drop-shadow(0 0 16px rgba(249, 115, 22, 0.45))">
-      <g transform="scale(0.56)">
-        <use href="#templarCrossSingle" />
-      </g>
+    <!-- Minimalist Feature Badges / Highlights -->
+    <g transform="translate(0, 42)" fill="#94a3b8" font-size="9" class="banner-tags">
+      <text x="0" y="0">
+        <tspan fill="#f97316">✦</tspan> Llama 70B AI  
+        <tspan fill="#475569" dx="6">•</tspan>
+        <tspan fill="#94a3b8" dx="6">Partnerships</tspan>  
+        <tspan fill="#475569" dx="6">•</tspan>
+        <tspan fill="#94a3b8" dx="6">AutoMod</tspan>
+        <tspan fill="#475569" dx="6">•</tspan>
+        <tspan fill="#94a3b8" dx="6">Embeds</tspan>
+      </text>
     </g>
   </g>
 </svg>
