@@ -7,6 +7,8 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const PORT = parseInt(process.env.DASHBOARD_PORT || process.env.SERVER_PORT || process.env.PORT || '9272', 10);
+
 export const CONFIG = {
   BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_TOKEN || '',
   CLIENT_ID: process.env.DISCORD_CLIENT_ID || process.env.DISCORD_APPLICATION_ID || '',
@@ -18,11 +20,11 @@ export const CONFIG = {
   CLOUDFLARE_MODEL: process.env.CLOUDFLARE_MODEL || '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
   GEMINI_API_KEY: process.env.GEMINI_API_KEY || '',
 
-  PORT: parseInt(process.env.SERVER_PORT || process.env.PORT || process.env.DASHBOARD_PORT || '3000', 10),
-  DASHBOARD_PASSWORD: process.env.DASHBOARD_PASSWORD || 'il_cavaliere_secret_pass',
+  PORT,
+  DASHBOARD_PASSWORD: process.env.DASHBOARD_PASSWORD || 'LumpaBread-Dash1946',
   SESSION_SECRET: process.env.SESSION_SECRET || 'il_cavaliere_secret_key_change_me_123456789',
-  DASHBOARD_URL: process.env.DASHBOARD_URL || `http://localhost:${process.env.SERVER_PORT || process.env.PORT || process.env.DASHBOARD_PORT || '3000'}`,
-  OAUTH2_CALLBACK_URL: process.env.OAUTH2_CALLBACK_URL || `http://localhost:${process.env.SERVER_PORT || process.env.PORT || process.env.DASHBOARD_PORT || '3000'}/auth/discord/callback`,
+  DASHBOARD_URL: process.env.DASHBOARD_URL || `http://0.0.0.0:${PORT}`,
+  OAUTH2_CALLBACK_URL: process.env.OAUTH2_CALLBACK_URL || `http://0.0.0.0:${PORT}/auth/discord/callback`,
   
   DEFAULT_PREFIX: '!',
   BOT_NAME: 'Il Cavaliere',
