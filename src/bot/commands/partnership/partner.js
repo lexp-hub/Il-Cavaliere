@@ -16,6 +16,12 @@ export default {
       sub
         .setName('form')
         .setDescription('Apre il form modale a schermo per compilare una nuova partnership')
+        .addUserOption(opt =>
+          opt
+            .setName('manager')
+            .setDescription('Il partner manager o rappresentante del server partner')
+            .setRequired(false)
+        )
     )
     .addSubcommand(sub =>
       sub
@@ -130,7 +136,8 @@ export default {
 
     // 1. OPEN FORM MODAL
     if (subcommand === 'form') {
-      const modal = PartnershipManager.createPartnershipModal();
+      const manager = interaction.options.getUser('manager') || interaction.user;
+      const modal = PartnershipManager.createPartnershipModal(manager.id);
       return interaction.showModal(modal);
     }
 

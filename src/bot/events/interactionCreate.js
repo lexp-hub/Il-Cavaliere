@@ -127,11 +127,11 @@ export default {
     if (interaction.isModalSubmit()) {
       const customId = interaction.customId;
 
-      if (customId === 'modal_partnership_submit') {
+      if (customId.startsWith('modal_partnership_submit')) {
         return PartnershipManager.handlePartnershipModalSubmit(interaction);
       }
 
-      if (customId === 'modal_presentation_submit') {
+      if (customId.startsWith('modal_presentation_submit')) {
         return PresentationManager.handlePresentationModalSubmit(interaction);
       }
     }

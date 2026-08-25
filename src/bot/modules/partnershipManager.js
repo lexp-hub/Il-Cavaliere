@@ -13,35 +13,30 @@ import { CONFIG } from '../../config.js';
 export const PartnershipManager = {
   /**
    * Generates the native Discord Modal form for partnership submission
+   * @param {string|null} managerId ID of the pre-selected manager/representative
    */
-  createPartnershipModal() {
+  createPartnershipModal(managerId = null) {
+    const customId = managerId ? `modal_partnership_submit_${managerId}` : 'modal_partnership_submit';
+
     const modal = new ModalBuilder()
-      .setCustomId('modal_partnership_submit')
+      .setCustomId(customId)
       .setTitle('🤝 Invia Nuova Partnership');
 
     const inviteInput = new TextInputBuilder()
       .setCustomId('partner_invite')
       .setLabel('Link o Codice Invito Server')
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder('es. https://discord.gg/invito oppure solo codice')
+      .setPlaceholder('es. discord.gg/invito oppure solo codice')
       .setRequired(true)
       .setMaxLength(100);
 
     const descInput = new TextInputBuilder()
       .setCustomId('partner_text')
-      .setLabel('Messaggio Pubblicitario / Descrizione')
+      .setLabel('Descrizione / Testo Pubblicitario')
       .setStyle(TextInputStyle.Paragraph)
       .setPlaceholder('Incolla la presentazione del server partner con emoji e testo...')
       .setRequired(true)
       .setMaxLength(4000);
-
-    const repInput = new TextInputBuilder()
-      .setCustomId('partner_rep')
-      .setLabel('Rappresentante / PM (Opzionale)')
-      .setStyle(TextInputStyle.Short)
-      .setPlaceholder('Menzione @utente o ID numerico (vuoto = te stesso)')
-      .setRequired(false)
-      .setMaxLength(50);
 
     const bannerInput = new TextInputBuilder()
       .setCustomId('partner_banner')
@@ -53,10 +48,9 @@ export const PartnershipManager = {
 
     const row1 = new ActionRowBuilder().addComponents(inviteInput);
     const row2 = new ActionRowBuilder().addComponents(descInput);
-    const row3 = new ActionRowBuilder().addComponents(repInput);
-    const row4 = new ActionRowBuilder().addComponents(bannerInput);
+    const row3 = new ActionRowBuilder().addComponents(bannerInput);
 
-    modal.addComponents(row1, row2, row3, row4);
+    modal.addComponents(row1, row2, row3);
     return modal;
   },
 
@@ -236,16 +230,22 @@ export const PartnershipManager = {
 
     const invite = interaction.fields.getTextInputValue('partner_invite')?.trim();
     const text = interaction.fields.getTextInputValue('partner_text')?.trim();
-    const repRaw = interaction.fields.getTextInputValue('partner_rep')?.trim();
-    const bannerUrl = interaction.fields.getTextInputValue('partner_banner')?.trim() || null;
+    let bannerUrl = null;
+    try {
+      bannerUrl = interaction.fields.getTextInputValue('partner_banner')?.trim() || null;
+    } catch (e) {}
 
     let repUser = interaction.user;
-    if (repRaw) {
-      const idMatch = repRaw.match(/\d{17,20}/);
-      if (idMatch) {
+    
+    // Extract manager ID from customId if provided (/partnership @manager)
+    if (interaction.customId.startsWith('modal_partnership_submit_')) {
+      const managerId = interaction.customId.replace('modal_partnership_submit_', '').trim();
+      if (managerId) {
         try {
-          repUser = await interaction.client.users.fetch(idMatch[0]);
-        } catch (e) {}
+          repUser = await interaction.client.users.fetch(managerId);
+        } catch (e) {
+          console.warn(`[Partnership] Impossibile recuperare utente manager ${managerId}:`, e.message);
+        }
       }
     }
 
