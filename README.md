@@ -44,7 +44,7 @@ Bot Discord con AI (Llama 70B), gestione partnership, embed builder, automod e d
 | | `/reactionrole list` | Mostra i ruoli interattivi |
 | **Welcomer** | `/welcomer config` | Imposta messaggi e canali di benvenuto |
 | | `/welcomer autorole` | Imposta i ruoli assegnati all'ingresso |
-| **Moderazione** | `/ban`, `/kick` | Banna o espelle un utente |
+| **Moderazione** | `/ban`, `/kick` | Banna o espelli un utente |
 | | `/timeout` | Mette in timeout temporaneo |
 | | `/warn`, `/warnings` | Assegna o visualizza gli avvertimenti |
 | | `/clear` | Elimina messaggi |

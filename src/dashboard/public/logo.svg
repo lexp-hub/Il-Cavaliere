@@ -1,29 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <!-- Minimalist Monochromatic Knight Symbol -->
-  <rect width="512" height="512" rx="100" fill="#0c0d12" />
+  <defs>
+    <!-- Soft Orange Ambient Glow on Avatar Base -->
+    <radialGradient id="avatarOrangeGlow" cx="25%" cy="25%" r="75%">
+      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.4" />
+      <stop offset="55%" stop-color="#ea580c" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Exact Knights Templar Beauceant Cross Geometry -->
+    <g id="templarCrossSolo">
+      <!-- Top Arm -->
+      <path d="M -18 -18 C -20 -60 -45 -115 -92 -165 C -40 -140 40 -140 92 -165 C 45 -115 20 -60 18 -18 Z" />
+      <!-- Right Arm (Rotated 90) -->
+      <path d="M -18 -18 C -20 -60 -45 -115 -92 -165 C -40 -140 40 -140 92 -165 C 45 -115 20 -60 18 -18 Z" transform="rotate(90)" />
+      <!-- Bottom Arm (Rotated 180) -->
+      <path d="M -18 -18 C -20 -60 -45 -115 -92 -165 C -40 -140 40 -140 92 -165 C 45 -115 20 -60 18 -18 Z" transform="rotate(180)" />
+      <!-- Left Arm (Rotated 270) -->
+      <path d="M -18 -18 C -20 -60 -45 -115 -92 -165 C -40 -140 40 -140 92 -165 C 45 -115 20 -60 18 -18 Z" transform="rotate(270)" />
+      <!-- Central Core Square -->
+      <rect x="-18" y="-18" width="36" height="36" />
+    </g>
+  </defs>
+
+  <!-- Circular Base in Pure AMOLED Black -->
+  <rect width="512" height="512" rx="256" fill="#000000" />
+  <rect width="512" height="512" rx="256" fill="url(#avatarOrangeGlow)" />
   
-  <g fill="#f59e0b" transform="translate(56, 56)">
-    <!-- Outer Shield Frame -->
-    <path d="M200 10 C290 10 370 30 370 30 C370 190 330 310 200 390 C70 310 30 190 30 30 C30 30 110 10 200 10 Z" 
-          fill="none" stroke="#f59e0b" stroke-width="16" stroke-linejoin="round" />
-    
-    <!-- Knight Helmet Minimalist Silhouette -->
-    <!-- Helmet Crown & Plume -->
-    <path d="M200 65 C150 65 115 105 110 160 L290 160 C285 105 250 65 200 65 Z" />
-    
-    <!-- Helmet Plume / Crest -->
-    <path d="M190 40 L200 20 L210 40 L200 55 Z" />
-
-    <!-- Helmet Visor / Faceplate -->
-    <path d="M112 175 L105 240 C105 290 145 330 200 345 C255 330 295 290 295 240 L288 175 Z" />
-
-    <!-- Visor Eye Slit Cutout (Negative Space) -->
-    <path d="M130 195 L270 195 L270 210 L130 210 Z" fill="#0c0d12" />
-
-    <!-- Vertical Breathing Slits (Negative Space) -->
-    <rect x="155" y="235" width="12" height="40" rx="6" fill="#0c0d12" />
-    <rect x="180" y="235" width="12" height="55" rx="6" fill="#0c0d12" />
-    <rect x="208" y="235" width="12" height="55" rx="6" fill="#0c0d12" />
-    <rect x="233" y="235" width="12" height="40" rx="6" fill="#0c0d12" />
+  <!-- Main Templar Cross Logo (Pure White, Perfectly Centered, Zero extra crosses) -->
+  <g transform="translate(256, 256) scale(0.95)" fill="#ffffff">
+    <use href="#templarCrossSolo" />
   </g>
 </svg>
