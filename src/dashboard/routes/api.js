@@ -287,32 +287,14 @@ export function createApiRouter(botClient) {
     try {
       const guild = botClient.guilds.cache.get(guildId);
       const config = DatabaseHelper.getWelcomerConfig(guildId);
-      const channel = guild.channels.cache.get(config.welcome_channel_id) || guild.channels.cache.find(c => c.type === 0);
+      const channelId = config.welcome_channel_id;
+      if (!channelId) return res.status(400).json({ error: 'Nessun canale di benvenuto configurato.' });
 
-      if (!channel) return res.status(400).json({ error: 'Nessun canale di benvenuto configurato.' });
+      const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
+      if (!channel) return res.status(400).json({ error: 'Canale di benvenuto non trovato su Discord.' });
 
       const fakeMember = guild.members.me;
-      const embData = config.welcome_embed || {};
-      const titleText = WelcomerManager.formatText(embData.title || `⚔️ Benvenuto nel Reame, {user}!`, fakeMember);
-      const descText = WelcomerManager.formatText(embData.description || config.welcome_message || 'Benvenuto {user.mention} in **{server.name}**!', fakeMember);
-      const footerText = WelcomerManager.formatText(embData.footer || `Membro #${guild.memberCount} • ${guild.name}`, fakeMember);
-
-      const embed = new EmbedBuilder()
-        .setColor(embData.color || CONFIG.EMBED_COLOR || '#ea580c')
-        .setTitle(titleText)
-        .setDescription(descText)
-        .setThumbnail(fakeMember.user.displayAvatarURL({ dynamic: true, size: 256 }))
-        .addFields(
-          { name: '👤 Utente', value: `<@${fakeMember.id}> (\`${fakeMember.user.tag}\`)`, inline: true },
-          { name: '🏰 Membro n°', value: `\`#${guild.memberCount}\``, inline: true },
-          { name: '📅 Creazione Account', value: `<t:${Math.floor(fakeMember.user.createdTimestamp / 1000)}:R>`, inline: false }
-        )
-        .setFooter({ text: footerText, iconURL: guild.iconURL() })
-        .setTimestamp();
-
-      if (embData.image) {
-        embed.setImage(embData.image);
-      }
+      const embed = WelcomerManager.buildDiscordEmbed(config.welcome_embed, config.welcome_message, fakeMember);
 
       await channel.send({ content: `<@${fakeMember.id}>`, embeds: [embed] });
       res.json({ success: true });

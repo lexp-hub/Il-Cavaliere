@@ -1,5 +1,15 @@
 
 (function () {
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   window.loadModuleData = async function (guildId) {
     if (!guildId) return;
 
@@ -456,27 +466,209 @@
     });
   }
 
+  // === Complete Welcomer Embed Builder Suite ===
+  let welFields = [];
+
+  function renderWelFieldsList() {
+    const container = document.getElementById('wel-fields-list');
+    if (!container) return;
+
+    if (welFields.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-3 text-slate-400 text-xs border border-dashed border-slate-300 rounded-lg">
+          Nessun campo personalizzato. Clicca su "+ Aggiungi Campo" per aggiungerne uno all'embed.
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = '';
+    welFields.forEach((field, index) => {
+      const row = document.createElement('div');
+      row.className = 'p-3 rounded-lg bg-white border border-slate-300 space-y-2';
+      row.innerHTML = `
+        <div class="flex items-center justify-between gap-2">
+          <span class="text-xs font-bold text-slate-700 font-mono">Campo #${index + 1}</span>
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-1.5 text-xs text-slate-600 font-medium cursor-pointer">
+              <input type="checkbox" class="wel-field-inline rounded text-red-600" data-index="${index}" ${field.inline ? 'checked' : ''}>
+              Allineato (Inline)
+            </label>
+            <button type="button" class="btn-wel-del-field text-red-500 hover:text-red-700 p-1" data-index="${index}" title="Elimina Campo">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <input type="text" class="wel-field-name form-input text-xs" data-index="${index}" placeholder="Titolo Campo (es. 👤 Utente, 🏰 Ruolo)" value="${escapeHtml(field.name || '')}">
+          <input type="text" class="wel-field-val form-input text-xs" data-index="${index}" placeholder="Valore Campo (es. {user.mention}, #{memberCount})" value="${escapeHtml(field.value || '')}">
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    if (window.lucide) lucide.createIcons();
+
+    // Attach listeners
+    container.querySelectorAll('.wel-field-name').forEach(input => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.dataset.index, 10);
+        if (welFields[idx]) {
+          welFields[idx].name = e.target.value;
+          updateWelcomerPreview();
+        }
+      });
+    });
+
+    container.querySelectorAll('.wel-field-val').forEach(input => {
+      input.addEventListener('input', (e) => {
+        const idx = parseInt(e.target.dataset.index, 10);
+        if (welFields[idx]) {
+          welFields[idx].value = e.target.value;
+          updateWelcomerPreview();
+        }
+      });
+    });
+
+    container.querySelectorAll('.wel-field-inline').forEach(chk => {
+      chk.addEventListener('change', (e) => {
+        const idx = parseInt(e.target.dataset.index, 10);
+        if (welFields[idx]) {
+          welFields[idx].inline = e.target.checked;
+          updateWelcomerPreview();
+        }
+      });
+    });
+
+    container.querySelectorAll('.btn-wel-del-field').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetBtn = e.target.closest('.btn-wel-del-field');
+        const idx = parseInt(targetBtn.dataset.index, 10);
+        welFields.splice(idx, 1);
+        renderWelFieldsList();
+        updateWelcomerPreview();
+      });
+    });
+  }
+
+  const btnWelAddField = document.getElementById('btn-wel-add-field');
+  if (btnWelAddField) {
+    btnWelAddField.addEventListener('click', () => {
+      if (welFields.length >= 25) return window.showToast('Massimo 25 campi consentiti per Embed.', 'error');
+      welFields.push({ name: 'Nuovo Campo', value: '{user.mention}', inline: true });
+      renderWelFieldsList();
+      updateWelcomerPreview();
+    });
+  }
+
   function updateWelcomerPreview() {
+    const authorName = document.getElementById('wel-embed-author-name')?.value?.trim();
+    const authorIcon = document.getElementById('wel-embed-author-icon')?.value?.trim();
     const title = document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!';
+    const titleUrl = document.getElementById('wel-embed-title-url')?.value?.trim();
     const color = document.getElementById('wel-embed-color')?.value || '#dc2626';
     const message = document.getElementById('wel-message')?.value || 'Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!';
+    const thumb = document.getElementById('wel-embed-thumbnail')?.value?.trim() || '{user.avatar}';
     const image = document.getElementById('wel-embed-image')?.value?.trim();
     const footer = document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}';
+    const footerIcon = document.getElementById('wel-embed-footer-icon')?.value?.trim();
+    const showTimestamp = document.getElementById('wel-embed-timestamp')?.checked ?? true;
     const guildName = window.AppState.currentGuildData?.name || 'Il Cavaliere Realm';
 
     const prevBox = document.getElementById('prev-wel-embed-box');
+    const prevAuthor = document.getElementById('prev-wel-author');
+    const prevAuthorText = document.getElementById('prev-wel-author-text');
+    const prevAuthorIcon = document.getElementById('prev-wel-author-icon');
     const prevTitle = document.getElementById('prev-wel-title');
     const prevDesc = document.getElementById('prev-wel-desc');
+    const prevFields = document.getElementById('prev-wel-fields');
+    const prevThumb = document.getElementById('prev-wel-thumb');
     const prevImage = document.getElementById('prev-wel-image');
     const prevFooter = document.getElementById('prev-wel-footer-text');
+    const prevFooterIcon = document.getElementById('prev-wel-footer-icon');
+    const prevTimestamp = document.getElementById('prev-wel-timestamp');
 
     if (prevBox) prevBox.style.borderLeftColor = color;
-    if (prevTitle) prevTitle.textContent = title.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
+
+    // Author
+    if (prevAuthor && prevAuthorText) {
+      if (authorName) {
+        prevAuthorText.textContent = authorName.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
+        if (prevAuthorIcon) {
+          if (authorIcon) {
+            prevAuthorIcon.src = authorIcon.replace(/{user\.avatar}/g, 'https://cdn.discordapp.com/embed/avatars/0.png');
+            prevAuthorIcon.classList.remove('hidden');
+          } else {
+            prevAuthorIcon.classList.add('hidden');
+          }
+        }
+        prevAuthor.classList.remove('hidden');
+      } else {
+        prevAuthor.classList.add('hidden');
+      }
+    }
+
+    // Title
+    if (prevTitle) {
+      const formattedTitle = title.replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName);
+      if (titleUrl) {
+        prevTitle.innerHTML = `<a href="${titleUrl}" target="_blank" class="hover:underline text-sky-400 font-bold">${escapeHtml(formattedTitle)}</a>`;
+      } else {
+        prevTitle.textContent = formattedTitle;
+      }
+    }
+
+    // Description
     if (prevDesc) {
-      const formatted = message.replace(/{user\.mention}/g, '@NuovoCavaliere').replace(/{user}/g, 'NuovoCavaliere').replace(/{user\.tag}/g, 'NuovoCavaliere#0000').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+      const formatted = message
+        .replace(/{user\.mention}/g, '@NuovoCavaliere')
+        .replace(/{user}/g, 'NuovoCavaliere')
+        .replace(/{user\.tag}/g, 'NuovoCavaliere#0000')
+        .replace(/{server\.name}/g, guildName)
+        .replace(/{memberCount}/g, '128');
       prevDesc.innerHTML = window.parseDiscordMarkdown ? window.parseDiscordMarkdown(formatted) : formatted;
     }
-    
+
+    // Fields
+    if (prevFields) {
+      prevFields.innerHTML = '';
+      const fieldsToRender = welFields.length > 0 ? welFields : [
+        { name: '👤 Utente', value: 'NuovoCavaliere (`NuovoCavaliere#0000`)', inline: true },
+        { name: '🏰 Membro n°', value: '#128', inline: true },
+        { name: '📅 Creazione Account', value: '2 mesi fa', inline: false }
+      ];
+
+      fieldsToRender.forEach(f => {
+        if (!f.name && !f.value) return;
+        const fieldEl = document.createElement('div');
+        fieldEl.className = 'discord-field';
+        if (!f.inline) fieldEl.style.gridColumn = 'span 2';
+
+        const fName = (f.name || '').replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+        const fVal = (f.value || '').replace(/{user\.mention}/g, '@NuovoCavaliere').replace(/{user}/g, 'NuovoCavaliere').replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+
+        fieldEl.innerHTML = `
+          <div class="discord-field-name">${escapeHtml(fName)}</div>
+          <div class="discord-field-value">${window.parseDiscordMarkdown ? window.parseDiscordMarkdown(fVal) : escapeHtml(fVal)}</div>
+        `;
+        prevFields.appendChild(fieldEl);
+      });
+    }
+
+    // Thumbnail
+    if (prevThumb) {
+      if (thumb === '{user.avatar}') {
+        prevThumb.src = 'https://cdn.discordapp.com/embed/avatars/0.png';
+        prevThumb.classList.remove('hidden');
+      } else if (thumb) {
+        prevThumb.src = thumb;
+        prevThumb.classList.remove('hidden');
+      } else {
+        prevThumb.classList.add('hidden');
+      }
+    }
+
+    // Large Banner Image
     if (prevImage) {
       if (image) {
         prevImage.src = image;
@@ -487,10 +679,36 @@
       }
     }
 
-    if (prevFooter) prevFooter.textContent = footer.replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+    // Footer & Icon
+    if (prevFooter) {
+      prevFooter.textContent = footer.replace(/{server\.name}/g, guildName).replace(/{memberCount}/g, '128');
+    }
+    if (prevFooterIcon) {
+      if (footerIcon) {
+        prevFooterIcon.src = footerIcon;
+        prevFooterIcon.classList.remove('hidden');
+      } else {
+        prevFooterIcon.src = '/logo.svg?v=12';
+        prevFooterIcon.classList.remove('hidden');
+      }
+    }
+
+    // Timestamp
+    if (prevTimestamp) {
+      if (showTimestamp) {
+        prevTimestamp.classList.remove('hidden');
+      } else {
+        prevTimestamp.classList.add('hidden');
+      }
+    }
   }
 
-  ['wel-embed-title', 'wel-embed-color', 'wel-embed-color-hex', 'wel-message', 'wel-embed-image', 'wel-embed-footer'].forEach(id => {
+  [
+    'wel-embed-author-name', 'wel-embed-author-icon', 'wel-embed-author-url',
+    'wel-embed-title', 'wel-embed-title-url', 'wel-embed-color', 'wel-embed-color-hex',
+    'wel-message', 'wel-embed-thumbnail', 'wel-embed-image', 'wel-embed-footer',
+    'wel-embed-footer-icon', 'wel-embed-timestamp'
+  ].forEach(id => {
     const el = document.getElementById(id);
     if (el) {
       el.addEventListener('input', (e) => {
@@ -503,6 +721,9 @@
         }
         updateWelcomerPreview();
       });
+      if (el.type === 'checkbox') {
+        el.addEventListener('change', updateWelcomerPreview);
+      }
     }
   });
 
@@ -514,13 +735,23 @@
 
       const enWel = document.getElementById('wel-enabled');
       const chWel = document.getElementById('wel-channel');
-      const arWel = document.getElementById('wel-autorole-user');
+      const arUser = document.getElementById('wel-autorole-user');
+      const arBot = document.getElementById('wel-autorole-bot');
       const msgWel = document.getElementById('wel-message');
+      
+      const embAuthorName = document.getElementById('wel-embed-author-name');
+      const embAuthorIcon = document.getElementById('wel-embed-author-icon');
+      const embAuthorUrl = document.getElementById('wel-embed-author-url');
       const embTitle = document.getElementById('wel-embed-title');
+      const embTitleUrl = document.getElementById('wel-embed-title-url');
       const embColor = document.getElementById('wel-embed-color');
       const embColorHex = document.getElementById('wel-embed-color-hex');
+      const embThumbnail = document.getElementById('wel-embed-thumbnail');
       const embImage = document.getElementById('wel-embed-image');
       const embFooter = document.getElementById('wel-embed-footer');
+      const embFooterIcon = document.getElementById('wel-embed-footer-icon');
+      const embTimestamp = document.getElementById('wel-embed-timestamp');
+
       const dmEnWel = document.getElementById('wel-dm-enabled');
       const dmMsgWel = document.getElementById('wel-dm-message');
       const lvEnWel = document.getElementById('wel-leave-enabled');
@@ -531,15 +762,32 @@
 
       if (enWel) enWel.checked = Boolean(config.welcome_enabled);
       if (chWel && config.welcome_channel_id) chWel.value = config.welcome_channel_id;
-      if (arWel && config.auto_role_user) arWel.value = config.auto_role_user;
+      if (arUser && config.auto_role_user) arUser.value = config.auto_role_user;
+      if (arBot && config.auto_role_bot) arBot.value = config.auto_role_bot;
       if (msgWel && config.welcome_message) msgWel.value = config.welcome_message;
+
+      if (embAuthorName) embAuthorName.value = emb.author?.name || emb.author_name || '';
+      if (embAuthorIcon) embAuthorIcon.value = emb.author?.icon_url || emb.author_icon || '';
+      if (embAuthorUrl) embAuthorUrl.value = emb.author?.url || emb.author_url || '';
+
       if (embTitle) embTitle.value = emb.title || '⚔️ Benvenuto nel Reame, {user}!';
+      if (embTitleUrl) embTitleUrl.value = emb.url || '';
+
       if (embColor) {
         embColor.value = emb.color || '#dc2626';
         if (embColorHex) embColorHex.value = emb.color || '#dc2626';
       }
-      if (embImage) embImage.value = emb.image || '';
-      if (embFooter) embFooter.value = emb.footer || 'Membro #{memberCount} • {server.name}';
+
+      if (embThumbnail) embThumbnail.value = emb.thumbnail?.url || emb.thumbnail || '{user.avatar}';
+      if (embImage) embImage.value = emb.image?.url || emb.image || '';
+      if (embFooter) embFooter.value = emb.footer?.text || emb.footer || 'Membro #{memberCount} • {server.name}';
+      if (embFooterIcon) embFooterIcon.value = emb.footer?.icon_url || emb.footer_icon || '';
+      if (embTimestamp) embTimestamp.checked = emb.timestamp !== false;
+
+      // Custom fields
+      welFields = emb.fields && Array.isArray(emb.fields) ? [...emb.fields] : [];
+      renderWelFieldsList();
+
       if (dmEnWel) dmEnWel.checked = Boolean(config.welcome_dm_enabled);
       if (dmMsgWel && config.welcome_dm_message) dmMsgWel.value = config.welcome_dm_message;
       if (lvEnWel) lvEnWel.checked = Boolean(config.leave_enabled);
@@ -552,28 +800,45 @@
     }
   }
 
+  function getWelcomerPayload() {
+    return {
+      welcome_enabled: document.getElementById('wel-enabled')?.checked,
+      welcome_channel_id: document.getElementById('wel-channel')?.value || null,
+      auto_role_user: document.getElementById('wel-autorole-user')?.value || null,
+      auto_role_bot: document.getElementById('wel-autorole-bot')?.value || null,
+      welcome_message: document.getElementById('wel-message')?.value,
+      welcome_embed: {
+        author: {
+          name: document.getElementById('wel-embed-author-name')?.value?.trim() || null,
+          icon_url: document.getElementById('wel-embed-author-icon')?.value?.trim() || null,
+          url: document.getElementById('wel-embed-author-url')?.value?.trim() || null
+        },
+        title: document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!',
+        url: document.getElementById('wel-embed-title-url')?.value?.trim() || null,
+        color: document.getElementById('wel-embed-color')?.value || '#dc2626',
+        description: document.getElementById('wel-message')?.value,
+        thumbnail: document.getElementById('wel-embed-thumbnail')?.value?.trim() || '{user.avatar}',
+        image: document.getElementById('wel-embed-image')?.value?.trim() || null,
+        fields: welFields.filter(f => f.name && f.value),
+        footer: {
+          text: document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}',
+          icon_url: document.getElementById('wel-embed-footer-icon')?.value?.trim() || null
+        },
+        timestamp: document.getElementById('wel-embed-timestamp')?.checked ?? true
+      },
+      welcome_dm_enabled: document.getElementById('wel-dm-enabled')?.checked,
+      welcome_dm_message: document.getElementById('wel-dm-message')?.value,
+      leave_enabled: document.getElementById('wel-leave-enabled')?.checked,
+      leave_channel_id: document.getElementById('wel-leave-channel')?.value || null,
+      leave_message: document.getElementById('wel-leave-message')?.value
+    };
+  }
+
   const btnSaveWelcomer = document.getElementById('btn-save-welcomer');
   if (btnSaveWelcomer) {
     btnSaveWelcomer.addEventListener('click', async () => {
       const guildId = window.AppState.currentGuildId;
-      const payload = {
-        welcome_enabled: document.getElementById('wel-enabled')?.checked,
-        welcome_channel_id: document.getElementById('wel-channel')?.value || null,
-        auto_role_user: document.getElementById('wel-autorole-user')?.value || null,
-        welcome_message: document.getElementById('wel-message')?.value,
-        welcome_embed: {
-          title: document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!',
-          color: document.getElementById('wel-embed-color')?.value || '#dc2626',
-          description: document.getElementById('wel-message')?.value,
-          image: document.getElementById('wel-embed-image')?.value?.trim() || null,
-          footer: document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}'
-        },
-        welcome_dm_enabled: document.getElementById('wel-dm-enabled')?.checked,
-        welcome_dm_message: document.getElementById('wel-dm-message')?.value,
-        leave_enabled: document.getElementById('wel-leave-enabled')?.checked,
-        leave_channel_id: document.getElementById('wel-leave-channel')?.value || null,
-        leave_message: document.getElementById('wel-leave-message')?.value
-      };
+      const payload = getWelcomerPayload();
 
       const res = await fetch(`/api/guilds/${guildId}/welcomer`, {
         method: 'POST',
@@ -581,7 +846,7 @@
         body: JSON.stringify(payload)
       });
 
-      if (res.ok) window.showToast('Impostazioni Welcomer Embed salvate!');
+      if (res.ok) window.showToast('Impostazioni Welcomer Embed salvate con successo!');
       else window.showToast('Errore salvataggio Welcomer.', 'error');
     });
   }
@@ -590,9 +855,18 @@
   if (btnTestWelcomer) {
     btnTestWelcomer.addEventListener('click', async () => {
       const guildId = window.AppState.currentGuildId;
+      const payload = getWelcomerPayload();
+
+      // Save first before testing
+      await fetch(`/api/guilds/${guildId}/welcomer`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
       const res = await fetch(`/api/guilds/${guildId}/welcomer/test`, { method: 'POST' });
       const data = await res.json();
-      if (res.ok && data.success) window.showToast('Embed di benvenuto inviato con successo nel canale!');
+      if (res.ok && data.success) window.showToast('Embed di benvenuto inviato con successo nel canale Discord!');
       else window.showToast(data.error || 'Errore invio test.', 'error');
     });
   }
@@ -1213,24 +1487,7 @@
       const p3 = fetch(`/api/guilds/${guildId}/welcomer`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          welcome_enabled: document.getElementById('wel-enabled')?.checked,
-          welcome_channel_id: document.getElementById('wel-channel')?.value || null,
-          auto_role_user: document.getElementById('wel-autorole-user')?.value || null,
-          welcome_message: document.getElementById('wel-message')?.value,
-          welcome_embed: {
-            title: document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!',
-            color: document.getElementById('wel-embed-color')?.value || '#dc2626',
-            description: document.getElementById('wel-message')?.value,
-            image: document.getElementById('wel-embed-image')?.value?.trim() || null,
-            footer: document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}'
-          },
-          welcome_dm_enabled: document.getElementById('wel-dm-enabled')?.checked,
-          welcome_dm_message: document.getElementById('wel-dm-message')?.value,
-          leave_enabled: document.getElementById('wel-leave-enabled')?.checked,
-          leave_channel_id: document.getElementById('wel-leave-channel')?.value || null,
-          leave_message: document.getElementById('wel-leave-message')?.value
-        })
+        body: JSON.stringify(getWelcomerPayload())
       });
 
       // 4. Partnership Config
@@ -1272,7 +1529,17 @@
         })
       });
 
-      await Promise.allSettled([p1, p2, p3, p4, p5, p6]);
+      // 7. Counting Minigame Config
+      const p7 = fetch(`/api/guilds/${guildId}/counting`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled: document.getElementById('cnt-enabled')?.checked,
+          channel_id: document.getElementById('cnt-channel')?.value || null
+        })
+      });
+
+      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7]);
       window.showToast('🛡️ Tutte le impostazioni del server sono state salvate permanentemente nel database!');
     } catch (err) {
       window.showToast('Errore durante il salvataggio.', 'error');
