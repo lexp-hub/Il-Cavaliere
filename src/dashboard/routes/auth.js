@@ -11,7 +11,10 @@ function getCallbackUrl(req) {
     return process.env.OAUTH2_CALLBACK_URL;
   }
   const host = req.get('x-forwarded-host') || req.get('host');
-  const proto = req.get('x-forwarded-proto') || req.protocol || 'http';
+  let proto = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http') || req.protocol || 'http';
+  if (host && (host.includes('wispbyte.app') || host.includes('https') || process.env.NODE_ENV === 'production')) {
+    proto = 'https';
+  }
   return `${proto}://${host}/auth/callback`;
 }
 

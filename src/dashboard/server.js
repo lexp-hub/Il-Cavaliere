@@ -18,6 +18,8 @@ export function createDashboardServer(botClient) {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: '/ws' });
 
+  app.set('trust proxy', 1);
+
   app.use(cors({ origin: true, credentials: true }));
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));
