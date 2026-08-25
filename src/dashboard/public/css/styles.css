@@ -42,7 +42,9 @@
 
 h1, h2, h3, h4, .font-medieval {
   font-family: 'Metamorphous', 'Montserrat', -apple-system, sans-serif;
-  letter-spacing: 0.03em;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 body {
