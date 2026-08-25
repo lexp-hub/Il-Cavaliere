@@ -4,61 +4,62 @@
 
 <br>
 
-# 🛡️ Il Cavaliere — Discord Bot & Dashboard
+# Il Cavaliere
 
-> Bot Discord a tema medievale con **AI (Llama 70B)**, gestione **Partnership**, **Embed Builder**, **AutoMod** e **Dashboard Web per moderatori**.
-
----
-
-## ⚡ Funzionalità
-
-- 🗡️ **AI Integrata**: Risponde alle menzioni con stile medievale e ricerca web in tempo reale.
-- 🤝 **Partnership**: Verifica automatica dei link di invito, requisiti minimi e cooldown.
-- 📜 **Embed Builder**: Crea e invia messaggi embed con anteprima live e pulsanti.
-- 🛡️ **AutoMod & Moderazione**: Filtri anti-spam, anti-invite, anti-link e comandi completi (`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`, `/nuke`).
-- 🎭 **Reaction Roles**: Assegnazione ruoli con pulsanti ed emoji interattive.
-- 👋 **Welcomer**: Messaggi di benvenuto nei canali e nei DM con auto-role.
-- 🎫 **Tickets & Giveaways**: Apertura ticket privati e concorsi a premi.
+Bot Discord con AI (Llama 70B), gestione partnership, embed builder, automod e dashboard web per moderatori.
 
 ---
 
-## 📜 Comandi Slash
+## Funzionalità
+
+- **AI**: Risposte alle menzioni con stile medievale e ricerca web.
+- **Partnership**: Verifica automatica dei link di invito, requisiti minimi e statistiche.
+- **Embed Builder**: Creazione e invio di messaggi embed con pulsanti dalla dashboard.
+- **AutoMod**: Filtri anti-spam, anti-invite, anti-link e comandi di moderazione (`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`, `/nuke`).
+- **Reaction Roles**: Assegnazione ruoli con pulsanti ed emoji.
+- **Welcomer**: Messaggi di benvenuto nei canali e nei DM con auto-role.
+- **Tickets**: Apertura ticket privati e transcript.
+- **Giveaways & XP**: Concorsi a premi e livelli in chat.
+
+---
+
+## Comandi Slash
 
 | Categoria | Comando | Descrizione |
 | :--- | :--- | :--- |
-| **🤖 AI** | `/ai ask` | Poni una domanda a Il Cavaliere |
-| | `/ai search` | Esegue una ricerca web con analisi dell'IA |
-| | `/ai reset` | Azzera la memoria della conversazione nel canale |
-| | `/ai prompt` | Visualizza o cambia il preset dell'IA |
-| **⚔️ Generale** | `/help` | Menu comandi interattivo |
-| | `/ping` | Latenza bot e stato memoria |
-| | `/serverinfo` | Informazioni sul server Discord |
-| | `/userinfo` | Informazioni sul profilo utente |
-| **🤝 Partnership** | `/partner add` | Registra e pubblica un nuovo partner |
-| | `/partner config` | Configura canale, ruolo ping e requisiti |
-| | `/partner stats` | Statistiche e classifica partner manager |
-| **🎨 Embeds** | `/embed send` | Invia un template embed |
-| | `/embed create` | Crea un embed al volo |
-| **🎭 Reaction Roles** | `/reactionrole button` | Crea pannello ruoli con pulsanti |
-| | `/reactionrole list` | Elenco ruoli interattivi attivi |
-| **👋 Welcomer** | `/welcomer config` | Configura benvenuto e canali |
-| | `/welcomer autorole` | Imposta ruoli automatici d'ingresso |
-| **🛡️ Moderazione** | `/ban`, `/kick` | Banna o espelli un membro |
+| **AI** | `/ai ask` | Pone una domanda al bot |
+| | `/ai search` | Ricerca informazioni sul web |
+| | `/ai reset` | Azzera la cronologia del canale |
+| | `/ai prompt` | Mostra o modifica il prompt del bot |
+| **Generale** | `/help` | Elenco dei comandi |
+| | `/ping` | Latenza del bot |
+| | `/serverinfo` | Informazioni sul server |
+| | `/userinfo` | Informazioni sull'utente |
+| **Partnership** | `/partner add` | Registra e invia una partnership |
+| | `/partner config` | Imposta canale, ruolo e requisiti |
+| | `/partner stats` | Statistiche delle partnership |
+| **Embeds** | `/embed send` | Invia un template embed |
+| | `/embed create` | Crea un messaggio embed |
+| **Reaction Roles** | `/reactionrole button` | Crea pannello ruoli con pulsanti |
+| | `/reactionrole list` | Mostra i ruoli interattivi |
+| **Welcomer** | `/welcomer config` | Imposta messaggi e canali di benvenuto |
+| | `/welcomer autorole` | Imposta i ruoli assegnati all'ingresso |
+| **Moderazione** | `/ban`, `/kick` | Banna o espelle un utente |
 | | `/timeout` | Mette in timeout temporaneo |
-| | `/warn`, `/warnings` | Assegna o consulta gli avvertimenti |
-| | `/clear` | Elimina fino a 100 messaggi |
-| | `/lock`, `/unlock` | Blocca o sblocca la scrittura nel canale |
-| | `/nuke` | Ricrea il canale cancellando la cronologia |
-| **🎫 Tickets** | `/ticket panel` | Invia il pannello per aprire ticket |
-| | `/ticket close` | Chiude il ticket e genera il transcript |
-| **🎉 Giveaways** | `/giveaway start` | Avvia un giveaway |
+| | `/warn`, `/warnings` | Assegna o visualizza gli avvertimenti |
+| | `/clear` | Elimina messaggi |
+| | `/lock`, `/unlock` | Blocca o sblocca il canale |
+| | `/nuke` | Ricrea il canale |
+| **Tickets** | `/ticket panel` | Invia il pannello ticket |
+| | `/ticket close` | Chiude il ticket |
+| **Giveaways** | `/giveaway start` | Avvia un giveaway |
 | | `/giveaway reroll` | Estrae un nuovo vincitore |
-| **⭐ Leveling** | `/rank` | Mostra scheda livello con XP |
-| | `/leaderboard` | Classifica dei membri più attivi |
+| **Leveling** | `/rank` | Mostra il livello e i punti XP |
+| | `/leaderboard` | Classifica dei punti XP |
 
 ---
 
-## 🛠️ Struttura del Progetto
+## Struttura del Progetto
 
 ```
 Il Cavaliere/
@@ -74,5 +75,5 @@ Il Cavaliere/
 
 ---
 
-## 🛡️ Licenza
-Distribuito sotto licenza **MIT**.
+## Licenza
+MIT
