@@ -6,7 +6,7 @@ import { WebSocketServer } from 'ws';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { CONFIG } from '../config.js';
-import { authRouter } from './routes/auth.js';
+import { authRouter, validateAuthToken } from './routes/auth.js';
 import { createGuildsRouter } from './routes/guilds.js';
 import { createApiRouter } from './routes/api.js';
 
@@ -30,16 +30,22 @@ export function createDashboardServer(botClient) {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        maxAge: 30 * 24 * 60 * 60 * 1000,
+        maxAge: 90 * 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: 'lax'
       }
     })
   );
 
-  app.get('/dashboard.html', (req, res, next) => {
-    if (!req.session.user) {
-      return res.redirect('/auth/login');
+  app.use((req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.substring(7);
+      const user = validateAuthToken(token);
+      if (user) {
+        req.session.user = user;
+        req.user = user;
+      }
     }
     next();
   });

@@ -1,10 +1,36 @@
 import express from 'express';
+import crypto from 'crypto';
 import { CONFIG } from '../../config.js';
 
 export const authRouter = express.Router();
 
 const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
+
+// In-memory token store for ad-block / brave / cookie-less localStorage authentication
+export const authTokens = new Map();
+
+export function createAuthToken(userData, accessToken) {
+  const token = 'cav_' + crypto.randomBytes(32).toString('hex');
+  authTokens.set(token, {
+    user: userData,
+    accessToken,
+    createdAt: Date.now()
+  });
+  return token;
+}
+
+export function validateAuthToken(token) {
+  if (!token) return null;
+  const entry = authTokens.get(token);
+  if (!entry) return null;
+  // 90 days validity
+  if (Date.now() - entry.createdAt > 90 * 24 * 60 * 60 * 1000) {
+    authTokens.delete(token);
+    return null;
+  }
+  return entry.user;
+}
 
 function getCallbackUrl(req) {
   if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost')) {
@@ -89,20 +115,21 @@ const handleCallback = async (req, res) => {
       ? `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png?size=128`
       : 'https://cdn.discordapp.com/embed/avatars/0.png';
 
-    req.session.user = {
+    const userObj = {
       id: userData.id,
       username: userData.username,
       discriminator: userData.discriminator,
       avatar: avatarUrl,
       guilds: guildsData || []
     };
+
+    req.session.user = userObj;
     req.session.accessToken = accessToken;
 
-    req.session.save((err) => {
-      if (err) {
-        console.error('[OAuth2] Session save error:', err);
-      }
-      res.redirect('/dashboard.html');
+    const authToken = createAuthToken(userObj, accessToken);
+
+    req.session.save(() => {
+      res.redirect(`/dashboard.html?auth_token=${authToken}`);
     });
   } catch (error) {
     console.error('[OAuth2] Auth exception:', error);
@@ -114,13 +141,25 @@ authRouter.get('/callback', handleCallback);
 authRouter.get('/discord/callback', handleCallback);
 
 authRouter.get('/me', (req, res) => {
-  if (!req.session.user) {
+  const authHeader = req.headers.authorization;
+  let user = req.session.user;
+
+  if (!user && authHeader && authHeader.startsWith('Bearer ')) {
+    user = validateAuthToken(authHeader.substring(7));
+    if (user) req.session.user = user;
+  }
+
+  if (!user) {
     return res.status(401).json({ error: 'Non autenticato' });
   }
-  res.json(req.session.user);
+  res.json(user);
 });
 
 authRouter.get('/logout', (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    authTokens.delete(authHeader.substring(7));
+  }
   req.session.destroy(() => {
     res.redirect('/');
   });

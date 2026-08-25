@@ -1,3 +1,25 @@
+// Global Fetch Interceptor for Anti-Adblock & Brave-Shields localStorage authentication
+const originalFetch = window.fetch;
+window.fetch = async function(url, options = {}) {
+  options = options || {};
+  options.headers = options.headers || {};
+  
+  const token = localStorage.getItem('cavaliere_auth_token');
+  if (token) {
+    if (options.headers instanceof Headers) {
+      if (!options.headers.has('Authorization')) {
+        options.headers.set('Authorization', `Bearer ${token}`);
+      }
+    } else if (typeof options.headers === 'object') {
+      if (!options.headers['Authorization'] && !options.headers['authorization']) {
+        options.headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+  }
+
+  return originalFetch.call(this, url, options);
+};
+
 window.AppState = {
   currentGuildId: null,
   currentGuildData: null,
@@ -29,14 +51,21 @@ window.showToast = function(message, type = 'success') {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const incomingAuthToken = urlParams.get('auth_token');
+
+  if (incomingAuthToken) {
+    localStorage.setItem('cavaliere_auth_token', incomingAuthToken);
+    const cleanUrl = window.location.pathname + (urlParams.get('guild') ? `?guild=${urlParams.get('guild')}` : '');
+    window.history.replaceState({}, document.title, cleanUrl);
+  }
+
   initTabNavigation();
   initWebSocket();
   await loadUserData();
   await loadGuilds();
   
-  const urlParams = new URLSearchParams(window.location.search);
   let targetGuild = urlParams.get('guild') || localStorage.getItem('cavaliere_last_guild');
-
   if (targetGuild && window.AppState.guilds.some(g => g.id === targetGuild)) {
     const select = document.getElementById('server-selector');
     if (select) select.value = targetGuild;
@@ -100,6 +129,7 @@ async function loadUserData() {
       if (avatarEl && user.avatar) avatarEl.src = user.avatar;
       if (nameEl && user.username) nameEl.textContent = user.username;
     } else if (res.status === 401) {
+      localStorage.removeItem('cavaliere_auth_token');
       window.location.href = '/auth/login';
     }
   } catch (e) {
@@ -111,6 +141,7 @@ async function loadGuilds() {
   try {
     const res = await fetch('/api/guilds');
     if (res.status === 401) {
+      localStorage.removeItem('cavaliere_auth_token');
       window.location.href = '/auth/login';
       return;
     }

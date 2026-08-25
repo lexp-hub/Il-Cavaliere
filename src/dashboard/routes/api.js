@@ -11,7 +11,7 @@ export function createApiRouter(botClient) {
   const router = express.Router();
 
   const requireModAuth = async (req, res, next) => {
-    const user = req.session.user;
+    const user = req.user || req.session.user;
     if (!user) {
       return res.status(401).json({ error: 'Accesso negato. Effettua il login con Discord.' });
     }
