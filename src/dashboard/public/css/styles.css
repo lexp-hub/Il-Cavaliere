@@ -1,12 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Metamorphous&family=Montserrat:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --bg-primary: #cbd5e1;
   --bg-secondary: #e2e8f0;
   --bg-tertiary: #f1f5f9;
   
-  --card-bg: rgba(248, 250, 252, 0.9);
-  --card-border: rgba(148, 163, 184, 0.5);
+  --card-bg: rgba(248, 250, 252, 0.92);
+  --card-border: rgba(148, 163, 184, 0.6);
   --card-border-hover: rgba(220, 38, 38, 0.65);
   
   --silver-primary: #cbd5e1;
@@ -43,9 +43,9 @@
 }
 
 h1, h2, h3, h4, .font-medieval {
-  font-family: 'Metamorphous', serif;
+  font-family: 'Cinzel', 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   text-transform: none;
   color: #0f172a;
 }
@@ -98,6 +98,64 @@ body {
 .glass-card:hover {
   border-color: var(--card-border-hover);
   box-shadow: 0 10px 30px -5px var(--crimson-glow);
+}
+
+/* High Contrast text & borders on light armor cards */
+.glass-card h1, .glass-card h2, .glass-card h3, .glass-card h4, .glass-card h5, .glass-card h6 {
+  color: #0f172a !important;
+}
+.glass-card .text-white {
+  color: #0f172a !important;
+}
+.glass-card p {
+  color: #475569;
+}
+.glass-card label {
+  color: #334155 !important;
+}
+.glass-card .text-slate-300,
+.glass-card .text-slate-400 {
+  color: #475569 !important;
+}
+.glass-card .border-white\/5,
+.glass-card .border-white\/10,
+.glass-card .border-white\/20 {
+  border-color: rgba(148, 163, 184, 0.45) !important;
+}
+.glass-card .divide-white\/5 > * + *,
+.glass-card .divide-white\/10 > * + * {
+  border-color: rgba(148, 163, 184, 0.35) !important;
+}
+.glass-card table thead th {
+  color: #64748b !important;
+  border-color: rgba(148, 163, 184, 0.5) !important;
+}
+.glass-card table tbody td {
+  color: #1e293b !important;
+}
+
+/* Discord preview dark theme preservation */
+.discord-chat-container {
+  background-color: var(--discord-dark) !important;
+}
+.discord-chat-container, 
+.discord-chat-container * {
+  color: revert;
+}
+.discord-chat-container strong,
+.discord-chat-container b,
+.discord-embed-title,
+.discord-author,
+.discord-field-name {
+  color: #ffffff !important;
+}
+.discord-embed-desc,
+.discord-field-value {
+  color: #dbdee1 !important;
+}
+.discord-timestamp,
+.discord-embed-footer {
+  color: #949ba4 !important;
 }
 
 .glass-nav {
