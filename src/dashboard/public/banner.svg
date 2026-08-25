@@ -20,28 +20,18 @@
       }
     </style>
 
-    <!-- Edge Ambient Glows (Corner & Border Lighting) -->
-    <radialGradient id="edgeGlowTopLeft" cx="0%" cy="0%" r="65%">
-      <stop offset="0%" stop-color="#f97316" stop-opacity="0.38" />
-      <stop offset="35%" stop-color="#ea580c" stop-opacity="0.18" />
-      <stop offset="70%" stop-color="#7c2d12" stop-opacity="0.04" />
+    <!-- Ultra-Subtle, Soft Noctaly Edge Vignette Glows -->
+    <radialGradient id="edgeGlowTopLeft" cx="0%" cy="0%" r="55%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.14" />
+      <stop offset="45%" stop-color="#ea580c" stop-opacity="0.05" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
 
-    <radialGradient id="edgeGlowBottomRight" cx="100%" cy="100%" r="65%">
-      <stop offset="0%" stop-color="#f97316" stop-opacity="0.32" />
-      <stop offset="35%" stop-color="#ea580c" stop-opacity="0.15" />
-      <stop offset="70%" stop-color="#7c2d12" stop-opacity="0.03" />
+    <radialGradient id="edgeGlowBottomRight" cx="100%" cy="100%" r="55%">
+      <stop offset="0%" stop-color="#f97316" stop-opacity="0.12" />
+      <stop offset="45%" stop-color="#ea580c" stop-opacity="0.04" />
       <stop offset="100%" stop-color="#000000" stop-opacity="0" />
     </radialGradient>
-
-    <linearGradient id="edgeBorderGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#ea580c" stop-opacity="0.6" />
-      <stop offset="25%" stop-color="#f97316" stop-opacity="0.2" />
-      <stop offset="50%" stop-color="#ea580c" stop-opacity="0.05" />
-      <stop offset="75%" stop-color="#f97316" stop-opacity="0.2" />
-      <stop offset="100%" stop-color="#ea580c" stop-opacity="0.6" />
-    </linearGradient>
 
     <!-- Luxury Metallic Platinum-Gold-Orange Gradient for Cross & Text -->
     <linearGradient id="crossMetallicGrad" x1="20%" y1="0%" x2="80%" y2="100%">
@@ -60,7 +50,7 @@
 
     <!-- Subtle Noctaly Tech Grid -->
     <pattern id="noctalyGrid" width="24" height="24" patternUnits="userSpaceOnUse">
-      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.025" />
+      <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.02" />
     </pattern>
 
     <!-- Pure Seamless Knights Templar Cross Path -->
@@ -87,36 +77,35 @@
   <!-- Ultra-Subtle Noctaly Tech Grid -->
   <rect width="600" height="240" fill="url(#noctalyGrid)" />
 
-  <!-- Edge & Corner Ambient Lighting (Top-Left & Bottom-Right) -->
+  <!-- Delicate, Soft Edge & Corner Lighting -->
   <rect width="600" height="240" fill="url(#edgeGlowTopLeft)" />
   <rect width="600" height="240" fill="url(#edgeGlowBottomRight)" />
 
-  <!-- Subtle Glowing Top & Bottom Horizon Lines -->
-  <line x1="0" y1="1" x2="600" y2="1" stroke="url(#edgeBorderGlow)" stroke-width="1.5" />
-  <line x1="0" y1="239" x2="600" y2="239" stroke="url(#edgeBorderGlow)" stroke-width="1.5" />
+  <!-- Ultra-Faint Border Accent -->
+  <rect width="598" height="238" x="1" y="1" rx="4" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.04" />
 
   <!-- Left: Glowing Templar Cross Emblem -->
   <g transform="translate(130, 120)">
     <!-- Delicate Modern Accent Rings -->
-    <circle cx="0" cy="0" r="76" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.08" />
-    <circle cx="0" cy="0" r="92" fill="none" stroke="#f97316" stroke-width="0.6" stroke-opacity="0.15" stroke-dasharray="4 6" />
+    <circle cx="0" cy="0" r="76" fill="none" stroke="#ffffff" stroke-width="0.5" stroke-opacity="0.06" />
+    <circle cx="0" cy="0" r="92" fill="none" stroke="#f97316" stroke-width="0.5" stroke-opacity="0.1" stroke-dasharray="4 6" />
     
-    <!-- Hero Cross -->
-    <g transform="scale(0.46)" fill="url(#crossMetallicGrad)" filter="drop-shadow(0 4px 18px rgba(234, 88, 12, 0.4))">
+    <!-- Hero Cross with Balanced Soft Aura -->
+    <g transform="scale(0.46)" fill="url(#crossMetallicGrad)" filter="drop-shadow(0 4px 16px rgba(234, 88, 12, 0.3))">
       <use href="#templarCrossSingle" />
     </g>
   </g>
 
   <!-- Right: Luxury Typography & Subtitle -->
   <g transform="translate(250, 120)">
-    <!-- Version Tag Pill (Shifted Higher Up) -->
+    <!-- Version Tag Pill -->
     <g transform="translate(0, -65)">
-      <rect x="0" y="0" width="62" height="18" rx="9" fill="rgba(249, 115, 22, 0.15)" stroke="rgba(249, 115, 22, 0.4)" stroke-width="0.75" />
+      <rect x="0" y="0" width="62" height="18" rx="9" fill="rgba(249, 115, 22, 0.1)" stroke="rgba(249, 115, 22, 0.3)" stroke-width="0.5" />
       <text x="31" y="12.5" fill="#fdba74" font-size="9" font-family="'Inter', sans-serif" font-weight="700" text-anchor="middle" letter-spacing="1.5px">v2.0</text>
     </g>
 
     <!-- Main Title: IL CAVALIERE -->
-    <text x="0" y="-12" fill="url(#textGrad)" font-size="34" class="banner-title" filter="drop-shadow(0 2px 10px rgba(234, 88, 12, 0.25))">
+    <text x="0" y="-12" fill="url(#textGrad)" font-size="34" class="banner-title" filter="drop-shadow(0 2px 8px rgba(234, 88, 12, 0.18))">
       Il Cavaliere
     </text>
 
