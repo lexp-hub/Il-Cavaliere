@@ -253,7 +253,7 @@ function populateDropdowns(channels = [], roles = []) {
 
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',
-    'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel',
+    'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel', 'tk-log-channel',
     'ga-channel', 'lvl-channel'
   ];
 

@@ -68,6 +68,14 @@ class UniversalDatabase {
 export const db = new UniversalDatabase(rawDb, isNodeSqlite);
 db.exec(SCHEMA);
 
+// Safe dynamic column migrations for ticket_panels
+try { db.exec("ALTER TABLE ticket_panels ADD COLUMN color TEXT DEFAULT '#ea580c';"); } catch (e) {}
+try { db.exec("ALTER TABLE ticket_panels ADD COLUMN image TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE ticket_panels ADD COLUMN footer TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE ticket_panels ADD COLUMN button_style TEXT DEFAULT 'Primary';"); } catch (e) {}
+try { db.exec("ALTER TABLE ticket_panels ADD COLUMN naming_scheme TEXT DEFAULT 'ticket-{user}';"); } catch (e) {}
+try { db.exec("ALTER TABLE ticket_panels ADD COLUMN log_channel_id TEXT;"); } catch (e) {}
+
 export const DatabaseHelper = {
   db,
 
@@ -523,20 +531,27 @@ export const DatabaseHelper = {
 
   saveTicketPanel(panelData) {
     db.prepare(`
-      INSERT OR REPLACE INTO ticket_panels (id, guild_id, channel_id, message_id, title, description, category_id, button_label, button_emoji, support_role_id, welcome_message)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT OR REPLACE INTO ticket_panels (
+        id, guild_id, channel_id, message_id, title, description, color, image, footer, button_style, category_id, button_label, button_emoji, support_role_id, welcome_message, naming_scheme, log_channel_id
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
       panelData.id,
       panelData.guild_id,
       panelData.channel_id || null,
       panelData.message_id || null,
       panelData.title || 'Crea un Ticket',
-      panelData.description || 'Clicca sul pulsante per aprire un ticket.',
+      panelData.description || 'Clicca sul pulsante sottostante per aprire un ticket.',
+      panelData.color || '#ea580c',
+      panelData.image || null,
+      panelData.footer || null,
+      panelData.button_style || 'Primary',
       panelData.category_id || null,
       panelData.button_label || 'Apri Ticket',
       panelData.button_emoji || '📩',
       panelData.support_role_id || null,
-      panelData.welcome_message || 'Benvenuto {user.mention}!'
+      panelData.welcome_message || 'Benvenuto {user.mention}! Lo staff ti risponderà a breve.',
+      panelData.naming_scheme || 'ticket-{user}',
+      panelData.log_channel_id || null
     );
     return this.getTicketPanel(panelData.id);
   },

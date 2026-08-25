@@ -18,15 +18,15 @@
   <div id="drawer-backdrop" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
 
   <!-- Mobile Top Header Bar -->
-  <header class="md:hidden flex items-center justify-between p-3.5 border-b border-orange-500/20 bg-black/95 sticky top-0 z-40">
+  <header class="md:hidden flex items-center justify-between p-3.5 border-b border-slate-700/60 bg-black/95 sticky top-0 z-40">
     <div class="flex items-center gap-2.5">
-      <button id="btn-toggle-drawer" class="p-2 rounded-xl bg-white/5 border border-orange-500/30 text-orange-400 hover:bg-orange-500/10">
+      <button id="btn-toggle-drawer" class="p-2 rounded-xl bg-white/5 border border-slate-700 text-red-400 hover:bg-red-500/10">
         <i data-lucide="menu" class="w-5 h-5"></i>
       </button>
-      <img src="/logo.svg?v=10" alt="Il Cavaliere" class="w-8 h-8 rounded-full border border-orange-400/40">
+      <img src="/logo.svg?v=12" alt="Il Cavaliere" class="w-8 h-8 rounded-full border border-slate-400/40">
       <div>
         <h1 class="text-sm font-bold text-white font-medieval">Il Cavaliere</h1>
-        <span class="text-[9px] text-orange-400 font-semibold uppercase">Dashboard</span>
+        <span class="text-[9px] text-red-400 font-semibold uppercase">Dashboard</span>
       </div>
     </div>
     <button id="btn-save-all-mobile" class="btn-knight text-xs py-1.5 px-3 flex items-center gap-1.5">
@@ -35,14 +35,14 @@
   </header>
 
   <!-- Sidebar / Mobile Drawer Navigation -->
-  <aside id="sidebar-drawer" class="fixed md:sticky top-0 left-0 z-50 h-screen w-72 md:w-64 bg-black/95 backdrop-blur-2xl border-r border-orange-500/20 flex flex-col justify-between shrink-0 shadow-2xl transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+  <aside id="sidebar-drawer" class="fixed md:sticky top-0 left-0 z-50 h-screen w-72 md:w-64 bg-black/95 backdrop-blur-2xl border-r border-slate-700/60 flex flex-col justify-between shrink-0 shadow-2xl transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div>
-      <div class="p-4 border-b border-orange-500/20 flex items-center justify-between">
+      <div class="p-4 border-b border-slate-700/60 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="/logo.svg?v=10" alt="Il Cavaliere" class="w-10 h-10 rounded-full shadow-md border border-orange-400/40">
+          <img src="/logo.svg?v=12" alt="Il Cavaliere" class="w-10 h-10 rounded-full shadow-md border border-slate-400/40">
           <div>
             <h1 class="text-base font-bold text-white tracking-tight font-medieval">Il Cavaliere</h1>
-            <span class="text-[10px] text-orange-400 font-semibold tracking-wider uppercase">Dashboard Moderatori</span>
+            <span class="text-[10px] text-red-400 font-semibold tracking-wider uppercase">Dashboard Moderatori</span>
           </div>
         </div>
         <button id="btn-close-drawer" class="md:hidden p-1.5 rounded-lg bg-white/5 text-slate-400 hover:text-white">
@@ -50,84 +50,84 @@
         </button>
       </div>
 
-      <div class="p-4 border-b border-orange-500/20">
-        <label class="text-[11px] uppercase tracking-wider text-orange-200/70 font-bold block mb-1.5">Server Selezionato</label>
-        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-[#0d1017] border-orange-500/30 text-orange-100">
+      <div class="p-4 border-b border-slate-700/60">
+        <label class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block mb-1.5">Server Selezionato</label>
+        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-[#0d1017] border-slate-700 text-slate-200">
           <option value="loading">Caricamento server...</option>
         </select>
       </div>
 
       <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-260px)]">
-        <button class="nav-tab active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-overview">
-          <i data-lucide="layout-grid" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-overview">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-red-500"></i>
           <span>Panoramica</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-ai">
-          <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-ai">
+          <i data-lucide="sparkles" class="w-4 h-4 text-red-500"></i>
           <span class="flex-grow font-medieval">Il Cavaliere AI</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold uppercase border border-amber-500/30">Llama 70B</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-semibold uppercase border border-red-500/30">Llama 70B</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-partnerships">
-          <i data-lucide="handshake" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-partnerships">
+          <i data-lucide="handshake" class="w-4 h-4 text-red-500"></i>
           <span>Partnership</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-embeds">
-          <i data-lucide="scroll" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-embeds">
+          <i data-lucide="scroll" class="w-4 h-4 text-red-500"></i>
           <span class="flex-grow">Embed Builder</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold uppercase border border-amber-500/30">Live</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 font-semibold uppercase border border-red-500/30">Live</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-reactionroles">
-          <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-reactionroles">
+          <i data-lucide="layers" class="w-4 h-4 text-red-500"></i>
           <span>Reaction Roles</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-welcomer">
-          <i data-lucide="user-plus" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-welcomer">
+          <i data-lucide="user-plus" class="w-4 h-4 text-red-500"></i>
           <span>Welcomer &amp; DM</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-autoresponder">
-          <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-autoresponder">
+          <i data-lucide="zap" class="w-4 h-4 text-red-500"></i>
           <span>Auto-Responder</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-automod">
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-automod">
           <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
           <span>AutoMod &amp; Sicurezza</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-tickets">
-          <i data-lucide="ticket" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-tickets">
+          <i data-lucide="ticket" class="w-4 h-4 text-red-500"></i>
           <span>Ticket System</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-giveaways">
-          <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-giveaways">
+          <i data-lucide="trophy" class="w-4 h-4 text-red-500"></i>
           <span>Giveaways &amp; XP</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-emojis">
-          <i data-lucide="smile" class="w-4 h-4 text-amber-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-emojis">
+          <i data-lucide="smile" class="w-4 h-4 text-red-500"></i>
           <span>Emoji Tracker</span>
         </button>
       </nav>
     </div>
 
-    <div class="p-3 border-t border-amber-500/20 bg-slate-950/60">
+    <div class="p-3 border-t border-slate-700/60 bg-slate-950/60">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full border border-amber-500/40" alt="Avatar">
+          <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full border border-slate-500/40" alt="Avatar">
           <div class="overflow-hidden">
             <p id="user-name" class="text-xs font-semibold text-white truncate font-medieval">Moderatore</p>
-            <p class="text-[10px] text-amber-300 font-medium">Accesso Moderatore</p>
+            <p class="text-[10px] text-red-400 font-medium">Accesso Moderatore</p>
           </div>
         </div>
         <div class="flex items-center gap-1">
-          <a href="/" class="p-2 rounded-lg bg-white/5 hover:bg-amber-500/20 text-amber-200/70 hover:text-amber-200 transition-colors" title="Torna alla Home">
+          <a href="/" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Torna alla Home">
             <i data-lucide="home" class="w-4 h-4"></i>
           </a>
           <a href="/auth/logout" onclick="localStorage.removeItem('cavaliere_auth_token');" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 transition-colors" title="Disconnetti">
@@ -139,12 +139,12 @@
   </aside>
 
   <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
-    <div class="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-amber-500/20">
+    <div class="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-700/60">
       <div>
         <h2 id="current-guild-name" class="text-2xl font-bold text-white flex items-center gap-2 font-medieval">
           🏰 Server Discord
         </h2>
-        <p class="text-xs text-amber-200/70 mt-1">Configurazione modulare in tempo reale per il server</p>
+        <p class="text-xs text-slate-400 mt-1">Configurazione modulare in tempo reale per il server</p>
       </div>
 
       <div class="flex items-center gap-3">
@@ -659,8 +659,8 @@
                 <div>
                   <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Barra Embed</label>
                   <div class="flex items-center gap-2">
-                    <input type="color" id="wel-embed-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#ea580c">
-                    <input type="text" id="wel-embed-color-hex" class="form-input text-xs font-mono" value="#ea580c">
+                    <input type="color" id="wel-embed-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#dc2626">
+                    <input type="text" id="wel-embed-color-hex" class="form-input text-xs font-mono" value="#dc2626">
                   </div>
                 </div>
               </div>
@@ -729,7 +729,7 @@
 
             <div class="discord-chat-container">
               <div class="discord-message">
-                <img src="/logo.svg?v=10" class="discord-avatar" alt="Avatar">
+                <img src="/logo.svg?v=12" class="discord-avatar" alt="Avatar">
                 <div class="discord-msg-content">
                   <div class="discord-header">
                     <span class="discord-author">Il Cavaliere</span>
@@ -741,7 +741,7 @@
                     <span class="bg-[#5865F2]/20 text-[#5865F2] px-1 py-0.5 rounded">@NuovoCavaliere</span>
                   </div>
 
-                  <div id="prev-wel-embed-box" class="discord-embed-box" style="border-left-color: #ea580c;">
+                  <div id="prev-wel-embed-box" class="discord-embed-box" style="border-left-color: #dc2626;">
                     <div>
                       <div id="prev-wel-title" class="discord-embed-title">⚔️ Benvenuto nel Reame, NuovoCavaliere!</div>
                       <div id="prev-wel-desc" class="discord-embed-desc">Benvenuto @NuovoCavaliere in Il Cavaliere Realm! Siamo felici di averti tra noi. Sei il membro #128!</div>
@@ -764,7 +764,7 @@
                     <img id="prev-wel-thumb" class="discord-embed-thumb" src="https://cdn.discordapp.com/embed/avatars/0.png" alt="Thumbnail">
                     <img id="prev-wel-image" class="discord-embed-image hidden" src="" alt="Banner">
                     <div id="prev-wel-footer" class="discord-embed-footer">
-                      <img src="/logo.svg?v=10" class="w-4 h-4 rounded-full" alt="Icon">
+                      <img src="/logo.svg?v=12" class="w-4 h-4 rounded-full" alt="Icon">
                       <span id="prev-wel-footer-text">Membro #128 • Il Cavaliere Realm</span>
                     </div>
                   </div>
@@ -908,46 +908,189 @@
     
     
     <section id="tab-tickets" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6">
-        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-          <i data-lucide="ticket" class="w-5 h-5 text-blue-400"></i> Crea Nuovo Pannello Ticket
-        </h3>
-        <p class="text-xs text-slate-400 mb-6">Genera un messaggio interattivo per aprire ticket privati</p>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Settings Form Column -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="glass-card p-6">
+            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2 font-medieval">
+              <i data-lucide="ticket" class="w-5 h-5 text-amber-400"></i> Personalizzazione Pannello Ticket
+            </h3>
+            <p class="text-xs text-slate-400 mb-6">Configura stile, canali e messaggi di benvenuto del sistema di supporto</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Canale per il Pannello</label>
-            <select id="tk-channel" class="form-select text-xs"></select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Categoria Canali Ticket</label>
-            <select id="tk-category" class="form-select text-xs"></select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Ruolo Staff Supporto</label>
-            <select id="tk-support-role" class="form-select text-xs"></select>
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Pannello</label>
-            <input type="text" id="tk-title" class="form-input text-xs" value="🎫 Centro Supporto & Assistenza">
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Bottone</label>
-            <input type="text" id="tk-btn-label" class="form-input text-xs" value="Apri Ticket">
-          </div>
-          <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Emoji Bottone</label>
-            <input type="text" id="tk-btn-emoji" class="form-input text-xs" value="📩">
+            <div class="space-y-4">
+              <!-- Basic Channels & Roles -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Canale per il Pannello</label>
+                  <select id="tk-channel" class="form-select text-xs"></select>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Categoria Canali Ticket</label>
+                  <select id="tk-category" class="form-select text-xs"></select>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Ruolo Staff di Supporto</label>
+                  <select id="tk-support-role" class="form-select text-xs"></select>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Log Transcript (Opzionale)</label>
+                  <select id="tk-log-channel" class="form-select text-xs"></select>
+                </div>
+              </div>
+
+              <!-- Panel Embed Styling -->
+              <div class="pt-4 border-t border-white/5 space-y-4">
+                <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <i data-lucide="layout" class="w-3.5 h-3.5"></i> Grafica Embed del Pannello
+                </h4>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div class="sm:col-span-2">
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Pannello</label>
+                    <input type="text" id="tk-title" class="form-input text-xs" value="🎫 Centro Supporto &amp; Assistenza">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Barra Embed</label>
+                    <div class="flex items-center gap-2">
+                      <input type="color" id="tk-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#dc2626">
+                      <input type="text" id="tk-color-hex" class="form-input text-xs font-mono" value="#dc2626">
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Descrizione / Istruzioni del Pannello</label>
+                  <textarea id="tk-description" class="form-textarea h-20 text-xs">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri cavalieri e moderatori.</textarea>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Immagine / Banner URL (Opzionale)</label>
+                    <input type="url" id="tk-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Footer</label>
+                    <input type="text" id="tk-footer" class="form-input text-xs" value="Il Cavaliere • Sistema Ticket">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Button Styling -->
+              <div class="pt-4 border-t border-white/5 space-y-4">
+                <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i> Pulsante di Apertura
+                </h4>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Etichetta Pulsante</label>
+                    <input type="text" id="tk-btn-label" class="form-input text-xs" value="Apri Ticket">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Emoji Pulsante</label>
+                    <input type="text" id="tk-btn-emoji" class="form-input text-xs" value="📩">
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Stile Colore Pulsante</label>
+                    <select id="tk-btn-style" class="form-select text-xs">
+                      <option value="Primary">Viola / Blurple (Primary)</option>
+                      <option value="Secondary">Grigio Grafite (Secondary)</option>
+                      <option value="Success">Verde Smeraldo (Success)</option>
+                      <option value="Danger">Rosso Rubino (Danger)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ticket Channel Experience -->
+              <div class="pt-4 border-t border-white/5 space-y-4">
+                <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                  <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Esperienza all'Interno del Ticket
+                </h4>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Formato Nome Canale</label>
+                    <select id="tk-naming" class="form-select text-xs">
+                      <option value="ticket-{user}">ticket-username</option>
+                      <option value="supporto-{user}">supporto-username</option>
+                      <option value="ticket-{id}">ticket-1234 (ID Casuale)</option>
+                      <option value="help-{user}">help-username</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Funzionalità Integrate</label>
+                    <div class="text-xs text-slate-300 space-y-1.5 pt-1">
+                      <p class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Trascrizione Transcript automatica</p>
+                      <p class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Invio Transcript in DM all'autore</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="text-xs font-semibold text-slate-300 block mb-1">Messaggio di Benvenuto all'Interno del Ticket</label>
+                  <textarea id="tk-welcome-msg" class="form-textarea h-16 text-xs">Benvenuto {user.mention}! Uno staffer ti risponderà al più presto. Descrivi il tuo problema in dettaglio.</textarea>
+                </div>
+              </div>
+
+              <div class="pt-2">
+                <button id="btn-create-ticket-panel" class="btn-cyber text-xs py-3 px-6 w-full justify-center">
+                  <i data-lucide="send" class="w-4 h-4"></i> Invia Pannello Ticket nel Canale
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
-        <button id="btn-create-ticket-panel" class="btn-cyber text-xs py-2.5 px-4">
-          <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia Pannello Ticket
-        </button>
+        <!-- Real-Time Discord Live Ticket Panel Preview Column -->
+        <div class="lg:col-span-5">
+          <div class="sticky top-6 space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
+              <span>Anteprima Pannello Ticket</span>
+              <span class="text-amber-400 font-mono text-[10px]">Real-time Live Preview</span>
+            </div>
+
+            <div class="discord-chat-container">
+              <div class="discord-message">
+                <img src="/logo.svg?v=12" class="discord-avatar" alt="Avatar">
+                <div class="discord-msg-content">
+                  <div class="discord-header">
+                    <span class="discord-author">Il Cavaliere</span>
+                    <span class="discord-bot-badge">Bot</span>
+                    <span class="discord-timestamp">Oggi alle 12:00</span>
+                  </div>
+
+                  <div id="prev-tk-embed-box" class="discord-embed-box" style="border-left-color: #dc2626;">
+                    <div>
+                      <div id="prev-tk-title" class="discord-embed-title">🎫 Centro Supporto &amp; Assistenza</div>
+                      <div id="prev-tk-desc" class="discord-embed-desc">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri cavalieri e moderatori.</div>
+                    </div>
+                    <img id="prev-tk-image" class="discord-embed-image hidden" src="" alt="Banner">
+                    <div id="prev-tk-footer" class="discord-embed-footer">
+                      <img src="/logo.svg?v=12" class="w-4 h-4 rounded-full" alt="Icon">
+                      <span id="prev-tk-footer-text">Il Cavaliere • Sistema Ticket</span>
+                    </div>
+                  </div>
+
+                  <!-- Interactive Button Preview -->
+                  <div class="mt-2.5">
+                    <button id="prev-tk-btn" class="px-3.5 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 bg-[#5865F2] text-white shadow">
+                      <span id="prev-tk-btn-emoji">📩</span>
+                      <span id="prev-tk-btn-label">Apri Ticket</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
+      <!-- Active Tickets List Section -->
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-3">Ticket Aperti di Recente</h4>
+        <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4 text-amber-400"></i> Ticket Aperti di Recente
+        </h4>
         <div id="tk-list-container" class="space-y-2"></div>
       </div>
     </section>

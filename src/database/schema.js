@@ -170,11 +170,17 @@ CREATE TABLE IF NOT EXISTS ticket_panels (
   message_id TEXT,
   title TEXT DEFAULT 'Crea un Ticket',
   description TEXT DEFAULT 'Clicca sul pulsante sottostante per aprire un ticket di supporto.',
+  color TEXT DEFAULT '#ea580c',
+  image TEXT,
+  footer TEXT,
+  button_style TEXT DEFAULT 'Primary',
   category_id TEXT,
   button_label TEXT DEFAULT 'Apri Ticket',
   button_emoji TEXT DEFAULT '📩',
   support_role_id TEXT,
-  welcome_message TEXT DEFAULT 'Benvenuto {user.mention}! Lo staff ti risponderà a breve.'
+  welcome_message TEXT DEFAULT 'Benvenuto {user.mention}! Lo staff ti risponderà a breve.',
+  naming_scheme TEXT DEFAULT 'ticket-{user}',
+  log_channel_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS tickets (

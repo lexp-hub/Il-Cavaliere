@@ -432,7 +432,7 @@
 
   function updateWelcomerPreview() {
     const title = document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!';
-    const color = document.getElementById('wel-embed-color')?.value || '#ea580c';
+    const color = document.getElementById('wel-embed-color')?.value || '#dc2626';
     const message = document.getElementById('wel-message')?.value || 'Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!';
     const image = document.getElementById('wel-embed-image')?.value?.trim();
     const footer = document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}';
@@ -506,8 +506,8 @@
       if (msgWel && config.welcome_message) msgWel.value = config.welcome_message;
       if (embTitle) embTitle.value = emb.title || '⚔️ Benvenuto nel Reame, {user}!';
       if (embColor) {
-        embColor.value = emb.color || '#ea580c';
-        if (embColorHex) embColorHex.value = emb.color || '#ea580c';
+        embColor.value = emb.color || '#dc2626';
+        if (embColorHex) embColorHex.value = emb.color || '#dc2626';
       }
       if (embImage) embImage.value = emb.image || '';
       if (embFooter) embFooter.value = emb.footer || 'Membro #{memberCount} • {server.name}';
@@ -534,7 +534,7 @@
         welcome_message: document.getElementById('wel-message')?.value,
         welcome_embed: {
           title: document.getElementById('wel-embed-title')?.value || '⚔️ Benvenuto nel Reame, {user}!',
-          color: document.getElementById('wel-embed-color')?.value || '#ea580c',
+          color: document.getElementById('wel-embed-color')?.value || '#dc2626',
           description: document.getElementById('wel-message')?.value,
           image: document.getElementById('wel-embed-image')?.value?.trim() || null,
           footer: document.getElementById('wel-embed-footer')?.value || 'Membro #{memberCount} • {server.name}'
@@ -713,6 +713,77 @@
     });
   }
 
+  function updateTicketPreview() {
+    const title = document.getElementById('tk-title')?.value || '🎫 Centro Supporto & Assistenza';
+    const desc = document.getElementById('tk-description')?.value || 'Clicca sul pulsante sottostante per aprire un ticket.';
+    const color = document.getElementById('tk-color')?.value || '#dc2626';
+    const image = document.getElementById('tk-image')?.value?.trim();
+    const footer = document.getElementById('tk-footer')?.value || 'Il Cavaliere • Sistema Ticket';
+    const btnLabel = document.getElementById('tk-btn-label')?.value || 'Apri Ticket';
+    const btnEmoji = document.getElementById('tk-btn-emoji')?.value || '📩';
+    const btnStyle = document.getElementById('tk-btn-style')?.value || 'Primary';
+
+    const prevBox = document.getElementById('prev-tk-embed-box');
+    const prevTitle = document.getElementById('prev-tk-title');
+    const prevDesc = document.getElementById('prev-tk-desc');
+    const prevImage = document.getElementById('prev-tk-image');
+    const prevFooter = document.getElementById('prev-tk-footer-text');
+    const prevBtn = document.getElementById('prev-tk-btn');
+    const prevBtnLabel = document.getElementById('prev-tk-btn-label');
+    const prevBtnEmoji = document.getElementById('prev-tk-btn-emoji');
+
+    if (prevBox) prevBox.style.borderLeftColor = color;
+    if (prevTitle) prevTitle.textContent = title;
+    if (prevDesc) prevDesc.textContent = desc;
+
+    if (prevImage) {
+      if (image) {
+        prevImage.src = image;
+        prevImage.classList.remove('hidden');
+      } else {
+        prevImage.src = '';
+        prevImage.classList.add('hidden');
+      }
+    }
+
+    if (prevFooter) prevFooter.textContent = footer;
+    if (prevBtnLabel) prevBtnLabel.textContent = btnLabel;
+    if (prevBtnEmoji) prevBtnEmoji.textContent = btnEmoji;
+
+    if (prevBtn) {
+      // Clear style classes
+      prevBtn.className = 'px-3.5 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 shadow transition-all';
+      if (btnStyle === 'Primary') {
+        prevBtn.classList.add('bg-[#5865F2]', 'text-white');
+      } else if (btnStyle === 'Secondary') {
+        prevBtn.classList.add('bg-slate-700', 'text-white');
+      } else if (btnStyle === 'Success') {
+        prevBtn.classList.add('bg-emerald-600', 'text-white');
+      } else if (btnStyle === 'Danger') {
+        prevBtn.classList.add('bg-rose-600', 'text-white');
+      }
+    }
+  }
+
+  ['tk-title', 'tk-description', 'tk-color', 'tk-color-hex', 'tk-image', 'tk-footer', 'tk-btn-label', 'tk-btn-emoji', 'tk-btn-style'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', (e) => {
+        if (id === 'tk-color') {
+          const hexEl = document.getElementById('tk-color-hex');
+          if (hexEl) hexEl.value = e.target.value;
+        } else if (id === 'tk-color-hex') {
+          const colEl = document.getElementById('tk-color');
+          if (colEl && /^#[0-9A-Fa-f]{6}$/.test(e.target.value)) colEl.value = e.target.value;
+        }
+        updateTicketPreview();
+      });
+      if (el.tagName === 'SELECT') {
+        el.addEventListener('change', updateTicketPreview);
+      }
+    }
+  });
+
   async function loadTicketsData(guildId) {
     try {
       const res = await fetch(`/api/guilds/${guildId}/tickets`);
@@ -720,31 +791,55 @@
       const data = await res.json();
 
       const container = document.getElementById('tk-list-container');
-      if (!container) return;
+      if (container) {
+        container.innerHTML = '';
+        const tickets = data.tickets || [];
 
-      container.innerHTML = '';
-      const tickets = data.tickets || [];
-
-      if (tickets.length === 0) {
-        container.innerHTML = '<p class="text-slate-500 text-xs text-center py-4">Nessun ticket recente.</p>';
-      } else {
-        tickets.forEach(tk => {
-          const card = document.createElement('div');
-          const dateStr = new Date(tk.created_at * 1000).toLocaleString('it-IT');
-          const badgeClass = tk.status === 'OPEN' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300';
-          card.className = 'p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between';
-          card.innerHTML = `
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-xs text-white">Ticket #${tk.id}</span>
-                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass}">${tk.status}</span>
+        if (tickets.length === 0) {
+          container.innerHTML = '<p class="text-slate-500 text-xs text-center py-4">Nessun ticket recente.</p>';
+        } else {
+          tickets.forEach(tk => {
+            const card = document.createElement('div');
+            const dateStr = new Date(tk.created_at * 1000).toLocaleString('it-IT');
+            const badgeClass = tk.status === 'OPEN' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300';
+            card.className = 'p-3 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between';
+            card.innerHTML = `
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-xs text-white">Ticket #${tk.id}</span>
+                  <span class="text-[10px] font-bold px-1.5 py-0.5 rounded ${badgeClass}">${tk.status}</span>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-0.5">Creato da &lt;@${tk.user_id}&gt; • ${dateStr}</p>
               </div>
-              <p class="text-[11px] text-slate-400 mt-0.5">Creato da &lt;@${tk.user_id}&gt; • ${dateStr}</p>
-            </div>
-          `;
-          container.appendChild(card);
-        });
+            `;
+            container.appendChild(card);
+          });
+        }
       }
+
+      // If existing panel found, optionally preload
+      const panel = data.panels?.[0];
+      if (panel) {
+        if (panel.title) document.getElementById('tk-title').value = panel.title;
+        if (panel.description) document.getElementById('tk-description').value = panel.description;
+        if (panel.color) {
+          document.getElementById('tk-color').value = panel.color;
+          document.getElementById('tk-color-hex').value = panel.color;
+        }
+        if (panel.image) document.getElementById('tk-image').value = panel.image;
+        if (panel.footer) document.getElementById('tk-footer').value = panel.footer;
+        if (panel.button_label) document.getElementById('tk-btn-label').value = panel.button_label;
+        if (panel.button_emoji) document.getElementById('tk-btn-emoji').value = panel.button_emoji;
+        if (panel.button_style) document.getElementById('tk-btn-style').value = panel.button_style;
+        if (panel.naming_scheme) document.getElementById('tk-naming').value = panel.naming_scheme;
+        if (panel.welcome_message) document.getElementById('tk-welcome-msg').value = panel.welcome_message;
+        if (panel.channel_id) document.getElementById('tk-channel').value = panel.channel_id;
+        if (panel.category_id) document.getElementById('tk-category').value = panel.category_id;
+        if (panel.support_role_id) document.getElementById('tk-support-role').value = panel.support_role_id;
+        if (panel.log_channel_id) document.getElementById('tk-log-channel').value = panel.log_channel_id;
+      }
+
+      updateTicketPreview();
     } catch (e) {
       console.error('Error loading tickets:', e);
     }
@@ -757,23 +852,48 @@
       const channelId = document.getElementById('tk-channel')?.value;
       const categoryId = document.getElementById('tk-category')?.value || null;
       const supportRoleId = document.getElementById('tk-support-role')?.value || null;
+      const logChannelId = document.getElementById('tk-log-channel')?.value || null;
       const title = document.getElementById('tk-title')?.value;
+      const description = document.getElementById('tk-description')?.value;
+      const color = document.getElementById('tk-color')?.value || '#dc2626';
+      const image = document.getElementById('tk-image')?.value?.trim() || null;
+      const footer = document.getElementById('tk-footer')?.value;
       const buttonLabel = document.getElementById('tk-btn-label')?.value;
       const buttonEmoji = document.getElementById('tk-btn-emoji')?.value;
+      const buttonStyle = document.getElementById('tk-btn-style')?.value || 'Primary';
+      const namingScheme = document.getElementById('tk-naming')?.value || 'ticket-{user}';
+      const welcomeMessage = document.getElementById('tk-welcome-msg')?.value;
 
-      if (!channelId) return window.showToast('Seleziona un canale.', 'error');
+      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello.', 'error');
+
+      const payload = {
+        channelId,
+        categoryId,
+        supportRoleId,
+        logChannelId,
+        title,
+        description,
+        color,
+        image,
+        footer,
+        buttonLabel,
+        buttonEmoji,
+        buttonStyle,
+        namingScheme,
+        welcomeMessage
+      };
 
       const res = await fetch(`/api/guilds/${guildId}/tickets/panel`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channelId, categoryId, supportRoleId, title, buttonLabel, buttonEmoji })
+        body: JSON.stringify(payload)
       });
 
       if (res.ok) {
-        window.showToast('Pannello Ticket inviato!');
+        window.showToast('Pannello Ticket personalizzato inviato con successo!');
         await loadTicketsData(guildId);
       } else {
-        window.showToast('Errore invio pannello.', 'error');
+        window.showToast('Errore durante l\'invio del pannello.', 'error');
       }
     });
   }

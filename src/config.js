@@ -28,9 +28,9 @@ export const CONFIG = {
   
   DEFAULT_PREFIX: '!',
   BOT_NAME: 'Il Cavaliere',
-  EMBED_COLOR: '#8B5CF6',
+  EMBED_COLOR: '#DC2626',
   EMBED_SUCCESS_COLOR: '#10B981',
-  EMBED_ERROR_COLOR: '#EF4444',
+  EMBED_ERROR_COLOR: '#B91C1C',
   EMBED_WARN_COLOR: '#F59E0B',
   
   DB_PATH: process.env.DB_PATH || path.join(__dirname, '../data/cavaliere.db'),

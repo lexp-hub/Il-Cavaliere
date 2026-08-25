@@ -361,7 +361,11 @@ export function createApiRouter(botClient) {
   });
 
   router.post('/guilds/:guildId/tickets/panel', requireModAuth, async (req, res) => {
-    const { channelId, title, description, categoryId, supportRoleId, buttonLabel, buttonEmoji } = req.body;
+    const {
+      channelId, title, description, color, image, footer,
+      buttonLabel, buttonEmoji, buttonStyle, categoryId, supportRoleId,
+      welcomeMessage, namingScheme, logChannelId
+    } = req.body;
     const guildId = req.params.guildId;
     const panelId = `panel_${Date.now()}`;
 
@@ -374,16 +378,18 @@ export function createApiRouter(botClient) {
             .setCustomId(`ticket_open_${panelId}`)
             .setLabel(buttonLabel || 'Apri Ticket')
             .setEmoji(buttonEmoji || '📩')
-            .setStyle(ButtonStyle.Primary);
+            .setStyle(ButtonStyle[buttonStyle] || ButtonStyle.Primary);
 
           const row = new ActionRowBuilder().addComponents(btn);
 
           const embed = new EmbedBuilder()
-            .setColor(CONFIG.EMBED_COLOR)
+            .setColor(color || CONFIG.EMBED_COLOR || '#ea580c')
             .setTitle(title || '🎫 Centro Supporto & Assistenza')
-            .setDescription(description || 'Clicca sul pulsante per aprire un ticket.')
-            .setFooter({ text: 'Il Cavaliere • Supporto' })
+            .setDescription(description || 'Clicca sul pulsante sottostante per aprire una richiesta di supporto privata.')
+            .setFooter({ text: footer || `${guild.name} • Sistema Ticket`, iconURL: guild.iconURL() })
             .setTimestamp();
+
+          if (image) embed.setImage(image);
 
           const sent = await channel.send({ embeds: [embed], components: [row] });
 
@@ -394,10 +400,17 @@ export function createApiRouter(botClient) {
             message_id: sent.id,
             title,
             description,
+            color: color || '#ea580c',
+            image: image || null,
+            footer: footer || null,
+            button_style: buttonStyle || 'Primary',
             category_id: categoryId,
             button_label: buttonLabel,
             button_emoji: buttonEmoji,
-            support_role_id: supportRoleId
+            support_role_id: supportRoleId,
+            welcome_message: welcomeMessage,
+            naming_scheme: namingScheme || 'ticket-{user}',
+            log_channel_id: logChannelId || null
           });
 
           return res.json({ success: true, panel: saved });
