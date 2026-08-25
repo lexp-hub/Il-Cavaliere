@@ -4,22 +4,21 @@
 
 <br>
 
-# 🛡️ Il Cavaliere — Discord Bot & Dashboard Moderatori
+# 🛡️ Il Cavaliere — Discord Bot & Dashboard
 
-> **Bot Discord multifunzione all-in-one** in JavaScript (Discord.js v14 + Express + Tailwind) con **Intelligenza Artificiale (Cloudflare Workers AI - Llama 3.3 70B)** e **Dashboard Web per moderatori**.
+> Bot Discord a tema medievale con **AI (Llama 70B)**, gestione **Partnership**, **Embed Builder**, **AutoMod** e **Dashboard Web per moderatori**.
 
 ---
 
-## ⚡ Caratteristiche Principali
+## ⚡ Funzionalità
 
-- 🗡️ **Il Cavaliere AI**: Chat neurale potenziata da Llama 3.3 70B con ricerca web in tempo reale e identità cavalleresca.
-- 🤝 **Sistema Partnership**: Gestione e verifica automatica inviti con requisiti minimi e statistiche manager.
-- 📜 **Live Embed Builder**: Creazione di annunci ed Embed con anteprima Discord in tempo reale e pulsanti.
-- 🛡️ **AutoMod & Moderazione**: Filtri anti-spam, anti-invite, anti-link, audit logs e comandi completi (`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`, `/nuke`).
-- 🎭 **Reaction Roles**: Assegnazione rapida dei ruoli con pulsanti interattivi e reazioni.
-- 👋 **Welcomer & Auto-Role**: Messaggi di benvenuto nei canali e nei DM, con auto-role per nuovi membri e bot.
-- 🎫 **Ticket System**: Apertura ticket privati con pulsanti, transcript e gestione staff.
-- 🎉 **Giveaways & ⭐ Leveling**: Concorsi a premi automatici e sistema di livelli XP da chat.
+- 🗡️ **AI Integrata**: Risponde alle menzioni con stile medievale e ricerca web in tempo reale.
+- 🤝 **Partnership**: Verifica automatica dei link di invito, requisiti minimi e cooldown.
+- 📜 **Embed Builder**: Crea e invia messaggi embed con anteprima live e pulsanti.
+- 🛡️ **AutoMod & Moderazione**: Filtri anti-spam, anti-invite, anti-link e comandi completi (`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`, `/nuke`).
+- 🎭 **Reaction Roles**: Assegnazione ruoli con pulsanti ed emoji interattive.
+- 👋 **Welcomer**: Messaggi di benvenuto nei canali e nei DM con auto-role.
+- 🎫 **Tickets & Giveaways**: Apertura ticket privati e concorsi a premi.
 
 ---
 
@@ -28,16 +27,16 @@
 | Categoria | Comando | Descrizione |
 | :--- | :--- | :--- |
 | **🤖 AI** | `/ai ask` | Poni una domanda a Il Cavaliere |
-| | `/ai search` | Esegue una ricerca web commentata dall'IA |
+| | `/ai search` | Esegue una ricerca web con analisi dell'IA |
 | | `/ai reset` | Azzera la memoria della conversazione nel canale |
 | | `/ai prompt` | Visualizza o cambia il preset dell'IA |
 | **⚔️ Generale** | `/help` | Menu comandi interattivo |
-| | `/ping` | Latenza bot, WebSocket e memoria |
+| | `/ping` | Latenza bot e stato memoria |
 | | `/serverinfo` | Informazioni sul server Discord |
 | | `/userinfo` | Informazioni sul profilo utente |
 | **🤝 Partnership** | `/partner add` | Registra e pubblica un nuovo partner |
 | | `/partner config` | Configura canale, ruolo ping e requisiti |
-| | `/partner stats` | Statistiche e classifica dei partner |
+| | `/partner stats` | Statistiche e classifica partner manager |
 | **🎨 Embeds** | `/embed send` | Invia un template embed |
 | | `/embed create` | Crea un embed al volo |
 | **🎭 Reaction Roles** | `/reactionrole button` | Crea pannello ruoli con pulsanti |
@@ -65,11 +64,11 @@
 Il Cavaliere/
 ├── index.js                   # Entry point root per Wispbyte / bot & dashboard
 ├── package.json               # Dipendenze e script di avvio
-├── README.md                  # Documentazione e panoramica
+├── README.md                  # Documentazione e comandi
 ├── src/
 │   ├── config.js              # Configurazione globale e porte
 │   ├── database/              # SQLite database adapter (node:sqlite / WAL)
-│   ├── bot/                   # Bot Discord (comandi, eventi e moduli AI/Partnership/AutoMod)
+│   ├── bot/                   # Bot Discord (comandi, eventi e moduli)
 │   └── dashboard/             # Server Express e frontend Dashboard
 ```
 
