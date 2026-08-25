@@ -55,3 +55,4 @@ process.on('uncaughtException', (err) => {
 });
 
 main();
+

@@ -172,3 +172,4 @@ runTests().catch(err => {
   console.error('Crash durante l\'esecuzione dei test:', err);
   process.exit(1);
 });
+
