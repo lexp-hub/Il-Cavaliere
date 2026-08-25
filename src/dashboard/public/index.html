@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il Cavaliere | Discord Bot & Dashboard All-in-One</title>
+  <link rel="icon" href="https://cdn.discordapp.com/embed/avatars/0.png">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="relative min-h-screen text-slate-100 flex flex-col justify-between">
+  <!-- Glow Orbs -->
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+  <div class="bg-glow-orb orb-3"></div>
+
+  <!-- Top Navigation Bar -->
+  <header class="glass-nav sticky top-0 z-50 w-full px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-lg shadow-purple-500/30">
+        <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+      </div>
+      <div>
+        <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+          Il Cavaliere <span class="text-xs px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">v1.0</span>
+        </h1>
+        <p class="text-xs text-slate-400">Proteggendo i tuoi Reami Discord</p>
+      </div>
+    </div>
+
+    <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+      <a href="#features" class="hover:text-purple-400 transition-colors">Funzionalità</a>
+      <a href="#modules" class="hover:text-purple-400 transition-colors">Moduli</a>
+      <a href="#partnership" class="hover:text-purple-400 transition-colors">Partnership</a>
+      <a href="/dashboard.html" class="hover:text-purple-400 transition-colors">Dashboard Live</a>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div id="bot-status-badge" class="badge-online">
+        <div class="pulse-dot"></div>
+        <span id="bot-status-text">Bot Online</span>
+      </div>
+      <a href="/dashboard.html" class="btn-cyber text-sm">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>Apri Dashboard</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="relative z-10 max-w-7xl mx-auto px-6 pt-16 pb-24 text-center">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-950/60 border border-purple-500/30 text-purple-300 text-xs font-semibold uppercase tracking-wider mb-6 shadow-inner">
+      <i data-lucide="sparkles" class="w-3.5 h-3.5 text-cyan-400"></i>
+      <span>Bot Discord Multifunzione di Nuova Generazione</span>
+    </div>
+
+    <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+      Il Bot Discord Definitivo con <br>
+      <span class="text-gradient">Dashboard Noctaly-Style</span>
+    </h1>
+
+    <p class="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-10 leading-relaxed">
+      Automatizza <strong>Partnership</strong> con verifica immediata, crea <strong>Embed live</strong> con anteprima real-time, gestisci <strong>Reaction Roles</strong>, accogli i membri con <strong>Card di Benvenuto</strong>, e proteggi il server con <strong>AutoMod</strong>.
+    </p>
+
+    <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
+      <a href="/dashboard.html" class="btn-cyber text-base py-3 px-8">
+        <i data-lucide="zap" class="w-5 h-5"></i>
+        <span>Gestisci i Tuoi Server</span>
+      </a>
+      <a href="https://discord.com" target="_blank" class="btn-secondary text-base py-3 px-6">
+        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+        <span>Invita Il Cavaliere</span>
+      </a>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-20">
+      <div class="glass-card p-5 text-center">
+        <div class="text-3xl font-extrabold text-white mb-1" id="stat-servers">3+</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Server Protetti</div>
+      </div>
+      <div class="glass-card p-5 text-center">
+        <div class="text-3xl font-extrabold text-cyan-400 mb-1" id="stat-users">4,840+</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Utenti Serviti</div>
+      </div>
+      <div class="glass-card p-5 text-center">
+        <div class="text-3xl font-extrabold text-purple-400 mb-1" id="stat-partnerships">100%</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Auto-Partnership</div>
+      </div>
+      <div class="glass-card p-5 text-center">
+        <div class="text-3xl font-extrabold text-emerald-400 mb-1" id="stat-ping">24ms</div>
+        <div class="text-xs uppercase tracking-wider text-slate-400 font-medium">Latenza API</div>
+      </div>
+    </div>
+
+    <!-- Server Selector Section -->
+    <section class="max-w-5xl mx-auto text-left mb-24">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+            <i data-lucide="server" class="w-6 h-6 text-purple-400"></i> Seleziona un Server
+          </h2>
+          <p class="text-sm text-slate-400">Scegli la tua gilda per accedere alla configurazione dei moduli</p>
+        </div>
+        <a href="/dashboard.html" class="text-sm font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1">
+          Vedi tutti <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+
+      <div id="guilds-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Dynamically rendered via app.js -->
+        <div class="glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer" onclick="window.location.href='/dashboard.html?guild=123456789012345678'">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-purple-900/60 border border-purple-500/30 flex items-center justify-center text-2xl shadow-md">
+              🏰
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">Il Reame del Cavaliere</h3>
+              <p class="text-xs text-slate-400">1,420 Membri • 8 Moduli Attivi</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/5">
+            <span class="text-xs font-semibold px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">Bot Configurato</span>
+            <span class="text-sm text-purple-400 font-semibold flex items-center gap-1">Gestisci <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer" onclick="window.location.href='/dashboard.html?guild=987654321098765432'">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-cyan-900/60 border border-cyan-500/30 flex items-center justify-center text-2xl shadow-md">
+              ⚔️
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">Gilda dei Guerrieri</h3>
+              <p class="text-xs text-slate-400">530 Membri • 6 Moduli Attivi</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/5">
+            <span class="text-xs font-semibold px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">Bot Configurato</span>
+            <span class="text-sm text-purple-400 font-semibold flex items-center gap-1">Gestisci <i data-lucide="chevron-right" class="w-4 h-4"></i></span>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 flex flex-col justify-between hover:border-purple-500/50 transition-all cursor-pointer" onclick="window.location.href='/dashboard.html?guild=555555555555555555'">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-2xl shadow-md">
+              🎮
+            </div>
+            <div>
+              <h3 class="font-bold text-white text-lg">Community Gaming</h3>
+              <p class="text-xs text-slate-400">2,890 Membri • Da Invitate</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between pt-4 border-t border-white/5">
+            <span class="text-xs font-semibold px-2 py-1 rounded bg-amber-500/20 text-amber-400">Invita Bot</span>
+            <span class="text-sm text-slate-400 font-semibold flex items-center gap-1">Aggiungi <i data-lucide="plus" class="w-4 h-4"></i></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Showcase Grid -->
+    <section id="modules" class="max-w-6xl mx-auto text-left">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-white mb-4">
+          Tutti i Moduli Che Hai Sempre Desiderato
+        </h2>
+        <p class="text-slate-400 text-sm md:text-base">
+          Costruito con una ricca suite di moduli integrati gestibili direttamente dalla dashboard Noctaly.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-500/30 flex items-center justify-center mb-4 text-purple-400">
+            <i data-lucide="handshake" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">🤝 Sistema Partnership</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Verifica automatica del link di invito, controllo del numero minimo di membri, cooldown intelligente, ping ruoli e classifica dei partner manager.
+          </p>
+        </div>
+
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center mb-4 text-cyan-400">
+            <i data-lucide="palette" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">🎨 Live Embed Builder</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Simulatore fedele del client Discord in tempo reale. Crea titoli, descrizioni, bottoni con link o ID, seleziona colori ed invia con 1 click.
+          </p>
+        </div>
+
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-pink-500/20 border border-pink-500/30 flex items-center justify-center mb-4 text-pink-400">
+            <i data-lucide="layers" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">🎭 Reaction & Button Roles</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Assegna ruoli istantanei ai membri con pulsanti colorati, reazioni emoji classiche o menu a tendina interattivi.
+          </p>
+        </div>
+
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mb-4 text-emerald-400">
+            <i data-lucide="user-plus" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">👋 Welcomer & Auto-Role</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Accogli i nuovi membri con messaggi dinamici personalizzati, messaggi privati (DM) e assegnazione automatica del ruolo all'ingresso.
+          </p>
+        </div>
+
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mb-4 text-amber-400">
+            <i data-lucide="zap" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">⚡ Auto-Responder & Emoji</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Risposte automatiche su parole chiave, auto-reactions per i canali suggerimenti (👍 👎) e comando steal emoji da altri server.
+          </p>
+        </div>
+
+        <div class="glass-card p-6">
+          <div class="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center mb-4 text-rose-400">
+            <i data-lucide="shield-alert" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">🛡️ AutoMod & Moderazione</h3>
+          <p class="text-sm text-slate-400 leading-relaxed">
+            Filtro anti-invite, anti-link, anti-spam rapido, filtro parole proibite, audit log e comandi completi (/ban, /kick, /timeout, /clear, /nuke).
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="relative z-10 border-t border-white/5 bg-slate-950/80 px-6 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <i data-lucide="shield" class="w-4 h-4 text-purple-400"></i>
+        <span class="font-semibold text-slate-300">Il Cavaliere</span> — Bot Discord e Dashboard Noctaly-Style
+      </div>
+      <div>
+        Realizzato con Node.js & Discord.js v14 • Sistema ad alte prestazioni SQLite WAL
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
+

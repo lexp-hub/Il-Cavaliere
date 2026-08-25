@@ -1,0 +1,42 @@
+{
+  "name": "il-cavaliere-bot",
+  "version": "2.0.0",
+  "description": "Bot Discord avanzato con AI (Cloudflare Workers / Llama 3.3 70B), Dashboard Web Noctaly-style, partnership, embed builder, reaction roles, welcomer, autoresponder e molto altro.",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js",
+    "deploy-commands": "node src/bot/deployCommands.js",
+    "test": "node test/runTests.js"
+  },
+  "keywords": [
+    "discord",
+    "discord-bot",
+    "discord-js",
+    "ai",
+    "cloudflare-ai",
+    "llama-70b",
+    "dashboard",
+    "noctaly-style",
+    "partnerships",
+    "embed-builder",
+    "reaction-roles",
+    "welcomer"
+  ],
+  "author": "Il Cavaliere Team",
+  "license": "MIT",
+  "dependencies": {
+    "@discordjs/builders": "^1.8.2",
+    "@discordjs/rest": "^2.3.0",
+    "better-sqlite3": "^11.3.0",
+    "cors": "^2.8.5",
+    "discord-api-types": "^0.37.100",
+    "discord.js": "^14.16.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "ws": "^8.18.0"
+  }
+}
+

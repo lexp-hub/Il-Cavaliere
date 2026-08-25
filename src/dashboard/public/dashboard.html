@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Il Cavaliere</title>
+  <link rel="icon" href="https://cdn.discordapp.com/embed/avatars/0.png">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body class="bg-[#07090e] text-slate-100 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+  <!-- Background Glow Orbs -->
+  <div class="bg-glow-orb orb-1"></div>
+  <div class="bg-glow-orb orb-2"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
+  <!-- Sidebar Navigation -->
+  <aside class="w-full md:w-64 bg-[#0a0e17]/90 backdrop-blur-2xl border-r border-white/5 flex flex-col justify-between shrink-0 z-30 sticky top-0 md:h-screen">
+    <div>
+      <!-- Brand & Server Switcher -->
+      <div class="p-4 border-b border-white/5">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-md">
+            <i data-lucide="shield" class="w-5 h-5 text-white"></i>
+          </div>
+          <div>
+            <h1 class="text-base font-bold text-white tracking-tight">Il Cavaliere</h1>
+            <span class="text-[10px] text-purple-400 font-medium tracking-wide uppercase">Noctaly Dashboard</span>
+          </div>
+        </div>
+
+        <!-- Server Selector Dropdown -->
+        <label class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block mb-1.5">Server Selezionato</label>
+        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-slate-900 border-white/10">
+          <option value="loading">Caricamento server...</option>
+        </select>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]">
+        <button class="nav-tab active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-overview">
+          <i data-lucide="layout-grid" class="w-4 h-4 text-purple-400"></i>
+          <span>Panoramica</span>
+        </button>
+
+        <!-- AI Tab -->
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-ai">
+          <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i>
+          <span class="flex-grow">Il Cavaliere AI</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold uppercase">Brain</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-partnerships">
+          <i data-lucide="handshake" class="w-4 h-4 text-cyan-400"></i>
+          <span>Partnership</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-embeds">
+          <i data-lucide="palette" class="w-4 h-4 text-pink-400"></i>
+          <span class="flex-grow">Embed Builder</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300 font-semibold uppercase">Live</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-reactionroles">
+          <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+          <span>Reaction Roles</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-welcomer">
+          <i data-lucide="user-plus" class="w-4 h-4 text-emerald-400"></i>
+          <span>Welcomer & DM</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-autoresponder">
+          <i data-lucide="zap" class="w-4 h-4 text-purple-400"></i>
+          <span>Auto-Responder</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-automod">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
+          <span>AutoMod & Logs</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-tickets">
+          <i data-lucide="ticket" class="w-4 h-4 text-blue-400"></i>
+          <span>Ticket System</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-giveaways">
+          <i data-lucide="gift" class="w-4 h-4 text-fuchsia-400"></i>
+          <span>Giveaways & XP</span>
+        </button>
+
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-emojis">
+          <i data-lucide="smile" class="w-4 h-4 text-yellow-400"></i>
+          <span>Emoji Tracker</span>
+        </button>
+      </nav>
+    </div>
+
+    <!-- User Profile & Back Button Footer -->
+    <div class="p-3 border-t border-white/5 bg-slate-950/40">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full border border-white/10" alt="Avatar">
+          <div class="overflow-hidden">
+            <p id="user-name" class="text-xs font-semibold text-white truncate">CavaliereAdmin</p>
+            <p class="text-[10px] text-emerald-400">Amministratore</p>
+          </div>
+        </div>
+        <a href="/" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Torna alla Home">
+          <i data-lucide="home" class="w-4 h-4"></i>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
+    <!-- Top Header Bar -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-white/5">
+      <div>
+        <h2 id="current-guild-name" class="text-2xl font-bold text-white flex items-center gap-2">
+          🏰 Il Reame del Cavaliere
+        </h2>
+        <p class="text-xs text-slate-400 mt-1">Configurazione modulare in tempo reale per il server</p>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="badge-online">
+          <div class="pulse-dot"></div>
+          <span id="bot-ws-status">Bot Online • Cloudflare AI Pronto</span>
+        </div>
+        <button id="btn-save-all" class="btn-cyber text-xs py-2 px-4">
+          <i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifiche
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 1: PANORAMICA (OVERVIEW) -->
+    <!-- ==================================================================== -->
+    <section id="tab-overview" class="tab-content block space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">Membri Server</span>
+            <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-white" id="ov-members">1,420</div>
+          <span class="text-xs text-emerald-400 mt-1 block">Tutti i permessi sincronizzati</span>
+        </div>
+
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">Partnership Effettuate</span>
+            <i data-lucide="handshake" class="w-4 h-4 text-cyan-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-white" id="ov-partnerships">28</div>
+          <span class="text-xs text-cyan-400 mt-1 block">Modulo attivo</span>
+        </div>
+
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">Reaction Roles</span>
+            <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+          </div>
+          <div class="text-2xl font-bold text-white" id="ov-rr">6</div>
+          <span class="text-xs text-slate-400 mt-1 block">Pannelli configurati</span>
+        </div>
+
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between text-slate-400 mb-2">
+            <span class="text-xs font-semibold uppercase tracking-wider">Modello AI Attivo</span>
+            <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i>
+          </div>
+          <div class="text-lg font-bold text-purple-300 truncate" id="ov-ai-model">Llama 3.3 70B</div>
+          <span class="text-xs text-purple-400 mt-1 block">Cloudflare Workers AI</span>
+        </div>
+      </div>
+
+      <!-- Modules Master Toggle Switcher -->
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="sliders" class="w-5 h-5 text-purple-400"></i> Gestione Attivazione Moduli
+        </h3>
+        <p class="text-xs text-slate-400 mb-6">Attiva o disattiva istantaneamente le funzionalità del bot su questo server</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modules-toggle-grid"></div>
+      </div>
+
+      <!-- General Server Settings -->
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="settings" class="w-5 h-5 text-cyan-400"></i> Impostazioni Generali & Canali di Log
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale Audit Log (Mod/Eventi)</label>
+            <select id="gen-log-channel" class="form-select">
+              <option value="">Nessun canale di log</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Prefisso Comandi Testuali</label>
+            <input type="text" id="gen-prefix" class="form-input" value="!" placeholder="!">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB: IL CAVALIERE AI (BRAIN & PLAYGROUND) -->
+    <!-- ==================================================================== -->
+    <section id="tab-ai" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- AI Settings & Persona Editor (Left 7 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="glass-card p-6 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-white/5">
+              <div>
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                  <i data-lucide="bot" class="w-5 h-5 text-purple-400"></i> Intelligenza Artificiale de Il Cavaliere
+                </h3>
+                <p class="text-xs text-slate-400">Personalizza stile, modello e ricerca web in tempo reale</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="ai-enabled" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <!-- Model & Web Search -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Modello AI (Cloudflare Workers)</label>
+                <select id="ai-model" class="form-select text-xs">
+                  <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Meta Llama 3.3 70B Instruct (Consigliato)</option>
+                  <option value="@cf/meta/llama-3-8b-instruct">Meta Llama 3 8B Instruct</option>
+                  <option value="@cf/mistral/mistral-7b-instruct-v0.1">Mistral 7B Instruct</option>
+                </select>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Ricerca Web in Tempo Reale</label>
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-white/5">
+                  <span class="text-xs text-slate-300">Attiva Tool Ricerca</span>
+                  <label class="switch"><input type="checkbox" id="ai-web-search" checked><span class="slider"></span></label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Style Presets Quick Buttons -->
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-2">Preset di Personalità Rapidi</label>
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="btn-preset btn-secondary text-xs py-1.5 px-3" data-preset="cynical">
+                  ⚔️ Cinico & Spietato (Default)
+                </button>
+                <button type="button" class="btn-preset btn-secondary text-xs py-1.5 px-3" data-preset="noble">
+                  🛡️ Nobile Cavaliere
+                </button>
+                <button type="button" class="btn-preset btn-secondary text-xs py-1.5 px-3" data-preset="technical">
+                  🤖 Assistente Tecnico
+                </button>
+              </div>
+            </div>
+
+            <!-- System Prompt / Persona Textarea -->
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1.5">System Prompt / Identità de Il Cavaliere</label>
+              <textarea id="ai-system-prompt" class="form-textarea h-44 text-xs font-mono"></textarea>
+            </div>
+
+            <button id="btn-save-ai-config" class="btn-cyber text-xs py-2.5 px-5">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione AI
+            </button>
+          </div>
+        </div>
+
+        <!-- Live AI Chat Playground (Right 5 Cols) -->
+        <div class="lg:col-span-5">
+          <div class="glass-card p-5 h-full flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
+                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i data-lucide="message-square" class="w-4 h-4 text-cyan-400"></i> Test Chat Playground
+                </h4>
+                <button id="btn-clear-playground" class="text-xs text-slate-400 hover:text-white p-1" title="Azzera Chat">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+
+              <!-- Chat Message History Box -->
+              <div id="ai-chat-history" class="space-y-3 overflow-y-auto max-h-[380px] p-2 pr-1">
+                <div class="flex gap-2.5">
+                  <div class="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs shrink-0 font-bold">🛡️</div>
+                  <div class="p-3 rounded-2xl bg-purple-950/40 border border-purple-500/20 text-xs text-slate-200 leading-relaxed">
+                    Salute. Sono <strong>Il Cavaliere</strong>. Metti alla prova la mia logica o poni una domanda.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Input Box -->
+            <div class="pt-4 border-t border-white/5 mt-4">
+              <form id="ai-chat-form" class="flex gap-2">
+                <input type="text" id="ai-chat-input" class="form-input text-xs" placeholder="Scrivi un messaggio a Il Cavaliere...">
+                <button type="submit" class="btn-cyber text-xs py-2 px-3 shrink-0">
+                  <i data-lucide="send" class="w-4 h-4"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 2: PARTNERSHIPS -->
+    <!-- ==================================================================== -->
+    <section id="tab-partnerships" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="handshake" class="w-5 h-5 text-cyan-400"></i> Configurazione Modulo Partnership
+            </h3>
+            <p class="text-xs text-slate-400">Automatizza annunci, verifica membri e ruoli ping per le partnership</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="part-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale Invio Partnership</label>
+            <select id="part-channel" class="form-select"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Ruolo Ping Notifica</label>
+            <select id="part-ping-role" class="form-select"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Numero Minimo Membri Richiesti</label>
+            <input type="number" id="part-min-members" class="form-input" value="50" min="0">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Cooldown tra Rinnovi (Minuti)</label>
+            <input type="number" id="part-cooldown" class="form-input" value="60" min="0">
+          </div>
+        </div>
+
+        <button id="btn-save-partner-config" class="btn-cyber text-xs py-2.5 px-4">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione Partnership
+        </button>
+      </div>
+
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-4 h-4 text-emerald-400"></i> Registra Partnership Rapida dalla Dashboard
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          <input type="text" id="part-quick-invite" class="form-input text-xs" placeholder="Link o codice invito (es. discord.gg/partner)">
+          <input type="text" id="part-quick-notes" class="form-input text-xs" placeholder="Descrizione o note (opzionale)">
+          <button id="btn-quick-partner" class="btn-secondary text-xs py-2 justify-center">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Pubblica Partnership
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="glass-card p-6 lg:col-span-2">
+          <h4 class="text-sm font-bold text-white mb-3">Ultime Partnership Registrate</h4>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="text-slate-400 border-b border-white/10 uppercase tracking-wider">
+                <tr>
+                  <th class="py-2">Server Partner</th>
+                  <th class="py-2">Rappresentante</th>
+                  <th class="py-2">Membri</th>
+                  <th class="py-2">Data</th>
+                </tr>
+              </thead>
+              <tbody id="part-recent-table" class="divide-y divide-white/5 text-slate-300"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="glass-card p-6">
+          <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+            <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> Top Partner Manager
+          </h4>
+          <div id="part-leaderboard-list" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 3: LIVE EMBED BUILDER -->
+    <!-- ==================================================================== -->
+    <section id="tab-embeds" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 space-y-4">
+          <div class="glass-card p-5 space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-white/5">
+              <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="sliders" class="w-4 h-4 text-pink-400"></i> Personalizzazione Messaggio Embed
+              </h3>
+              <div class="flex items-center gap-2">
+                <button id="btn-reset-embed" class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-white/5">Reset</button>
+                <button id="btn-save-template" class="btn-secondary text-xs py-1 px-3">Salva Template</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Canale di Invio</label>
+                <select id="embed-channel" class="form-select text-xs"></select>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Barra Laterale</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="embed-color" value="#8b5cf6" class="w-10 h-9 rounded cursor-pointer bg-transparent border-0">
+                  <input type="text" id="embed-color-hex" value="#8B5CF6" class="form-input text-xs uppercase" maxlength="7">
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Nome Autore</label>
+                <input type="text" id="embed-author-name" class="form-input text-xs" placeholder="es. Il Cavaliere News">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">URL Icona Autore</label>
+                <input type="text" id="embed-author-icon" class="form-input text-xs" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Embed</label>
+                <input type="text" id="embed-title" class="form-input text-xs" value="🛡️ Annuncio Ufficiale | Il Cavaliere">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">URL Titolo</label>
+                <input type="text" id="embed-title-url" class="form-input text-xs" placeholder="https://...">
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Descrizione (Markdown)</label>
+              <textarea id="embed-description" class="form-textarea text-xs h-24">Benvenuti nel reame! Questo è un messaggio generato dal **Live Embed Builder** de *Il Cavaliere*.</textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">URL Immagine Grande</label>
+                <input type="text" id="embed-image-url" class="form-input text-xs" placeholder="https://...">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">URL Miniatura (Thumbnail)</label>
+                <input type="text" id="embed-thumb-url" class="form-input text-xs" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Footer</label>
+                <input type="text" id="embed-footer-text" class="form-input text-xs" value="Il Cavaliere • Notifiche">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">URL Icona Footer</label>
+                <input type="text" id="embed-footer-icon" class="form-input text-xs" placeholder="https://...">
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-300">Campi Aggiuntivi (Fields)</label>
+                <button id="btn-add-field" class="text-xs text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Campo
+                </button>
+              </div>
+              <div id="embed-fields-container" class="space-y-2"></div>
+            </div>
+
+            <div class="pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
+              <button id="btn-copy-json" class="btn-secondary text-xs py-2 px-3">
+                <i data-lucide="code" class="w-3.5 h-3.5"></i> Copia JSON
+              </button>
+              <button id="btn-send-embed" class="btn-cyber text-xs py-2 px-5">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia nel Canale Discord
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5">
+          <div class="sticky top-6 space-y-3">
+            <div class="flex items-center justify-between text-xs text-slate-400 font-bold uppercase tracking-wider">
+              <span>Anteprima Live Discord</span>
+              <span class="text-pink-400 font-mono text-[10px]">Real-time DOM</span>
+            </div>
+
+            <div class="discord-chat-container">
+              <div class="discord-message">
+                <img src="https://cdn.discordapp.com/embed/avatars/0.png" class="discord-avatar" alt="Avatar">
+                <div class="discord-msg-content">
+                  <div class="discord-header">
+                    <span class="discord-author">Il Cavaliere</span>
+                    <span class="discord-bot-badge">Bot</span>
+                    <span class="discord-timestamp">Oggi alle 15:30</span>
+                  </div>
+
+                  <div id="preview-embed-box" class="discord-embed-box">
+                    <div>
+                      <div id="prev-author" class="discord-embed-author hidden">
+                        <img id="prev-author-icon" src="" class="hidden" alt="Author Icon">
+                        <span id="prev-author-name"></span>
+                      </div>
+                      <div id="prev-title" class="discord-embed-title">Titolo Embed</div>
+                      <div id="prev-desc" class="discord-embed-desc">Descrizione...</div>
+                      <div id="prev-fields" class="discord-embed-fields"></div>
+                    </div>
+                    <img id="prev-thumb" class="discord-embed-thumb hidden" src="" alt="Thumbnail">
+                    <img id="prev-image" class="discord-embed-image hidden" src="" alt="Image">
+                    <div id="prev-footer" class="discord-embed-footer">
+                      <img id="prev-footer-icon" class="hidden" src="" alt="Footer Icon">
+                      <span id="prev-footer-text">Il Cavaliere • Notifiche</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 4: REACTION ROLES -->
+    <!-- ==================================================================== -->
+    <section id="tab-reactionroles" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i> Crea Pulsante Ruolo Interattivo
+        </h3>
+        <p class="text-xs text-slate-400 mb-6">Invia un messaggio con pulsante per assegnazione automatica ruoli</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Target</label>
+            <select id="rr-channel" class="form-select text-xs"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Ruolo da Assegnare</label>
+            <select id="rr-role" class="form-select text-xs"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Stile Colore Pulsante</label>
+            <select id="rr-style" class="form-select text-xs">
+              <option value="Primary">Viola / Blurple (Primary)</option>
+              <option value="Secondary">Grigio Scuro (Secondary)</option>
+              <option value="Success">Verde Smeraldo (Success)</option>
+              <option value="Danger">Rosso Rubino (Danger)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Etichetta del Bottone</label>
+            <input type="text" id="rr-label" class="form-input text-xs" value="Ruolo Notifiche">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Emoji sul Bottone</label>
+            <input type="text" id="rr-emoji" class="form-input text-xs" value="🔔">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Embed</label>
+            <input type="text" id="rr-title" class="form-input text-xs" value="🎭 Selezione Ruoli">
+          </div>
+        </div>
+
+        <button id="btn-create-rr" class="btn-cyber text-xs py-2.5 px-4">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Crea & Invia Pannello Reaction Role
+        </button>
+      </div>
+
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-white mb-3">Reaction Roles Attivi nel Server</h4>
+        <div id="rr-list-container" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 5: WELCOMER & LEAVER -->
+    <!-- ==================================================================== -->
+    <section id="tab-welcomer" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="user-plus" class="w-5 h-5 text-emerald-400"></i> Modulo Benvenuto (Welcomer)
+            </h3>
+            <p class="text-xs text-slate-400">Invia messaggi personalizzati e card quando un nuovo utente entra nel server</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="wel-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale di Benvenuto</label>
+            <select id="wel-channel" class="form-select"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Auto-Role Utenti</label>
+            <select id="wel-autorole-user" class="form-select"></select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Testo Messaggio di Benvenuto</label>
+            <textarea id="wel-message" class="form-textarea h-20">Benvenuto {user.mention} in **{server.name}**! Siamo felicissimi di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-white/5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio Privato (DM) di Benvenuto</span>
+            <label class="switch"><input type="checkbox" id="wel-dm-enabled"><span class="slider"></span></label>
+          </div>
+          <textarea id="wel-dm-message" class="form-textarea h-16 text-xs">Benvenuto in {server.name}! Ricordati di leggere il regolamento.</textarea>
+        </div>
+
+        <div class="pt-4 border-t border-white/5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio di Addio (Leaver)</span>
+            <label class="switch"><input type="checkbox" id="wel-leave-enabled"><span class="slider"></span></label>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale Addio</label>
+              <select id="wel-leave-channel" class="form-select"></select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1.5">Testo Addio</label>
+              <input type="text" id="wel-leave-message" class="form-input" value="{user.tag} ha lasciato il server.">
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex items-center gap-3">
+          <button id="btn-save-welcomer" class="btn-cyber text-xs py-2.5 px-4">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Welcomer
+          </button>
+          <button id="btn-test-welcomer" class="btn-secondary text-xs py-2.5 px-4">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia Messaggio di Prova
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 6: AUTO-RESPONDER & REACTION MESSAGES -->
+    <!-- ==================================================================== -->
+    <section id="tab-autoresponder" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="zap" class="w-5 h-5 text-purple-400"></i> Aggiungi Risposta Automatica o Reazione
+        </h3>
+        <p class="text-xs text-slate-400 mb-6">Configura risposte su parole chiave o reazioni emoji</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Trigger (Parola Chiave)</label>
+            <input type="text" id="ar-trigger" class="form-input text-xs" placeholder="es. orari apertura, !ip">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Tipo di Confronto</label>
+            <select id="ar-match" class="form-select text-xs">
+              <option value="CONTAINS">Contiene la parola (Contains)</option>
+              <option value="EXACT">Corrispondenza Esatta (Exact)</option>
+              <option value="STARTS_WITH">Inizia con (Starts with)</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Reazioni Emoji Automatiche</label>
+            <input type="text" id="ar-reactions" class="form-input text-xs" placeholder="es. 👍, 🔥, 🛡️">
+          </div>
+          <div class="md:col-span-3">
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Risposta del Bot</label>
+            <input type="text" id="ar-response" class="form-input text-xs" placeholder="La risposta inviata dal bot...">
+          </div>
+        </div>
+
+        <button id="btn-add-autoresponder" class="btn-cyber text-xs py-2.5 px-4">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Salva Risposta Automatica
+        </button>
+      </div>
+
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i> Canale Auto-Reaction (es. Suggerimenti 👍 👎)
+        </h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          <select id="ar-chan-select" class="form-select text-xs"></select>
+          <input type="text" id="ar-chan-emojis" class="form-input text-xs" value="👍 👎" placeholder="Emoji separate da spazio">
+          <button id="btn-set-autoreact-chan" class="btn-secondary text-xs py-2">Applica al Canale</button>
+        </div>
+      </div>
+
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-white mb-3">Trigger & Risposte Configurate</h4>
+        <div id="ar-list-container" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 7: AUTOMOD & MODERATION -->
+    <!-- ==================================================================== -->
+    <section id="tab-automod" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400"></i> Protezione Automatica AutoMod
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-sm text-white">Filtro Anti-Invite</p>
+              <p class="text-xs text-slate-400">Elimina automaticamente inviti Discord non autorizzati</p>
+            </div>
+            <label class="switch"><input type="checkbox" id="am-invite" checked><span class="slider"></span></label>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-sm text-white">Filtro Anti-Link</p>
+              <p class="text-xs text-slate-400">Elimina link web esterni non autorizzati</p>
+            </div>
+            <label class="switch"><input type="checkbox" id="am-link"><span class="slider"></span></label>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-sm text-white">Anti-Spam Rapido</p>
+              <p class="text-xs text-slate-400">Blocca 5 o più messaggi in 3 secondi</p>
+            </div>
+            <label class="switch"><input type="checkbox" id="am-spam" checked><span class="slider"></span></label>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-sm text-white">Anti-Caps</p>
+              <p class="text-xs text-slate-400">Blocca oltre il 70% di testo in MAIUSCOLO</p>
+            </div>
+            <label class="switch"><input type="checkbox" id="am-caps"><span class="slider"></span></label>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1.5">Parole Vietate (Separate da virgola)</label>
+          <input type="text" id="am-badwords" class="form-input text-xs" placeholder="parolaccia1, parola2, insulto3">
+        </div>
+
+        <button id="btn-save-automod" class="btn-cyber text-xs py-2.5 px-4 mt-4">
+          <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Regole AutoMod
+        </button>
+      </div>
+
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-white mb-3">Cronologia Sanzioni & Audit Moderazione</h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 border-b border-white/10 uppercase tracking-wider">
+              <tr>
+                <th class="py-2">ID</th>
+                <th class="py-2">Azione</th>
+                <th class="py-2">Utente</th>
+                <th class="py-2">Moderatore</th>
+                <th class="py-2">Motivo</th>
+                <th class="py-2">Data</th>
+              </tr>
+            </thead>
+            <tbody id="am-cases-table" class="divide-y divide-white/5 text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 8: TICKET SYSTEM -->
+    <!-- ==================================================================== -->
+    <section id="tab-tickets" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+          <i data-lucide="ticket" class="w-5 h-5 text-blue-400"></i> Crea Nuovo Pannello Ticket
+        </h3>
+        <p class="text-xs text-slate-400 mb-6">Genera un messaggio interattivo per aprire ticket privati</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Canale per il Pannello</label>
+            <select id="tk-channel" class="form-select text-xs"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Categoria Canali Ticket</label>
+            <select id="tk-category" class="form-select text-xs"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Ruolo Staff Supporto</label>
+            <select id="tk-support-role" class="form-select text-xs"></select>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Pannello</label>
+            <input type="text" id="tk-title" class="form-input text-xs" value="🎫 Centro Supporto & Assistenza">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Bottone</label>
+            <input type="text" id="tk-btn-label" class="form-input text-xs" value="Apri Ticket">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Emoji Bottone</label>
+            <input type="text" id="tk-btn-emoji" class="form-input text-xs" value="📩">
+          </div>
+        </div>
+
+        <button id="btn-create-ticket-panel" class="btn-cyber text-xs py-2.5 px-4">
+          <i data-lucide="send" class="w-3.5 h-3.5"></i> Invia Pannello Ticket
+        </button>
+      </div>
+
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-white mb-3">Ticket Aperti di Recente</h4>
+        <div id="tk-list-container" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 9: GIVEAWAYS & LEVELING -->
+    <!-- ==================================================================== -->
+    <section id="tab-giveaways" class="tab-content hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="glass-card p-6">
+          <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+            <i data-lucide="gift" class="w-4 h-4 text-fuchsia-400"></i> Avvia Giveaway Istantaneo
+          </h3>
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Canale</label>
+              <select id="ga-channel" class="form-select text-xs"></select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Premio in Palio</label>
+              <input type="text" id="ga-prize" class="form-input text-xs" value="Discord Nitro 1 Mese">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Durata</label>
+                <input type="text" id="ga-duration" class="form-input text-xs" value="1h">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Vincitori</label>
+                <input type="number" id="ga-winners" class="form-input text-xs" value="1" min="1">
+              </div>
+            </div>
+            <button id="btn-start-giveaway" class="btn-cyber text-xs py-2 px-4 w-full justify-center">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Avvia Giveaway
+            </button>
+          </div>
+        </div>
+
+        <div class="glass-card p-6">
+          <h3 class="text-base font-bold text-white mb-3 flex items-center gap-2">
+            <i data-lucide="star" class="w-4 h-4 text-amber-400"></i> Configurazione XP & Leveling
+          </h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-300 font-semibold">Modulo Leveling Attivo</span>
+              <label class="switch"><input type="checkbox" id="lvl-enabled" checked><span class="slider"></span></label>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Moltiplicatore XP</label>
+              <input type="number" id="lvl-rate" class="form-input text-xs" value="1.0" step="0.1" min="0.1">
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Annunci Level-Up</label>
+              <select id="lvl-channel" class="form-select text-xs"></select>
+            </div>
+            <button id="btn-save-leveling" class="btn-secondary text-xs py-2 px-4 w-full justify-center">
+              <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Leveling
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- TAB 10: EMOJI TRACKER -->
+    <!-- ==================================================================== -->
+    <section id="tab-emojis" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6">
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="smile" class="w-5 h-5 text-yellow-400"></i> Statistiche e Classifica Utilizzo Emoji
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-400 border-b border-white/10 uppercase tracking-wider">
+              <tr>
+                <th class="py-2">Posizione</th>
+                <th class="py-2">Nome Emoji</th>
+                <th class="py-2">Tipo</th>
+                <th class="py-2">Conteggio Utilizzi</th>
+                <th class="py-2">Ultimo Utilizzo</th>
+              </tr>
+            </thead>
+            <tbody id="emoji-stats-table" class="divide-y divide-white/5 text-slate-300"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/embedBuilder.js"></script>
+  <script src="/js/modules.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
