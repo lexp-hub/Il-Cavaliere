@@ -7,7 +7,7 @@
   <link rel="icon" href="/logo.svg?v=12" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/css/styles.css?v=16">
+  <link rel="stylesheet" href="/css/styles.css?v=17">
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
   <div class="bg-glow-orb orb-1"></div>
@@ -356,19 +356,31 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale Invio Partnership</label>
-            <select id="part-channel" class="form-select"></select>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Invio Partnership</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="part-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+              </div>
+              <select id="part-channel" class="form-select text-xs"></select>
+            </div>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Ruolo Ping Notifica</label>
-            <select id="part-ping-role" class="form-select"></select>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Ruolo Ping Notifica</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="part-ping-role-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca ruolo...">
+              </div>
+              <select id="part-ping-role" class="form-select text-xs"></select>
+            </div>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Numero Minimo Membri Richiesti</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1.5">Numero Minimo Membri Richiesti</label>
             <input type="number" id="part-min-members" class="form-input" value="50" min="0">
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Cooldown tra Rinnovi (Minuti)</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1.5">Cooldown tra Rinnovi (Minuti)</label>
             <input type="number" id="part-cooldown" class="form-input" value="60" min="0">
           </div>
         </div>
@@ -708,27 +720,35 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale di Benvenuto</label>
-                <select id="wel-channel" class="form-select text-xs"></select>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Canale di Benvenuto</label>
+                <div class="space-y-1.5">
+                  <div class="relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                    <input type="text" id="wel-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                  </div>
+                  <select id="wel-channel" class="form-select text-xs"></select>
+                </div>
               </div>
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Auto-Role Utenti</label>
-                <select id="wel-autorole-user" class="form-select text-xs"></select>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Auto-Role Utenti</label>
+                <div class="pt-6">
+                  <select id="wel-autorole-user" class="form-select text-xs"></select>
+                </div>
               </div>
             </div>
 
-            <div class="space-y-4 pt-3 border-t border-white/5">
-              <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+            <div class="space-y-4 pt-3 border-t border-slate-300">
+              <h4 class="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-1.5">
                 <i data-lucide="layout" class="w-3.5 h-3.5"></i> Personalizzazione Card Embed
               </h4>
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="sm:col-span-2">
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Embed</label>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Embed</label>
                   <input type="text" id="wel-embed-title" class="form-input text-xs" value="⚔️ Benvenuto nel Reame, {user}!">
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Barra Embed</label>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Colore Barra Embed</label>
                   <div class="flex items-center gap-2">
                     <input type="color" id="wel-embed-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#dc2626">
                     <input type="text" id="wel-embed-color-hex" class="form-input text-xs font-mono" value="#dc2626">
@@ -737,43 +757,65 @@
               </div>
 
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1">Messaggio Principale (Descrizione Embed)</label>
-                <textarea id="wel-message" class="form-textarea h-20 text-xs">Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
-                <p class="text-[10px] text-slate-400 mt-1">Variabili disponibili: <code class="text-amber-300">{user.mention}</code>, <code class="text-amber-300">{user}</code>, <code class="text-amber-300">{user.tag}</code>, <code class="text-amber-300">{server.name}</code>, <code class="text-amber-300">{memberCount}</code></p>
+                <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                  <label class="text-xs font-semibold text-slate-700 block">Messaggio Principale (Descrizione Embed)</label>
+                  <div id="wel-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+                </div>
+                <textarea id="wel-message" class="form-textarea h-24 text-xs">Benvenuto {user.mention} in **{server.name}**! Siamo felici di averti tra noi. Sei il membro **#{memberCount}**!</textarea>
+                <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                  <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user.mention}">{user.mention}</button>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{user}">{user}</button>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{server.name}">{server.name}</button>
+                  <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="wel-message" data-var="{memberCount}">{memberCount}</button>
+                </div>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Immagine / Banner URL (Opzionale)</label>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Immagine / Banner URL (Opzionale)</label>
                   <input type="url" id="wel-embed-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Footer Embed</label>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Testo Footer Embed</label>
                   <input type="text" id="wel-embed-footer" class="form-input text-xs" value="Membro #{memberCount} • {server.name}">
                 </div>
               </div>
             </div>
 
-            <div class="pt-4 border-t border-white/5 space-y-3">
+            <div class="pt-4 border-t border-slate-300 space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio Privato (DM) in Embed</span>
+                <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Messaggio Privato (DM) in Embed</span>
                 <label class="switch"><input type="checkbox" id="wel-dm-enabled"><span class="slider"></span></label>
               </div>
-              <textarea id="wel-dm-message" class="form-textarea h-16 text-xs">Benvenuto in {server.name}! Ricordati di leggere il regolamento e buona permanenza!</textarea>
+              <div class="flex flex-wrap items-center justify-between gap-1.5">
+                <label class="text-xs font-semibold text-slate-700">Testo DM</label>
+                <div id="wel-dm-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+              </div>
+              <textarea id="wel-dm-message" class="form-textarea h-18 text-xs">Benvenuto in **{server.name}**! Ricordati di leggere il regolamento e buona permanenza!</textarea>
             </div>
 
-            <div class="pt-4 border-t border-white/5 space-y-3">
+            <div class="pt-4 border-t border-slate-300 space-y-3">
               <div class="flex items-center justify-between">
-                <span class="text-xs font-bold text-white uppercase tracking-wider">Messaggio di Addio (Leaver Embed)</span>
+                <span class="text-xs font-bold text-slate-900 uppercase tracking-wider">Messaggio di Addio (Leaver Embed)</span>
                 <label class="switch"><input type="checkbox" id="wel-leave-enabled"><span class="slider"></span></label>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Addio</label>
-                  <select id="wel-leave-channel" class="form-select text-xs"></select>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Addio</label>
+                  <div class="space-y-1.5">
+                    <div class="relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                      <input type="text" id="wel-leave-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                    </div>
+                    <select id="wel-leave-channel" class="form-select text-xs"></select>
+                  </div>
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Addio</label>
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <label class="text-xs font-semibold text-slate-700 block">Testo Addio</label>
+                    <div id="wel-leave-toolbar-container" class="flex items-center gap-1"></div>
+                  </div>
                   <input type="text" id="wel-leave-message" class="form-input text-xs" value="{user.tag} ha lasciato il server. Siamo rimasti in {memberCount}.">
                 </div>
               </div>
@@ -992,36 +1034,60 @@
               <!-- Basic Channels & Roles -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Canale per il Pannello</label>
-                  <select id="tk-channel" class="form-select text-xs"></select>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Canale per il Pannello</label>
+                  <div class="space-y-1.5">
+                    <div class="relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                      <input type="text" id="tk-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                    </div>
+                    <select id="tk-channel" class="form-select text-xs"></select>
+                  </div>
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Categoria Canali Ticket</label>
-                  <select id="tk-category" class="form-select text-xs"></select>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Categoria Canali Ticket</label>
+                  <div class="space-y-1.5">
+                    <div class="relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                      <input type="text" id="tk-category-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca categoria...">
+                    </div>
+                    <select id="tk-category" class="form-select text-xs"></select>
+                  </div>
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Ruolo Staff di Supporto</label>
-                  <select id="tk-support-role" class="form-select text-xs"></select>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Ruolo Staff di Supporto</label>
+                  <div class="space-y-1.5">
+                    <div class="relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                      <input type="text" id="tk-support-role-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca ruolo...">
+                    </div>
+                    <select id="tk-support-role" class="form-select text-xs"></select>
+                  </div>
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Log Transcript (Opzionale)</label>
-                  <select id="tk-log-channel" class="form-select text-xs"></select>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Log Transcript (Opzionale)</label>
+                  <div class="space-y-1.5">
+                    <div class="relative">
+                      <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                      <input type="text" id="tk-log-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale log...">
+                    </div>
+                    <select id="tk-log-channel" class="form-select text-xs"></select>
+                  </div>
                 </div>
               </div>
 
               <!-- Panel Embed Styling -->
-              <div class="pt-4 border-t border-white/5 space-y-4">
-                <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+              <div class="pt-4 border-t border-slate-300 space-y-4">
+                <h4 class="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="layout" class="w-3.5 h-3.5"></i> Grafica Embed del Pannello
                 </h4>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div class="sm:col-span-2">
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Pannello</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Pannello</label>
                     <input type="text" id="tk-title" class="form-input text-xs" value="🎫 Centro Supporto &amp; Assistenza">
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Barra Embed</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Colore Barra Embed</label>
                     <div class="flex items-center gap-2">
                       <input type="color" id="tk-color" class="h-9 w-10 rounded cursor-pointer bg-transparent border-0" value="#dc2626">
                       <input type="text" id="tk-color-hex" class="form-input text-xs font-mono" value="#dc2626">
@@ -1030,39 +1096,42 @@
                 </div>
 
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Descrizione / Istruzioni del Pannello</label>
-                  <textarea id="tk-description" class="form-textarea h-20 text-xs">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri cavalieri e moderatori.</textarea>
+                  <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                    <label class="text-xs font-semibold text-slate-700 block">Descrizione / Istruzioni del Pannello</label>
+                    <div id="tk-desc-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+                  </div>
+                  <textarea id="tk-description" class="form-textarea h-24 text-xs">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri cavalieri e moderatori.</textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Immagine / Banner URL (Opzionale)</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Immagine / Banner URL (Opzionale)</label>
                     <input type="url" id="tk-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Footer</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Testo Footer</label>
                     <input type="text" id="tk-footer" class="form-input text-xs" value="Il Cavaliere • Sistema Ticket">
                   </div>
                 </div>
               </div>
 
               <!-- Button Styling -->
-              <div class="pt-4 border-t border-white/5 space-y-4">
-                <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+              <div class="pt-4 border-t border-slate-300 space-y-4">
+                <h4 class="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="mouse-pointer" class="w-3.5 h-3.5"></i> Pulsante di Apertura
                 </h4>
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Etichetta Pulsante</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Etichetta Pulsante</label>
                     <input type="text" id="tk-btn-label" class="form-input text-xs" value="Apri Ticket">
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Emoji Pulsante</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Emoji Pulsante</label>
                     <input type="text" id="tk-btn-emoji" class="form-input text-xs" value="📩">
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Stile Colore Pulsante</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Stile Colore Pulsante</label>
                     <select id="tk-btn-style" class="form-select text-xs">
                       <option value="Primary">Viola / Blurple (Primary)</option>
                       <option value="Secondary">Grigio Grafite (Secondary)</option>
@@ -1074,14 +1143,14 @@
               </div>
 
               <!-- Ticket Channel Experience -->
-              <div class="pt-4 border-t border-white/5 space-y-4">
-                <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+              <div class="pt-4 border-t border-slate-300 space-y-4">
+                <h4 class="text-xs font-bold text-red-600 uppercase tracking-wider flex items-center gap-1.5">
                   <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Esperienza all'Interno del Ticket
                 </h4>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Formato Nome Canale</label>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Formato Nome Canale</label>
                     <select id="tk-naming" class="form-select text-xs">
                       <option value="ticket-{user}">ticket-username</option>
                       <option value="supporto-{user}">supporto-username</option>
@@ -1090,17 +1159,26 @@
                     </select>
                   </div>
                   <div>
-                    <label class="text-xs font-semibold text-slate-300 block mb-1">Funzionalità Integrate</label>
-                    <div class="text-xs text-slate-300 space-y-1.5 pt-1">
-                      <p class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Trascrizione Transcript automatica</p>
-                      <p class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> Invio Transcript in DM all'autore</p>
+                    <label class="text-xs font-semibold text-slate-700 block mb-1">Funzionalità Integrate</label>
+                    <div class="text-xs text-slate-600 space-y-1.5 pt-1 font-medium">
+                      <p class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i> Trascrizione Transcript automatica</p>
+                      <p class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-600"></i> Invio Transcript in DM all'autore</p>
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label class="text-xs font-semibold text-slate-300 block mb-1">Messaggio di Benvenuto all'Interno del Ticket</label>
-                  <textarea id="tk-welcome-msg" class="form-textarea h-16 text-xs">Benvenuto {user.mention}! Uno staffer ti risponderà al più presto. Descrivi il tuo problema in dettaglio.</textarea>
+                  <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
+                    <label class="text-xs font-semibold text-slate-700 block">Messaggio di Benvenuto all'Interno del Ticket</label>
+                    <div id="tk-welcome-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
+                  </div>
+                  <textarea id="tk-welcome-msg" class="form-textarea h-20 text-xs">Benvenuto {user.mention}! Uno staffer ti risponderà al più presto. Descrivi il tuo problema in dettaglio.</textarea>
+                  <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+                    <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
+                    <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="tk-welcome-msg" data-var="{user.mention}">{user.mention}</button>
+                    <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="tk-welcome-msg" data-var="{user}">{user}</button>
+                    <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="tk-welcome-msg" data-var="{ticket_id}">{ticket_id}</button>
+                  </div>
                 </div>
               </div>
 
@@ -1251,9 +1329,9 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=15"></script>
-  <script src="/js/embedBuilder.js?v=15"></script>
-  <script src="/js/modules.js?v=15"></script>
+  <script src="/js/app.js?v=17"></script>
+  <script src="/js/embedBuilder.js?v=17"></script>
+  <script src="/js/modules.js?v=17"></script>
   <script>
     lucide.createIcons();
   </script>

@@ -1119,6 +1119,35 @@
     }
   }
 
+  // Initialize Markdown Toolbars for Welcomer & Ticket System
+  function initModuleToolbars() {
+    if (window.setupMarkdownToolbar) {
+      window.setupMarkdownToolbar('wel-toolbar-container', 'wel-message');
+      window.setupMarkdownToolbar('wel-dm-toolbar-container', 'wel-dm-message');
+      window.setupMarkdownToolbar('wel-leave-toolbar-container', 'wel-leave-message');
+      window.setupMarkdownToolbar('tk-desc-toolbar-container', 'tk-description');
+      window.setupMarkdownToolbar('tk-welcome-toolbar-container', 'tk-welcome-msg');
+    }
+
+    if (window.setupSearchableSelect) {
+      window.setupSearchableSelect('wel-channel-search', 'wel-channel', 'text');
+      window.setupSearchableSelect('wel-leave-channel-search', 'wel-leave-channel', 'text');
+      window.setupSearchableSelect('tk-channel-search', 'tk-channel', 'text');
+      window.setupSearchableSelect('tk-category-search', 'tk-category', 'category');
+      window.setupSearchableSelect('tk-support-role-search', 'tk-support-role', 'role');
+      window.setupSearchableSelect('tk-log-channel-search', 'tk-log-channel', 'text');
+      window.setupSearchableSelect('part-channel-search', 'part-channel', 'text');
+      window.setupSearchableSelect('part-ping-role-search', 'part-ping-role', 'role');
+    }
+  }
+
+  // Run on DOM Ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModuleToolbars);
+  } else {
+    initModuleToolbars();
+  }
+
   const btnSaveAll = document.getElementById('btn-save-all');
   if (btnSaveAll) {
     btnSaveAll.addEventListener('click', () => {

@@ -27,20 +27,8 @@
   const prevFooterText = document.getElementById('prev-footer-text');
   const prevFooterIcon = document.getElementById('prev-footer-icon');
 
-  // Channel search input & select
   const channelSearchInput = document.getElementById('embed-channel-search');
   const channelSelect = document.getElementById('embed-channel');
-
-  // Channel & Role Picker Dropdowns
-  const btnOpenChannelPicker = document.getElementById('btn-open-channel-picker');
-  const channelPickerDropdown = document.getElementById('channel-picker-dropdown');
-  const pickerChannelSearch = document.getElementById('picker-channel-search');
-  const pickerChannelsList = document.getElementById('picker-channels-list');
-
-  const btnOpenRolePicker = document.getElementById('btn-open-role-picker');
-  const rolePickerDropdown = document.getElementById('role-picker-dropdown');
-  const pickerRoleSearch = document.getElementById('picker-role-search');
-  const pickerRolesList = document.getElementById('picker-roles-list');
 
   const savedTemplatesContainer = document.getElementById('saved-templates-container');
   const btnSaveAsTemplate = document.getElementById('btn-save-as-template');
@@ -109,7 +97,7 @@
       return `<span class="discord-mention-pill">@utente</span>`;
     });
 
-    // 7. Bold Italic (***text*** or ___***text***___)
+    // 7. Bold Italic (***text***)
     text = text.replace(/\*\*\*([\s\S]*?)\*\*\*/g, '<strong class="font-bold text-white"><em class="italic">$1</em></strong>');
 
     // 8. Bold (**text**) - High contrast white and heavy weight
@@ -133,9 +121,9 @@
     text = text.replace(/^-#\s*(.*)/gm, '<small class="text-[11px] text-slate-400 block">$1</small>');
 
     // 14. Headers (# H1, ## H2, ### H3)
-    text = text.replace(/^### (.*)/gm, '<h3 class="text-sm font-bold text-white mt-1 mb-0.5">$1</h3>');
-    text = text.replace(/^## (.*)/gm, '<h2 class="text-base font-bold text-white mt-1.5 mb-0.5">$1</h2>');
-    text = text.replace(/^# (.*)/gm, '<h1 class="text-lg font-bold text-white mt-2 mb-1">$1</h1>');
+    text = text.replace(/^### (.*)/gm, '<h3 class="text-sm font-bold text-white mt-1 mb-0.5 font-montserrat">$1</h3>');
+    text = text.replace(/^## (.*)/gm, '<h2 class="text-base font-bold text-white mt-1.5 mb-0.5 font-montserrat">$1</h2>');
+    text = text.replace(/^# (.*)/gm, '<h1 class="text-lg font-bold text-white mt-2 mb-1 font-montserrat">$1</h1>');
 
     // 15. Bullet lists (- item or * item)
     text = text.replace(/^[*-] (.*)/gm, '<div class="flex items-start gap-2 ml-2"><span class="text-slate-400">•</span><span>$1</span></div>');
@@ -176,10 +164,216 @@
     textarea.dispatchEvent(new Event('input', { bubbles: true }));
   }
 
+  window.insertTextAtCursor = insertTextAtCursor;
+
   /**
-   * Setup Quick Formatting Buttons
+   * Global Universal Markdown Toolbar Generator
    */
-  function setupFormattingToolbar() {
+  window.setupMarkdownToolbar = function (containerId, textareaId) {
+    const container = typeof containerId === 'string' ? document.getElementById(containerId) : containerId;
+    const textarea = typeof textareaId === 'string' ? document.getElementById(textareaId) : textareaId;
+    if (!container || !textarea) return;
+
+    container.innerHTML = `
+      <div class="flex flex-wrap items-center gap-1">
+        <button type="button" class="btn-fmt-b px-2 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Grassetto: **testo**">
+          <b>B</b>
+        </button>
+        <button type="button" class="btn-fmt-i px-2 py-0.5 text-[11px] italic rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Corsivo: *testo*">
+          <i>I</i>
+        </button>
+        <button type="button" class="btn-fmt-s px-2 py-0.5 text-[11px] line-through rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Barrato: ~~testo~~">
+          S
+        </button>
+        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Codice: \`codice\`">
+          &lt;/&gt;
+        </button>
+        <button type="button" class="btn-fmt-q px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Citazione: > testo">
+          &gt; Quote
+        </button>
+        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm" title="Link: [titolo](url)">
+          🔗 Link
+        </button>
+
+        <!-- Searchable Channel Inserter -->
+        <div class="relative inline-block text-left">
+          <button type="button" class="btn-open-ch-pick px-2 py-0.5 text-[11px] font-semibold rounded bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 shadow-sm flex items-center gap-1" title="Cerca e inserisci un canale">
+            <i data-lucide="hash" class="w-3 h-3 text-red-600"></i> Canale
+          </button>
+          <div class="ch-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-white border border-slate-300 shadow-2xl z-50 p-2 space-y-2">
+            <input type="text" class="ch-pick-search form-input text-xs py-1 px-2" placeholder="🔍 Cerca canale...">
+            <div class="ch-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
+          </div>
+        </div>
+
+        <!-- Searchable Role Inserter -->
+        <div class="relative inline-block text-left">
+          <button type="button" class="btn-open-role-pick px-2 py-0.5 text-[11px] font-semibold rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 shadow-sm flex items-center gap-1" title="Cerca e inserisci un ruolo">
+            <i data-lucide="at-sign" class="w-3 h-3 text-slate-600"></i> Ruolo
+          </button>
+          <div class="role-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-white border border-slate-300 shadow-2xl z-50 p-2 space-y-2">
+            <input type="text" class="role-pick-search form-input text-xs py-1 px-2" placeholder="🔍 Cerca ruolo...">
+            <div class="role-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.querySelector('.btn-fmt-b')?.addEventListener('click', () => insertTextAtCursor(textarea, '**', '**'));
+    container.querySelector('.btn-fmt-i')?.addEventListener('click', () => insertTextAtCursor(textarea, '*', '*'));
+    container.querySelector('.btn-fmt-s')?.addEventListener('click', () => insertTextAtCursor(textarea, '~~', '~~'));
+    container.querySelector('.btn-fmt-c')?.addEventListener('click', () => insertTextAtCursor(textarea, '`', '`'));
+    container.querySelector('.btn-fmt-q')?.addEventListener('click', () => insertTextAtCursor(textarea, '> '));
+    container.querySelector('.btn-fmt-l')?.addEventListener('click', () => insertTextAtCursor(textarea, '[Titolo Link](', 'https://...)'));
+
+    const btnCh = container.querySelector('.btn-open-ch-pick');
+    const ddCh = container.querySelector('.ch-pick-dropdown');
+    const searchCh = container.querySelector('.ch-pick-search');
+    const listCh = container.querySelector('.ch-pick-list');
+
+    const btnRole = container.querySelector('.btn-open-role-pick');
+    const ddRole = container.querySelector('.role-pick-dropdown');
+    const searchRole = container.querySelector('.role-pick-search');
+    const listRole = container.querySelector('.role-pick-list');
+
+    function renderChannels(query = '') {
+      const channels = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+      const q = query.toLowerCase().trim().replace(/^#/, '');
+      listCh.innerHTML = '';
+      const filtered = channels.filter(c => !q || c.name.toLowerCase().includes(q) || String(c.id).includes(q));
+      if (filtered.length === 0) {
+        listCh.innerHTML = '<div class="p-2 text-slate-400 text-[11px] text-center">Nessun canale trovato</div>';
+        return;
+      }
+      filtered.forEach(c => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-red-50 hover:text-red-700 text-slate-700 flex items-center justify-between transition-colors';
+        item.innerHTML = `<span class="font-medium truncate"># ${c.name}</span><span class="text-[10px] text-slate-400 font-mono">${c.id.slice(-4)}</span>`;
+        item.addEventListener('click', () => {
+          insertTextAtCursor(textarea, `<#${c.id}>`);
+          ddCh.classList.add('hidden');
+          window.showToast(`Inserito canale #${c.name}`);
+        });
+        listCh.appendChild(item);
+      });
+    }
+
+    function renderRoles(query = '') {
+      const roles = window.AppState?.roles || [];
+      const q = query.toLowerCase().trim().replace(/^@/, '');
+      listRole.innerHTML = '';
+      const filtered = roles.filter(r => !q || r.name.toLowerCase().includes(q) || String(r.id).includes(q));
+      if (filtered.length === 0) {
+        listRole.innerHTML = '<div class="p-2 text-slate-400 text-[11px] text-center">Nessun ruolo trovato</div>';
+        return;
+      }
+      filtered.forEach(r => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-900 text-slate-700 flex items-center justify-between transition-colors';
+        item.innerHTML = `<span class="font-medium truncate">@ ${r.name}</span><span class="text-[10px] text-slate-400 font-mono">${r.id.slice(-4)}</span>`;
+        item.addEventListener('click', () => {
+          insertTextAtCursor(textarea, `<@&${r.id}>`);
+          ddRole.classList.add('hidden');
+          window.showToast(`Inserito ruolo @${r.name}`);
+        });
+        listRole.appendChild(item);
+      });
+    }
+
+    btnCh?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      ddCh?.classList.toggle('hidden');
+      ddRole?.classList.add('hidden');
+      if (!ddCh?.classList.contains('hidden')) {
+        renderChannels(searchCh?.value || '');
+        searchCh?.focus();
+      }
+    });
+
+    searchCh?.addEventListener('input', (e) => renderChannels(e.target.value));
+    ddCh?.addEventListener('click', (e) => e.stopPropagation());
+
+    btnRole?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      ddRole?.classList.toggle('hidden');
+      ddCh?.classList.add('hidden');
+      if (!ddRole?.classList.contains('hidden')) {
+        renderRoles(searchRole?.value || '');
+        searchRole?.focus();
+      }
+    });
+
+    searchRole?.addEventListener('input', (e) => renderRoles(e.target.value));
+    ddRole?.addEventListener('click', (e) => e.stopPropagation());
+
+    document.addEventListener('click', () => {
+      ddCh?.classList.add('hidden');
+      ddRole?.classList.add('hidden');
+    });
+
+    if (window.lucide) lucide.createIcons();
+  };
+
+  /**
+   * Global Universal Searchable Select Filter
+   */
+  window.setupSearchableSelect = function (searchInputId, selectId, filterType = 'text') {
+    const input = typeof searchInputId === 'string' ? document.getElementById(searchInputId) : searchInputId;
+    const select = typeof selectId === 'string' ? document.getElementById(selectId) : selectId;
+    if (!input || !select) return;
+
+    input.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim().replace(/^[#@]/, '');
+      let items = [];
+      if (filterType === 'role') {
+        items = window.AppState?.roles || [];
+      } else if (filterType === 'category') {
+        items = (window.AppState?.channels || []).filter(c => c.type === 'category' || c.type === 4);
+      } else {
+        items = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+      }
+
+      const currentVal = select.value;
+      select.innerHTML = '<option value="">-- Seleziona --</option>';
+
+      let matched = 0;
+      items.forEach(item => {
+        if (!query || item.name.toLowerCase().includes(query) || String(item.id).includes(query)) {
+          const opt = document.createElement('option');
+          opt.value = item.id;
+          opt.textContent = `${filterType === 'role' ? '@' : (filterType === 'category' ? '📁' : '#')} ${item.name}`;
+          select.appendChild(opt);
+          matched++;
+        }
+      });
+
+      if (matched === 1) {
+        select.selectedIndex = 1;
+      } else if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+        select.value = currentVal;
+      }
+    });
+  };
+
+  // Setup variable tag insertion handler globally
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-var-tag');
+    if (!btn) return;
+    const targetId = btn.getAttribute('data-target');
+    const varText = btn.getAttribute('data-var');
+    const targetEl = document.getElementById(targetId);
+    if (targetEl && varText) {
+      insertTextAtCursor(targetEl, varText);
+      window.showToast(`Inserito ${varText}`);
+    }
+  });
+
+  /**
+   * Setup Quick Formatting Toolbar on Embed Description
+   */
+  function setupEmbedFormattingToolbar() {
     const btnBold = document.getElementById('btn-fmt-bold');
     const btnItalic = document.getElementById('btn-fmt-italic');
     const btnStrike = document.getElementById('btn-fmt-strike');
@@ -193,157 +387,106 @@
     if (btnCode) btnCode.addEventListener('click', () => insertTextAtCursor(descInput, '`', '`'));
     if (btnQuote) btnQuote.addEventListener('click', () => insertTextAtCursor(descInput, '> '));
     if (btnLink) btnLink.addEventListener('click', () => insertTextAtCursor(descInput, '[Titolo Link](', 'https://...)'));
-  }
 
-  /**
-   * Channel Search & Filter for Target Channel Selector
-   */
-  function setupChannelSearchFilter() {
-    if (!channelSearchInput || !channelSelect) return;
+    // Embed specific mention pickers
+    const btnOpenChannelPicker = document.getElementById('btn-open-channel-picker');
+    const channelPickerDropdown = document.getElementById('channel-picker-dropdown');
+    const pickerChannelSearch = document.getElementById('picker-channel-search');
+    const pickerChannelsList = document.getElementById('picker-channels-list');
 
-    channelSearchInput.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase().trim().replace(/^#/, '');
-      const channels = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+    const btnOpenRolePicker = document.getElementById('btn-open-role-picker');
+    const rolePickerDropdown = document.getElementById('role-picker-dropdown');
+    const pickerRoleSearch = document.getElementById('picker-role-search');
+    const pickerRolesList = document.getElementById('picker-roles-list');
 
-      const currentVal = channelSelect.value;
-      channelSelect.innerHTML = '<option value="">-- Seleziona un Canale --</option>';
+    if (btnOpenChannelPicker && channelPickerDropdown && pickerChannelSearch && pickerChannelsList) {
+      function renderPickerChannels(filter = '') {
+        const channels = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+        const query = filter.toLowerCase().trim().replace(/^#/, '');
+        pickerChannelsList.innerHTML = '';
 
-      let matched = 0;
-      channels.forEach(c => {
-        if (!query || c.name.toLowerCase().includes(query) || String(c.id).includes(query)) {
-          const opt = document.createElement('option');
-          opt.value = c.id;
-          opt.textContent = `# ${c.name}`;
-          channelSelect.appendChild(opt);
-          matched++;
+        const filtered = channels.filter(c => !query || c.name.toLowerCase().includes(query));
+        if (filtered.length === 0) {
+          pickerChannelsList.innerHTML = '<div class="p-2 text-slate-400 text-[11px] text-center">Nessun canale trovato</div>';
+          return;
+        }
+
+        filtered.forEach(c => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-red-50 hover:text-red-700 text-slate-700 flex items-center justify-between transition-colors';
+          item.innerHTML = `<span class="font-medium truncate"># ${c.name}</span><span class="text-[10px] text-slate-400 font-mono">${c.id.slice(-4)}</span>`;
+          item.addEventListener('click', () => {
+            insertTextAtCursor(descInput, `<#${c.id}>`);
+            channelPickerDropdown.classList.add('hidden');
+            window.showToast(`Inserito canale #${c.name}`);
+          });
+          pickerChannelsList.appendChild(item);
+        });
+      }
+
+      btnOpenChannelPicker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        channelPickerDropdown.classList.toggle('hidden');
+        if (rolePickerDropdown) rolePickerDropdown.classList.add('hidden');
+        if (!channelPickerDropdown.classList.contains('hidden')) {
+          renderPickerChannels(pickerChannelSearch.value);
+          pickerChannelSearch.focus();
         }
       });
 
-      if (matched === 1) {
-        channelSelect.selectedIndex = 1;
-      } else if (currentVal && Array.from(channelSelect.options).some(o => o.value === currentVal)) {
-        channelSelect.value = currentVal;
-      }
-    });
-  }
-
-  /**
-   * Searchable Channel Mention Picker Dropdown
-   */
-  function setupChannelPicker() {
-    if (!btnOpenChannelPicker || !channelPickerDropdown || !pickerChannelSearch || !pickerChannelsList) return;
-
-    function renderPickerChannels(filter = '') {
-      const channels = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
-      const query = filter.toLowerCase().trim().replace(/^#/, '');
-      pickerChannelsList.innerHTML = '';
-
-      const filtered = channels.filter(c => !query || c.name.toLowerCase().includes(query));
-      if (filtered.length === 0) {
-        pickerChannelsList.innerHTML = '<div class="p-2 text-slate-400 text-[11px] text-center">Nessun canale trovato</div>';
-        return;
-      }
-
-      filtered.forEach(c => {
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-red-50 hover:text-red-700 text-slate-700 flex items-center justify-between transition-colors';
-        item.innerHTML = `
-          <span class="font-medium truncate"># ${c.name}</span>
-          <span class="text-[10px] text-slate-400 font-mono">${c.id.slice(-4)}</span>
-        `;
-        item.addEventListener('click', () => {
-          insertTextAtCursor(descInput, `<#${c.id}>`);
-          channelPickerDropdown.classList.add('hidden');
-          window.showToast(`Inserito canale #${c.name}`);
-        });
-        pickerChannelsList.appendChild(item);
-      });
+      pickerChannelSearch.addEventListener('input', (e) => renderPickerChannels(e.target.value));
+      channelPickerDropdown.addEventListener('click', (e) => e.stopPropagation());
     }
 
-    btnOpenChannelPicker.addEventListener('click', (e) => {
-      e.stopPropagation();
-      channelPickerDropdown.classList.toggle('hidden');
-      if (rolePickerDropdown) rolePickerDropdown.classList.add('hidden');
-      if (!channelPickerDropdown.classList.contains('hidden')) {
-        renderPickerChannels(pickerChannelSearch.value);
-        pickerChannelSearch.focus();
-      }
-    });
+    if (btnOpenRolePicker && rolePickerDropdown && pickerRoleSearch && pickerRolesList) {
+      function renderPickerRoles(filter = '') {
+        const roles = window.AppState?.roles || [];
+        const query = filter.toLowerCase().trim().replace(/^@/, '');
+        pickerRolesList.innerHTML = '';
 
-    pickerChannelSearch.addEventListener('input', (e) => {
-      renderPickerChannels(e.target.value);
-    });
+        const filtered = roles.filter(r => !query || r.name.toLowerCase().includes(query));
+        if (filtered.length === 0) {
+          pickerRolesList.innerHTML = '<div class="p-2 text-slate-400 text-[11px] text-center">Nessun ruolo trovato</div>';
+          return;
+        }
 
-    channelPickerDropdown.addEventListener('click', (e) => e.stopPropagation());
-  }
-
-  /**
-   * Searchable Role Mention Picker Dropdown
-   */
-  function setupRolePicker() {
-    if (!btnOpenRolePicker || !rolePickerDropdown || !pickerRoleSearch || !pickerRolesList) return;
-
-    function renderPickerRoles(filter = '') {
-      const roles = window.AppState?.roles || [];
-      const query = filter.toLowerCase().trim().replace(/^@/, '');
-      pickerRolesList.innerHTML = '';
-
-      const filtered = roles.filter(r => !query || r.name.toLowerCase().includes(query));
-      if (filtered.length === 0) {
-        pickerRolesList.innerHTML = '<div class="p-2 text-slate-400 text-[11px] text-center">Nessun ruolo trovato</div>';
-        return;
-      }
-
-      filtered.forEach(r => {
-        const item = document.createElement('button');
-        item.type = 'button';
-        item.className = 'w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-900 text-slate-700 flex items-center justify-between transition-colors';
-        item.innerHTML = `
-          <span class="font-medium truncate">@ ${r.name}</span>
-          <span class="text-[10px] text-slate-400 font-mono">${r.id.slice(-4)}</span>
-        `;
-        item.addEventListener('click', () => {
-          insertTextAtCursor(descInput, `<@&${r.id}>`);
-          rolePickerDropdown.classList.add('hidden');
-          window.showToast(`Inserito ruolo @${r.name}`);
+        filtered.forEach(r => {
+          const item = document.createElement('button');
+          item.type = 'button';
+          item.className = 'w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-slate-100 hover:text-slate-900 text-slate-700 flex items-center justify-between transition-colors';
+          item.innerHTML = `<span class="font-medium truncate">@ ${r.name}</span><span class="text-[10px] text-slate-400 font-mono">${r.id.slice(-4)}</span>`;
+          item.addEventListener('click', () => {
+            insertTextAtCursor(descInput, `<@&${r.id}>`);
+            rolePickerDropdown.classList.add('hidden');
+            window.showToast(`Inserito ruolo @${r.name}`);
+          });
+          pickerRolesList.appendChild(item);
         });
-        pickerRolesList.appendChild(item);
-      });
-    }
-
-    btnOpenRolePicker.addEventListener('click', (e) => {
-      e.stopPropagation();
-      rolePickerDropdown.classList.toggle('hidden');
-      if (channelPickerDropdown) channelPickerDropdown.classList.add('hidden');
-      if (!rolePickerDropdown.classList.contains('hidden')) {
-        renderPickerRoles(pickerRoleSearch.value);
-        pickerRoleSearch.focus();
       }
-    });
 
-    pickerRoleSearch.addEventListener('input', (e) => {
-      renderPickerRoles(e.target.value);
-    });
+      btnOpenRolePicker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        rolePickerDropdown.classList.toggle('hidden');
+        if (channelPickerDropdown) channelPickerDropdown.classList.add('hidden');
+        if (!rolePickerDropdown.classList.contains('hidden')) {
+          renderPickerRoles(pickerRoleSearch.value);
+          pickerRoleSearch.focus();
+        }
+      });
 
-    rolePickerDropdown.addEventListener('click', (e) => e.stopPropagation());
+      pickerRoleSearch.addEventListener('input', (e) => renderPickerRoles(e.target.value));
+      rolePickerDropdown.addEventListener('click', (e) => e.stopPropagation());
+    }
   }
-
-  // Close dropdowns on outside click
-  document.addEventListener('click', () => {
-    if (channelPickerDropdown) channelPickerDropdown.classList.add('hidden');
-    if (rolePickerDropdown) rolePickerDropdown.classList.add('hidden');
-  });
 
   /**
    * Update Live Discord Embed Preview
    */
   function updatePreview() {
-    // 1. Color
     const color = colorHexInput?.value || colorInput?.value || '#DC2626';
     if (prevEmbedBox) prevEmbedBox.style.borderLeftColor = color;
 
-    // 2. Author
     const authorName = authorNameInput?.value?.trim();
     const authorIcon = authorIconInput?.value?.trim();
     if (prevAuthor) {
@@ -363,21 +506,18 @@
       }
     }
 
-    // 3. Title
     const title = titleInput?.value?.trim() || '';
     if (prevTitle) {
       prevTitle.textContent = title;
       prevTitle.style.display = title ? 'block' : 'none';
     }
 
-    // 4. Description (with robust Discord Markdown + Bold highlight)
     const desc = descInput?.value || '';
     if (prevDesc) {
       prevDesc.innerHTML = parseDiscordMarkdown(desc);
       prevDesc.style.display = desc ? 'block' : 'none';
     }
 
-    // 5. Fields
     if (prevFields) {
       prevFields.innerHTML = '';
       fields.forEach(f => {
@@ -392,7 +532,6 @@
       prevFields.style.display = fields.length > 0 ? 'grid' : 'none';
     }
 
-    // 6. Images
     const imgUrl = imageInput?.value?.trim();
     if (prevImage) {
       if (imgUrl) {
@@ -413,7 +552,6 @@
       }
     }
 
-    // 7. Footer
     const footerText = footerTextInput?.value?.trim();
     const footerIcon = footerIconInput?.value?.trim();
     if (prevFooter) {
@@ -433,7 +571,6 @@
       }
     }
 
-    // Save auto-draft to localStorage for this guild
     saveDraftToLocalStorage();
   }
 
@@ -488,9 +625,8 @@
       fieldsContainer.appendChild(row);
     });
 
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
 
-    // Attach row events
     document.querySelectorAll('.field-name-input').forEach(inp => {
       inp.addEventListener('input', (e) => {
         const idx = parseInt(e.target.getAttribute('data-index'), 10);
@@ -536,7 +672,6 @@
     });
   }
 
-  // Generate Embed Payload Object
   function getEmbedPayload() {
     const payload = {};
     const color = colorHexInput?.value || '#DC2626';
@@ -583,9 +718,6 @@
     return payload;
   }
 
-  /**
-   * Populate Form with an Embed Data Object
-   */
   function loadEmbedDataIntoForm(embedData) {
     if (!embedData) return;
 
@@ -618,9 +750,6 @@
     updatePreview();
   }
 
-  /**
-   * LocalStorage Auto-Draft Manager
-   */
   function saveDraftToLocalStorage() {
     const guildId = window.AppState?.currentGuildId;
     if (!guildId) return;
@@ -676,9 +805,6 @@
     }
   }
 
-  /**
-   * Reset Form to Defaults
-   */
   if (btnResetEmbed) {
     btnResetEmbed.addEventListener('click', () => {
       if (!confirm('Sei sicuro di voler resettare l\'editor dell\'embed?')) return;
@@ -704,9 +830,6 @@
     });
   }
 
-  /**
-   * Saved Templates API Manager (SQLite Permanent Storage)
-   */
   async function loadSavedTemplates(guildId) {
     if (!guildId || !savedTemplatesContainer) return;
 
@@ -717,7 +840,7 @@
           Caricamento template salvati...
         </div>
       `;
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
       const res = await fetch(`/api/guilds/${guildId}/embeds`);
       if (!res.ok) return;
@@ -733,7 +856,7 @@
             <p class="text-xs text-slate-500">Crea il tuo messaggio personalizzato e clicca su "Salva Embed Corrente" per ritrovarlo sempre qui.</p>
           </div>
         `;
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
         return;
       }
 
@@ -792,15 +915,12 @@
         savedTemplatesContainer.appendChild(card);
       });
 
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     } catch (e) {
       console.error('Error loading saved templates:', e);
     }
   }
 
-  /**
-   * Action: Save Current Embed as Named Template in SQLite Database
-   */
   async function handleSaveTemplate() {
     const guildId = window.AppState?.currentGuildId;
     if (!guildId) return window.showToast('Nessun server selezionato.', 'error');
@@ -837,7 +957,6 @@
   if (btnSaveAsTemplate) btnSaveAsTemplate.addEventListener('click', handleSaveTemplate);
   if (btnSaveTemplateTop) btnSaveTemplateTop.addEventListener('click', handleSaveTemplate);
 
-  // Action: Copy JSON
   const btnCopyJson = document.getElementById('btn-copy-json');
   if (btnCopyJson) {
     btnCopyJson.addEventListener('click', () => {
@@ -847,7 +966,6 @@
     });
   }
 
-  // Action: Send to Channel
   const btnSendEmbed = document.getElementById('btn-send-embed');
   if (btnSendEmbed) {
     btnSendEmbed.addEventListener('click', async () => {
@@ -862,7 +980,7 @@
       try {
         btnSendEmbed.disabled = true;
         btnSendEmbed.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Invio in corso...';
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
 
         const res = await fetch(`/api/guilds/${guildId}/embeds/send`, {
           method: 'POST',
@@ -885,22 +1003,19 @@
       } finally {
         btnSendEmbed.disabled = false;
         btnSendEmbed.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Invia nel Canale Discord';
-        lucide.createIcons();
+        if (window.lucide) lucide.createIcons();
       }
     });
   }
 
-  // Expose global hook for app.js when guild switches
   window.loadEmbedBuilderData = function (guildId) {
     loadDraftFromLocalStorage(guildId);
     loadSavedTemplates(guildId);
     updatePreview();
   };
 
-  // Initialize
-  setupFormattingToolbar();
-  setupChannelSearchFilter();
-  setupChannelPicker();
-  setupRolePicker();
+  // Initialize embed builder specific components
+  setupEmbedFormattingToolbar();
+  window.setupSearchableSelect('embed-channel-search', 'embed-channel', 'text');
   updatePreview();
 })();
