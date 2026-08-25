@@ -26,6 +26,15 @@
       <!-- Central Core Square -->
       <rect x="-3.5" y="-3.5" width="7" height="7" />
     </g>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Metamorphous&amp;family=Montserrat:wght@800;900&amp;display=swap');
+      .hybrid-medieval {
+        font-family: 'Metamorphous', 'Montserrat', -apple-system, sans-serif;
+        font-weight: 800;
+        letter-spacing: 2.5px;
+      }
+    </style>
   </defs>
 
   <!-- Pure AMOLED Black Background -->
@@ -35,22 +44,20 @@
   <rect width="600" height="240" fill="url(#leftOrangeGlow)" />
   <rect width="600" height="240" fill="url(#rightOrangeGlow)" />
 
-  <!-- Main Lockup (Centered, Pure White Typography Matching the Cross) -->
-  <g transform="translate(130, 120)">
+  <!-- Main Lockup (Centered: Pure White Templar Cross + Rounded Spiky Medieval Typography) -->
+  <g transform="translate(125, 120)">
     
     <!-- Primary Brand Icon: Pure White Templar Cross -->
     <g transform="translate(0, 0) scale(1.05)" fill="#ffffff">
       <use href="#templarCrossSolo" />
     </g>
 
-    <!-- Brand Typography: Pure White Cinzel Text -->
-    <text x="58" y="14" 
-          font-family="'Cinzel', 'Georgia', 'Times New Roman', serif" 
-          font-size="44" 
-          font-weight="800" 
-          letter-spacing="2" 
+    <!-- Custom Typography: Rounded bodies like Montserrat + sharp spiky cusps like the cross -->
+    <text x="62" y="15" 
+          class="hybrid-medieval"
+          font-size="45" 
           fill="#ffffff">
-      IL CAVALIERE
+      Il Cavaliere
     </text>
   </g>
 </svg>

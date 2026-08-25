@@ -7,14 +7,17 @@ const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
 function getCallbackUrl(req) {
-  if (process.env.OAUTH2_CALLBACK_URL) {
-    return process.env.OAUTH2_CALLBACK_URL;
-  }
-  const host = req.get('x-forwarded-host') || req.get('host');
+  const host = req.get('x-forwarded-host') || req.get('host') || 'il-cavaliere.wispbyte.app';
   let proto = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http') || req.protocol || 'http';
-  if (host && (host.includes('wispbyte.app') || host.includes('https') || process.env.NODE_ENV === 'production')) {
+  
+  if (host.includes('wispbyte.app') || req.headers['x-forwarded-proto'] === 'https' || host.includes('.app') || host.includes('.com') || host.includes('.it')) {
     proto = 'https';
   }
+
+  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost')) {
+    return process.env.OAUTH2_CALLBACK_URL;
+  }
+
   return `${proto}://${host}/auth/callback`;
 }
 
@@ -24,6 +27,8 @@ authRouter.get('/login', (req, res) => {
   }
 
   const callbackUrl = getCallbackUrl(req);
+  console.log(`[OAuth2] Initiating login with redirect_uri: ${callbackUrl}`);
+
   const redirectUri = encodeURIComponent(callbackUrl);
   const scope = encodeURIComponent(OAUTH_SCOPES.join(' '));
   const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${CONFIG.CLIENT_ID}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
