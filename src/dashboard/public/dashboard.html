@@ -20,124 +20,127 @@
   <div id="toast-container"></div>
 
   
-  <aside class="w-full md:w-64 bg-[#0a0e17]/90 backdrop-blur-2xl border-r border-white/5 flex flex-col justify-between shrink-0 z-30 sticky top-0 md:h-screen">
+  <aside class="w-full md:w-64 bg-[#0a0c12]/95 backdrop-blur-2xl border-r border-amber-500/20 flex flex-col justify-between shrink-0 z-30 sticky top-0 md:h-screen shadow-2xl">
     <div>
-      
-      <div class="p-4 border-b border-white/5">
+      <div class="p-4 border-b border-amber-500/20">
         <div class="flex items-center gap-3 mb-4">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-600 to-cyan-400 flex items-center justify-center shadow-md">
-            <i data-lucide="shield" class="w-5 h-5 text-white"></i>
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-700 via-amber-600 to-amber-400 flex items-center justify-center shadow-md border border-amber-400/40">
+            <i data-lucide="shield" class="w-5 h-5 text-stone-950"></i>
           </div>
           <div>
-            <h1 class="text-base font-bold text-white tracking-tight">Il Cavaliere</h1>
-            <span class="text-[10px] text-purple-400 font-medium tracking-wide uppercase">Noctaly Dashboard</span>
+            <h1 class="text-base font-bold text-white tracking-tight font-medieval">Il Cavaliere</h1>
+            <span class="text-[10px] text-amber-400 font-semibold tracking-wider uppercase">Tavola di Comando</span>
           </div>
         </div>
 
-        
-        <label class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block mb-1.5">Server Selezionato</label>
-        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-slate-900 border-white/10">
-          <option value="loading">Caricamento server...</option>
+        <label class="text-[11px] uppercase tracking-wider text-amber-200/70 font-bold block mb-1.5 font-medieval">Reame Selezionato</label>
+        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-[#121622] border-amber-500/30 text-amber-100">
+          <option value="loading">Caricamento Reami...</option>
         </select>
       </div>
 
-      
       <nav class="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-220px)]">
-        <button class="nav-tab active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-overview">
-          <i data-lucide="layout-grid" class="w-4 h-4 text-purple-400"></i>
-          <span>Panoramica</span>
+        <button class="nav-tab active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-overview">
+          <i data-lucide="castle" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Panoramica Reame</span>
         </button>
 
-        
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-ai">
-          <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i>
-          <span class="flex-grow">Il Cavaliere AI</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold uppercase">Brain</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-ai">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+          <span class="flex-grow font-medieval">Il Cavaliere AI</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold uppercase border border-amber-500/30">Oracolo</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-partnerships">
-          <i data-lucide="handshake" class="w-4 h-4 text-cyan-400"></i>
-          <span>Partnership</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-partnerships">
+          <i data-lucide="handshake" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Patti & Alleanze</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-embeds">
-          <i data-lucide="palette" class="w-4 h-4 text-pink-400"></i>
-          <span class="flex-grow">Embed Builder</span>
-          <span class="text-[10px] px-1.5 py-0.5 rounded bg-pink-500/20 text-pink-300 font-semibold uppercase">Live</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-embeds">
+          <i data-lucide="scroll" class="w-4 h-4 text-amber-400"></i>
+          <span class="flex-grow font-medieval">Fabbro Pergamene</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-semibold uppercase border border-amber-500/30">Live</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-reactionroles">
-          <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
-          <span>Reaction Roles</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-reactionroles">
+          <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Assegnazione Ranghi</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-welcomer">
-          <i data-lucide="user-plus" class="w-4 h-4 text-emerald-400"></i>
-          <span>Welcomer & DM</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-welcomer">
+          <i data-lucide="door-open" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Cerimonia Benvenuto</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-autoresponder">
-          <i data-lucide="zap" class="w-4 h-4 text-purple-400"></i>
-          <span>Auto-Responder</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-autoresponder">
+          <i data-lucide="zap" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Sentinella Risposte</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-automod">
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-automod">
           <i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i>
-          <span>AutoMod & Logs</span>
+          <span class="font-medieval">Tribunale & AutoMod</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-tickets">
-          <i data-lucide="ticket" class="w-4 h-4 text-blue-400"></i>
-          <span>Ticket System</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-tickets">
+          <i data-lucide="ticket" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Sala delle Udienze</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-giveaways">
-          <i data-lucide="gift" class="w-4 h-4 text-fuchsia-400"></i>
-          <span>Giveaways & XP</span>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-giveaways">
+          <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Tornei & Esperienza</span>
         </button>
 
-        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all text-left" data-tab="tab-emojis">
-          <i data-lucide="smile" class="w-4 h-4 text-yellow-400"></i>
+        <button class="nav-tab w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:text-amber-200 hover:bg-amber-500/10 transition-all text-left" data-tab="tab-emojis">
+          <i data-lucide="feather" class="w-4 h-4 text-amber-400"></i>
+          <span class="font-medieval">Araldica & Sigilli</span>
+        </button>
+      </nav>
+    </div>
           <span>Emoji Tracker</span>
         </button>
       </nav>
     </div>
 
     
-    <div class="p-3 border-t border-white/5 bg-slate-950/40">
+    <div class="p-3 border-t border-amber-500/20 bg-slate-950/60">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2.5">
-          <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full border border-white/10" alt="Avatar">
+          <img id="user-avatar" src="https://cdn.discordapp.com/embed/avatars/0.png" class="w-8 h-8 rounded-full border border-amber-500/40" alt="Avatar">
           <div class="overflow-hidden">
-            <p id="user-name" class="text-xs font-semibold text-white truncate">CavaliereAdmin</p>
-            <p class="text-[10px] text-emerald-400">Amministratore</p>
+            <p id="user-name" class="text-xs font-semibold text-white truncate font-medieval">Moderatore</p>
+            <p class="text-[10px] text-amber-300 font-medium">Ufficiale del Reame</p>
           </div>
         </div>
-        <a href="/" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors" title="Torna alla Home">
-          <i data-lucide="home" class="w-4 h-4"></i>
-        </a>
+        <div class="flex items-center gap-1">
+          <a href="/" class="p-2 rounded-lg bg-white/5 hover:bg-amber-500/20 text-amber-200/70 hover:text-amber-200 transition-colors" title="Torna alla Home">
+            <i data-lucide="home" class="w-4 h-4"></i>
+          </a>
+          <a href="/auth/logout" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/25 text-rose-300 transition-colors" title="Disconnetti">
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </a>
+        </div>
       </div>
     </div>
   </aside>
 
-  
   <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
-    
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-white/5">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-amber-500/20">
       <div>
-        <h2 id="current-guild-name" class="text-2xl font-bold text-white flex items-center gap-2">
-          🏰 Il Reame del Cavaliere
+        <h2 id="current-guild-name" class="text-2xl font-bold text-white flex items-center gap-2 font-medieval">
+          🏰 Reame di Discord
         </h2>
-        <p class="text-xs text-slate-400 mt-1">Configurazione modulare in tempo reale per il server</p>
+        <p class="text-xs text-amber-200/70 mt-1">Tavola di comando e bastioni di difesa per il server</p>
       </div>
 
       <div class="flex items-center gap-3">
         <div class="badge-online">
           <div class="pulse-dot"></div>
-          <span id="bot-ws-status">Bot Online • Cloudflare AI Pronto</span>
+          <span id="bot-ws-status">Bot Online • Llama 70B Pronto</span>
         </div>
-        <button id="btn-save-all" class="btn-cyber text-xs py-2 px-4">
-          <i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifiche
+        <button id="btn-save-all" class="btn-knight text-xs py-2 px-4">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Salva Decreti
         </button>
       </div>
     </div>

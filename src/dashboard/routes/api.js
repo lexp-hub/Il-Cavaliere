@@ -4,17 +4,41 @@ import { PartnershipManager } from '../../bot/modules/partnershipManager.js';
 import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
 export function createApiRouter(botClient) {
   const router = express.Router();
 
-  const requireAuth = (req, res, next) => {
-    if (req.session.user || CONFIG.DEMO_MODE) {
-      return next();
+  const requireModAuth = async (req, res, next) => {
+    const user = req.session.user;
+    if (!user && !CONFIG.DEMO_MODE) {
+      return res.status(401).json({ error: 'Accesso negato. Effettua il login con Discord.' });
     }
-    return res.status(401).json({ error: 'Non autorizzato' });
+
+    const isCreator = user?.id === CONFIG.CREATOR_ID || user?.isAdmin || CONFIG.DEMO_MODE;
+    const guildId = req.params.guildId;
+
+    if (!isCreator && guildId && botClient?.isReady() && botClient.guilds.cache.has(guildId)) {
+      const guild = botClient.guilds.cache.get(guildId);
+      try {
+        const member = await guild.members.fetch(user.id);
+        const isMod = member.permissions.has(PermissionsBitField.Flags.Administrator) ||
+                      member.permissions.has(PermissionsBitField.Flags.ManageGuild) ||
+                      member.permissions.has(PermissionsBitField.Flags.BanMembers) ||
+                      member.permissions.has(PermissionsBitField.Flags.KickMembers) ||
+                      member.permissions.has(PermissionsBitField.Flags.ManageMessages) ||
+                      guild.ownerId === user.id;
+
+        if (!isMod) {
+          return res.status(403).json({ error: 'Accesso vietato: Solo i moderatori e cavalieri autorizzati possono modificare questo Reame.' });
+        }
+      } catch (e) {
+        return res.status(403).json({ error: 'Non fai parte di questo server.' });
+      }
+    }
+
+    next();
   };
 
   router.get('/status', (req, res) => {
@@ -32,28 +56,28 @@ export function createApiRouter(botClient) {
     });
   });
 
-  router.get('/guilds/:guildId/settings', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/settings', requireModAuth, (req, res) => {
     const settings = DatabaseHelper.getGuildSettings(req.params.guildId);
     res.json(settings);
   });
 
-  router.post('/guilds/:guildId/settings', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/settings', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateGuildSettings(req.params.guildId, req.body);
     res.json({ success: true, settings: updated });
   });
 
-  router.get('/guilds/:guildId/ai', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/ai', requireModAuth, (req, res) => {
     const config = DatabaseHelper.getAIConfig(req.params.guildId);
     const defaultPrompt = AIManager.loadPrompt();
     res.json({ config, defaultPrompt });
   });
 
-  router.post('/guilds/:guildId/ai', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/ai', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateAIConfig(req.params.guildId, req.body);
     res.json({ success: true, config: updated });
   });
 
-  router.post('/guilds/:guildId/ai/chat', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/ai/chat', requireModAuth, async (req, res) => {
     const { message, customPrompt, model } = req.body;
     if (!message) return res.status(400).json({ error: 'Messaggio vuoto' });
 
@@ -62,7 +86,7 @@ export function createApiRouter(botClient) {
     const systemPrompt = customPrompt || config.system_prompt || AIManager.loadPrompt();
 
     try {
-      const messages = [{ role: 'user', content: `[Dashboard Test User]: ${message}` }];
+      const messages = [{ role: 'user', content: `[Moderatore]: ${message}` }];
       let reply = await AIManager.getAIResponse(messages, systemPrompt, model || config.model);
 
       const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
@@ -80,31 +104,24 @@ export function createApiRouter(botClient) {
     }
   });
 
-  router.get('/guilds/:guildId/partnerships', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/partnerships', requireModAuth, (req, res) => {
     const config = DatabaseHelper.getPartnershipConfig(req.params.guildId);
     const stats = DatabaseHelper.getPartnershipStats(req.params.guildId);
     const list = DatabaseHelper.getPartnerships(req.params.guildId, 25);
     res.json({ config, stats, partnerships: list });
   });
 
-  router.post('/guilds/:guildId/partnerships/config', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/partnerships/config', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updatePartnershipConfig(req.params.guildId, req.body);
     res.json({ success: true, config: updated });
   });
 
-  router.post('/guilds/:guildId/partnerships/add', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/partnerships/add', requireModAuth, async (req, res) => {
     const { invite, repId, notes } = req.body;
     const guildId = req.params.guildId;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
-      const saved = DatabaseHelper.addPartnership(guildId, {
-        partner_name: 'Server Partner Demo',
-        invite_url: invite || 'https://discord.gg/example',
-        rep_user_id: repId || '999999999999999999',
-        partner_count: 500,
-        notes: notes || 'Partnership Demo'
-      });
-      return res.json({ success: true, partnership: saved, demo: true });
+      return res.status(400).json({ error: 'Il bot non è presente in questo server.' });
     }
 
     const guild = botClient.guilds.cache.get(guildId);
@@ -124,12 +141,12 @@ export function createApiRouter(botClient) {
     res.json({ success: true, result });
   });
 
-  router.get('/guilds/:guildId/embeds', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/embeds', requireModAuth, (req, res) => {
     const templates = DatabaseHelper.getEmbedTemplates(req.params.guildId);
     res.json(templates);
   });
 
-  router.post('/guilds/:guildId/embeds/save', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/embeds/save', requireModAuth, (req, res) => {
     const { id, name, embedData, componentsData } = req.body;
     const templateId = id || `template_${Date.now()}`;
     const saved = DatabaseHelper.saveEmbedTemplate(
@@ -138,17 +155,17 @@ export function createApiRouter(botClient) {
       name || 'Nuovo Template',
       embedData,
       componentsData || [],
-      req.session.user?.username || 'Dashboard'
+      req.session.user?.username || 'Moderatore'
     );
     res.json({ success: true, template: saved });
   });
 
-  router.post('/guilds/:guildId/embeds/send', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/embeds/send', requireModAuth, async (req, res) => {
     const { channelId, embedData, componentsData } = req.body;
     const guildId = req.params.guildId;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
-      return res.json({ success: true, message: 'Simulazione invio completata (Modalità Demo/Preview).' });
+      return res.status(400).json({ error: 'Bot non pronto.' });
     }
 
     try {
@@ -184,32 +201,22 @@ export function createApiRouter(botClient) {
     }
   });
 
-  router.delete('/guilds/:guildId/embeds/:id', requireAuth, (req, res) => {
+  router.delete('/guilds/:guildId/embeds/:id', requireModAuth, (req, res) => {
     DatabaseHelper.deleteEmbedTemplate(req.params.id);
     res.json({ success: true });
   });
 
-  router.get('/guilds/:guildId/reaction-roles', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/reaction-roles', requireModAuth, (req, res) => {
     const list = DatabaseHelper.getReactionRoles(req.params.guildId);
     res.json(list);
   });
 
-  router.post('/guilds/:guildId/reaction-roles', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/reaction-roles', requireModAuth, async (req, res) => {
     const { channelId, roleId, label, emoji, style, title, description } = req.body;
     const guildId = req.params.guildId;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
-      const saved = DatabaseHelper.addReactionRole(
-        guildId,
-        channelId || '101',
-        `demo_msg_${Date.now()}`,
-        'BUTTON',
-        roleId,
-        emoji,
-        label,
-        style
-      );
-      return res.json({ success: true, reactionRole: saved, demo: true });
+      return res.status(400).json({ error: 'Bot non collegato al server.' });
     }
 
     try {
@@ -256,25 +263,25 @@ export function createApiRouter(botClient) {
     }
   });
 
-  router.delete('/guilds/:guildId/reaction-roles/:id', requireAuth, (req, res) => {
+  router.delete('/guilds/:guildId/reaction-roles/:id', requireModAuth, (req, res) => {
     DatabaseHelper.deleteReactionRole(req.params.id);
     res.json({ success: true });
   });
 
-  router.get('/guilds/:guildId/welcomer', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/welcomer', requireModAuth, (req, res) => {
     const config = DatabaseHelper.getWelcomerConfig(req.params.guildId);
     res.json(config);
   });
 
-  router.post('/guilds/:guildId/welcomer', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/welcomer', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateWelcomerConfig(req.params.guildId, req.body);
     res.json({ success: true, config: updated });
   });
 
-  router.post('/guilds/:guildId/welcomer/test', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/welcomer/test', requireModAuth, async (req, res) => {
     const guildId = req.params.guildId;
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
-      return res.json({ success: true, message: 'Test simulato con successo (Modalità Demo).' });
+      return res.status(400).json({ error: 'Bot non collegato.' });
     }
 
     try {
@@ -289,7 +296,7 @@ export function createApiRouter(botClient) {
 
       const embed = new EmbedBuilder()
         .setColor(CONFIG.EMBED_COLOR)
-        .setTitle('🎉 [Test Dashboard] Benvenuto!')
+        .setTitle('🎉 [Test] Benvenuto nel Reame!')
         .setDescription(text)
         .setThumbnail(fakeMember.user.displayAvatarURL())
         .setTimestamp();
@@ -301,46 +308,46 @@ export function createApiRouter(botClient) {
     }
   });
 
-  router.get('/guilds/:guildId/autoresponders', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/autoresponders', requireModAuth, (req, res) => {
     const list = DatabaseHelper.getAutoresponders(req.params.guildId);
     const channels = DatabaseHelper.getAutoreactionChannels(req.params.guildId);
     res.json({ autoresponders: list, autoreactionChannels: channels });
   });
 
-  router.post('/guilds/:guildId/autoresponders', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/autoresponders', requireModAuth, (req, res) => {
     const created = DatabaseHelper.addAutoresponder(req.params.guildId, req.body);
     res.json({ success: true, autoresponder: created });
   });
 
-  router.delete('/guilds/:guildId/autoresponders/:id', requireAuth, (req, res) => {
+  router.delete('/guilds/:guildId/autoresponders/:id', requireModAuth, (req, res) => {
     DatabaseHelper.deleteAutoresponder(req.params.id);
     res.json({ success: true });
   });
 
-  router.post('/guilds/:guildId/autoreaction-channel', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/autoreaction-channel', requireModAuth, (req, res) => {
     const { channelId, emojis, enabled } = req.body;
     const id = DatabaseHelper.setAutoreactionChannel(req.params.guildId, channelId, emojis, enabled);
     res.json({ success: true, id });
   });
 
-  router.get('/guilds/:guildId/automod', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/automod', requireModAuth, (req, res) => {
     const config = DatabaseHelper.getAutomodConfig(req.params.guildId);
     const cases = DatabaseHelper.getModerationCases(req.params.guildId, null, 25);
     res.json({ config, recentCases: cases });
   });
 
-  router.post('/guilds/:guildId/automod', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/automod', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateAutomodConfig(req.params.guildId, req.body);
     res.json({ success: true, config: updated });
   });
 
-  router.get('/guilds/:guildId/tickets', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/tickets', requireModAuth, (req, res) => {
     const panels = DatabaseHelper.getTicketPanels(req.params.guildId);
     const tickets = DatabaseHelper.db.prepare('SELECT * FROM tickets WHERE guild_id = ? ORDER BY created_at DESC LIMIT 20').all(req.params.guildId);
     res.json({ panels, tickets });
   });
 
-  router.post('/guilds/:guildId/tickets/panel', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/tickets/panel', requireModAuth, async (req, res) => {
     const { channelId, title, description, categoryId, supportRoleId, buttonLabel, buttonEmoji } = req.body;
     const guildId = req.params.guildId;
     const panelId = `panel_${Date.now()}`;
@@ -360,8 +367,8 @@ export function createApiRouter(botClient) {
 
           const embed = new EmbedBuilder()
             .setColor(CONFIG.EMBED_COLOR)
-            .setTitle(title || '🎫 Assistenza & Ticket')
-            .setDescription(description || 'Clicca sul pulsante sottostante per aprire un ticket.')
+            .setTitle(title || '🎫 Centro Supporto & Assistenza')
+            .setDescription(description || 'Clicca sul pulsante per aprire un ticket.')
             .setFooter({ text: 'Il Cavaliere • Supporto' })
             .setTimestamp();
 
@@ -387,26 +394,15 @@ export function createApiRouter(botClient) {
       }
     }
 
-    const saved = DatabaseHelper.saveTicketPanel({
-      id: panelId,
-      guild_id: guildId,
-      channel_id: channelId,
-      title,
-      description,
-      category_id: categoryId,
-      button_label: buttonLabel,
-      button_emoji: buttonEmoji,
-      support_role_id: supportRoleId
-    });
-    res.json({ success: true, panel: saved, demo: true });
+    res.status(400).json({ error: 'Server non raggiungibile.' });
   });
 
-  router.get('/guilds/:guildId/giveaways', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/giveaways', requireModAuth, (req, res) => {
     const list = DatabaseHelper.db.prepare('SELECT * FROM giveaways WHERE guild_id = ? ORDER BY id DESC LIMIT 20').all(req.params.guildId);
     res.json(list);
   });
 
-  router.post('/guilds/:guildId/giveaways/start', requireAuth, async (req, res) => {
+  router.post('/guilds/:guildId/giveaways/start', requireModAuth, async (req, res) => {
     const { channelId, prize, winnerCount, durationSeconds } = req.body;
     const guildId = req.params.guildId;
 
@@ -423,33 +419,22 @@ export function createApiRouter(botClient) {
       }
     }
 
-    res.json({ success: true, message: 'Giveaway avviato in modalità simulazione.' });
+    res.status(400).json({ error: 'Server non raggiungibile.' });
   });
 
-  router.get('/guilds/:guildId/leveling', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/leveling', requireModAuth, (req, res) => {
     const config = DatabaseHelper.getLevelConfig(req.params.guildId);
     const leaderboard = DatabaseHelper.getLeaderboard(req.params.guildId, 20);
     const rewards = DatabaseHelper.getLevelRewards(req.params.guildId);
     res.json({ config, leaderboard, rewards });
   });
 
-  router.post('/guilds/:guildId/leveling/config', requireAuth, (req, res) => {
+  router.post('/guilds/:guildId/leveling/config', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateLevelConfig(req.params.guildId, req.body);
     res.json({ success: true, config: updated });
   });
 
-  router.post('/guilds/:guildId/leveling/reward', requireAuth, (req, res) => {
-    const { level, roleId } = req.body;
-    DatabaseHelper.addLevelReward(req.params.guildId, level, roleId);
-    res.json({ success: true });
-  });
-
-  router.delete('/guilds/:guildId/leveling/reward/:id', requireAuth, (req, res) => {
-    DatabaseHelper.deleteLevelReward(req.params.id);
-    res.json({ success: true });
-  });
-
-  router.get('/guilds/:guildId/emoji-stats', requireAuth, (req, res) => {
+  router.get('/guilds/:guildId/emoji-stats', requireModAuth, (req, res) => {
     const stats = DatabaseHelper.getEmojiStats(req.params.guildId, 30);
     res.json(stats);
   });

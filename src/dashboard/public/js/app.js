@@ -99,6 +99,8 @@ async function loadUserData() {
       const nameEl = document.getElementById('user-name');
       if (avatarEl && user.avatar) avatarEl.src = user.avatar;
       if (nameEl && user.username) nameEl.textContent = user.username;
+    } else if (res.status === 401) {
+      window.location.href = '/auth/login';
     }
   } catch (e) {
     console.error('Error fetching user info:', e);
@@ -108,6 +110,10 @@ async function loadUserData() {
 async function loadGuilds() {
   try {
     const res = await fetch('/api/guilds');
+    if (res.status === 401) {
+      window.location.href = '/auth/login';
+      return;
+    }
     if (!res.ok) return;
 
     const guilds = await res.json();
@@ -117,10 +123,16 @@ async function loadGuilds() {
     if (!selector) return;
 
     selector.innerHTML = '';
+    if (guilds.length === 0) {
+      selector.innerHTML = '<option value="">Nessun Reame Disponibile</option>';
+      window.showToast('Nessun server trovato in cui possiedi i permessi di Moderatore/Amministratore.', 'error');
+      return;
+    }
+
     guilds.forEach(g => {
       const opt = document.createElement('option');
       opt.value = g.id;
-      opt.textContent = `${g.name} (${g.memberCount} membri)`;
+      opt.textContent = `${g.name} (${g.memberCount} abitanti)`;
       selector.appendChild(opt);
     });
 
