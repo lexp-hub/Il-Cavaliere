@@ -1,183 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <defs>
-    <!-- Background Gradient -->
-    <radialGradient id="bgGrad" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#1e1810" />
-      <stop offset="60%" stop-color="#0e0c08" />
-      <stop offset="100%" stop-color="#050403" />
-    </radialGradient>
-
-    <!-- Gold Gradients -->
-    <linearGradient id="goldPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fffbeb" />
-      <stop offset="25%" stop-color="#fde68a" />
-      <stop offset="50%" stop-color="#f59e0b" />
-      <stop offset="75%" stop-color="#b45309" />
-      <stop offset="100%" stop-color="#78350f" />
-    </linearGradient>
-
-    <linearGradient id="goldLight" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="50%" stop-color="#fbbf24" />
-      <stop offset="100%" stop-color="#b45309" />
-    </linearGradient>
-
-    <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#d97706" />
-      <stop offset="50%" stop-color="#78350f" />
-      <stop offset="100%" stop-color="#451a03" />
-    </linearGradient>
-
-    <!-- Steel Gradients -->
-    <linearGradient id="steelBlade" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#e2e8f0" />
-      <stop offset="50%" stop-color="#94a3b8" />
-      <stop offset="100%" stop-color="#475569" />
-    </linearGradient>
-
-    <linearGradient id="steelDark" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#334155" />
-      <stop offset="100%" stop-color="#0f172a" />
-    </linearGradient>
-
-    <!-- Crimson Velvet -->
-    <linearGradient id="crimsonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#881337" />
-      <stop offset="50%" stop-color="#4c0519" />
-      <stop offset="100%" stop-color="#1f0208" />
-    </linearGradient>
-
-    <!-- Glow Filter -->
-    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-
-    <filter id="shadowFilter" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000" flood-opacity="0.8" />
-    </filter>
-  </defs>
-
-  <!-- Background Base -->
-  <rect width="512" height="512" rx="96" fill="url(#bgGrad)" />
-  <rect width="504" height="504" x="4" y="4" rx="92" fill="none" stroke="url(#goldDark)" stroke-width="2" opacity="0.6" />
-  <rect width="488" height="488" x="12" y="12" rx="84" fill="none" stroke="url(#goldPrimary)" stroke-width="1.5" opacity="0.3" stroke-dasharray="8 6" />
-
-  <!-- Outer Radiant Aura -->
-  <circle cx="256" cy="240" r="180" fill="url(#goldPrimary)" opacity="0.08" filter="url(#goldGlow)" />
-
-  <g filter="url(#shadowFilter)">
-    <!-- Crossed Broadswords (Behind Shield) -->
-    <!-- Sword 1 (Top-Left to Bottom-Right) -->
-    <g transform="rotate(-45 256 240)">
-      <!-- Blade -->
-      <path d="M251 40 L256 15 L261 40 L261 340 L251 340 Z" fill="url(#steelBlade)" />
-      <!-- Fuller / Groove -->
-      <line x1="256" y1="45" x2="256" y2="300" stroke="#1e293b" stroke-width="2" />
-      <!-- Crossguard -->
-      <rect x="220" y="340" width="72" height="14" rx="4" fill="url(#goldPrimary)" />
-      <circle cx="224" cy="347" r="4" fill="#fbbf24" />
-      <circle cx="288" cy="347" r="4" fill="#fbbf24" />
-      <!-- Hilt / Grip -->
-      <rect x="250" y="354" width="12" height="50" rx="3" fill="#1e1810" stroke="url(#goldDark)" stroke-width="1.5" />
-      <!-- Pommel -->
-      <circle cx="256" cy="415" r="14" fill="url(#goldPrimary)" />
-      <circle cx="256" cy="415" r="6" fill="#78350f" />
-    </g>
-
-    <!-- Sword 2 (Top-Right to Bottom-Left) -->
-    <g transform="rotate(45 256 240)">
-      <!-- Blade -->
-      <path d="M251 40 L256 15 L261 40 L261 340 L251 340 Z" fill="url(#steelBlade)" />
-      <!-- Fuller -->
-      <line x1="256" y1="45" x2="256" y2="300" stroke="#1e293b" stroke-width="2" />
-      <!-- Crossguard -->
-      <rect x="220" y="340" width="72" height="14" rx="4" fill="url(#goldPrimary)" />
-      <circle cx="224" cy="347" r="4" fill="#fbbf24" />
-      <circle cx="288" cy="347" r="4" fill="#fbbf24" />
-      <!-- Hilt -->
-      <rect x="250" y="354" width="12" height="50" rx="3" fill="#1e1810" stroke="url(#goldDark)" stroke-width="1.5" />
-      <!-- Pommel -->
-      <circle cx="256" cy="415" r="14" fill="url(#goldPrimary)" />
-      <circle cx="256" cy="415" r="6" fill="#78350f" />
-    </g>
-
-    <!-- Great Knight Shield -->
-    <!-- Outer Golden Shield Rim -->
-    <path d="M120 120 C120 120 256 90 256 90 C256 90 392 120 392 120 C392 240 370 340 256 420 C142 340 120 240 120 120 Z" 
-          fill="url(#goldPrimary)" stroke="#d97706" stroke-width="2" />
-
-    <!-- Inner Dark Obsidian/Crimson Field -->
-    <path d="M136 132 C136 132 256 106 256 106 C256 106 376 132 376 132 C376 235 356 325 256 398 C156 325 136 235 136 132 Z" 
-          fill="url(#crimsonGrad)" />
-
-    <!-- Shield Steel Inlay & Studs -->
-    <circle cx="148" cy="144" r="3.5" fill="#fde68a" />
-    <circle cx="364" cy="144" r="3.5" fill="#fde68a" />
-    <circle cx="145" cy="220" r="3.5" fill="#fde68a" />
-    <circle cx="367" cy="220" r="3.5" fill="#fde68a" />
-    <circle cx="170" cy="290" r="3.5" fill="#fde68a" />
-    <circle cx="342" cy="290" r="3.5" fill="#fde68a" />
-    <circle cx="256" cy="385" r="4" fill="#fde68a" />
-
-    <!-- Knight Helm (Great Helmet) -->
-    <!-- Helmet Crown & Plume -->
-    <path d="M256 125 C230 125 210 145 208 175 L304 175 C302 145 282 125 256 125 Z" fill="url(#steelBlade)" />
-    <!-- Golden Plume Crest Mount -->
-    <path d="M246 115 L256 95 L266 115 L256 130 Z" fill="url(#goldLight)" filter="url(#goldGlow)" />
+  <!-- Minimalist Monochromatic Knight Symbol -->
+  <rect width="512" height="512" rx="100" fill="#0c0d12" />
+  
+  <g fill="#f59e0b" transform="translate(56, 56)">
+    <!-- Outer Shield Frame -->
+    <path d="M200 10 C290 10 370 30 370 30 C370 190 330 310 200 390 C70 310 30 190 30 30 C30 30 110 10 200 10 Z" 
+          fill="none" stroke="#f59e0b" stroke-width="16" stroke-linejoin="round" />
     
+    <!-- Knight Helmet Minimalist Silhouette -->
+    <!-- Helmet Crown & Plume -->
+    <path d="M200 65 C150 65 115 105 110 160 L290 160 C285 105 250 65 200 65 Z" />
+    
+    <!-- Helmet Plume / Crest -->
+    <path d="M190 40 L200 20 L210 40 L200 55 Z" />
+
     <!-- Helmet Visor / Faceplate -->
-    <path d="M208 175 L200 235 C200 280 230 310 256 325 C282 310 312 280 312 235 L304 175 Z" 
-          fill="url(#steelDark)" stroke="url(#steelBlade)" stroke-width="3" />
+    <path d="M112 175 L105 240 C105 290 145 330 200 345 C255 330 295 290 295 240 L288 175 Z" />
 
-    <!-- Golden Visor Reinforcement Plate (T-Bar / Cross) -->
-    <path d="M210 205 L302 205 L300 225 L264 225 L264 305 L248 305 L248 225 L212 225 Z" 
-          fill="url(#goldPrimary)" stroke="#b45309" stroke-width="1.5" />
+    <!-- Visor Eye Slit Cutout (Negative Space) -->
+    <path d="M130 195 L270 195 L270 210 L130 210 Z" fill="#0c0d12" />
 
-    <!-- Visor Eye Slits (Ocularium) -->
-    <rect x="218" y="210" width="30" height="7" rx="2" fill="#050403" stroke="#f59e0b" stroke-width="0.75" />
-    <rect x="264" y="210" width="30" height="7" rx="2" fill="#050403" stroke="#f59e0b" stroke-width="0.75" />
-
-    <!-- Breathing Holes (Breaths) -->
-    <g fill="#050403">
-      <circle cx="230" cy="245" r="2.5" />
-      <circle cx="240" cy="245" r="2.5" />
-      <circle cx="272" cy="245" r="2.5" />
-      <circle cx="282" cy="245" r="2.5" />
-
-      <circle cx="225" cy="260" r="2.5" />
-      <circle cx="235" cy="260" r="2.5" />
-      <circle cx="277" cy="260" r="2.5" />
-      <circle cx="287" cy="260" r="2.5" />
-
-      <circle cx="230" cy="275" r="2.5" />
-      <circle cx="240" cy="275" r="2.5" />
-      <circle cx="272" cy="275" r="2.5" />
-      <circle cx="282" cy="275" r="2.5" />
-    </g>
-
-    <!-- Royal Collar / Gorget Plates -->
-    <path d="M225 315 L256 335 L287 315 L296 345 L256 365 L216 345 Z" fill="url(#goldPrimary)" />
-    <circle cx="256" cy="350" r="4" fill="#451a03" />
-
-    <!-- Royal Heraldic Banner Ribbon (Bottom) -->
-    <g transform="translate(0, 40)">
-      <!-- Ribbon Tails -->
-      <path d="M70 415 L130 395 L130 435 L85 450 Z" fill="url(#goldDark)" />
-      <path d="M442 415 L382 395 L382 435 L427 450 Z" fill="url(#goldDark)" />
-      
-      <!-- Main Ribbon Banner -->
-      <path d="M110 405 C180 390 332 390 402 405 L392 445 C322 430 190 430 120 445 Z" 
-            fill="url(#goldPrimary)" stroke="#78350f" stroke-width="2" />
-
-      <!-- Text: IL CAVALIERE -->
-      <text x="256" y="430" 
-            font-family="'Cinzel', 'Times New Roman', serif" 
-            font-size="20" 
-            font-weight="900" 
-            letter-spacing="4" 
-            fill="#1e1810" 
-            text-anchor="middle">IL CAVALIERE</text>
-    </g>
+    <!-- Vertical Breathing Slits (Negative Space) -->
+    <rect x="155" y="235" width="12" height="40" rx="6" fill="#0c0d12" />
+    <rect x="180" y="235" width="12" height="55" rx="6" fill="#0c0d12" />
+    <rect x="208" y="235" width="12" height="55" rx="6" fill="#0c0d12" />
+    <rect x="233" y="235" width="12" height="40" rx="6" fill="#0c0d12" />
   </g>
 </svg>

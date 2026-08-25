@@ -1,198 +1,54 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="100%" height="100%">
-  <defs>
-    <!-- Background Gradient -->
-    <radialGradient id="bannerBg" cx="30%" cy="50%" r="70%">
-      <stop offset="0%" stop-color="#2a1b10" />
-      <stop offset="45%" stop-color="#141010" />
-      <stop offset="85%" stop-color="#08080a" />
-      <stop offset="100%" stop-color="#030304" />
-    </radialGradient>
+  <!-- Minimalist Dark Background -->
+  <rect width="1200" height="400" fill="#0c0d12" />
+  <rect width="1180" height="380" x="10" y="10" rx="12" fill="none" stroke="#f59e0b" stroke-width="2" opacity="0.3" />
 
-    <!-- Gold Gradients -->
-    <linearGradient id="goldBanner" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fffdf0" />
-      <stop offset="25%" stop-color="#fde68a" />
-      <stop offset="50%" stop-color="#f59e0b" />
-      <stop offset="75%" stop-color="#b45309" />
-      <stop offset="100%" stop-color="#78350f" />
-    </linearGradient>
+  <!-- Left: Minimalist Monochromatic Knight Symbol -->
+  <g fill="#f59e0b" transform="translate(100, 60)">
+    <!-- Outer Shield Frame -->
+    <path d="M140 10 C200 10 260 25 260 25 C260 140 230 225 140 280 C50 225 20 140 20 25 C20 25 80 10 140 10 Z" 
+          fill="none" stroke="#f59e0b" stroke-width="12" stroke-linejoin="round" />
 
-    <linearGradient id="goldTrim" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#78350f" />
-      <stop offset="25%" stop-color="#f59e0b" />
-      <stop offset="50%" stop-color="#fffbeb" />
-      <stop offset="75%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#78350f" />
-    </linearGradient>
+    <!-- Helmet Top -->
+    <path d="M140 50 C105 50 80 78 76 118 L204 118 C200 78 175 50 140 50 Z" />
+    <path d="M133 30 L140 15 L147 30 L140 42 Z" />
 
-    <linearGradient id="crimsonBanner" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#991b1b" />
-      <stop offset="50%" stop-color="#581c87" />
-      <stop offset="100%" stop-color="#180424" />
-    </linearGradient>
+    <!-- Helmet Faceplate -->
+    <path d="M78 130 L73 175 C73 210 100 240 140 250 C180 240 207 210 207 175 L202 130 Z" />
 
-    <linearGradient id="steelBladeB" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#f1f5f9" />
-      <stop offset="50%" stop-color="#94a3b8" />
-      <stop offset="100%" stop-color="#475569" />
-    </linearGradient>
+    <!-- Eye Slit (Cutout) -->
+    <path d="M90 144 L190 144 L190 155 L90 155 Z" fill="#0c0d12" />
 
-    <!-- Glow & Shadow -->
-    <filter id="goldGlowB" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-
-    <filter id="dropShadowB" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity="0.8" />
-    </filter>
-
-    <!-- Grid / Castle Silhouette -->
-    <linearGradient id="castleGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#0f0e14" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#030304" stop-opacity="0.9" />
-    </linearGradient>
-  </defs>
-
-  <!-- Banner Background -->
-  <rect width="1200" height="400" fill="url(#bannerBg)" />
-
-  <!-- Atmospheric Fortress Silhouette in Background -->
-  <path d="M0 400 L0 320 L60 320 L60 280 L90 280 L90 320 L150 320 L150 250 L180 250 L180 230 L210 230 L210 250 L240 250 L240 320 L320 320 L320 270 L350 270 L350 320 L450 320 L450 290 L480 290 L480 320 L600 320 L600 300 L640 300 L640 320 L750 320 L750 240 L780 240 L780 220 L810 220 L810 240 L850 240 L850 320 L980 320 L980 280 L1010 280 L1010 320 L1100 320 L1100 260 L1130 260 L1130 320 L1200 320 L1200 400 Z" fill="url(#castleGrad)" opacity="0.4" />
-
-  <!-- Ambient Light Orbs -->
-  <circle cx="220" cy="200" r="160" fill="url(#goldBanner)" opacity="0.09" filter="url(#goldGlowB)" />
-  <circle cx="850" cy="180" r="220" fill="#991b1b" opacity="0.08" filter="url(#goldGlowB)" />
-
-  <!-- Outer Ornate Medieval Border Frames -->
-  <rect width="1184" height="384" x="8" y="8" rx="8" fill="none" stroke="url(#goldBanner)" stroke-width="2" opacity="0.65" />
-  <rect width="1168" height="368" x="16" y="16" rx="4" fill="none" stroke="url(#goldBanner)" stroke-width="1" opacity="0.35" stroke-dasharray="8 6" />
-
-  <!-- Ornate Corner Filigrees -->
-  <!-- Top-Left -->
-  <g transform="translate(18, 18)" stroke="url(#goldBanner)" stroke-width="2" fill="none">
-    <path d="M0 40 L0 0 L40 0" />
-    <circle cx="10" cy="10" r="4" fill="url(#goldBanner)" />
-    <path d="M0 0 L25 25" />
-  </g>
-  <!-- Top-Right -->
-  <g transform="translate(1182, 18) scale(-1, 1)" stroke="url(#goldBanner)" stroke-width="2" fill="none">
-    <path d="M0 40 L0 0 L40 0" />
-    <circle cx="10" cy="10" r="4" fill="url(#goldBanner)" />
-    <path d="M0 0 L25 25" />
-  </g>
-  <!-- Bottom-Left -->
-  <g transform="translate(18, 382) scale(1, -1)" stroke="url(#goldBanner)" stroke-width="2" fill="none">
-    <path d="M0 40 L0 0 L40 0" />
-    <circle cx="10" cy="10" r="4" fill="url(#goldBanner)" />
-    <path d="M0 0 L25 25" />
-  </g>
-  <!-- Bottom-Right -->
-  <g transform="translate(1182, 382) scale(-1, -1)" stroke="url(#goldBanner)" stroke-width="2" fill="none">
-    <path d="M0 40 L0 0 L40 0" />
-    <circle cx="10" cy="10" r="4" fill="url(#goldBanner)" />
-    <path d="M0 0 L25 25" />
+    <!-- Breathing Slits (Cutouts) -->
+    <rect x="108" y="174" width="9" height="28" rx="4.5" fill="#0c0d12" />
+    <rect x="126" y="174" width="9" height="38" rx="4.5" fill="#0c0d12" />
+    <rect x="145" y="174" width="9" height="38" rx="4.5" fill="#0c0d12" />
+    <rect x="163" y="174" width="9" height="28" rx="4.5" fill="#0c0d12" />
   </g>
 
-  <!-- LEFT: Heraldic Knight Shield Crest -->
-  <g transform="translate(40, 20)" filter="url(#dropShadowB)">
-    <!-- Crossed Swords behind shield -->
-    <g transform="translate(180, 180) rotate(-45)">
-      <path d="M-4 -140 L0 -160 L4 -140 L4 90 L-4 90 Z" fill="url(#steelBladeB)" />
-      <rect x="-24" y="90" width="48" height="10" rx="3" fill="url(#goldBanner)" />
-      <rect x="-4" y="100" width="8" height="30" fill="#18120c" stroke="url(#goldBanner)" stroke-width="1" />
-      <circle cx="0" cy="140" r="10" fill="url(#goldBanner)" />
-    </g>
-    <g transform="translate(180, 180) rotate(45)">
-      <path d="M-4 -140 L0 -160 L4 -140 L4 90 L-4 90 Z" fill="url(#steelBladeB)" />
-      <rect x="-24" y="90" width="48" height="10" rx="3" fill="url(#goldBanner)" />
-      <rect x="-4" y="100" width="8" height="30" fill="#18120c" stroke="url(#goldBanner)" stroke-width="1" />
-      <circle cx="0" cy="140" r="10" fill="url(#goldBanner)" />
-    </g>
-
-    <!-- Outer Shield -->
-    <path d="M80 80 C80 80 180 60 180 60 C180 60 280 80 280 80 C280 170 260 240 180 300 C100 240 80 170 80 80 Z" 
-          fill="url(#goldBanner)" stroke="#d97706" stroke-width="2" />
-
-    <!-- Inner Crimson Field -->
-    <path d="M92 90 C92 90 180 72 180 72 C180 72 268 90 268 90 C268 165 250 230 180 284 C110 230 92 165 92 90 Z" 
-          fill="url(#crimsonBanner)" />
-
-    <!-- Knight Helm -->
-    <path d="M180 88 C160 88 145 105 144 128 L216 128 C215 105 200 88 180 88 Z" fill="url(#steelBladeB)" />
-    <path d="M144 128 L138 175 C138 210 160 232 180 244 C200 232 222 210 222 175 L216 128 Z" 
-          fill="#111827" stroke="url(#steelBladeB)" stroke-width="2" />
-    
-    <!-- Gold T-Bar Visor -->
-    <path d="M146 150 L214 150 L212 165 L186 165 L186 228 L174 228 L174 165 L148 165 Z" 
-          fill="url(#goldBanner)" />
-    
-    <!-- Slits -->
-    <rect x="152" y="154" width="20" height="5" rx="1.5" fill="#050403" />
-    <rect x="188" y="154" width="20" height="5" rx="1.5" fill="#050403" />
-  </g>
-
-  <!-- CENTER/RIGHT: Typography and Badges -->
-  <g transform="translate(420, 60)" filter="url(#dropShadowB)">
-    <!-- Top Royal Header Label -->
-    <g transform="translate(0, 20)">
-      <rect x="0" y="0" width="310" height="28" rx="14" fill="#451a03" stroke="url(#goldBanner)" stroke-width="1.5" />
-      <circle cx="14" cy="14" r="5" fill="#f59e0b" filter="url(#goldGlowB)" />
-      <text x="32" y="19" font-family="'Inter', sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#fde68a">
-        TAVOLA DI COMANDO DEI REAMI
-      </text>
-    </g>
-
-    <!-- Main Title: IL CAVALIERE -->
-    <text x="0" y="105" 
+  <!-- Right: Minimalist Typography -->
+  <g fill="#f59e0b" transform="translate(440, 120)">
+    <!-- Main Title -->
+    <text x="0" y="70" 
           font-family="'Cinzel', 'Georgia', serif" 
-          font-size="64" 
-          font-weight="900" 
-          letter-spacing="6" 
-          fill="url(#goldBanner)"
-          filter="url(#goldGlowB)">
+          font-size="68" 
+          font-weight="800" 
+          letter-spacing="8" 
+          fill="#f59e0b">
       IL CAVALIERE
     </text>
 
+    <!-- Clean Divider Line -->
+    <line x1="0" y1="105" x2="640" y2="105" stroke="#f59e0b" stroke-width="3" opacity="0.6" />
+
     <!-- Subtitle -->
     <text x="4" y="145" 
-          font-family="'Cinzel', 'Times New Roman', serif" 
+          font-family="'Inter', -apple-system, sans-serif" 
           font-size="20" 
-          font-weight="600" 
-          letter-spacing="3" 
-          fill="#fef08a" opacity="0.9">
-      Custode, Baluardo &amp; Oracolo dei Reami Discord
+          font-weight="500" 
+          letter-spacing="4" 
+          fill="#fde68a" opacity="0.85">
+      BOT DISCORD &amp; TAVOLA DI COMANDO
     </text>
-
-    <!-- Decorative Gold Divider Line -->
-    <line x1="4" y1="165" x2="680" y2="165" stroke="url(#goldTrim)" stroke-width="2" />
-    <circle cx="342" cy="165" r="4" fill="#fbbf24" />
-
-    <!-- Feature Seals / Crest Badges -->
-    <g transform="translate(0, 190)">
-      <!-- Badge 1: AI Neurale -->
-      <g transform="translate(0, 0)">
-        <rect width="160" height="38" rx="8" fill="#181310" stroke="url(#goldBanner)" stroke-width="1" />
-        <text x="14" y="24" font-family="'Inter', sans-serif" font-size="12" font-weight="700" fill="#fef3c7">🗡️ Oracolo AI 70B</text>
-      </g>
-
-      <!-- Badge 2: Patti & Alleanze -->
-      <g transform="translate(170, 0)">
-        <rect width="160" height="38" rx="8" fill="#181310" stroke="url(#goldBanner)" stroke-width="1" />
-        <text x="14" y="24" font-family="'Inter', sans-serif" font-size="12" font-weight="700" fill="#fef3c7">🤝 Patti &amp; Alleanze</text>
-      </g>
-
-      <!-- Badge 3: Fabbro Pergamene -->
-      <g transform="translate(340, 0)">
-        <rect width="170" height="38" rx="8" fill="#181310" stroke="url(#goldBanner)" stroke-width="1" />
-        <text x="14" y="24" font-family="'Inter', sans-serif" font-size="12" font-weight="700" fill="#fef3c7">📜 Fabbro Pergamene</text>
-      </g>
-
-      <!-- Badge 4: Tribunale AutoMod -->
-      <g transform="translate(520, 0)">
-        <rect width="160" height="38" rx="8" fill="#181310" stroke="url(#goldBanner)" stroke-width="1" />
-        <text x="14" y="24" font-family="'Inter', sans-serif" font-size="12" font-weight="700" fill="#fef3c7">🛡️ Tribunale AutoMod</text>
-      </g>
-    </g>
   </g>
 </svg>
