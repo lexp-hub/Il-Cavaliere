@@ -320,20 +320,43 @@ input:checked + .slider:before {
   color: #334155 !important;
   font-weight: 600;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  min-height: 40px;
 }
 .nav-tab:hover {
-  background: rgba(255, 255, 255, 0.75) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
   color: #0f172a !important;
 }
 
+.nav-tab i,
+.nav-tab svg,
+.nav-tab .lucide {
+  color: #dc2626 !important;
+  stroke: #dc2626 !important;
+  transition: all 0.2s ease;
+}
+
 .nav-tab.active {
+  background: #dc2626 !important;
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
   color: #ffffff !important;
   box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
   border-left: none !important;
 }
-.nav-tab.active i, .nav-tab.active span {
+.nav-tab.active,
+.nav-tab.active i,
+.nav-tab.active svg,
+.nav-tab.active svg *,
+.nav-tab.active .lucide,
+.nav-tab.active span {
   color: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.nav-tab.active span.rounded {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.35) !important;
 }
 
 .discord-chat-container {
