@@ -13,8 +13,11 @@ export default {
     ),
 
   async execute(interaction) {
-    const manager = interaction.options.getUser('manager') || interaction.user;
-    const modal = PartnershipManager.createPartnershipModal(manager.id);
+    const manager = interaction.options.getUser('manager');
+    const modal = PartnershipManager.createPartnershipModal(
+      manager ? manager.id : null,
+      manager ? (manager.tag || manager.username) : ''
+    );
     return interaction.showModal(modal);
   }
 };

@@ -14,8 +14,9 @@ export const PartnershipManager = {
   /**
    * Generates the native Discord Modal form for partnership submission
    * @param {string|null} managerId ID of the pre-selected manager/representative
+   * @param {string} managerName Username or mention string of the pre-selected manager
    */
-  createPartnershipModal(managerId = null) {
+  createPartnershipModal(managerId = null, managerName = '') {
     const customId = managerId ? `modal_partnership_submit_${managerId}` : 'modal_partnership_submit';
 
     const modal = new ModalBuilder()
@@ -29,6 +30,18 @@ export const PartnershipManager = {
       .setPlaceholder('es. discord.gg/invito oppure solo codice')
       .setRequired(true)
       .setMaxLength(100);
+
+    const managerInput = new TextInputBuilder()
+      .setCustomId('partner_manager')
+      .setLabel('Partner Manager / Rappresentante')
+      .setStyle(TextInputStyle.Short)
+      .setPlaceholder('es. @utente, ID Discord o lascia vuoto per te stesso')
+      .setRequired(false)
+      .setMaxLength(100);
+
+    if (managerName) {
+      managerInput.setValue(managerName);
+    }
 
     const descInput = new TextInputBuilder()
       .setCustomId('partner_text')
@@ -47,10 +60,11 @@ export const PartnershipManager = {
       .setMaxLength(255);
 
     const row1 = new ActionRowBuilder().addComponents(inviteInput);
-    const row2 = new ActionRowBuilder().addComponents(descInput);
-    const row3 = new ActionRowBuilder().addComponents(bannerInput);
+    const row2 = new ActionRowBuilder().addComponents(managerInput);
+    const row3 = new ActionRowBuilder().addComponents(descInput);
+    const row4 = new ActionRowBuilder().addComponents(bannerInput);
 
-    modal.addComponents(row1, row2, row3);
+    modal.addComponents(row1, row2, row3, row4);
     return modal;
   },
 
@@ -230,6 +244,11 @@ export const PartnershipManager = {
 
     const invite = interaction.fields.getTextInputValue('partner_invite')?.trim();
     const text = interaction.fields.getTextInputValue('partner_text')?.trim();
+    let managerInputRaw = null;
+    try {
+      managerInputRaw = interaction.fields.getTextInputValue('partner_manager')?.trim() || null;
+    } catch (e) {}
+
     let bannerUrl = null;
     try {
       bannerUrl = interaction.fields.getTextInputValue('partner_banner')?.trim() || null;
@@ -237,7 +256,7 @@ export const PartnershipManager = {
 
     let repUser = interaction.user;
     
-    // Extract manager ID from customId if provided (/partnership @manager)
+    // 1. Extract manager ID from customId if provided (/partnership @manager)
     if (interaction.customId.startsWith('modal_partnership_submit_')) {
       const managerId = interaction.customId.replace('modal_partnership_submit_', '').trim();
       if (managerId) {
@@ -246,6 +265,25 @@ export const PartnershipManager = {
         } catch (e) {
           console.warn(`[Partnership] Impossibile recuperare utente manager ${managerId}:`, e.message);
         }
+      }
+    }
+
+    // 2. If manager text was typed into modal, resolve it
+    if (managerInputRaw && managerInputRaw.length > 0) {
+      const idMatch = managerInputRaw.match(/\d{17,20}/);
+      if (idMatch) {
+        try {
+          const fetched = await interaction.client.users.fetch(idMatch[0]);
+          if (fetched) repUser = fetched;
+        } catch (e) {}
+      } else {
+        const cleanName = managerInputRaw.replace(/^@/, '').toLowerCase();
+        const foundMember = interaction.guild?.members.cache.find(m => 
+          m.user.username.toLowerCase() === cleanName ||
+          m.user.tag?.toLowerCase() === cleanName ||
+          m.displayName.toLowerCase() === cleanName
+        );
+        if (foundMember) repUser = foundMember.user;
       }
     }
 
