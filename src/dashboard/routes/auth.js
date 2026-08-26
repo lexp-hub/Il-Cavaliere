@@ -1,13 +1,14 @@
 import express from 'express';
 import crypto from 'crypto';
 import { CONFIG } from '../../config.js';
+import { DatabaseHelper } from '../../database/db.js';
 
 export const authRouter = express.Router();
 
 const DISCORD_API_URL = 'https://discord.com/api/v10';
 const OAUTH_SCOPES = ['identify', 'guilds'];
 
-// In-memory token store for ad-block / brave / cookie-less localStorage authentication
+// In-memory token cache backed by SQLite
 export const authTokens = new Map();
 
 export function createAuthToken(userData, accessToken) {
@@ -17,29 +18,36 @@ export function createAuthToken(userData, accessToken) {
     accessToken,
     createdAt: Date.now()
   });
+  DatabaseHelper.saveAuthSession(token, userData, accessToken);
   return token;
 }
 
 export function validateAuthToken(token) {
   if (!token) return null;
   const entry = authTokens.get(token);
-  if (!entry) return null;
-  // 90 days validity
-  if (Date.now() - entry.createdAt > 90 * 24 * 60 * 60 * 1000) {
-    authTokens.delete(token);
-    return null;
+  if (entry) {
+    if (Date.now() - entry.createdAt > 90 * 24 * 60 * 60 * 1000) {
+      authTokens.delete(token);
+      DatabaseHelper.deleteAuthSession(token);
+      return null;
+    }
+    return entry.user;
   }
-  return entry.user;
+
+  // Check persistent SQLite database
+  const dbUser = DatabaseHelper.getAuthSession(token);
+  if (dbUser) {
+    authTokens.set(token, {
+      user: dbUser,
+      accessToken: '',
+      createdAt: Date.now()
+    });
+    return dbUser;
+  }
+  return null;
 }
 
 function getCallbackUrl(req) {
-  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost')) {
-    return process.env.OAUTH2_CALLBACK_URL;
-  }
-  if (process.env.SUBDOMAIN) {
-    const sub = process.env.SUBDOMAIN.includes('.') ? process.env.SUBDOMAIN : `${process.env.SUBDOMAIN}.wispbyte.app`;
-    return `https://${sub}/auth/callback`;
-  }
   const host = req.get('x-forwarded-host') || req.get('host') || 'il-cavaliere.wispbyte.app';
   let proto = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http') || req.protocol || 'http';
   
@@ -47,7 +55,18 @@ function getCallbackUrl(req) {
     proto = 'https';
   }
 
-  return `${proto}://${host}/auth/callback`;
+  if (req.originalUrl && req.originalUrl.includes('/auth/discord/callback')) {
+    return `${proto}://${host}/auth/discord/callback`;
+  }
+  if (req.originalUrl && req.originalUrl.includes('/auth/callback')) {
+    return `${proto}://${host}/auth/callback`;
+  }
+
+  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost')) {
+    return process.env.OAUTH2_CALLBACK_URL;
+  }
+
+  return `https://il-cavaliere.wispbyte.app/auth/discord/callback`;
 }
 
 authRouter.get('/login', (req, res) => {
@@ -92,10 +111,13 @@ const handleCallback = async (req, res) => {
     return res.redirect('/?error=missing_client_secret');
   }
 
-  const callbackUrl = getCallbackUrl(req);
+  const primaryUrl = getCallbackUrl(req);
+  const altUrl = primaryUrl.includes('/discord/callback')
+    ? primaryUrl.replace('/discord/callback', '/callback')
+    : primaryUrl.replace('/auth/callback', '/auth/discord/callback');
 
   try {
-    const tokenResponse = await fetch(`${DISCORD_API_URL}/oauth2/token`, {
+    let tokenResponse = await fetch(`${DISCORD_API_URL}/oauth2/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -105,11 +127,30 @@ const handleCallback = async (req, res) => {
         client_secret: CONFIG.CLIENT_SECRET,
         grant_type: 'authorization_code',
         code: code.toString(),
-        redirect_uri: callbackUrl
+        redirect_uri: primaryUrl
       })
     });
 
-    const tokenData = await tokenResponse.json();
+    let tokenData = await tokenResponse.json();
+
+    if ((!tokenResponse.ok || !tokenData.access_token) && altUrl) {
+      console.log(`[OAuth2] Primary redirect_uri failed (${primaryUrl}), trying alternate: ${altUrl}`);
+      tokenResponse = await fetch(`${DISCORD_API_URL}/oauth2/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          client_id: CONFIG.CLIENT_ID,
+          client_secret: CONFIG.CLIENT_SECRET,
+          grant_type: 'authorization_code',
+          code: code.toString(),
+          redirect_uri: altUrl
+        })
+      });
+      tokenData = await tokenResponse.json();
+    }
+
     if (!tokenResponse.ok || !tokenData.access_token) {
       console.error('[OAuth2] Token error from Discord:', tokenData);
       return res.redirect(`/?error=token_exchange_failed&msg=${encodeURIComponent(tokenData.error_description || tokenData.error || 'unknown')}`);

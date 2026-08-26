@@ -325,4 +325,11 @@ CREATE TABLE IF NOT EXISTS presentations (
   message_id TEXT,
   timestamp INTEGER DEFAULT (strftime('%s', 'now'))
 );
+
+CREATE TABLE IF NOT EXISTS auth_sessions (
+  token TEXT PRIMARY KEY,
+  user_data TEXT,
+  access_token TEXT,
+  created_at INTEGER
+);
 `;

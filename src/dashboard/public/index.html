@@ -220,6 +220,25 @@
     });
 
     async function checkAuthState() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const err = urlParams.get('error');
+      const msg = urlParams.get('msg');
+      if (err) {
+        localStorage.removeItem('cavaliere_auth_token');
+        let errDesc = 'Accesso non riuscito o sessione scaduta.';
+        if (err === 'missing_client_secret') errDesc = 'DISCORD_CLIENT_SECRET non configurato nelle variabili d\'ambiente.';
+        if (err === 'token_exchange_failed') errDesc = `Errore di scambio token Discord: ${msg || 'verifica il redirect_uri'}`;
+        if (err === 'no_code') errDesc = 'Autorizzazione Discord annullata.';
+        
+        const heroBadge = document.getElementById('hero-badge');
+        if (heroBadge) {
+          heroBadge.className = 'inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-full bg-rose-100 border border-rose-300 text-rose-800 text-[11px] sm:text-xs font-bold mb-5 shadow-sm';
+          heroBadge.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-rose-600"></i> <span>${errDesc}</span>`;
+          if (window.lucide) lucide.createIcons();
+        }
+        return;
+      }
+
       try {
         const res = await fetch('/auth/me');
         if (res.ok) {
@@ -256,8 +275,11 @@
                 <i data-lucide="shield-check" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-600"></i>
                 <span>Connesso come @${user.username}</span>
               `;
+              if (window.lucide) lucide.createIcons();
             }
           }
+        } else if (res.status === 401) {
+          localStorage.removeItem('cavaliere_auth_token');
         }
       } catch (e) {
         console.warn('Auth check skipped:', e);

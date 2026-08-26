@@ -941,6 +941,38 @@ export const DatabaseHelper = {
 
   getUserPresentation(guildId, userId) {
     return db.prepare('SELECT * FROM presentations WHERE guild_id = ? AND user_id = ? ORDER BY timestamp DESC LIMIT 1').get(guildId, userId);
+  },
+
+  saveAuthSession(token, userData, accessToken) {
+    try {
+      db.prepare(`
+        INSERT OR REPLACE INTO auth_sessions (token, user_data, access_token, created_at)
+        VALUES (?, ?, ?, ?)
+      `).run(token, JSON.stringify(userData), accessToken || '', Date.now());
+    } catch (e) {
+      console.error('[DB] Error saving auth session:', e.message);
+    }
+  },
+
+  getAuthSession(token) {
+    try {
+      const row = db.prepare('SELECT user_data, created_at FROM auth_sessions WHERE token = ?').get(token);
+      if (!row) return null;
+      if (Date.now() - Number(row.created_at || 0) > 90 * 24 * 60 * 60 * 1000) {
+        db.prepare('DELETE FROM auth_sessions WHERE token = ?').run(token);
+        return null;
+      }
+      return JSON.parse(row.user_data);
+    } catch (e) {
+      console.error('[DB] Error getting auth session:', e.message);
+      return null;
+    }
+  },
+
+  deleteAuthSession(token) {
+    try {
+      db.prepare('DELETE FROM auth_sessions WHERE token = ?').run(token);
+    } catch (e) {}
   }
 };
 
