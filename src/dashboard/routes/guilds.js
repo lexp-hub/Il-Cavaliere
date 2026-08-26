@@ -105,8 +105,16 @@ export function createGuildsRouter(botClient) {
         let normalizedType = 'other';
         if (c.type === ChannelType.GuildCategory || c.type === 4) {
           normalizedType = 'category';
-        } else if (c.isTextBased?.() || c.type === ChannelType.GuildText || c.type === ChannelType.GuildAnnouncement || c.type === 0 || c.type === 5) {
+        } else if (
+          (c.type === ChannelType.GuildText || c.type === ChannelType.GuildAnnouncement || c.type === 0 || c.type === 5) &&
+          c.type !== ChannelType.GuildVoice &&
+          c.type !== ChannelType.GuildStageVoice &&
+          c.type !== 2 &&
+          c.type !== 13
+        ) {
           normalizedType = 'text';
+        } else if (c.type === ChannelType.GuildVoice || c.type === ChannelType.GuildStageVoice || c.type === 2 || c.type === 13) {
+          normalizedType = 'voice';
         }
 
         return {

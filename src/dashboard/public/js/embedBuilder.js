@@ -260,7 +260,7 @@
     const listRole = container.querySelector('.role-pick-list');
 
     function renderChannels(query = '') {
-      const channels = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+      const channels = (window.AppState?.channels || []).filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
       const q = query.toLowerCase().trim().replace(/^#/, '');
       listCh.innerHTML = '';
       const filtered = channels.filter(c => !q || c.name.toLowerCase().includes(q) || String(c.id).includes(q));
@@ -357,7 +357,7 @@
       } else if (filterType === 'category') {
         items = (window.AppState?.channels || []).filter(c => c.type === 'category' || c.type === 4);
       } else {
-        items = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+        items = (window.AppState?.channels || []).filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
       }
 
       const currentVal = select.value;
@@ -428,7 +428,7 @@
 
     if (btnOpenChannelPicker && channelPickerDropdown && pickerChannelSearch && pickerChannelsList) {
       function renderPickerChannels(filter = '') {
-        const channels = (window.AppState?.channels || []).filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+        const channels = (window.AppState?.channels || []).filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
         const query = filter.toLowerCase().trim().replace(/^#/, '');
         pickerChannelsList.innerHTML = '';
 

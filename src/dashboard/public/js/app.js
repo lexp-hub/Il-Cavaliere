@@ -272,7 +272,7 @@ window.switchGuild = async function(guildId) {
 };
 
 function populateDropdowns(channels = [], roles = []) {
-  const textChannels = channels.filter(c => c.type === 'text' || c.type === 0 || c.type === 5);
+  const textChannels = channels.filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
   const categories = channels.filter(c => c.type === 'category' || c.type === 4);
 
   const channelSelectIds = [
