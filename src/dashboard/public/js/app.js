@@ -250,6 +250,12 @@ window.switchGuild = async function(guildId) {
       window.updateEmbedPreview();
     }
 
+    if (window.loadWelcomerData) {
+      window.loadWelcomerData(guildId);
+    } else if (window.updateWelcomerPreview) {
+      window.updateWelcomerPreview();
+    }
+
     if (window.loadModuleData) {
       window.loadModuleData(guildId);
     }
