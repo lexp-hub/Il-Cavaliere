@@ -3,6 +3,7 @@ const originalFetch = window.fetch;
 window.fetch = async function(url, options = {}) {
   options = options || {};
   options.headers = options.headers || {};
+  options.credentials = options.credentials || 'include';
   
   const token = localStorage.getItem('cavaliere_auth_token');
   if (token) {

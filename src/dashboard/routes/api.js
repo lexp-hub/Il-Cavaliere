@@ -226,15 +226,49 @@ export function createApiRouter(botClient) {
     const guildId = req.params.guildId;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
-      return res.status(400).json({ error: 'Bot non pronto.' });
+      return res.status(400).json({ error: 'Bot non collegato al server o offline.' });
     }
 
     try {
       const guild = botClient.guilds.cache.get(guildId);
-      const channel = guild.channels.cache.get(channelId);
+      const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
       if (!channel) return res.status(404).json({ error: 'Canale non trovato nel server' });
 
-      const embed = new EmbedBuilder(embedData);
+      const embed = new EmbedBuilder();
+      if (embedData.title) embed.setTitle(embedData.title);
+      if (embedData.description) embed.setDescription(embedData.description);
+      if (embedData.url) embed.setURL(embedData.url);
+      if (embedData.color !== undefined) {
+        try { embed.setColor(embedData.color); } catch (e) { embed.setColor('#dc2626'); }
+      }
+      if (embedData.author?.name) {
+        embed.setAuthor({
+          name: embedData.author.name,
+          iconURL: embedData.author.icon_url || undefined,
+          url: embedData.author.url || undefined
+        });
+      }
+      if (embedData.image?.url) embed.setImage(embedData.image.url);
+      if (embedData.thumbnail?.url) embed.setThumbnail(embedData.thumbnail.url);
+      if (embedData.footer?.text) {
+        embed.setFooter({
+          text: embedData.footer.text,
+          iconURL: embedData.footer.icon_url || undefined
+        });
+      }
+      if (embedData.timestamp) embed.setTimestamp();
+      if (Array.isArray(embedData.fields) && embedData.fields.length > 0) {
+        embedData.fields.forEach(f => {
+          if (f.name && f.value) {
+            embed.addFields({
+              name: String(f.name),
+              value: String(f.value),
+              inline: Boolean(f.inline)
+            });
+          }
+        });
+      }
+
       const rows = [];
 
       if (componentsData && componentsData.length > 0) {

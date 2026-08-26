@@ -7,14 +7,15 @@ export function createGuildsRouter(botClient) {
   const router = express.Router();
 
   const requireModAuth = async (req, res, next) => {
-    if (!req.session.user) {
+    const user = req.user || req.session?.user;
+    if (!user) {
       return res.status(401).json({ error: 'Accesso negato. Effettua prima il login con Discord.' });
     }
     next();
   };
 
   router.get('/', requireModAuth, async (req, res) => {
-    const user = req.session.user;
+    const user = req.user || req.session?.user;
 
     if (!botClient?.isReady() || botClient.guilds.cache.size === 0) {
       return res.json([]);
@@ -65,7 +66,7 @@ export function createGuildsRouter(botClient) {
 
   router.get('/:guildId', requireModAuth, async (req, res) => {
     const guildId = req.params.guildId;
-    const user = req.session.user;
+    const user = req.user || req.session?.user;
 
     if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
       return res.status(404).json({ error: 'Server non trovato nel bot' });

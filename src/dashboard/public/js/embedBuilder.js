@@ -612,10 +612,12 @@
 
   allInputs.forEach(input => {
     if (input) {
-      input.addEventListener('input', () => {
-        if (input === colorInput && colorHexInput) colorHexInput.value = colorInput.value.toUpperCase();
-        if (input === colorHexInput && colorInput && colorHexInput.value.startsWith('#')) colorInput.value = colorHexInput.value;
-        updatePreview();
+      ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+        input.addEventListener(evt, () => {
+          if (input === colorInput && colorHexInput) colorHexInput.value = colorInput.value.toUpperCase();
+          if (input === colorHexInput && colorInput && colorHexInput.value.startsWith('#')) colorInput.value = colorHexInput.value;
+          updatePreview();
+        });
       });
     }
   });
@@ -1356,10 +1358,12 @@
 
   allWelInputs.forEach(input => {
     if (input) {
-      input.addEventListener('input', () => {
-        if (input === welColorInput && welColorHexInput) welColorHexInput.value = welColorInput.value.toUpperCase();
-        if (input === welColorHexInput && welColorInput && welColorHexInput.value.startsWith('#')) welColorInput.value = welColorHexInput.value;
-        updateWelcomerPreview();
+      ['input', 'change', 'keyup', 'paste'].forEach(evt => {
+        input.addEventListener(evt, () => {
+          if (input === welColorInput && welColorHexInput) welColorHexInput.value = welColorInput.value.toUpperCase();
+          if (input === welColorHexInput && welColorInput && welColorHexInput.value.startsWith('#')) welColorInput.value = welColorHexInput.value;
+          updateWelcomerPreview();
+        });
       });
     }
   });

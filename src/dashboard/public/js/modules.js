@@ -1015,13 +1015,15 @@
   const btnSendPresPanel = document.getElementById('btn-send-pres-panel');
   if (btnSendPresPanel) {
     btnSendPresPanel.addEventListener('click', async () => {
-      const guildId = window.AppState.currentGuildId;
+      const guildId = window.AppState?.currentGuildId;
+      if (!guildId) return window.showToast('Nessun server selezionato. Seleziona prima un server dal menu in alto.', 'error');
+
       const channelId = document.getElementById('pres-channel')?.value;
+      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello presentazioni.', 'error');
+
       const title = document.getElementById('pres-panel-title')?.value || '📜 Benvenuto nella Sala delle Presentazioni';
       const description = document.getElementById('pres-panel-desc')?.value?.trim() || null;
       const image = document.getElementById('pres-panel-image')?.value?.trim() || null;
-
-      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello presentazioni.', 'error');
 
       try {
         btnSendPresPanel.disabled = true;
