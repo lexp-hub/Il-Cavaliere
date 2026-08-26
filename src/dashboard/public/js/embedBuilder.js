@@ -1034,6 +1034,9 @@
         btnSendEmbed.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5"></i> Invia nel Canale Discord';
         if (window.lucide) lucide.createIcons();
       }
+    });
+  }
+
   // Live Embed Fetch & In-Place Editor Handler
   const fetchInput = document.getElementById('embed-fetch-input');
   const btnFetchLive = document.getElementById('btn-fetch-live-embed');

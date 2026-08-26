@@ -84,6 +84,8 @@
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ modules_enabled: enabledMap })
           });
+        });
+      });
 
       const prefixEl = document.getElementById('gen-prefix');
       const logEl = document.getElementById('gen-log-channel');
@@ -944,6 +946,8 @@
       if (res.ok) window.showToast(`Giveaway per ${prize} avviato!`);
       else window.showToast('Errore avvio giveaway.', 'error');
     });
+  }
+
   // === Community Presentations (Presentazioni) Handler ===
   async function loadPresentationsData(guildId) {
     try {
