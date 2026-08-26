@@ -238,7 +238,10 @@ window.switchGuild = async function(guildId) {
     window.AppState.roles = guildData.roles || [];
 
     const nameEl = document.getElementById('current-guild-name');
-    if (nameEl) nameEl.innerHTML = `🏰 ${guildData.name}`;
+    if (nameEl) {
+      nameEl.innerHTML = `<i data-lucide="shield" class="w-6 h-6 text-red-600 inline-block mr-2 align-middle"></i><span>${guildData.name}</span>`;
+      if (window.lucide) lucide.createIcons();
+    }
 
     const membersEl = document.getElementById('ov-members');
     if (membersEl) membersEl.textContent = (guildData.memberCount || 0).toLocaleString();

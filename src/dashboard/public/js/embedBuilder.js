@@ -647,8 +647,9 @@
       row.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${field.inline ? 'bg-cyan-100 text-cyan-800 border border-cyan-300' : 'bg-red-100 text-red-800 border border-red-300'} font-medieval">
-              ${field.inline ? '🍱 Riquadro Affiancato' : '📦 Riquadro Intero'} #${index + 1}
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${field.inline ? 'bg-cyan-100 text-cyan-800 border border-cyan-300' : 'bg-red-100 text-red-800 border border-red-300'} font-medieval flex items-center gap-1">
+              <i data-lucide="${field.inline ? 'columns-2' : 'square'}" class="w-3 h-3"></i>
+              <span>${field.inline ? 'Riquadro Affiancato' : 'Riquadro Intero'} #${index + 1}</span>
             </span>
           </div>
           <div class="flex items-center gap-2">
@@ -670,7 +671,7 @@
         <div class="space-y-2">
           <div>
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Titolo del Riquadro / Sottogruppo</label>
-            <input type="text" class="form-input text-xs field-name-input bg-white" data-index="${index}" placeholder="es. 📜 Regole, 👑 Staff, 📌 Info..." value="${field.name || ''}">
+            <input type="text" class="form-input text-xs field-name-input bg-white" data-index="${index}" placeholder="es. Regole, Staff, Informazioni..." value="${field.name || ''}">
           </div>
           <div>
             <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
@@ -762,7 +763,7 @@
       if (fields.length >= 25) {
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
-      fields.push({ name: `📦 Riquadro #${fields.length + 1}`, value: 'Testo del riquadro...', inline: false });
+      fields.push({ name: `Riquadro #${fields.length + 1}`, value: 'Testo del riquadro...', inline: false });
       renderFieldsList();
       updatePreview();
     });
@@ -774,8 +775,8 @@
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
       fields.push(
-        { name: `🍱 Colonna 1`, value: 'Informazioni...', inline: true },
-        { name: `🍱 Colonna 2`, value: 'Dettagli...', inline: true }
+        { name: `Colonna 1`, value: 'Informazioni...', inline: true },
+        { name: `Colonna 2`, value: 'Dettagli...', inline: true }
       );
       renderFieldsList();
       updatePreview();
@@ -788,9 +789,9 @@
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
       fields.push(
-        { name: `🍱 Colonna 1`, value: 'Info...', inline: true },
-        { name: `🍱 Colonna 2`, value: 'Info...', inline: true },
-        { name: `🍱 Colonna 3`, value: 'Info...', inline: true }
+        { name: `Colonna 1`, value: 'Info...', inline: true },
+        { name: `Colonna 2`, value: 'Info...', inline: true },
+        { name: `Colonna 3`, value: 'Info...', inline: true }
       );
       renderFieldsList();
       updatePreview();
@@ -1388,8 +1389,9 @@
       row.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
           <div class="flex items-center gap-2">
-            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${field.inline ? 'bg-cyan-100 text-cyan-800 border border-cyan-300' : 'bg-red-100 text-red-800 border border-red-300'} font-medieval">
-              ${field.inline ? '🍱 Riquadro Affiancato' : '📦 Riquadro Intero'} #${index + 1}
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${field.inline ? 'bg-cyan-100 text-cyan-800 border border-cyan-300' : 'bg-red-100 text-red-800 border border-red-300'} font-medieval flex items-center gap-1">
+              <i data-lucide="${field.inline ? 'columns-2' : 'square'}" class="w-3 h-3"></i>
+              <span>${field.inline ? 'Riquadro Affiancato' : 'Riquadro Intero'} #${index + 1}</span>
             </span>
           </div>
           <div class="flex items-center gap-2">
@@ -1411,7 +1413,7 @@
         <div class="space-y-2">
           <div>
             <label class="text-[11px] font-semibold text-slate-600 block mb-1">Titolo del Riquadro</label>
-            <input type="text" class="form-input text-xs wel-field-name-input bg-white" data-index="${index}" placeholder="es. 📜 Regole, 🎭 Ruoli, 💬 Chat..." value="${field.name || ''}">
+            <input type="text" class="form-input text-xs wel-field-name-input bg-white" data-index="${index}" placeholder="es. Regole, Ruoli, Canali..." value="${field.name || ''}">
           </div>
           <div>
             <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
@@ -1503,7 +1505,7 @@
       if (welFields.length >= 25) {
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
-      welFields.push({ name: `📦 Riquadro #${welFields.length + 1}`, value: '{user.mention}', inline: false });
+      welFields.push({ name: `Riquadro #${welFields.length + 1}`, value: '{user.mention}', inline: false });
       renderWelFieldsList();
       updateWelcomerPreview();
     });
@@ -1515,8 +1517,8 @@
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
       welFields.push(
-        { name: `🍱 Regole`, value: 'Rispetta tutti i membri', inline: true },
-        { name: `🍱 Ruoli`, value: 'Visita il canale ruoli', inline: true }
+        { name: `Regole`, value: 'Rispetta tutti i membri del server.', inline: true },
+        { name: `Ruoli`, value: 'Assegnati i ruoli nel canale dedicato.', inline: true }
       );
       renderWelFieldsList();
       updateWelcomerPreview();
@@ -1529,9 +1531,9 @@
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
       welFields.push(
-        { name: `🍱 Regole`, value: 'Info 1...', inline: true },
-        { name: `🍱 Canali`, value: 'Info 2...', inline: true },
-        { name: `🍱 Supporto`, value: 'Info 3...', inline: true }
+        { name: `Regole`, value: 'Leggi le linee guida.', inline: true },
+        { name: `Canali`, value: 'Esplora le sezioni attive.', inline: true },
+        { name: `Supporto`, value: 'Apri un ticket per aiuto.', inline: true }
       );
       renderWelFieldsList();
       updateWelcomerPreview();

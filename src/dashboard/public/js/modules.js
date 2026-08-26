@@ -39,17 +39,17 @@
       if (!grid) return;
 
       const moduleLabels = {
-        ai: { name: '🤖 Il Cavaliere AI', desc: 'Chat neurale e ricerca web' },
-        partnerships: { name: '🤝 Partnership System', desc: 'Verifica inviti e annunci' },
-        embeds: { name: '🎨 Live Embeds', desc: 'Invio messaggi avanzati' },
-        reaction_roles: { name: '🎭 Reaction Roles', desc: 'Pulsanti e ruoli automatici' },
-        welcomer: { name: '👋 Welcomer & DM', desc: 'Benvenuto e auto-role' },
-        autoresponder: { name: '⚡ Auto-Responder', desc: 'Trigger e auto-reaction' },
-        moderation: { name: '🛡️ AutoMod & Sanzioni', desc: 'Protezione anti-spam e log' },
-        tickets: { name: '🎫 Ticket Support', desc: 'Canali privati di assistenza' },
-        giveaways: { name: '🎉 Giveaways', desc: 'Concorsi e timer' },
-        leveling: { name: '⭐ XP & Leveling', desc: 'Classifiche e premi livello' },
-        starboard: { name: '🌟 Starboard', desc: 'Bacheca messaggi stellati' }
+        ai: { name: 'Il Cavaliere AI', desc: 'Chat neurale e ricerca web', icon: 'sparkles', color: 'text-red-600' },
+        partnerships: { name: 'Partnership System', desc: 'Form modale e statistiche manager', icon: 'handshake', color: 'text-red-600' },
+        embeds: { name: 'Live Embeds', desc: 'Anteprima live e riquadri', icon: 'scroll', color: 'text-red-600' },
+        reaction_roles: { name: 'Reaction Roles', desc: 'Pulsanti e ruoli automatici', icon: 'layers', color: 'text-red-600' },
+        welcomer: { name: 'Welcomer & DM', desc: 'Benvenuto, DM e auto-role', icon: 'user-plus', color: 'text-red-600' },
+        autoresponder: { name: 'Auto-Responder', desc: 'Trigger e auto-reaction', icon: 'zap', color: 'text-red-600' },
+        moderation: { name: 'AutoMod & Sanzioni', desc: 'Protezione anti-spam e log', icon: 'shield-alert', color: 'text-rose-600' },
+        tickets: { name: 'Ticket Support', desc: 'Canali privati di assistenza', icon: 'ticket', color: 'text-red-600' },
+        giveaways: { name: 'Giveaways & XP', desc: 'Concorsi e timer automatici', icon: 'trophy', color: 'text-amber-600' },
+        leveling: { name: 'XP & Leveling', desc: 'Classifiche e ruoli livello', icon: 'star', color: 'text-amber-500' },
+        starboard: { name: 'Starboard', desc: 'Bacheca messaggi stellati', icon: 'sparkle', color: 'text-amber-500' }
       };
 
       grid.innerHTML = '';
@@ -60,19 +60,26 @@
         const isEnabled = enabledMap[key] !== false;
 
         const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
+        card.className = 'p-3.5 rounded-xl bg-white/90 border border-slate-300 shadow-sm flex items-center justify-between gap-3';
         card.innerHTML = `
-          <div>
-            <p class="font-bold text-xs text-white">${info.name}</p>
-            <p class="text-[11px] text-slate-400">${info.desc}</p>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center ${info.color} shrink-0">
+              <i data-lucide="${info.icon}" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <p class="font-bold text-xs text-slate-900">${info.name}</p>
+              <p class="text-[11px] text-slate-500">${info.desc}</p>
+            </div>
           </div>
-          <label class="switch">
+          <label class="switch shrink-0">
             <input type="checkbox" class="master-module-toggle" data-module="${key}" ${isEnabled ? 'checked' : ''}>
             <span class="slider"></span>
           </label>
         `;
         grid.appendChild(card);
       });
+
+      if (window.lucide) lucide.createIcons();
 
       document.querySelectorAll('.master-module-toggle').forEach(toggle => {
         toggle.addEventListener('change', async (e) => {
