@@ -759,13 +759,26 @@
             </div>
 
             <div>
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-xs font-bold uppercase tracking-wider text-slate-300">Campi Aggiuntivi (Fields)</label>
-                <button id="btn-add-field" class="text-xs text-purple-400 hover:text-purple-300 font-semibold flex items-center gap-1">
-                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Campo
-                </button>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1 border-b border-slate-300">
+                <div>
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5 font-medieval">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-red-600"></i> Sottogruppi & Riquadri (Fields)
+                  </label>
+                  <p class="text-[11px] text-slate-500">Suddividi l'embed in sezioni e riquadri affiancati (fino a 3 colonne) o a tutta larghezza</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" id="btn-add-field" class="btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1">
+                    <i data-lucide="plus" class="w-3 h-3 text-red-600"></i> + Riquadro
+                  </button>
+                  <button type="button" id="btn-add-field-pair" class="btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1">
+                    <i data-lucide="columns-2" class="w-3 h-3 text-cyan-600"></i> + 2 Colonne
+                  </button>
+                  <button type="button" id="btn-add-field-trio" class="btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1">
+                    <i data-lucide="columns-3" class="w-3 h-3 text-amber-600"></i> + 3 Colonne
+                  </button>
+                </div>
               </div>
-              <div id="embed-fields-container" class="space-y-2"></div>
+              <div id="embed-fields-container" class="space-y-2.5"></div>
             </div>
 
             <div class="pt-3 border-t border-white/5 flex flex-wrap items-center justify-between gap-3">
@@ -1040,13 +1053,26 @@
 
             <!-- Row 7: Fields -->
             <div>
-              <div class="flex items-center justify-between mb-2">
-                <label class="text-xs font-bold uppercase tracking-wider text-slate-700">Campi Aggiuntivi (Fields)</label>
-                <button type="button" id="btn-wel-add-field" class="text-xs text-red-600 hover:text-red-700 font-semibold flex items-center gap-1">
-                  <i data-lucide="plus" class="w-3.5 h-3.5"></i> Aggiungi Campo
-                </button>
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1 border-b border-slate-300">
+                <div>
+                  <label class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5 font-medieval">
+                    <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-red-600"></i> Sottogruppi & Riquadri (Fields)
+                  </label>
+                  <p class="text-[11px] text-slate-500">Riquadri informativi (es. Regole, Ruoli, Canali)</p>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" id="btn-wel-add-field" class="btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1">
+                    <i data-lucide="plus" class="w-3 h-3 text-red-600"></i> + Riquadro
+                  </button>
+                  <button type="button" id="btn-wel-add-field-pair" class="btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1">
+                    <i data-lucide="columns-2" class="w-3 h-3 text-cyan-600"></i> + 2 Colonne
+                  </button>
+                  <button type="button" id="btn-wel-add-field-trio" class="btn-secondary text-[11px] py-1 px-2.5 flex items-center gap-1">
+                    <i data-lucide="columns-3" class="w-3 h-3 text-amber-600"></i> + 3 Colonne
+                  </button>
+                </div>
               </div>
-              <div id="wel-fields-list" class="space-y-2"></div>
+              <div id="wel-fields-list" class="space-y-2.5"></div>
             </div>
 
             <!-- Optional DM & Leaver Sub-Settings -->
@@ -1738,6 +1764,6 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=32"></script>
-  <script src="/js/embedBuilder.js?v=32"></script>
-  <script src="/js/modules.js?v=32"></script>
+  <script src="/js/app.js?v=33"></script>
+  <script src="/js/embedBuilder.js?v=33"></script>
+  <script src="/js/modules.js?v=33"></script>

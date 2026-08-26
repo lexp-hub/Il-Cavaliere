@@ -622,36 +622,70 @@
     }
   });
 
-  // Dynamic Fields Management
+  // Dynamic Fields & Subgroups Management
   const btnAddField = document.getElementById('btn-add-field');
+  const btnAddFieldPair = document.getElementById('btn-add-field-pair');
+  const btnAddFieldTrio = document.getElementById('btn-add-field-trio');
   const fieldsContainer = document.getElementById('embed-fields-container');
 
   function renderFieldsList() {
     if (!fieldsContainer) return;
     fieldsContainer.innerHTML = '';
 
+    if (fields.length === 0) {
+      fieldsContainer.innerHTML = `
+        <div class="p-4 rounded-xl border border-dashed border-slate-300 text-center text-slate-500 text-xs">
+          Nessun riquadro/sottogruppo aggiunto. Usa i pulsanti sopra per aggiungere riquadri a 1, 2 o 3 colonne.
+        </div>
+      `;
+      return;
+    }
+
     fields.forEach((field, index) => {
       const row = document.createElement('div');
-      row.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm space-y-2';
+      row.className = 'p-3.5 rounded-xl bg-white/90 border border-slate-300 shadow-sm space-y-2.5 transition-all';
       row.innerHTML = `
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold text-red-600 uppercase tracking-wider">Campo #${index + 1}</span>
-          <div class="flex items-center gap-3">
-            <label class="text-xs text-slate-600 flex items-center gap-1.5 cursor-pointer font-medium">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${field.inline ? 'bg-cyan-100 text-cyan-800 border border-cyan-300' : 'bg-red-100 text-red-800 border border-red-300'} font-medieval">
+              ${field.inline ? '🍱 Riquadro Affiancato' : '📦 Riquadro Intero'} #${index + 1}
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-700 flex items-center gap-1.5 cursor-pointer font-medium select-none" title="Se attivo, il riquadro si affianca agli altri (fino a 3 colonne)">
               <input type="checkbox" class="field-inline-toggle" data-index="${index}" ${field.inline ? 'checked' : ''}>
-              <span>In Linea</span>
+              <span>Affianca (Colonne)</span>
             </label>
-            <button type="button" class="btn-remove-field text-rose-600 hover:text-rose-700 p-1" data-index="${index}">
+            <button type="button" class="btn-field-up text-slate-400 hover:text-slate-700 p-1" data-index="${index}" title="Sposta su" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>
+              <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+            </button>
+            <button type="button" class="btn-field-down text-slate-400 hover:text-slate-700 p-1" data-index="${index}" title="Sposta giù" ${index === fields.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>
+              <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+            </button>
+            <button type="button" class="btn-remove-field text-rose-600 hover:text-rose-700 p-1" data-index="${index}" title="Elimina riquadro">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <input type="text" class="form-input text-xs field-name-input bg-white" data-index="${index}" placeholder="Nome del campo" value="${field.name}">
-          <input type="text" class="form-input text-xs field-val-input bg-white" data-index="${index}" placeholder="Valore del campo (markdown supportato)" value="${field.value}">
+        <div class="space-y-2">
+          <div>
+            <label class="text-[11px] font-semibold text-slate-600 block mb-1">Titolo del Riquadro / Sottogruppo</label>
+            <input type="text" class="form-input text-xs field-name-input bg-white" data-index="${index}" placeholder="es. 📜 Regole, 👑 Staff, 📌 Info..." value="${field.name || ''}">
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
+              <label class="text-[11px] font-semibold text-slate-600 block">Contenuto del Riquadro (Markdown, elenchi, menzioni)</label>
+              <div id="field-toolbar-${index}"></div>
+            </div>
+            <textarea class="form-textarea h-20 text-xs field-val-input bg-white" id="field-val-${index}" data-index="${index}" placeholder="Scrivi il testo del riquadro...">${field.value || ''}</textarea>
+          </div>
         </div>
       `;
       fieldsContainer.appendChild(row);
+
+      if (window.setupMarkdownToolbar) {
+        window.setupMarkdownToolbar(`field-toolbar-${index}`, `field-val-${index}`);
+      }
     });
 
     if (window.lucide) lucide.createIcons();
@@ -659,24 +693,57 @@
     document.querySelectorAll('.field-name-input').forEach(inp => {
       inp.addEventListener('input', (e) => {
         const idx = parseInt(e.target.getAttribute('data-index'), 10);
-        fields[idx].name = e.target.value;
-        updatePreview();
+        if (fields[idx]) {
+          fields[idx].name = e.target.value;
+          updatePreview();
+        }
       });
     });
 
     document.querySelectorAll('.field-val-input').forEach(inp => {
       inp.addEventListener('input', (e) => {
         const idx = parseInt(e.target.getAttribute('data-index'), 10);
-        fields[idx].value = e.target.value;
-        updatePreview();
+        if (fields[idx]) {
+          fields[idx].value = e.target.value;
+          updatePreview();
+        }
       });
     });
 
     document.querySelectorAll('.field-inline-toggle').forEach(chk => {
       chk.addEventListener('change', (e) => {
         const idx = parseInt(e.target.getAttribute('data-index'), 10);
-        fields[idx].inline = e.target.checked;
-        updatePreview();
+        if (fields[idx]) {
+          fields[idx].inline = e.target.checked;
+          renderFieldsList();
+          updatePreview();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-field-up').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        if (idx > 0) {
+          const temp = fields[idx];
+          fields[idx] = fields[idx - 1];
+          fields[idx - 1] = temp;
+          renderFieldsList();
+          updatePreview();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-field-down').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        if (idx < fields.length - 1) {
+          const temp = fields[idx];
+          fields[idx] = fields[idx + 1];
+          fields[idx + 1] = temp;
+          renderFieldsList();
+          updatePreview();
+        }
       });
     });
 
@@ -695,7 +762,36 @@
       if (fields.length >= 25) {
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
-      fields.push({ name: `Campo #${fields.length + 1}`, value: 'Valore con **grassetto**', inline: true });
+      fields.push({ name: `📦 Riquadro #${fields.length + 1}`, value: 'Testo del riquadro...', inline: false });
+      renderFieldsList();
+      updatePreview();
+    });
+  }
+
+  if (btnAddFieldPair) {
+    btnAddFieldPair.addEventListener('click', () => {
+      if (fields.length >= 24) {
+        return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
+      }
+      fields.push(
+        { name: `🍱 Colonna 1`, value: 'Informazioni...', inline: true },
+        { name: `🍱 Colonna 2`, value: 'Dettagli...', inline: true }
+      );
+      renderFieldsList();
+      updatePreview();
+    });
+  }
+
+  if (btnAddFieldTrio) {
+    btnAddFieldTrio.addEventListener('click', () => {
+      if (fields.length >= 23) {
+        return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
+      }
+      fields.push(
+        { name: `🍱 Colonna 1`, value: 'Info...', inline: true },
+        { name: `🍱 Colonna 2`, value: 'Info...', inline: true },
+        { name: `🍱 Colonna 3`, value: 'Info...', inline: true }
+      );
       renderFieldsList();
       updatePreview();
     });
@@ -1166,6 +1262,8 @@
   const welAutoRoleBot = document.getElementById('wel-autorole-bot');
   const welFieldsContainer = document.getElementById('wel-fields-list');
   const btnWelAddField = document.getElementById('btn-wel-add-field');
+  const btnWelAddFieldPair = document.getElementById('btn-wel-add-field-pair');
+  const btnWelAddFieldTrio = document.getElementById('btn-wel-add-field-trio');
 
   const prevWelBox = document.getElementById('prev-wel-embed-box');
   const prevWelAuthor = document.getElementById('prev-wel-author');
@@ -1275,28 +1373,60 @@
     if (!welFieldsContainer) return;
     welFieldsContainer.innerHTML = '';
 
+    if (welFields.length === 0) {
+      welFieldsContainer.innerHTML = `
+        <div class="p-4 rounded-xl border border-dashed border-slate-300 text-center text-slate-500 text-xs">
+          Nessun riquadro/sottogruppo aggiunto. Usa i pulsanti sopra per aggiungere riquadri a 1, 2 o 3 colonne.
+        </div>
+      `;
+      return;
+    }
+
     welFields.forEach((field, index) => {
       const row = document.createElement('div');
-      row.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm space-y-2';
+      row.className = 'p-3.5 rounded-xl bg-white/90 border border-slate-300 shadow-sm space-y-2.5 transition-all';
       row.innerHTML = `
-        <div class="flex items-center justify-between">
-          <span class="text-[11px] font-bold text-red-600 uppercase tracking-wider">Campo #${index + 1}</span>
-          <div class="flex items-center gap-3">
-            <label class="text-xs text-slate-600 flex items-center gap-1.5 cursor-pointer font-medium">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold ${field.inline ? 'bg-cyan-100 text-cyan-800 border border-cyan-300' : 'bg-red-100 text-red-800 border border-red-300'} font-medieval">
+              ${field.inline ? '🍱 Riquadro Affiancato' : '📦 Riquadro Intero'} #${index + 1}
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-slate-700 flex items-center gap-1.5 cursor-pointer font-medium select-none" title="Se attivo, il riquadro si affianca agli altri (fino a 3 colonne)">
               <input type="checkbox" class="wel-field-inline-toggle" data-index="${index}" ${field.inline ? 'checked' : ''}>
-              <span>In Linea</span>
+              <span>Affianca (Colonne)</span>
             </label>
-            <button type="button" class="btn-wel-remove-field text-rose-600 hover:text-rose-700 p-1" data-index="${index}">
+            <button type="button" class="btn-wel-field-up text-slate-400 hover:text-slate-700 p-1" data-index="${index}" title="Sposta su" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>
+              <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+            </button>
+            <button type="button" class="btn-wel-field-down text-slate-400 hover:text-slate-700 p-1" data-index="${index}" title="Sposta giù" ${index === welFields.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>
+              <i data-lucide="arrow-down" class="w-3.5 h-3.5"></i>
+            </button>
+            <button type="button" class="btn-wel-remove-field text-rose-600 hover:text-rose-700 p-1" data-index="${index}" title="Elimina riquadro">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <input type="text" class="form-input text-xs wel-field-name-input bg-white" data-index="${index}" placeholder="Nome del campo" value="${field.name || ''}">
-          <input type="text" class="form-input text-xs wel-field-val-input bg-white" data-index="${index}" placeholder="Valore del campo (markdown supportato)" value="${field.value || ''}">
+        <div class="space-y-2">
+          <div>
+            <label class="text-[11px] font-semibold text-slate-600 block mb-1">Titolo del Riquadro</label>
+            <input type="text" class="form-input text-xs wel-field-name-input bg-white" data-index="${index}" placeholder="es. 📜 Regole, 🎭 Ruoli, 💬 Chat..." value="${field.name || ''}">
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
+              <label class="text-[11px] font-semibold text-slate-600 block">Contenuto del Riquadro (Markdown, tag {user}, menzioni)</label>
+              <div id="wel-field-toolbar-${index}"></div>
+            </div>
+            <textarea class="form-textarea h-20 text-xs wel-field-val-input bg-white" id="wel-field-val-${index}" data-index="${index}" placeholder="Scrivi il testo del riquadro...">${field.value || ''}</textarea>
+          </div>
         </div>
       `;
       welFieldsContainer.appendChild(row);
+
+      if (window.setupMarkdownToolbar) {
+        window.setupMarkdownToolbar(`wel-field-toolbar-${index}`, `wel-field-val-${index}`);
+      }
     });
 
     if (window.lucide) lucide.createIcons();
@@ -1326,6 +1456,33 @@
         const idx = parseInt(e.target.getAttribute('data-index'), 10);
         if (welFields[idx]) {
           welFields[idx].inline = e.target.checked;
+          renderWelFieldsList();
+          updateWelcomerPreview();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-wel-field-up').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        if (idx > 0) {
+          const temp = welFields[idx];
+          welFields[idx] = welFields[idx - 1];
+          welFields[idx - 1] = temp;
+          renderWelFieldsList();
+          updateWelcomerPreview();
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-wel-field-down').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const idx = parseInt(btn.getAttribute('data-index'), 10);
+        if (idx < welFields.length - 1) {
+          const temp = welFields[idx];
+          welFields[idx] = welFields[idx + 1];
+          welFields[idx + 1] = temp;
+          renderWelFieldsList();
           updateWelcomerPreview();
         }
       });
@@ -1346,7 +1503,36 @@
       if (welFields.length >= 25) {
         return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
       }
-      welFields.push({ name: `Campo #${welFields.length + 1}`, value: '{user.mention}', inline: true });
+      welFields.push({ name: `📦 Riquadro #${welFields.length + 1}`, value: '{user.mention}', inline: false });
+      renderWelFieldsList();
+      updateWelcomerPreview();
+    });
+  }
+
+  if (btnWelAddFieldPair) {
+    btnWelAddFieldPair.addEventListener('click', () => {
+      if (welFields.length >= 24) {
+        return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
+      }
+      welFields.push(
+        { name: `🍱 Regole`, value: 'Rispetta tutti i membri', inline: true },
+        { name: `🍱 Ruoli`, value: 'Visita il canale ruoli', inline: true }
+      );
+      renderWelFieldsList();
+      updateWelcomerPreview();
+    });
+  }
+
+  if (btnWelAddFieldTrio) {
+    btnWelAddFieldTrio.addEventListener('click', () => {
+      if (welFields.length >= 23) {
+        return window.showToast('Limite massimo di 25 campi raggiunto.', 'error');
+      }
+      welFields.push(
+        { name: `🍱 Regole`, value: 'Info 1...', inline: true },
+        { name: `🍱 Canali`, value: 'Info 2...', inline: true },
+        { name: `🍱 Supporto`, value: 'Info 3...', inline: true }
+      );
       renderWelFieldsList();
       updateWelcomerPreview();
     });

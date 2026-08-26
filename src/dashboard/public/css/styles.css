@@ -490,24 +490,43 @@ input:checked + .slider:before {
 
 .discord-embed-fields {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.5rem;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
 }
 .discord-field {
   display: flex;
   flex-direction: column;
+  padding: 0.45rem 0.65rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  grid-column: 1 / -1;
+  transition: all 0.2s ease;
+}
+.discord-field:hover {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.discord-field.inline {
+  grid-column: span 1;
+}
+@media (max-width: 640px) {
+  .discord-embed-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .discord-field-name {
   font-size: 0.8125rem;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 0.125rem;
+  margin-bottom: 0.2rem;
 }
 .discord-field-value {
   font-size: 0.875rem;
   color: var(--discord-text);
   line-height: 1.35rem;
+  word-break: break-word;
 }
 .discord-embed-image {
   max-width: 100%;
