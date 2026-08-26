@@ -2,6 +2,8 @@ import {
   SlashCommandBuilder,
   EmbedBuilder,
   ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   StringSelectMenuBuilder,
   ComponentType
 } from 'discord.js';
@@ -13,22 +15,24 @@ export default {
     .setDescription('Mostra la lista completa dei comandi e moduli di Il Cavaliere'),
 
   async execute(interaction) {
+    const dashboardUrl = CONFIG.DASHBOARD_URL || 'https://il-cavaliere.wispbyte.app/';
+
     const mainEmbed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR)
       .setTitle('🛡️ Il Cavaliere | Centro Comandi')
       .setDescription(
         'Benvenuto nel pannello di aiuto di **Il Cavaliere**!\n' +
         'Seleziona una categoria dal menu a tendina sottostante per esplorare tutti i comandi disponibili.\n\n' +
-        `🌐 **Dashboard Web:** [Accedi alla Dashboard](${CONFIG.DASHBOARD_URL})\n` +
+        `🌐 **Dashboard Web:** [Accedi alla Dashboard](${dashboardUrl})\n` +
         `✨ **Versione:** \`v1.0.0\` | **Sviluppato per Discord.js v14**`
       )
       .addFields(
-        { name: '🤝 Partnership', value: '`/partner` - Gestione automatica e statistiche', inline: true },
+        { name: '🤝 Partnership', value: '`/partnership` - Registrazione rapida con form modale', inline: true },
         { name: '🎨 Embed Builder', value: '`/embed` - Crea ed invia embed avanzati', inline: true },
         { name: '🎭 Reaction Roles', value: '`/reactionrole` - Assegna ruoli con bottoni e menu', inline: true },
         { name: '👋 Welcomer', value: '`/welcomer` - Benvenuto con card e auto-role', inline: true },
         { name: '⚡ Auto-Responder', value: '`/autoresponder` - Risposte e reazioni automatiche', inline: true },
-        { name: '✨ Emoji & Starboard', value: '`/steal`, `/emoji-stats`, `/starboard`', inline: true },
+        { name: '📜 Presentazioni', value: '`/presentati` - Presentati alla community', inline: true },
         { name: '🛡️ Moderazione', value: '`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`', inline: true },
         { name: '🎫 Ticket System', value: '`/ticket` - Gestione supporto e transcript', inline: true },
         { name: '🎉 Giveaway & XP', value: '`/giveaway`, `/rank`, `/leaderboard`', inline: true }
@@ -46,11 +50,22 @@ export default {
         { label: 'Welcomer & Auto-Responder', value: 'welcomer_auto', emoji: '👋', description: 'Benvenuto, DM, trigger e reazioni' },
         { label: 'Moderazione & AutoMod', value: 'moderation', emoji: '⚔️', description: 'Ban, kick, warn, purge, filtri' },
         { label: 'Tickets & Giveaways', value: 'tickets_ga', emoji: '🎫', description: 'Supporto ticket e concorsi' },
-        { label: 'Leveling & Emoji', value: 'leveling_emoji', emoji: '⭐', description: 'XP, classifiche e gestione emoji' }
+        { label: 'Leveling & Community', value: 'leveling_emoji', emoji: '⭐', description: 'XP, classifiche e presentazioni' }
       ]);
 
-    const row = new ActionRowBuilder().addComponents(selectMenu);
-    const reply = await interaction.reply({ embeds: [mainEmbed], components: [row], fetchReply: true });
+    const selectRow = new ActionRowBuilder().addComponents(selectMenu);
+    const linkRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setLabel('🌐 Accedi alla Dashboard')
+        .setStyle(ButtonStyle.Link)
+        .setURL(dashboardUrl)
+    );
+
+    const reply = await interaction.reply({
+      embeds: [mainEmbed],
+      components: [selectRow, linkRow],
+      fetchReply: true
+    });
 
     const collector = reply.createMessageComponentCollector({
       componentType: ComponentType.StringSelect,
@@ -74,11 +89,10 @@ export default {
         case 'partnerships':
           newEmbed
             .setTitle('🤝 Modulo Partnership')
-            .setDescription('Gestisci partnership in modo completamente automatizzato.')
+            .setDescription('Gestisci partnership in modo rapido e completamente automatizzato.')
             .addFields(
-              { name: '`/partner add <invite> [rep]`', value: 'Registra e pubblica una nuova partnership con verifica automatica del server.' },
-              { name: '`/partner config`', value: 'Configura il canale di invio, ruolo ping e numero minimo di membri.' },
-              { name: '`/partner stats`', value: 'Mostra le statistiche globali e la classifica dei partner manager.' }
+              { name: '`/partnership [manager]`', value: 'Apre il form modale a schermo per inserire descrizione e link della partnership.' },
+              { name: '🌐 Configurazione Dashboard', value: `Configura canali, ruoli ping e requisiti su [Dashboard Web](${dashboardUrl}).` }
             );
           break;
 
@@ -139,9 +153,10 @@ export default {
 
         case 'leveling_emoji':
           newEmbed
-            .setTitle('⭐ Leveling & Emoji Tracker')
-            .setDescription('Coinvolgimento della community e personalizzazione emoji.')
+            .setTitle('⭐ Leveling & Community')
+            .setDescription('Coinvolgimento della community, XP e presentazioni.')
             .addFields(
+              { name: '`/presentati`', value: 'Compila il form modale per presentarti alla community.' },
               { name: '`/rank [user]`', value: 'Visualizza la scheda livello, XP e posizione in classifica.' },
               { name: '`/leaderboard`', value: 'Mostra la top 10 degli utenti più attivi del server.' },
               { name: '`/steal emoji <emoji/url>`', value: 'Ruba e aggiungi un\'emoji al tuo server istantaneamente.' },
