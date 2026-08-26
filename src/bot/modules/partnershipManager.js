@@ -157,12 +157,11 @@ export const PartnershipManager = {
 
     const partnerEmbed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR || '#ea580c')
-      .setTitle(`🤝 Nuova Partnership${partnerGuild?.name ? ` | ${partnerGuild.name}` : ''}`)
-      .setDescription(customText || `Siamo lieti di annunciare la nuova partnership con **${partnerGuild?.name || 'il server partner'}**!`)
+      .setTitle(`🤝 Informazioni Partnership${partnerGuild?.name ? ` | ${partnerGuild.name}` : ''}`)
       .addFields(
-        { name: '👑 Rappresentante', value: `${user} (\`${user.tag || user.username}\`)`, inline: true }
+        { name: '👑 Partner Manager', value: `${user} (\`${user.tag || user.username}\`)`, inline: true }
       )
-      .setFooter({ text: `Il Cavaliere • Partnership #${stats.total}`, iconURL: guild.iconURL() })
+      .setFooter({ text: `${guild.name} • Partnership #${stats.total}`, iconURL: guild.iconURL() })
       .setTimestamp();
 
     if (inviteInfo?.url) {
@@ -177,14 +176,8 @@ export const PartnershipManager = {
       partnerEmbed.setThumbnail(`https://cdn.discordapp.com/icons/${partnerGuild.id}/${partnerGuild.icon}.png?size=256`);
     }
 
-    // Auto-detect banner from image parameter or embedded markdown image
-    let banner = bannerUrl;
-    if (!banner && customText) {
-      const imgMatch = customText.match(/https?:\/\/\S+\.(?:png|jpe?g|webp|gif)/i);
-      if (imgMatch) banner = imgMatch[0];
-    }
-    if (banner && banner.startsWith('http')) {
-      partnerEmbed.setImage(banner);
+    if (bannerUrl && bannerUrl.startsWith('http')) {
+      partnerEmbed.setImage(bannerUrl);
     }
 
     const targetChannelId = config.channel_id;
@@ -196,15 +189,30 @@ export const PartnershipManager = {
       return { success: false, error: 'Canale partnership non trovato o non configurato.' };
     }
 
-    let pingContent = '';
+    let messageContent = '';
     if (config.ping_role_id) {
-      pingContent = `<@&${config.ping_role_id}>`;
+      messageContent += `<@&${config.ping_role_id}>\n\n`;
     }
+    if (customText) {
+      messageContent += customText;
+    }
+    messageContent = messageContent.trim();
 
-    const sentMessage = await targetChannel.send({
-      content: pingContent || undefined,
-      embeds: [partnerEmbed]
-    });
+    let sentMessage;
+    if (messageContent.length > 1950) {
+      const part1 = messageContent.slice(0, 1900);
+      const part2 = messageContent.slice(1900);
+      await targetChannel.send({ content: part1 });
+      sentMessage = await targetChannel.send({
+        content: part2,
+        embeds: [partnerEmbed]
+      });
+    } else {
+      sentMessage = await targetChannel.send({
+        content: messageContent || undefined,
+        embeds: [partnerEmbed]
+      });
+    }
 
     if (config.log_channel_id) {
       const logChan = guild.channels.cache.get(config.log_channel_id) || await guild.channels.fetch(config.log_channel_id).catch(() => null);
