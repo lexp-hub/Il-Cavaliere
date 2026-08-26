@@ -84,10 +84,17 @@ export default {
     ),
 
   async execute(interaction) {
-    const subcommand = interaction.options.getSubcommand();
+    const subcommand = interaction.options.getSubcommand(false) || 'form';
+    const config = DatabaseHelper.getPresentationConfig(interaction.guild.id);
 
     // 1. OPEN FORM MODAL
     if (subcommand === 'form') {
+      if (!config.enabled) {
+        return interaction.reply({
+          content: '❌ Il modulo presentazioni è attualmente disattivato su questo server.',
+          ephemeral: true
+        });
+      }
       const modal = PresentationManager.createPresentationModal();
       return interaction.showModal(modal);
     }

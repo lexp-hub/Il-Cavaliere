@@ -913,6 +913,10 @@ export const DatabaseHelper = {
     return this.getPresentationConfig(guildId);
   },
 
+  savePresentationConfig(guildId, data) {
+    return this.updatePresentationConfig(guildId, data);
+  },
+
   addPresentation(guildId, data) {
     const info = db.prepare(`
       INSERT INTO presentations (guild_id, user_id, name, age_pronouns, hobbies, bio, social_media, message_id, timestamp)
