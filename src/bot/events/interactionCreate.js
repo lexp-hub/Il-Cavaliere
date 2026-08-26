@@ -2,7 +2,7 @@ import { TicketManager } from '../modules/ticketManager.js';
 import { PartnershipManager } from '../modules/partnershipManager.js';
 import { PresentationManager } from '../modules/presentationManager.js';
 import { DatabaseHelper } from '../../database/db.js';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
 export default {
@@ -41,6 +41,22 @@ export default {
 
       // Partnership Form Modal Button
       if (customId === 'partnership_open_form') {
+        const config = DatabaseHelper.getPartnershipConfig(interaction.guild.id);
+        const member = interaction.member;
+        const isOwnerOrAdmin = interaction.guild.ownerId === interaction.user.id ||
+          member.permissions.has(PermissionsBitField.Flags.Administrator) ||
+          member.permissions.has(PermissionsBitField.Flags.ManageGuild);
+
+        if (config.manager_role_id && !isOwnerOrAdmin) {
+          const hasManagerRole = member.roles.cache.has(config.manager_role_id);
+          if (!hasManagerRole) {
+            return interaction.reply({
+              content: `❌ Non possiedi il ruolo autorizzato (<@&${config.manager_role_id}>) per inviare partnership su questo server.`,
+              ephemeral: true
+            });
+          }
+        }
+
         const modal = PartnershipManager.createPartnershipModal();
         return interaction.showModal(modal);
       }

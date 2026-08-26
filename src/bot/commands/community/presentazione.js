@@ -102,79 +102,90 @@ export default {
         });
       }
 
-      const config = DatabaseHelper.getPresentationConfig(interaction.guild.id);
-      const targetChannel = interaction.options.getChannel('canale') || 
-        (config.channel_id ? interaction.guild.channels.cache.get(config.channel_id) : interaction.channel);
-
-      if (!targetChannel) {
-        return interaction.reply({ content: '❌ Nessun canale valido specificato o configurato.', ephemeral: true });
-      }
-
-      const title = interaction.options.getString('titolo') || '📜 Sala delle Presentazioni';
+      const targetChannel = interaction.options.getChannel('canale') || interaction.channel;
+      const title = interaction.options.getString('titolo') || '📜 Benvenuto nella Sala delle Presentazioni';
       const description = interaction.options.getString('descrizione') || null;
       const image = interaction.options.getString('immagine') || null;
 
       try {
-        await PresentationManager.sendPresentationPanel(interaction.guild, targetChannel.id, title, description, '#6366f1', image);
-        return interaction.reply({ content: `✅ Pannello presentazioni inviato con successo in ${targetChannel}!`, ephemeral: true });
+        await PresentationManager.sendPresentationPanel(
+          interaction.guild,
+          targetChannel.id,
+          title,
+          description,
+          '#6366f1',
+          image
+        );
+        return interaction.reply({
+          content: `✅ Pannello presentazioni inviato con successo nel canale ${targetChannel}!`,
+          ephemeral: true
+        });
       } catch (err) {
-        return interaction.reply({ content: `❌ Errore durante l'invio del pannello: ${err.message}`, ephemeral: true });
+        return interaction.reply({
+          content: `❌ Errore durante l'invio del pannello: ${err.message}`,
+          ephemeral: true
+        });
       }
     }
 
-    // 3. CONFIG
+    // 3. CONFIGURATION
     if (subcommand === 'config') {
-      if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator) &&
+          !interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
         return interaction.reply({
-          content: '❌ Solo gli amministratori possono modificare la configurazione delle presentazioni.',
+          content: '❌ Solo gli amministratori possono configurare il modulo presentazioni.',
           ephemeral: true
         });
       }
 
       const channel = interaction.options.getChannel('canale');
-      const rewardRole = interaction.options.getRole('ruolo_premio');
-      const xpReward = interaction.options.getInteger('xp_bonus');
-      const active = interaction.options.getBoolean('attivo');
+      const role = interaction.options.getRole('ruolo_premio');
+      const xp = interaction.options.getInteger('xp_bonus');
+      const enabled = interaction.options.getBoolean('attivo');
 
-      const updates = {};
-      if (channel) updates.channel_id = channel.id;
-      if (rewardRole) updates.reward_role_id = rewardRole.id;
-      if (xpReward !== null) updates.xp_reward = xpReward;
-      if (active !== null) updates.enabled = active;
+      const current = DatabaseHelper.getPresentationConfig(interaction.guild.id);
+      const updated = {
+        channel_id: channel ? channel.id : current.channel_id,
+        reward_role_id: role ? role.id : current.reward_role_id,
+        xp_reward: xp !== null ? xp : current.xp_reward,
+        enabled: enabled !== null ? (enabled ? 1 : 0) : current.enabled
+      };
 
-      const newConfig = DatabaseHelper.updatePresentationConfig(interaction.guild.id, updates);
+      DatabaseHelper.savePresentationConfig(interaction.guild.id, updated);
 
       const embed = new EmbedBuilder()
         .setColor('#6366f1')
         .setTitle('⚙️ Configurazione Presentazioni Aggiornata')
         .addFields(
-          { name: 'Stato Modulo', value: newConfig.enabled ? '🟢 `Attivo`' : '🔴 `Disattivato`', inline: true },
-          { name: 'Canale Presentazioni', value: newConfig.channel_id ? `<#${newConfig.channel_id}>` : '`Non impostato`', inline: true },
-          { name: 'Ruolo Ricompensa', value: newConfig.reward_role_id ? `<@&${newConfig.reward_role_id}>` : '`Nessuno`', inline: true },
-          { name: 'XP Bonus', value: `\`+${newConfig.xp_reward}\` XP`, inline: true }
+          { name: 'Stato Modulo', value: updated.enabled ? '🟢 Attivo' : '🔴 Disattivato', inline: true },
+          { name: 'Canale Dedicato', value: updated.channel_id ? `<#${updated.channel_id}>` : '`Non impostato`', inline: true },
+          { name: 'Ruolo Ricompensa', value: updated.reward_role_id ? `<@&${updated.reward_role_id}>` : '`Nessuno`', inline: true },
+          { name: 'Bonus XP', value: `\`+${updated.xp_reward || 100} XP\``, inline: true }
         )
-        .setFooter({ text: 'Puoi personalizzare tutto anche dalla Dashboard Web' })
         .setTimestamp();
 
-      await interaction.reply({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
-    // 4. LIST RECENT
+    // 4. LIST PRESENTATIONS
     if (subcommand === 'list') {
       const list = DatabaseHelper.getPresentations(interaction.guild.id, 10);
       if (list.length === 0) {
-        return interaction.reply({ content: '📜 Nessuna presentazione registrata finora.', ephemeral: true });
+        return interaction.reply({ content: 'ℹ️ Nessuna presentazione registrata finora su questo server.', ephemeral: true });
       }
 
-      const desc = list.map(p => `• **${p.name}** (<@${p.user_id}>) — <t:${p.timestamp}:R>`).join('\n');
       const embed = new EmbedBuilder()
         .setColor('#6366f1')
         .setTitle(`📜 Ultime Presentazioni | ${interaction.guild.name}`)
-        .setDescription(desc)
+        .setDescription(
+          list.map((p, idx) => {
+            const dateStr = new Date(p.timestamp * 1000).toLocaleDateString('it-IT');
+            return `**#${idx + 1}** <@${p.user_id}> (${p.name || 'Senza Nome'}) • *${dateStr}*\n> 🎭 ${p.hobbies?.slice(0, 80) || 'N/A'}`;
+          }).join('\n\n')
+        )
         .setTimestamp();
 
-      await interaction.reply({ embeds: [embed] });
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
   }
 };
-

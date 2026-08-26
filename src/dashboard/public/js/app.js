@@ -309,7 +309,7 @@ function populateDropdowns(channels = [], roles = []) {
     });
   }
 
-  const roleSelectIds = ['part-ping-role', 'rr-role', 'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role', 'pres-role'];
+  const roleSelectIds = ['part-ping-role', 'part-manager-role', 'rr-role', 'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role', 'pres-role'];
   roleSelectIds.forEach(id => {
     const select = document.getElementById(id);
     if (!select) return;

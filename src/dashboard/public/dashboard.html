@@ -369,7 +369,7 @@
           </label>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
             <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Invio Partnership</label>
             <div class="space-y-1.5">
@@ -391,12 +391,22 @@
             </div>
           </div>
           <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Ruolo con Permesso /partnership (Manager)</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="part-manager-role-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca ruolo manager...">
+              </div>
+              <select id="part-manager-role" class="form-select text-xs"></select>
+            </div>
+          </div>
+          <div>
             <label class="text-xs font-semibold text-slate-700 block mb-1.5">Numero Minimo Membri Richiesti</label>
-            <input type="number" id="part-min-members" class="form-input" value="50" min="0">
+            <input type="number" id="part-min-members" class="form-input text-xs" value="50" min="0">
           </div>
           <div>
             <label class="text-xs font-semibold text-slate-700 block mb-1.5">Cooldown tra Rinnovi (Minuti)</label>
-            <input type="number" id="part-cooldown" class="form-input" value="60" min="0">
+            <input type="number" id="part-cooldown" class="form-input text-xs" value="60" min="0">
           </div>
         </div>
 
@@ -1728,6 +1738,6 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=31"></script>
-  <script src="/js/embedBuilder.js?v=31"></script>
-  <script src="/js/modules.js?v=31"></script>
+  <script src="/js/app.js?v=32"></script>
+  <script src="/js/embedBuilder.js?v=32"></script>
+  <script src="/js/modules.js?v=32"></script>

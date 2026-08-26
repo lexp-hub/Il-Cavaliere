@@ -278,12 +278,14 @@
       const config = data.config || {};
       const chEl = document.getElementById('part-channel');
       const pingEl = document.getElementById('part-ping-role');
+      const mgrEl = document.getElementById('part-manager-role');
       const minEl = document.getElementById('part-min-members');
       const cdEl = document.getElementById('part-cooldown');
       const enEl = document.getElementById('part-enabled');
 
       if (chEl && config.channel_id) chEl.value = config.channel_id;
       if (pingEl && config.ping_role_id) pingEl.value = config.ping_role_id;
+      if (mgrEl && config.manager_role_id) mgrEl.value = config.manager_role_id;
       if (minEl) minEl.value = config.min_members ?? 50;
       if (cdEl) cdEl.value = config.cooldown_minutes ?? 60;
       if (enEl) enEl.checked = Boolean(config.enabled);
@@ -348,6 +350,7 @@
       const payload = {
         channel_id: document.getElementById('part-channel')?.value || null,
         ping_role_id: document.getElementById('part-ping-role')?.value || null,
+        manager_role_id: document.getElementById('part-manager-role')?.value || null,
         min_members: parseInt(document.getElementById('part-min-members')?.value || '0', 10),
         cooldown_minutes: parseInt(document.getElementById('part-cooldown')?.value || '60', 10),
         enabled: document.getElementById('part-enabled')?.checked
@@ -1367,6 +1370,7 @@
       // Partnerships Channels & Roles
       window.setupSearchableSelect('part-channel-search', 'part-channel', 'text');
       window.setupSearchableSelect('part-ping-role-search', 'part-ping-role', 'role');
+      window.setupSearchableSelect('part-manager-role-search', 'part-manager-role', 'role');
 
       // Community Presentations Channels & Roles
       window.setupSearchableSelect('pres-channel-search', 'pres-channel', 'text');
