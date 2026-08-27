@@ -7,7 +7,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const PORT = parseInt(process.env.DASHBOARD_PORT || process.env.SERVER_PORT || process.env.PORT || '9272', 10);
+const PORT = parseInt(process.env.SERVER_PORT || process.env.DASHBOARD_PORT || process.env.PORT || '9272', 10);
 
 export const CONFIG = {
   BOT_TOKEN: process.env.DISCORD_BOT_TOKEN || process.env.DISCORD_TOKEN || '',
