@@ -11,7 +11,7 @@
       .brand-luxury {
         font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
         font-weight: 800;
-        letter-spacing: -1.5px;
+        letter-spacing: -0.5px;
       }
     </style>
 
@@ -44,25 +44,25 @@
       <stop offset="100%" stop-color="#991b1b" />
     </linearGradient>
 
-    <!-- Pure Seamless Knights Templar Cross Path -->
-    <g id="templarCrossSingle">
-      <path d="M -15 -15 
-               C -20 -55 -45 -115 -92 -165 
-               C -40 -140 40 -140 92 -165 
-               C 45 -115 20 -55 15 -15 
-               C 55 -20 115 -45 165 -92 
-               C 140 -40 140 40 165 92 
-               C 115 45 55 20 15 15 
-               C 20 55 45 115 92 165 
-               C 40 140 -40 140 -92 165 
-               C -45 115 -20 55 -15 15 
-               C -55 20 -115 45 -165 92 
-               C -140 40 -140 -40 -165 -92 
-               C -115 -45 -55 -20 -15 -15 Z" />
-    </g>
+    <!-- Transition Gradient: Dark Steel to Red (Left Bridge) -->
+    <linearGradient id="bridgeLeftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="40%" stop-color="#1e293b" />
+      <stop offset="75%" stop-color="#b91c1c" />
+      <stop offset="100%" stop-color="#dc2626" />
+    </linearGradient>
 
-    <!-- Elongated Knights Templar Cross specifically sculpted for letter 't' -->
-    <g id="elongatedTemplarT">
+    <!-- Transition Gradient: Red to Dark Steel (Right Bridge) -->
+    <linearGradient id="bridgeRightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#dc2626" />
+      <stop offset="25%" stop-color="#b91c1c" />
+      <stop offset="60%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <!-- Elongated Knights Templar Cross with Extended Crossbar Arms -->
+    <g id="elongatedTemplarConnected">
+      <!-- Main Flared Body -->
       <path d="M -4.2 -4.2 
                C -5.6 -14 -12 -30 -24 -42 
                C -10 -35 10 -35 24 -42 
@@ -84,7 +84,7 @@
   <rect width="600" height="240" fill="url(#centerGlow)" />
 
   <!-- Heraldic Watermark Ring Aligned with the Cross Center -->
-  <g transform="translate(330, 120)" opacity="0.4">
+  <g transform="translate(300, 120)" opacity="0.4">
     <circle cx="0" cy="0" r="90" fill="none" stroke="#cbd5e1" stroke-width="1" />
     <circle cx="0" cy="0" r="100" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.2" stroke-dasharray="4 8" />
   </g>
@@ -102,26 +102,48 @@
     <polygon points="588,228 591,225 594,228 591,231" />
   </g>
 
-  <!-- Centered Modern Minimal Luxury Sentry Wordmark -->
+  <!-- Unified Interconnected Sentry Emblem (sen ──── ⚔️ ──── ry.) -->
   <g transform="translate(300, 120)">
-    <g transform="translate(-225, 0)">
-      <!-- Left part: sen in Dark Steel Montserrat 800 -->
+    <g transform="translate(-228, 0)">
+
+      <!-- Smooth Continuous Bridge Beam (from n right-shoulder, through Cross, into r stem) -->
+      <!-- Left Connecting Flange: joining 'n' stem to Cross Left Arm -->
+      <path d="M 194 -16 
+               Q 214 -10 236 -4 
+               L 236 4 
+               Q 214 0 194 -4 Z" 
+            fill="url(#bridgeLeftGrad)" />
+
+      <!-- Left Horizontal Core Bridge Bar -->
+      <rect x="188" y="-11" width="52" height="14" rx="3" fill="url(#bridgeLeftGrad)" />
+
+      <!-- Right Horizontal Core Bridge Bar (joining Cross Right Arm into 'r' stem) -->
+      <rect x="264" y="-11" width="50" height="14" rx="3" fill="url(#bridgeRightGrad)" />
+
+      <!-- Right Connecting Flange: joining Cross Right Arm into 'r' arch -->
+      <path d="M 264 -4 
+               Q 286 0 308 -16 
+               L 308 -4 
+               Q 286 4 264 4 Z" 
+            fill="url(#bridgeRightGrad)" />
+
+      <!-- Left Wordmark: 'sen' in Dark Steel -->
       <text x="0" y="38" fill="url(#steelTextGrad)" font-size="112" class="brand-luxury" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))">
         sen
       </text>
 
-      <!-- Center: Elongated Templar Cross as 't' (Perfect Alignment) -->
-      <g transform="translate(254, -3) scale(0.85)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 18px rgba(220, 38, 38, 0.45))">
-        <use href="#elongatedTemplarT" />
+      <!-- Center: Elongated Templar Cross connected in-line as 't' -->
+      <g transform="translate(250, -3) scale(0.85)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 18px rgba(220, 38, 38, 0.52))">
+        <use href="#elongatedTemplarConnected" />
       </g>
 
-      <!-- Right part: ry in Dark Steel Montserrat 800 -->
-      <text x="296" y="38" fill="url(#steelTextGrad)" font-size="112" class="brand-luxury" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))">
+      <!-- Right Wordmark: 'ry' in Dark Steel -->
+      <text x="282" y="38" fill="url(#steelTextGrad)" font-size="112" class="brand-luxury" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))">
         ry
       </text>
 
       <!-- Signature Crimson Period Dot Placed Cleanly on Baseline -->
-      <circle cx="428" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
+      <circle cx="418" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
     </g>
   </g>
 </svg>
