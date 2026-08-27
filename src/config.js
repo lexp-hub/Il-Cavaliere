@@ -23,10 +23,10 @@ export const CONFIG = {
   PORT,
   DASHBOARD_PASSWORD: process.env.DASHBOARD_PASSWORD || 'LumpaBread-Dash1946',
   SESSION_SECRET: process.env.SESSION_SECRET || 'il_cavaliere_secret_key_change_me_123456789',
-  DASHBOARD_URL: (process.env.DASHBOARD_URL && !process.env.DASHBOARD_URL.includes('localhost') && !process.env.DASHBOARD_URL.includes('127.0.0.1'))
+  DASHBOARD_URL: (process.env.DASHBOARD_URL && !process.env.DASHBOARD_URL.includes('localhost') && !process.env.DASHBOARD_URL.includes('127.0.0.1') && !process.env.DASHBOARD_URL.includes('wispbyte.app'))
     ? process.env.DASHBOARD_URL
     : 'https://sentry.wisp.uno',
-  OAUTH2_CALLBACK_URL: (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1'))
+  OAUTH2_CALLBACK_URL: (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1') && !process.env.OAUTH2_CALLBACK_URL.includes('wispbyte.app'))
     ? process.env.OAUTH2_CALLBACK_URL
     : 'https://sentry.wisp.uno/auth/discord/callback',
   

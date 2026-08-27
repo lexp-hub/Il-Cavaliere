@@ -48,7 +48,7 @@ export function validateAuthToken(token) {
 }
 
 function getCallbackUrl(req) {
-  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1')) {
+  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1') && !process.env.OAUTH2_CALLBACK_URL.includes('wispbyte.app')) {
     return process.env.OAUTH2_CALLBACK_URL;
   }
   return 'https://sentry.wisp.uno/auth/discord/callback';

@@ -48,8 +48,8 @@
           <i data-lucide="layout" class="w-4 h-4 text-red-600"></i>
           <h2 class="text-sm font-bold text-slate-900">Banner Ufficiale (1200x480)</h2>
         </div>
-        <div class="w-full h-40 rounded-xl overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center bg-slate-50 p-1">
-          <img id="banner-preview" src="/banner.svg?v=65" alt="Banner Preview" class="w-full h-full rounded-lg object-contain">
+        <div id="banner-preview-box" class="w-full h-40 rounded-xl overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center bg-slate-50 p-1">
+          <div id="banner-svg-wrapper" class="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:rounded-lg"></div>
         </div>
         <button onclick="downloadPng('/banner.svg', 'sentry-banner.png', 1200, 480)" 
                 class="btn-knight w-full py-2.5 px-4 text-xs font-bold rounded-xl shadow-sm">
@@ -107,6 +107,21 @@
         alert('Errore durante la generazione del file PNG.');
       }
     }
+
+    async function loadPreviews() {
+      try {
+        const res = await fetch('/banner.svg?t=' + Date.now());
+        if (res.ok) {
+          const svg = await res.text();
+          const wrapper = document.getElementById('banner-svg-wrapper');
+          if (wrapper) wrapper.innerHTML = svg;
+        }
+      } catch (e) {
+        console.error('Failed to load inline banner preview:', e);
+      }
+    }
+
+    loadPreviews();
     if (window.lucide) lucide.createIcons();
   </script>
 </body>
