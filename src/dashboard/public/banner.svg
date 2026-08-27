@@ -15,20 +15,42 @@
       }
     </style>
 
-    <!-- Luxury Silver Armor Plate Gradient -->
-    <linearGradient id="silverPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="25%" stop-color="#f8fafc" />
-      <stop offset="65%" stop-color="#f1f5f9" />
-      <stop offset="100%" stop-color="#e2e8f0" />
+    <!-- Base Modern Silver & Slate Mesh Background Gradient -->
+    <linearGradient id="bgBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f8fafc" />
+      <stop offset="40%" stop-color="#f1f5f9" />
+      <stop offset="75%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#cbd5e1" />
     </linearGradient>
 
-    <!-- Ambient Center Light Flare -->
-    <radialGradient id="centerGlow" cx="50%" cy="50%" r="65%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
-      <stop offset="45%" stop-color="#f8fafc" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0" />
+    <!-- Geometric Facet Gradient 1 (Top Left to Bottom Right Angled) -->
+    <linearGradient id="facetGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#f1f5f9" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0.1" />
+    </linearGradient>
+
+    <!-- Geometric Facet Gradient 2 (Bottom Left to Top Right Angled) -->
+    <linearGradient id="facetGrad2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e2e8f0" stop-opacity="0.6" />
+      <stop offset="60%" stop-color="#f8fafc" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.8" />
+    </linearGradient>
+
+    <!-- Dynamic Crimson Accent Flare (Behind Cross & Edges) -->
+    <radialGradient id="rubyCenterFlare" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.24" />
+      <stop offset="40%" stop-color="#dc2626" stop-opacity="0.1" />
+      <stop offset="80%" stop-color="#991b1b" stop-opacity="0.02" />
+      <stop offset="100%" stop-color="#dc2626" stop-opacity="0" />
     </radialGradient>
+
+    <!-- Geometric Shard Accent Gradient -->
+    <linearGradient id="crimsonFacetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.15" />
+      <stop offset="50%" stop-color="#dc2626" stop-opacity="0.05" />
+      <stop offset="100%" stop-color="#991b1b" stop-opacity="0" />
+    </linearGradient>
 
     <!-- Deep Polished Gunmetal Gradient for Text -->
     <linearGradient id="steelTextGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -44,19 +66,6 @@
       <stop offset="25%" stop-color="#ef4444" />
       <stop offset="65%" stop-color="#dc2626" />
       <stop offset="100%" stop-color="#991b1b" />
-    </linearGradient>
-
-    <!-- Delicate Shield Watermark Gradients -->
-    <linearGradient id="shieldStrokeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#cbd5e1" stop-opacity="0.6" />
-      <stop offset="50%" stop-color="#94a3b8" stop-opacity="0.35" />
-      <stop offset="100%" stop-color="#dc2626" stop-opacity="0.3" />
-    </linearGradient>
-
-    <linearGradient id="swordGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#94a3b8" stop-opacity="0.5" />
-      <stop offset="50%" stop-color="#cbd5e1" stop-opacity="0.3" />
-      <stop offset="100%" stop-color="#dc2626" stop-opacity="0.4" />
     </linearGradient>
 
     <!-- Master Refined Elongated Knights Templar Cross -->
@@ -77,53 +86,38 @@
     </g>
   </defs>
 
-  <!-- Clean Background Surface & Ambient Lighting -->
-  <rect width="600" height="240" fill="url(#silverPlateGrad)" />
-  <rect width="600" height="240" fill="url(#centerGlow)" />
+  <!-- 1. Base Layer Gradient -->
+  <rect width="600" height="240" fill="url(#bgBaseGrad)" />
 
-  <!-- HERALDIC SHIELD & CRUSADER SWORD WATERMARK -->
-  <g transform="translate(300, 120)" opacity="0.65">
-    
-    <!-- Central Greatsword (Vertical Axis) -->
-    <!-- Pommel -->
-    <circle cx="0" cy="-106" r="7" fill="none" stroke="url(#swordGrad)" stroke-width="1.5" />
-    <circle cx="0" cy="-106" r="2.5" fill="#94a3b8" opacity="0.4" />
-    
-    <!-- Grip / Hilt -->
-    <line x1="0" y1="-99" x2="0" y2="-86" stroke="url(#swordGrad)" stroke-width="3" stroke-linecap="round" />
-    
-    <!-- Crossguard (Quillons) -->
-    <path d="M -34 -86 C -18 -88 18 -88 34 -86 C 30 -83 24 -83 18 -84 L -18 -84 C -24 -83 -30 -83 -34 -86 Z" fill="url(#swordGrad)" />
-    
-    <!-- Sword Blade (Behind Shield) -->
-    <line x1="0" y1="-84" x2="0" y2="110" stroke="url(#swordGrad)" stroke-width="2" />
-    <line x1="-3" y1="-84" x2="0" y2="114" stroke="url(#swordGrad)" stroke-width="0.75" opacity="0.5" />
-    <line x1="3" y1="-84" x2="0" y2="114" stroke="url(#swordGrad)" stroke-width="0.75" opacity="0.5" />
+  <!-- 2. Central Ruby Ambient Light Sphere -->
+  <rect width="600" height="240" fill="url(#rubyCenterFlare)" />
 
-    <!-- Outer Heraldic Shield Contour -->
-    <path d="M -88 -76 
-             C -35 -82 35 -82 88 -76 
-             C 92 -40 92 10 74 48 
-             C 56 82 22 102 0 112 
-             C -22 102 -56 82 -74 48 
-             C -92 10 -92 -40 -88 -76 Z" 
-          fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="1.5" />
+  <!-- 3. Abstract Geometric Shards & Diagonal Facets -->
+  <!-- Diagonal Facet Left Top -->
+  <polygon points="0,0 260,0 120,240 0,240" fill="url(#facetGrad1)" />
+  
+  <!-- Diagonal Facet Right Bottom -->
+  <polygon points="340,0 600,0 600,240 480,240" fill="url(#facetGrad2)" />
 
-    <!-- Inner Shield Inset Hairline -->
-    <path d="M -78 -68 
-             C -30 -73 30 -73 78 -68 
-             C 82 -36 82 8 66 42 
-             C 50 72 18 90 0 100 
-             C -18 90 -50 72 -66 42 
-             C -82 8 -82 -36 -78 -68 Z" 
-          fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="0.85" stroke-dasharray="3 5" />
+  <!-- Central Dynamic Diamond Crystal Facet -->
+  <polygon points="300,10 440,120 300,230 160,120" fill="url(#facetGrad1)" stroke="#ffffff" stroke-width="1" stroke-opacity="0.6" />
 
-    <!-- Subtle Heraldic Chevron Inscription in Shield -->
-    <path d="M -60 -40 L 0 -10 L 60 -40" fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="0.75" opacity="0.4" />
-    <path d="M -60 -20 L 0 10 L 60 -20" fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="0.75" opacity="0.3" />
+  <!-- Subtle Crimson Light Shard Angles -->
+  <polygon points="240,0 360,0 300,120" fill="url(#crimsonFacetGrad)" />
+  <polygon points="300,120 360,240 240,240" fill="url(#crimsonFacetGrad)" />
+
+  <!-- Subtle Geometric Lattice Grid Lines -->
+  <g stroke="#cbd5e1" stroke-width="0.75" stroke-opacity="0.4" stroke-dasharray="4 8">
+    <line x1="0" y1="60" x2="600" y2="60" />
+    <line x1="0" y1="180" x2="600" y2="180" />
+    <line x1="150" y1="0" x2="150" y2="240" />
+    <line x1="450" y1="0" x2="450" y2="240" />
+    <!-- Diagonal Dynamic Guidelines -->
+    <line x1="0" y1="0" x2="600" y2="240" />
+    <line x1="0" y1="240" x2="600" y2="0" />
   </g>
 
-  <!-- Architectural Armor Plate Border & Corner Brackets -->
+  <!-- 4. Architectural Armor Plate Border & Corner Brackets -->
   <rect width="598" height="238" x="1" y="1" rx="8" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.95" />
   <rect width="588" height="228" x="6" y="6" rx="5" fill="none" stroke="#cbd5e1" stroke-width="1" />
   <rect width="582" height="222" x="9" y="9" rx="4" fill="none" stroke="#e2e8f0" stroke-width="0.75" />
@@ -136,7 +130,7 @@
     <polygon points="588,228 591,225 594,228 591,231" />
   </g>
 
-  <!-- Mathematically Centered Wordmark Block on Canvas (300, 120) -->
+  <!-- 5. Mathematically Centered Wordmark Block on Canvas (300, 120) -->
   <g transform="translate(300, 120)">
     <g transform="translate(-223, 0)">
       <!-- Left Part: 'sen' in Polished Dark Gunmetal -->
