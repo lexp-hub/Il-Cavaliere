@@ -48,10 +48,10 @@ export function validateAuthToken(token) {
 }
 
 function getCallbackUrl(req) {
-  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1') && !process.env.OAUTH2_CALLBACK_URL.includes('wispbyte.app')) {
+  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1')) {
     return process.env.OAUTH2_CALLBACK_URL;
   }
-  return 'https://sentry.wisp.uno/auth/discord/callback';
+  return 'https://sentry.wispbyte.app/auth/discord/callback';
 }
 
 authRouter.get('/login', (req, res) => {

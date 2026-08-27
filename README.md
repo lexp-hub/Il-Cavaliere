@@ -4,7 +4,7 @@
     <strong>Sentinella Intelligente, Sicurezza &amp; Gestione Community per Discord</strong>
   </p>
   <p align="center">
-    <a href="https://sentry.wisp.uno"><img src="https://img.shields.io/badge/Dashboard-sentry.wisp.uno-dc2626?style=flat-square&logo=safari" alt="Dashboard" /></a>
+    <a href="https://sentry.wispbyte.app"><img src="https://img.shields.io/badge/Dashboard-sentry.wispbyte.app-dc2626?style=flat-square&logo=safari" alt="Dashboard" /></a>
     <img src="https://img.shields.io/badge/Discord.js-v14.16-5865F2?style=flat-square&logo=discord" alt="Discord.js" />
     <img src="https://img.shields.io/badge/AI-Llama_3.3_70B-red?style=flat-square" alt="Llama 70B" />
     <img src="https://img.shields.io/badge/Database-SQLite_WAL-003B57?style=flat-square&logo=sqlite" alt="SQLite" />
@@ -18,7 +18,7 @@
 
 **Sentry** è una sentinella multifunzione all-in-one per Discord, dotata di Intelligenza Artificiale (Llama 3.3 70B), gestione automatica delle partnership, live embed builder, reaction roles, welcomer personalizzato, sistema di ticket, automod avanzato e una **Dashboard Web moderna in stile acciaio nobile**.
 
-🌐 **Dashboard Ufficiale:** [https://sentry.wisp.uno](https://sentry.wisp.uno)
+🌐 **Dashboard Ufficiale:** [https://sentry.wispbyte.app](https://sentry.wispbyte.app)
 
 ---
 

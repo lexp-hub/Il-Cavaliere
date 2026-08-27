@@ -17,7 +17,7 @@ export default {
   async execute(interaction) {
     const dashboardUrl = (CONFIG.DASHBOARD_URL && !CONFIG.DASHBOARD_URL.includes('localhost') && !CONFIG.DASHBOARD_URL.includes('127.0.0.1'))
       ? CONFIG.DASHBOARD_URL
-      : 'https://sentry.wisp.uno';
+      : 'https://sentry.wispbyte.app';
 
     const mainEmbed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR)
