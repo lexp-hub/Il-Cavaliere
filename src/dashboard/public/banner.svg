@@ -15,7 +15,7 @@
       }
     </style>
 
-    <!-- Luxury Silver Armor Plate Gradient -->
+    <!-- Luxury Clean Silver Armor Plate Gradient -->
     <linearGradient id="silverPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
       <stop offset="25%" stop-color="#f8fafc" />
@@ -27,7 +27,7 @@
     <radialGradient id="centerGlow" cx="50%" cy="50%" r="65%">
       <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
       <stop offset="45%" stop-color="#f8fafc" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#e2e8f0" />
+      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0" />
     </radialGradient>
 
     <!-- Deep Polished Gunmetal Gradient for Text -->
@@ -45,13 +45,6 @@
       <stop offset="65%" stop-color="#dc2626" />
       <stop offset="100%" stop-color="#991b1b" />
     </linearGradient>
-
-    <!-- Subtle Red Atmospheric Glow behind Cross -->
-    <radialGradient id="crossHalo" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.22" />
-      <stop offset="50%" stop-color="#dc2626" stop-opacity="0.06" />
-      <stop offset="100%" stop-color="#dc2626" stop-opacity="0" />
-    </radialGradient>
 
     <!-- Master Refined Elongated Knights Templar Cross -->
     <g id="elongatedTemplarT">
@@ -71,24 +64,9 @@
     </g>
   </defs>
 
-  <!-- Background Surface & Ambient Lighting -->
+  <!-- Clean Background Surface & Ambient Lighting -->
   <rect width="600" height="240" fill="url(#silverPlateGrad)" />
   <rect width="600" height="240" fill="url(#centerGlow)" />
-
-  <!-- Technical Heraldic Watermark Circles centered EXACTLY with the Cross at (300, 120) -->
-  <g transform="translate(300, 120)" opacity="0.5">
-    <!-- Subtle Crimson Cross Halo -->
-    <circle cx="0" cy="0" r="90" fill="url(#crossHalo)" />
-    <!-- Fine Hairline Compass Rings -->
-    <circle cx="0" cy="0" r="95" fill="none" stroke="#cbd5e1" stroke-width="1" />
-    <circle cx="0" cy="0" r="105" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.28" stroke-dasharray="4 8" />
-    <circle cx="0" cy="0" r="115" fill="none" stroke="#cbd5e1" stroke-width="0.75" stroke-dasharray="2 6" />
-    <!-- Subtle Crosshairs -->
-    <line x1="-125" y1="0" x2="-110" y2="0" stroke="#94a3b8" stroke-width="1.25" stroke-opacity="0.5" />
-    <line x1="110" y1="0" x2="125" y2="0" stroke="#94a3b8" stroke-width="1.25" stroke-opacity="0.5" />
-    <line x1="0" y1="-120" x2="0" y2="-105" stroke="#94a3b8" stroke-width="1.25" stroke-opacity="0.5" />
-    <line x1="0" y1="105" x2="0" y2="120" stroke="#94a3b8" stroke-width="1.25" stroke-opacity="0.5" />
-  </g>
 
   <!-- Architectural Armor Plate Border & Corner Brackets -->
   <rect width="598" height="238" x="1" y="1" rx="8" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.95" />
@@ -103,24 +81,26 @@
     <polygon points="588,228 591,225 594,228 591,231" />
   </g>
 
-  <!-- Harmonious Master Wordmark: Perfectly balanced around Central Cross at (300, 116) -->
-  <g>
-    <!-- Left Part: 'sen' right-aligned cleanly to X = 264 -->
-    <text x="264" y="159" text-anchor="end" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
-      sen
-    </text>
+  <!-- Mathematically Centered Wordmark Block on Canvas (300, 120) -->
+  <g transform="translate(300, 120)">
+    <g transform="translate(-230, 0)">
+      <!-- Left Part: 'sen' in Polished Dark Gunmetal -->
+      <text x="0" y="40" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
+        sen
+      </text>
 
-    <!-- Center: Elongated Templar Cross ('t') at Exact Axis (300, 116) -->
-    <g transform="translate(300, 116) scale(0.90)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.52))">
-      <use href="#elongatedTemplarT" />
+      <!-- Center: Elongated Templar Cross ('t') with clean, refined gaps -->
+      <g transform="translate(252, -4) scale(0.90)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.52))">
+        <use href="#elongatedTemplarT" />
+      </g>
+
+      <!-- Right Part: 'ry' in Polished Dark Gunmetal -->
+      <text x="296" y="40" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
+        ry
+      </text>
+
+      <!-- Signature Crimson Period Dot Placed on Baseline beside 'y' -->
+      <circle cx="428" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
     </g>
-
-    <!-- Right Part: 'ry' left-aligned cleanly from X = 336 -->
-    <text x="336" y="159" text-anchor="start" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
-      ry
-    </text>
-
-    <!-- Signature Crimson Period Dot Placed on Baseline beside 'y' -->
-    <circle cx="472" cy="150" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
   </g>
 </svg>
