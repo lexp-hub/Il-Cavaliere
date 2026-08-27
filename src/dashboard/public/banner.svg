@@ -106,21 +106,7 @@
   <path d="M 600 35 C 510 65 510 175 600 205" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
   <path d="M 600 60 C 535 85 535 155 600 180" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
 
-  <!-- CENTRAL GEOMETRIC CURVED ARCH FIGURE (Exact Matching Style: Curves, Highlight, Dashed Lines & Crimson Accent) -->
-  <!-- Central Curved Mandorla Lens (Curved Arcs matching the side style) -->
-  <path d="M 300 12 C 410 40 410 200 300 228 C 190 200 190 40 300 12 Z" fill="url(#arcGradCenter)" />
-  <!-- Central White Highlight Arcs -->
-  <path d="M 300 24 C 390 50 390 190 300 216 C 210 190 210 50 300 24 Z" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-opacity="0.65" />
-  <!-- Central Dashed Guide Arcs -->
-  <path d="M 300 38 C 365 62 365 178 300 202 C 235 178 235 62 300 38 Z" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
-  <!-- Central Crimson Accent Arc -->
-  <path d="M 300 55 C 340 75 340 165 300 185 C 260 165 260 75 300 55 Z" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
-
-  <!-- Connecting Horizontal Flow Lines -->
-  <g stroke="#cbd5e1" stroke-width="0.75" stroke-opacity="0.3" stroke-dasharray="3 6">
-    <line x1="110" y1="120" x2="210" y2="120" />
-    <line x1="390" y1="120" x2="490" y2="120" />
-  </g>
+  
 
   <!-- 4. Architectural Armor Plate Border & Corner Brackets -->
   <rect width="598" height="238" x="1" y="1" rx="8" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.95" />
