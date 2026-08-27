@@ -104,7 +104,7 @@
   </g>
 
   <!-- Mathematically Centered Sentry Wordmark (X: 73, Y: 120 -> Exact Center 300, 120) -->
-  <g transform="translate(65, 120)">
+  <g transform="translate(64, 120)">
 
     <!-- Left Part: 'sen' in Polished Dark Gunmetal -->
     <text x="0" y="41" fill="url(#steelTextGrad)" font-size="124" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
