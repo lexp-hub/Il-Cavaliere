@@ -108,7 +108,7 @@
 
     // 6. Resolve Discord User Mentions: &lt;@!?ID&gt;
     text = text.replace(/&lt;@!?([0-9]{15,22})&gt;/g, () => {
-      return `<span class="discord-mention-pill user">@NuovoCavaliere</span>`;
+      return `<span class="discord-mention-pill user">@NuovoUtente</span>`;
     });
 
     // 7. Bold Italic (***text***)
