@@ -212,7 +212,7 @@ export const TicketManager = {
               { name: '🔒 Chiuso da', value: `${user} (\`${user.tag}\`)`, inline: true },
               { name: '📝 Motivo', value: `\`${reason}\``, inline: false }
             )
-            .setFooter({ text: 'Il Cavaliere • Ticket Logs', iconURL: guild.iconURL() })
+            .setFooter({ text: 'Sentry • Ticket Logs', iconURL: guild.iconURL() })
             .setTimestamp();
 
           await logChannel.send({ embeds: [logEmbed], files: [attachment] }).catch(() => {});
@@ -331,7 +331,7 @@ export const TicketManager = {
       .setColor(newConfig.color || panel.color || CONFIG.EMBED_COLOR || '#dc2626')
       .setTitle(newConfig.title || panel.title || '🎫 Centro Supporto & Assistenza')
       .setDescription(newConfig.description || panel.description || 'Clicca sul pulsante sottostante per aprire una richiesta di supporto.')
-      .setFooter({ text: newConfig.footer || panel.footer || 'Il Cavaliere • Ticket System', iconURL: channel.guild.iconURL() })
+      .setFooter({ text: newConfig.footer || panel.footer || 'Sentry • Ticket System', iconURL: channel.guild.iconURL() })
       .setTimestamp();
 
     if (newConfig.image || panel.image) {

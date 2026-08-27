@@ -178,7 +178,7 @@ export default {
           { name: '🐟 Catture Totali', value: `\`${profile.total_fish_caught} Pescati\``, inline: true },
           { name: `📦 Contenuto Cestino (${inv.length} oggetti - Valore: 🪙 ${totalValue})`, value: invList }
         )
-        .setFooter({ text: 'Il Cavaliere • Economia Medievale', iconURL: interaction.guild.iconURL() })
+        .setFooter({ text: 'Sentry • Economia', iconURL: interaction.guild.iconURL() })
         .setTimestamp();
 
       await interaction.reply({ embeds: [embed] });

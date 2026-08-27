@@ -119,7 +119,7 @@ export default {
         .setColor(CONFIG.EMBED_COLOR || '#dc2626')
         .setTitle(title)
         .setDescription(desc)
-        .setFooter({ text: 'Il Cavaliere • Assistenza Clienti', iconURL: interaction.guild.iconURL() })
+        .setFooter({ text: 'Sentry • Assistenza Clienti', iconURL: interaction.guild.iconURL() })
         .setTimestamp();
 
       const sent = await channel.send({ embeds: [embed], components: [row] });

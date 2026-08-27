@@ -100,7 +100,7 @@ export const AutoModManager = {
 
       const warnEmbed = new EmbedBuilder()
         .setColor(CONFIG.EMBED_WARN_COLOR)
-        .setTitle('🛡️ AutoMod | Il Cavaliere')
+        .setTitle('🛡️ AutoMod | Sentry')
         .setDescription(`⚠️ ${message.author}, il tuo messaggio è stato bloccato.\n**Motivo:** \`${reason}\``)
         .setFooter({ text: 'Sistema di protezione automatico' })
         .setTimestamp();

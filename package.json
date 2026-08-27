@@ -1,7 +1,7 @@
 {
-  "name": "il-cavaliere-bot",
+  "name": "sentry-bot",
   "version": "2.0.0",
-  "description": "Bot Discord avanzato con AI (Cloudflare Workers / Llama 3.3 70B), Dashboard Web Noctaly-style, partnership, embed builder, reaction roles, welcomer, autoresponder e molto altro.",
+  "description": "Bot Discord avanzato con AI (Cloudflare Workers / Llama 3.3 70B), Dashboard Web, partnership, embed builder, reaction roles, welcomer, autoresponder e molto altro.",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -17,13 +17,12 @@
     "cloudflare-ai",
     "llama-70b",
     "dashboard",
-    "noctaly-style",
     "partnerships",
     "embed-builder",
     "reaction-roles",
     "welcomer"
   ],
-  "author": "Il Cavaliere Team",
+  "author": "Sentry Team",
   "license": "MIT",
   "dependencies": {
     "@discordjs/builders": "^1.8.2",

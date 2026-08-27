@@ -14,11 +14,11 @@ export function loadDefaultPrompt() {
       }
     }
   } catch (err) {
-    console.error("[Il Cavaliere AI] Errore nel caricamento del file prompt.json:", err.message);
+    console.error("[Sentry AI] Errore nel caricamento del file prompt.json:", err.message);
   }
 
   if (!DEFAULT_IDENTITY || DEFAULT_IDENTITY.trim().length === 0) {
-    DEFAULT_IDENTITY = "Sei 'Il Cavaliere', un analista cinico, spietato e allergico all'ipocrisia umano-sociale. Proteggi la verità e smonti i ragionamenti fallati di chiunque ti si ponga davanti. Rispondi con stile sarcastico, secco e pungente in massimo 300 caratteri.";
+    DEFAULT_IDENTITY = "Sei 'Sentry', un'intelligenza artificiale avanzata, analista cinico e sentinella di sicurezza del server. Proteggi la verità e smonti i ragionamenti fallati di chiunque ti si ponga davanti. Rispondi con stile sarcastico, secco e pungente in massimo 300 caratteri.";
   }
   return DEFAULT_IDENTITY;
 }
@@ -57,10 +57,10 @@ export const AIManager = {
           }
         } else {
           const errorText = await response.text();
-          console.warn('[Il Cavaliere AI] Cloudflare AI risposta non ok:', errorText);
+          console.warn('[Sentry AI] Cloudflare AI risposta non ok:', errorText);
         }
       } catch (err) {
-        console.error('[Il Cavaliere AI] Errore chiamata Cloudflare AI:', err.message);
+        console.error('[Sentry AI] Errore chiamata Cloudflare AI:', err.message);
       }
     }
 
@@ -89,11 +89,11 @@ export const AIManager = {
           }
         }
       } catch (geminiErr) {
-        console.error('[Il Cavaliere AI] Fallback Gemini error:', geminiErr.message);
+        console.error('[Sentry AI] Fallback Gemini error:', geminiErr.message);
       }
     }
 
-    return "Sono Il Cavaliere. I miei canali neurali sono temporaneamente sovraccarichi di banalità. Riprova tra poco.";
+    return "Sono Sentry. I miei canali neurali sono temporaneamente sovraccarichi. Riprova tra poco.";
   },
 
   formatReply(messages, reply) {
@@ -144,7 +144,7 @@ export const AIManager = {
         if (results.length > 0) return results.join("\n\n");
       }
     } catch (err) {
-      console.warn("[Il Cavaliere AI] Ricerca DuckDuckGo fallita, tento fallback Wikipedia...", err.message);
+      console.warn("[Sentry AI] Ricerca DuckDuckGo fallita, tento fallback Wikipedia...", err.message);
     }
 
     try {
@@ -161,7 +161,7 @@ export const AIManager = {
         }
       }
     } catch (err) {
-      console.error("[Il Cavaliere AI] Fallback Wikipedia fallito:", err.message);
+      console.error("[Sentry AI] Fallback Wikipedia fallito:", err.message);
     }
 
     return "Nessun risultato rilevante trovato sul web per questa ricerca.";
@@ -173,7 +173,7 @@ export const AIManager = {
     const question = message.content.replace(botMentionRegExp, '').trim();
 
     if (!question) {
-      return message.reply("Dimmi pure, sono qui a proteggere il reame. (Anche se gradirei meno disturbo).");
+      return message.reply("Dimmi pure, sono qui a proteggere il server. (Anche se gradirei meno disturbo).");
     }
 
     const cleanQuestion = question.toLowerCase();
@@ -186,7 +186,7 @@ export const AIManager = {
 
     const guildAIConfig = guild ? DatabaseHelper.getAIConfig(guild.id) : { enabled: true };
     if (!guildAIConfig.enabled) {
-      return message.reply("Il modulo AI de Il Cavaliere è momentaneamente disattivato in questo server.");
+      return message.reply("Il modulo Sentry AI è momentaneamente disattivato in questo server.");
     }
 
     const basePrompt = guildAIConfig.system_prompt || DEFAULT_IDENTITY;
@@ -230,12 +230,12 @@ ISTRUZIONI NOMI E RUOLI DEGLI UTENTI:
       } else {
         const authorId = msg.author.id;
         const displayName = msg.member?.displayName || msg.author.username;
-        let roleDescription = "Utente del Reame";
+        let roleDescription = "Utente del Server";
 
         if (creatorId && authorId === creatorId) {
           roleDescription = "Creatore del bot";
         } else if (msg.member?.permissions.has('Administrator')) {
-          roleDescription = "Amministratore del Reame";
+          roleDescription = "Amministratore del Server";
         }
 
         const cleanText = (msg.content || "").replace(botMentionRegExp, '').trim();
@@ -269,7 +269,7 @@ ISTRUZIONI NOMI E RUOLI DEGLI UTENTI:
     const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
     if (searchMatch) {
       const searchQuery = searchMatch[1].trim();
-      console.log(`[Il Cavaliere AI] Ricerca web attivata per: "${searchQuery}"`);
+      console.log(`[Sentry AI] Ricerca web attivata per: "${searchQuery}"`);
 
       const searchResults = await this.performWebSearch(searchQuery);
 

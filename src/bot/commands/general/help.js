@@ -12,7 +12,7 @@ import { CONFIG } from '../../../config.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('help')
-    .setDescription('Mostra la lista completa dei comandi e moduli di Il Cavaliere'),
+    .setDescription('Mostra la lista completa dei comandi e moduli di Sentry'),
 
   async execute(interaction) {
     const dashboardUrl = (CONFIG.DASHBOARD_URL && !CONFIG.DASHBOARD_URL.includes('localhost') && !CONFIG.DASHBOARD_URL.includes('127.0.0.1'))
@@ -21,12 +21,12 @@ export default {
 
     const mainEmbed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR)
-      .setTitle('🛡️ Il Cavaliere | Centro Comandi')
+      .setTitle('🛡️ Sentry | Centro Comandi')
       .setDescription(
-        'Benvenuto nel pannello di aiuto di **Il Cavaliere**!\n' +
+        'Benvenuto nel pannello di aiuto di **Sentry**!\n' +
         'Seleziona una categoria dal menu a tendina sottostante per esplorare tutti i comandi disponibili.\n\n' +
         `🌐 **Dashboard Web:** [Accedi alla Dashboard](${dashboardUrl})\n` +
-        `✨ **Versione:** \`v1.0.0\` | **Sviluppato per Discord.js v14**`
+        `✨ **Versione:** \`v2.0.0\` | **Sviluppato per Discord.js v14**`
       )
       .addFields(
         { name: '🤝 Partnership', value: '`/partnership` - Registrazione rapida con form modale', inline: true },

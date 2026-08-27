@@ -5,7 +5,7 @@ import os from 'os';
 export default {
   data: new SlashCommandBuilder()
     .setName('botinfo')
-    .setDescription('Mostra informazioni tecniche e statistiche su Il Cavaliere'),
+    .setDescription('Mostra informazioni tecniche e statistiche su Sentry'),
 
   async execute(interaction) {
     const { client } = interaction;
@@ -20,9 +20,9 @@ export default {
 
     const embed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR)
-      .setTitle('🛡️ Informazioni su Il Cavaliere')
+      .setTitle('🛡️ Informazioni su Sentry')
       .setDescription(
-        '**Il Cavaliere** è un bot multifunzione all-in-one di nuova generazione dotato di Dashboard web interattiva stile Noctaly, sistema partnership automatico, embed builder live, ticket e automod.'
+        '**Sentry** è una sentinella multifunzione all-in-one di nuova generazione dotata di Dashboard web interattiva, intelligenza artificiale neurale Llama 70B, sistema partnership automatico, embed builder live, ticket e automod.'
       )
       .setThumbnail(client.user.displayAvatarURL({ size: 256 }))
       .addFields(
@@ -36,7 +36,7 @@ export default {
         { name: '🧠 RAM Bot', value: `\`${(process.memoryUsage().rss / 1024 / 1024).toFixed(1)} MB\``, inline: true },
         { name: '🔗 Dashboard', value: `[Visita la Dashboard](${CONFIG.DASHBOARD_URL})`, inline: true }
       )
-      .setFooter({ text: 'Il Cavaliere • Proteggendo i Reami', iconURL: client.user.displayAvatarURL() })
+      .setFooter({ text: 'Sentry • Sicurezza & Gestione Server', iconURL: client.user.displayAvatarURL() })
       .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });

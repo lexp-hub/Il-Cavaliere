@@ -13,7 +13,7 @@ export default {
 
     const embed = new EmbedBuilder()
       .setColor(CONFIG.EMBED_COLOR)
-      .setTitle('🏓 Pong! | Prestazioni de Il Cavaliere')
+      .setTitle('🏓 Pong! | Prestazioni di Sentry')
       .addFields(
         { name: '⚡ Latenza Messaggio', value: `\`${latency}ms\``, inline: true },
         { name: '🌐 Latenza WebSocket', value: `\`${apiLatency}ms\``, inline: true },

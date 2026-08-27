@@ -6,15 +6,15 @@ import { CONFIG } from '../../../config.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('ai')
-    .setDescription('Interagisci con l\'Intelligenza Artificiale de Il Cavaliere')
+    .setDescription('Interagisci con l\'Intelligenza Artificiale Sentry AI')
     .addSubcommand(sub =>
       sub
         .setName('ask')
-        .setDescription('Poni una domanda diretta a Il Cavaliere')
+        .setDescription('Poni una domanda diretta a Sentry')
         .addStringOption(opt =>
           opt
             .setName('domanda')
-            .setDescription('Cosa vuoi chiedere a Il Cavaliere?')
+            .setDescription('Cosa vuoi chiedere a Sentry?')
             .setRequired(true)
         )
         .addBooleanOption(opt =>
@@ -43,14 +43,14 @@ export default {
     .addSubcommand(sub =>
       sub
         .setName('prompt')
-        .setDescription('Visualizza o reimposta l\'identità e lo stile de Il Cavaliere')
+        .setDescription('Visualizza o reimposta l\'identità e lo stile di Sentry')
         .addStringOption(opt =>
           opt
             .setName('preset')
             .setDescription('Scegli uno stile preimpostato')
             .addChoices(
               { name: '⚔️ Cinico & Spietato (Default)', value: 'cynical' },
-              { name: '🛡️ Nobile Cavaliere Protettore', value: 'noble' },
+              { name: '🛡️ Nobile Sentinella & Guardiano', value: 'noble' },
               { name: '🤖 Assistente Tecnico Preciso', value: 'technical' }
             )
             .setRequired(false)
@@ -108,14 +108,14 @@ export default {
         .setColor(CONFIG.EMBED_COLOR)
         .setTitle(`🔍 Ricerca Web: ${query}`)
         .setDescription(reply)
-        .setFooter({ text: 'Il Cavaliere AI • Web Intelligence' })
+        .setFooter({ text: 'Sentry AI • Web Intelligence' })
         .setTimestamp();
 
       await interaction.editReply({ embeds: [embed] });
     } else if (subcommand === 'reset') {
       DatabaseHelper.resetChannelMemory(interaction.channel.id);
       await interaction.reply({
-        content: '🧹 Memoria della conversazione azzerata per questo canale. Il Cavaliere ha dimenticato i messaggi precedenti.'
+        content: '🧹 Memoria della conversazione azzerata per questo canale. Sentry ha dimenticato i messaggi precedenti.'
       });
     } else if (subcommand === 'prompt') {
       const preset = interaction.options.getString('preset');
@@ -126,7 +126,7 @@ export default {
 
         const embed = new EmbedBuilder()
           .setColor(CONFIG.EMBED_COLOR)
-          .setTitle('🎭 Identità Attuale de Il Cavaliere')
+          .setTitle('🎭 Identità Attuale di Sentry')
           .setDescription(`\`\`\`${currentPrompt.slice(0, 1500)}\`\`\``)
           .setFooter({ text: 'Puoi personalizzare il prompt anche dalla Dashboard Web!' })
           .setTimestamp();
@@ -140,15 +140,15 @@ export default {
 
       let newPrompt = "";
       if (preset === 'noble') {
-        newPrompt = "Sei 'Il Cavaliere', un nobile guardiano d'onore. Rispondi con tono fiero, leale ed epico, dispensando consigli saggi ed elevati per il bene del server. Massimo 300 caratteri.";
+        newPrompt = "Sei 'Sentry', una nobile sentinella di sicurezza e guardiano dei server Discord. Rispondi con tono fiero, leale ed epico, dispensando consigli saggi ed elevati per il bene del server. Massimo 300 caratteri.";
       } else if (preset === 'technical') {
-        newPrompt = "Sei 'Il Cavaliere', un'intelligenza artificiale focalizzata su precisione logica, programmazione e analisi tecnica oggettiva. Rispondi in modo pulito, asciutto ed impeccabile.";
+        newPrompt = "Sei 'Sentry', un'intelligenza artificiale focalizzata su precisione logica, programmazione, sicurezza e analisi tecnica oggettiva. Rispondi in modo pulito, asciutto ed impeccabile.";
       } else {
         newPrompt = AIManager.loadPrompt();
       }
 
       DatabaseHelper.updateAIConfig(interaction.guild.id, { system_prompt: newPrompt });
-      await interaction.reply({ content: `✅ Stile de Il Cavaliere aggiornato al preset: **${preset}**!` });
+      await interaction.reply({ content: `✅ Stile di Sentry aggiornato al preset: **${preset}**!` });
     }
   }
 };

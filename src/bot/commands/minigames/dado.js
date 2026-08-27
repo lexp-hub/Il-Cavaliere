@@ -28,7 +28,7 @@ export default {
       .setColor(isMax ? '#10b981' : isMin ? '#ef4444' : '#dc2626')
       .setTitle(`🎲 Lancio Dado (d${sides})`)
       .setDescription(`**${interaction.user.username}** ha tirato il dado e ha ottenuto:\n\n# 🎲 **${roll}** ${isMax ? '🔥 *(Massimo!)*' : isMin ? '💀 *(Fallimento Critico)*' : ''}`)
-      .setFooter({ text: 'Il Cavaliere • Minigiochi', iconURL: interaction.guild.iconURL() })
+      .setFooter({ text: 'Sentry • Minigiochi', iconURL: interaction.guild.iconURL() })
       .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });

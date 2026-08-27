@@ -59,7 +59,7 @@ export default {
         .setColor(CONFIG.EMBED_SUCCESS_COLOR || '#10b981')
         .setTitle('🔢 Canale Counting Impostato!')
         .setDescription(`Il canale ${channel} è ora attivo per il gioco del conteggio!\n\n**Regole del Gioco:**\n1. Iniziate scrivendo **1**, poi **2**, **3**, ecc.\n2. La stessa persona **non può** contare due volte di fila!\n3. Se qualcuno sbaglia o conta due volte, si ricomincia da 1!\n\n*Buona fortuna, cavalieri!*`)
-        .setFooter({ text: 'Il Cavaliere • Minigiochi', iconURL: interaction.guild.iconURL() })
+        .setFooter({ text: 'Sentry • Minigiochi', iconURL: interaction.guild.iconURL() })
         .setTimestamp();
 
       await channel.send({ embeds: [embed] });

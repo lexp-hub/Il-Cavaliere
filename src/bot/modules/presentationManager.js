@@ -141,7 +141,7 @@ export const PresentationManager = {
         name: `Presentazione di ${name}`,
         iconURL: user.displayAvatarURL({ dynamic: true })
       })
-      .setTitle(`📜 Un nuovo Cavaliere si presenta: ${name}!`)
+      .setTitle(`📜 Nuova Presentazione: ${name}!`)
       .setThumbnail(user.displayAvatarURL({ dynamic: true, size: 512 }))
       .addFields(
         { name: '👤 Nome / Nickname', value: `**${name}** (<@${user.id}>)`, inline: true },
@@ -150,7 +150,7 @@ export const PresentationManager = {
         { name: '🎮 Hobby & Passioni', value: hobbies, inline: false },
         { name: '✨ Qualcosa su di me', value: bio, inline: false }
       )
-      .setFooter({ text: `${guild.name} • Benvenuto nel Reame!`, iconURL: guild.iconURL() })
+      .setFooter({ text: `${guild.name} • Presentazioni`, iconURL: guild.iconURL() })
       .setTimestamp();
 
     if (social) {

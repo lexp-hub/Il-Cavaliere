@@ -6,26 +6,22 @@ export default {
   name: 'ready',
   once: true,
   async execute(client) {
-    console.log(`\n🛡️ [Il Cavaliere] Bot avviato con successo come ${client.user.tag}!`);
+    console.log(`\n🛡️ [Sentry] Bot avviato con successo come ${client.user.tag}!`);
     console.log(`🌐 Connesso a ${client.guilds.cache.size} server e ${client.users.cache.size} utenti.`);
     console.log(`📊 Dashboard attiva su: ${CONFIG.DASHBOARD_URL}\n`);
 
     const updatePresence = () => {
       const activities = [
         {
-          name: 'Cantiche Medievali | /help',
-          type: ActivityType.Listening
+          name: 'la sicurezza del server | /help',
+          type: ActivityType.Watching
         },
         {
-          name: 'Canti dei Templari',
-          type: ActivityType.Listening
+          name: 'Sentry AI 70B | /ai',
+          type: ActivityType.Playing
         },
         {
-          name: 'Inni Gregoriani | /help',
-          type: ActivityType.Listening
-        },
-        {
-          name: `${client.guilds.cache.size} Reami | /help`,
+          name: `${client.guilds.cache.size} Server | /help`,
           type: ActivityType.Watching
         }
       ];

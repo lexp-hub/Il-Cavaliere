@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Il Cavaliere | Dashboard Moderatori</title>
+  <title>Sentry | Dashboard Moderatori</title>
   <link rel="icon" href="/logo.svg?v=25" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,10 +13,10 @@
 
   <header class="glass-nav sticky top-0 z-50 w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <img src="/logo.svg?v=25" alt="Il Cavaliere" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-sm border border-slate-300">
+      <img src="/logo.svg?v=25" alt="Sentry" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-sm border border-slate-300">
       <div>
         <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-medieval">
-          Il Cavaliere <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-800 border border-slate-300 font-sans font-bold">v2.0</span>
+          Sentry <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-800 border border-slate-300 font-sans font-bold">v2.0</span>
         </h1>
         <p class="text-[11px] sm:text-xs text-slate-500 hidden sm:block">Dashboard Ufficiale per Moderatori Discord</p>
       </div>
@@ -44,16 +44,16 @@
   <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-20 sm:pb-24 text-center">
     <div id="hero-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/80 border border-slate-300 text-slate-800 text-xs font-semibold mb-5 shadow-sm">
       <i data-lucide="shield" class="w-3.5 h-3.5 text-red-600"></i>
-      <span>Il Cavaliere • Centro di Gestione &amp; Moderazione</span>
+      <span>Sentry • Centro di Gestione &amp; Moderazione</span>
     </div>
 
     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 leading-tight text-slate-900 font-medieval">
       Controllo completo e sicurezza <br class="hidden sm:inline">
-      per la tua community con <span class="text-red-600">Il Cavaliere</span>
+      per la tua community con <span class="text-red-600">Sentry</span>
     </h1>
 
     <p class="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-600 mb-8 leading-relaxed px-2">
-      Pannello di controllo in tempo reale: gestisci partnership con form modale, crea live embed avanzati a colonne, attiva la moderazione automatica e chatta con l'AI neurale Llama 70B.
+      Pannello di controllo in tempo reale: gestisci partnership con form modale, crea live embed avanzati a colonne, attiva la moderazione automatica e chatta con Sentry AI basata su Llama 70B.
     </p>
 
     <div class="flex flex-wrap items-center justify-center gap-3 sm:gap-4 mb-12 sm:mb-14">
@@ -117,7 +117,7 @@
           <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
             <i data-lucide="sparkles" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Il Cavaliere AI</h3>
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Sentry AI</h3>
           <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
             AI conversazionale basata su Llama 3.3 70B con ricerca web in tempo reale e risposte alle menzioni.
           </p>
@@ -179,8 +179,8 @@
   <footer class="relative z-10 border-t border-slate-300 bg-slate-900 px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-400">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
-        <img src="/logo.svg?v=25" class="w-5 h-5 rounded-full" alt="Il Cavaliere">
-        <span class="font-bold text-white font-medieval">Il Cavaliere</span> — Dashboard per Moderatori Discord
+        <img src="/logo.svg?v=25" class="w-5 h-5 rounded-full" alt="Sentry">
+        <span class="font-bold text-white font-medieval">Sentry</span> — Dashboard per Moderatori Discord
       </div>
       <div>
         Accesso consentito ai Moderatori e Amministratori autorizzati • SQLite WAL
@@ -363,7 +363,7 @@
       } else if (authError === 'token_exchange_failed') {
         errMsg = 'Autenticazione fallita: Client Secret errato o non corrispondente sul Discord Developer Portal.';
       }
-      alert('🛡️ [Il Cavaliere] ' + errMsg);
+      alert('🛡️ [Sentry] ' + errMsg);
     }
 
     checkAuthState().then(loadLandingData);

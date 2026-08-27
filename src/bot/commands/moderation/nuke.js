@@ -36,7 +36,7 @@ export default {
         .setTitle('💥 Canale Ricreato (Nuked)')
         .setDescription(`Questo canale è stato ripulito e ricreato con successo da ${interaction.user}!`)
         .setImage('https://media.giphy.com/media/HhTXt43pk1I1W/giphy.gif')
-        .setFooter({ text: 'Il Cavaliere • Moderazione' })
+        .setFooter({ text: 'Sentry • Moderazione' })
         .setTimestamp();
 
       await clonedChannel.send({ embeds: [embed] });

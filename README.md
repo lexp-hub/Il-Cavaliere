@@ -1,12 +1,12 @@
 <div align="center">
-  <img src="src/dashboard/public/banner.svg" alt="Il Cavaliere" width="100%" />
+  <img src="src/dashboard/public/banner.svg" alt="Sentry" width="100%" />
 </div>
 
 <br>
 
-# Il Cavaliere
+# Sentry
 
-Bot Discord con AI (Llama 70B), gestione partnership, embed builder, automod e dashboard web per moderatori.
+Bot Discord e Sentinella di Sicurezza con AI (Llama 70B), gestione partnership, embed builder, automod e dashboard web per moderatori.
 
 ---
 

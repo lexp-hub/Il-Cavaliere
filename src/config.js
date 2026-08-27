@@ -31,7 +31,7 @@ export const CONFIG = {
     : 'https://il-cavaliere.wispbyte.app/auth/discord/callback',
   
   DEFAULT_PREFIX: '!',
-  BOT_NAME: 'Il Cavaliere',
+  BOT_NAME: 'Sentry',
   EMBED_COLOR: '#DC2626',
   EMBED_SUCCESS_COLOR: '#10B981',
   EMBED_ERROR_COLOR: '#B91C1C',

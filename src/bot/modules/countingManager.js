@@ -83,7 +83,7 @@ export const CountingManager = {
         .setColor('#ef4444')
         .setTitle('💀 Errore nel Conteggio!')
         .setDescription(`**${message.author}** ha scritto **${parsedNumber}**, ma il numero corretto era **${expectedNumber}**!\n\n👑 *Record Massimo Raggiunto:* **${countingConfig.highest_streak}**\n🔄 Il conteggio riparte da **1**!`)
-        .setFooter({ text: 'Il Cavaliere • Counting Game', iconURL: message.guild.iconURL() })
+        .setFooter({ text: 'Sentry • Counting Game', iconURL: message.guild.iconURL() })
         .setTimestamp();
 
       await message.channel.send({ embeds: [ruinEmbed] });

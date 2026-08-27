@@ -336,7 +336,7 @@ export function createApiRouter(botClient) {
         .setColor(CONFIG.EMBED_COLOR)
         .setTitle(title || '🎭 Selezione Ruolo')
         .setDescription(description || `Clicca sul pulsante per ricevere o toglierti il ruolo ${role}.`)
-        .setFooter({ text: 'Il Cavaliere • Reaction Roles' })
+        .setFooter({ text: 'Sentry • Reaction Roles' })
         .setTimestamp();
 
       const msg = await channel.send({ embeds: [embed], components: [row] });
@@ -540,7 +540,7 @@ export function createApiRouter(botClient) {
       if (!message) return res.status(404).json({ error: 'Messaggio non trovato in questo canale.' });
 
       if (message.author.id !== botClient.user.id) {
-        return res.status(403).json({ error: 'Puoi modificare solo i messaggi inviati da Il Cavaliere.' });
+        return res.status(403).json({ error: 'Puoi modificare solo i messaggi inviati da Sentry.' });
       }
 
       const editPayload = {};

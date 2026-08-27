@@ -180,7 +180,7 @@ export const WelcomerManager = {
         const embData = config.leave_embed || {};
         const embed = new EmbedBuilder()
           .setColor(embData.color || CONFIG.EMBED_ERROR_COLOR || '#dc2626')
-          .setTitle(`👋 Un Cavaliere ha lasciato il Reame`)
+          .setTitle(`👋 Un membro ha lasciato il Server`)
           .setDescription(this.formatText(embData.description || messageText, member))
           .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 256 }))
           .setFooter({ text: `Membri rimasti: ${member.guild.memberCount}`, iconURL: member.guild.iconURL() })

@@ -117,7 +117,7 @@ export default {
         .setColor(CONFIG.EMBED_COLOR)
         .setTitle(title)
         .setDescription(desc)
-        .setFooter({ text: 'Sistema Ruoli Automatici • Il Cavaliere' })
+        .setFooter({ text: 'Sistema Ruoli Automatici • Sentry' })
         .setTimestamp();
 
       const sentMsg = await channel.send({ embeds: [embed], components: [row] });
