@@ -46,10 +46,10 @@
 
     <!-- Dynamic Crimson Accent Flare (Behind Cross) -->
     <radialGradient id="rubyCenterFlare" cx="50%" cy="50%" r="55%">
-      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.22" />
-      <stop offset="40%" stop-color="#dc2626" stop-opacity="0.08" />
-      <stop offset="80%" stop-color="#991b1b" stop-opacity="0.02" />
-      <stop offset="100%" stop-color="#dc2626" stop-opacity="0" />
+      <stop offset="0%" stop-color="#f87171" stop-opacity="0.35" />
+      <stop offset="25%" stop-color="#ef4444" stop-opacity="0.22" />
+      <stop offset="65%" stop-color="#dc2626" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#991b1b" stop-opacity="0" />
     </radialGradient>
 
     <!-- Deep Polished Gunmetal Gradient for Text -->
@@ -98,13 +98,13 @@
   <path d="M 0 0 C 130 35 130 205 0 240 Z" fill="url(#arcGradLeft)" />
   <path d="M 0 15 C 110 50 110 190 0 225" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-opacity="0.7" />
   <path d="M 0 35 C 90 65 90 175 0 205" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
-  <path d="M 0 60 C 65 85 65 155 0 180" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
+  <path d="M 0 60 C 65 85 65 155 0 180" fill="none" stroke="url(#crusaderCrossGrad)" stroke-width="1.25" stroke-opacity="0.55" />
 
   <!-- Right Side Geometric Curved Ribbon -->
   <path d="M 600 0 C 470 35 470 205 600 240 Z" fill="url(#arcGradRight)" />
   <path d="M 600 15 C 490 50 490 190 600 225" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-opacity="0.7" />
   <path d="M 600 35 C 510 65 510 175 600 205" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
-  <path d="M 600 60 C 535 85 535 155 600 180" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
+  <path d="M 600 60 C 535 85 535 155 600 180" fill="none" stroke="url(#crusaderCrossGrad)" stroke-width="1.25" stroke-opacity="0.55" />
 
   
 
