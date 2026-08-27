@@ -37,10 +37,10 @@
       <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0" />
     </linearGradient>
 
-    <!-- Geometric Facet Gradient 1 -->
-    <linearGradient id="facetGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.75" />
-      <stop offset="50%" stop-color="#f1f5f9" stop-opacity="0.35" />
+    <!-- Central Curved Mandorla / Arch Gradient -->
+    <linearGradient id="arcGradCenter" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#f1f5f9" stop-opacity="0.4" />
       <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0.1" />
     </linearGradient>
 
@@ -92,30 +92,37 @@
   <!-- 2. Central Ruby Ambient Light Sphere -->
   <rect width="600" height="240" fill="url(#rubyCenterFlare)" />
 
-  <!-- 3. GEOMETRIC CURVED ARCS ON THE FLANKS (Left & Right Sides) -->
+  <!-- 3. GEOMETRIC CURVED ARCS - HARMONIC TRIPLE ARCS (Flanks + Center) -->
+  
   <!-- Left Side Geometric Curved Ribbon -->
   <path d="M 0 0 C 130 35 130 205 0 240 Z" fill="url(#arcGradLeft)" />
-  <!-- Left Outer Arcs -->
   <path d="M 0 15 C 110 50 110 190 0 225" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-opacity="0.7" />
   <path d="M 0 35 C 90 65 90 175 0 205" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
   <path d="M 0 60 C 65 85 65 155 0 180" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
 
   <!-- Right Side Geometric Curved Ribbon -->
   <path d="M 600 0 C 470 35 470 205 600 240 Z" fill="url(#arcGradRight)" />
-  <!-- Right Outer Arcs -->
   <path d="M 600 15 C 490 50 490 190 600 225" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-opacity="0.7" />
   <path d="M 600 35 C 510 65 510 175 600 205" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
   <path d="M 600 60 C 535 85 535 155 600 180" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
 
-  <!-- 4. Subtle Diamond Crystal Facet & Diagonal Grid Guides -->
-  <polygon points="300,15 420,120 300,225 180,120" fill="url(#facetGrad1)" stroke="#ffffff" stroke-width="1" stroke-opacity="0.4" />
-  
-  <g stroke="#cbd5e1" stroke-width="0.75" stroke-opacity="0.35" stroke-dasharray="3 6">
-    <line x1="180" y1="120" x2="0" y2="120" />
-    <line x1="420" y1="120" x2="600" y2="120" />
+  <!-- CENTRAL GEOMETRIC CURVED ARCH FIGURE (Exact Matching Style: Curves, Highlight, Dashed Lines & Crimson Accent) -->
+  <!-- Central Curved Mandorla Lens (Curved Arcs matching the side style) -->
+  <path d="M 300 12 C 410 40 410 200 300 228 C 190 200 190 40 300 12 Z" fill="url(#arcGradCenter)" />
+  <!-- Central White Highlight Arcs -->
+  <path d="M 300 24 C 390 50 390 190 300 216 C 210 190 210 50 300 24 Z" fill="none" stroke="#ffffff" stroke-width="1.25" stroke-opacity="0.65" />
+  <!-- Central Dashed Guide Arcs -->
+  <path d="M 300 38 C 365 62 365 178 300 202 C 235 178 235 62 300 38 Z" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 6" stroke-opacity="0.6" />
+  <!-- Central Crimson Accent Arc -->
+  <path d="M 300 55 C 340 75 340 165 300 185 C 260 165 260 75 300 55 Z" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.35" />
+
+  <!-- Connecting Horizontal Flow Lines -->
+  <g stroke="#cbd5e1" stroke-width="0.75" stroke-opacity="0.3" stroke-dasharray="3 6">
+    <line x1="110" y1="120" x2="210" y2="120" />
+    <line x1="390" y1="120" x2="490" y2="120" />
   </g>
 
-  <!-- 5. Architectural Armor Plate Border & Corner Brackets -->
+  <!-- 4. Architectural Armor Plate Border & Corner Brackets -->
   <rect width="598" height="238" x="1" y="1" rx="8" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.95" />
   <rect width="588" height="228" x="6" y="6" rx="5" fill="none" stroke="#cbd5e1" stroke-width="1" />
   <rect width="582" height="222" x="9" y="9" rx="4" fill="none" stroke="#e2e8f0" stroke-width="0.75" />
@@ -128,7 +135,7 @@
     <polygon points="588,228 591,225 594,228 591,231" />
   </g>
 
-  <!-- 6. Mathematically Centered Wordmark Block on Canvas (300, 120) -->
+  <!-- 5. Mathematically Centered Wordmark Block on Canvas (300, 120) -->
   <g transform="translate(300, 120)">
     <g transform="translate(-223, 0)">
       <!-- Left Part: 'sen' in Polished Dark Gunmetal -->
