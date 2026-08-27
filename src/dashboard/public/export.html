@@ -4,55 +4,54 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Asset Ufficiali | Sentry</title>
-  <link rel="icon" href="/logo.svg?v=60" type="image/svg+xml">
+  <link rel="icon" href="/logo.svg?v=25" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@800;900&display=swap">
-  <link rel="stylesheet" href="/css/styles.css?v=65">
+  <link rel="stylesheet" href="/css/styles.css?v=25">
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-6 font-sans text-slate-900 bg-slate-50">
+<body class="min-h-screen flex flex-col items-center justify-between p-6 font-sans text-slate-100 bg-slate-950">
   <div class="max-w-3xl w-full text-center space-y-6 pt-6">
     <div class="space-y-2">
-      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/70 border border-slate-300 text-slate-800 text-xs font-semibold shadow-sm">
-        <i data-lucide="shield" class="w-3.5 h-3.5 text-red-600"></i>
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-red-500/30 text-slate-200 text-xs font-semibold shadow-sm">
+        <i data-lucide="shield" class="w-3.5 h-3.5 text-red-500"></i>
         <span>Sentry • Brand &amp; Media Kit</span>
       </div>
-      <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-medieval">
         Asset Grafici Ufficiali
       </h1>
-      <p class="text-slate-600 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
+      <p class="text-slate-300 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
         Scarica il Logo e il Banner in altissima risoluzione PNG per il profilo Discord del bot o per il tuo server.
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Logo Card -->
-      <div class="glass-card p-6 flex flex-col items-center gap-4 text-center">
+      <div class="glass-card p-6 flex flex-col items-center gap-4 text-center border-slate-800 shadow-md">
         <div class="flex items-center gap-2">
-          <i data-lucide="image" class="w-4 h-4 text-red-600"></i>
-          <h2 class="text-sm font-bold text-slate-900">Avatar Ufficiale (1024x1024)</h2>
+          <i data-lucide="image" class="w-4 h-4 text-red-500"></i>
+          <h2 class="text-sm font-bold text-white font-medieval">Avatar Ufficiale (1024x1024)</h2>
         </div>
-        <div class="w-40 h-40 rounded-full overflow-hidden border border-slate-200 shadow-sm bg-white p-1">
-          <img id="logo-preview" src="/logo.svg?v=65" alt="Logo Preview" class="w-full h-full rounded-full object-cover">
+        <div class="w-40 h-40 rounded-full overflow-hidden border border-red-500/40 shadow-sm bg-slate-900 p-1">
+          <img id="logo-preview" src="/logo.svg?v=25" alt="Logo Preview" class="w-full h-full rounded-full object-cover">
         </div>
-        <button onclick="downloadPng('/logo.svg', 'sentry-avatar.png', 1024, 1024)" 
-                class="btn-knight w-full py-2.5 px-4 text-xs font-bold rounded-xl shadow-sm">
+        <button onclick="downloadPng('/logo.svg?v=25', 'sentry-avatar.png', 1024, 1024)" 
+                class="btn-knight w-full py-2.5 px-4 text-xs font-bold shadow-md">
           <i data-lucide="download" class="w-4 h-4"></i>
           <span>Scarica Avatar PNG</span>
         </button>
       </div>
 
       <!-- Banner Card -->
-      <div class="glass-card p-6 flex flex-col items-center gap-4 text-center">
+      <div class="glass-card p-6 flex flex-col items-center gap-4 text-center border-slate-800 shadow-md">
         <div class="flex items-center gap-2">
-          <i data-lucide="layout" class="w-4 h-4 text-red-600"></i>
-          <h2 class="text-sm font-bold text-slate-900">Banner Ufficiale (1200x480)</h2>
+          <i data-lucide="layout" class="w-4 h-4 text-red-500"></i>
+          <h2 class="text-sm font-bold text-white font-medieval">Banner Ufficiale (1200x480)</h2>
         </div>
-        <div id="banner-preview-box" class="w-full h-40 rounded-xl overflow-hidden border border-slate-200 shadow-sm flex items-center justify-center bg-slate-50 p-1">
-          <div id="banner-svg-wrapper" class="w-full h-full flex items-center justify-center [&>svg]:w-full [&>svg]:h-full [&>svg]:rounded-lg"></div>
+        <div class="w-full h-40 rounded-xl overflow-hidden border border-red-500/40 shadow-sm flex items-center justify-center bg-slate-900 p-1">
+          <img id="banner-preview" src="/banner.svg?v=41" alt="Banner Preview" class="w-full h-full rounded-lg object-contain">
         </div>
-        <button onclick="downloadPng('/banner.svg', 'sentry-banner.png', 1200, 480)" 
-                class="btn-knight w-full py-2.5 px-4 text-xs font-bold rounded-xl shadow-sm">
+        <button onclick="downloadPng('/banner.svg?v=41', 'sentry-banner.png', 1200, 480)" 
+                class="btn-knight w-full py-2.5 px-4 text-xs font-bold shadow-md">
           <i data-lucide="download" class="w-4 h-4"></i>
           <span>Scarica Banner PNG</span>
         </button>
@@ -60,8 +59,8 @@
     </div>
 
     <div class="pt-4">
-      <a href="/" class="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-2 rounded-xl">
-        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+      <a href="/" class="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-2 bg-slate-900 border-slate-700 text-slate-200 hover:bg-slate-800">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5 text-red-400"></i>
         <span>Torna alla Home</span>
       </a>
     </div>
@@ -76,17 +75,12 @@
         const svgRes = await fetch(cleanUrl + '?t=' + Date.now());
         const svgText = await svgRes.text();
 
-        if (document.fonts) {
-          await document.fonts.ready;
-        }
-
         const canvas = document.getElementById('export-canvas');
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
 
         const img = new Image();
-        img.crossOrigin = 'anonymous';
         const svgBlob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(svgBlob);
 
@@ -107,21 +101,6 @@
         alert('Errore durante la generazione del file PNG.');
       }
     }
-
-    async function loadPreviews() {
-      try {
-        const res = await fetch('/banner.svg?t=' + Date.now());
-        if (res.ok) {
-          const svg = await res.text();
-          const wrapper = document.getElementById('banner-svg-wrapper');
-          if (wrapper) wrapper.innerHTML = svg;
-        }
-      } catch (e) {
-        console.error('Failed to load inline banner preview:', e);
-      }
-    }
-
-    loadPreviews();
     if (window.lucide) lucide.createIcons();
   </script>
 </body>
