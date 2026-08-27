@@ -15,7 +15,7 @@
       }
     </style>
 
-    <!-- Luxury Clean Silver Armor Plate Gradient -->
+    <!-- Luxury Silver Armor Plate Gradient -->
     <linearGradient id="silverPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
       <stop offset="25%" stop-color="#f8fafc" />
@@ -46,6 +46,19 @@
       <stop offset="100%" stop-color="#991b1b" />
     </linearGradient>
 
+    <!-- Delicate Shield Watermark Gradients -->
+    <linearGradient id="shieldStrokeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#94a3b8" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#dc2626" stop-opacity="0.3" />
+    </linearGradient>
+
+    <linearGradient id="swordGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#94a3b8" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#cbd5e1" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#dc2626" stop-opacity="0.4" />
+    </linearGradient>
+
     <!-- Master Refined Elongated Knights Templar Cross -->
     <g id="elongatedTemplarT">
       <path d="M -4 -4 
@@ -67,6 +80,48 @@
   <!-- Clean Background Surface & Ambient Lighting -->
   <rect width="600" height="240" fill="url(#silverPlateGrad)" />
   <rect width="600" height="240" fill="url(#centerGlow)" />
+
+  <!-- HERALDIC SHIELD & CRUSADER SWORD WATERMARK -->
+  <g transform="translate(300, 120)" opacity="0.65">
+    
+    <!-- Central Greatsword (Vertical Axis) -->
+    <!-- Pommel -->
+    <circle cx="0" cy="-106" r="7" fill="none" stroke="url(#swordGrad)" stroke-width="1.5" />
+    <circle cx="0" cy="-106" r="2.5" fill="#94a3b8" opacity="0.4" />
+    
+    <!-- Grip / Hilt -->
+    <line x1="0" y1="-99" x2="0" y2="-86" stroke="url(#swordGrad)" stroke-width="3" stroke-linecap="round" />
+    
+    <!-- Crossguard (Quillons) -->
+    <path d="M -34 -86 C -18 -88 18 -88 34 -86 C 30 -83 24 -83 18 -84 L -18 -84 C -24 -83 -30 -83 -34 -86 Z" fill="url(#swordGrad)" />
+    
+    <!-- Sword Blade (Behind Shield) -->
+    <line x1="0" y1="-84" x2="0" y2="110" stroke="url(#swordGrad)" stroke-width="2" />
+    <line x1="-3" y1="-84" x2="0" y2="114" stroke="url(#swordGrad)" stroke-width="0.75" opacity="0.5" />
+    <line x1="3" y1="-84" x2="0" y2="114" stroke="url(#swordGrad)" stroke-width="0.75" opacity="0.5" />
+
+    <!-- Outer Heraldic Shield Contour -->
+    <path d="M -88 -76 
+             C -35 -82 35 -82 88 -76 
+             C 92 -40 92 10 74 48 
+             C 56 82 22 102 0 112 
+             C -22 102 -56 82 -74 48 
+             C -92 10 -92 -40 -88 -76 Z" 
+          fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="1.5" />
+
+    <!-- Inner Shield Inset Hairline -->
+    <path d="M -78 -68 
+             C -30 -73 30 -73 78 -68 
+             C 82 -36 82 8 66 42 
+             C 50 72 18 90 0 100 
+             C -18 90 -50 72 -66 42 
+             C -82 8 -82 -36 -78 -68 Z" 
+          fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="0.85" stroke-dasharray="3 5" />
+
+    <!-- Subtle Heraldic Chevron Inscription in Shield -->
+    <path d="M -60 -40 L 0 -10 L 60 -40" fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="0.75" opacity="0.4" />
+    <path d="M -60 -20 L 0 10 L 60 -20" fill="none" stroke="url(#shieldStrokeGrad)" stroke-width="0.75" opacity="0.3" />
+  </g>
 
   <!-- Architectural Armor Plate Border & Corner Brackets -->
   <rect width="598" height="238" x="1" y="1" rx="8" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.95" />
