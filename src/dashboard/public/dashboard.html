@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard | Sentry</title>
+  <title>Dashboard | Il Cavaliere</title>
   <link rel="icon" href="/logo.svg?v=25" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/css/styles.css?v=25">
+  <link rel="stylesheet" href="/css/styles.css?v=21">
 </head>
 <body class="text-slate-900 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
   <div id="toast-container"></div>
@@ -21,9 +21,9 @@
       <button id="btn-toggle-drawer" class="p-2 rounded-xl bg-white/80 border border-slate-300 text-red-600 hover:bg-red-50">
         <i data-lucide="menu" class="w-5 h-5"></i>
       </button>
-      <img src="/logo.svg?v=25" alt="Sentry" class="w-8 h-8 rounded-full border border-slate-300">
+      <img src="/logo.svg?v=25" alt="Il Cavaliere" class="w-8 h-8 rounded-full border border-slate-300">
       <div>
-        <h1 class="text-sm font-bold text-slate-900 font-medieval">Sentry</h1>
+        <h1 class="text-sm font-bold text-slate-900 font-medieval">Il Cavaliere</h1>
         <span class="text-[9px] text-red-600 font-semibold uppercase">Dashboard</span>
       </div>
     </div>
@@ -37,9 +37,9 @@
     <div>
       <div class="p-4 border-b border-slate-300/80 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="/logo.svg?v=25" alt="Sentry" class="w-10 h-10 rounded-full shadow-sm border border-slate-300">
+          <img src="/logo.svg?v=25" alt="Il Cavaliere" class="w-10 h-10 rounded-full shadow-sm border border-slate-300">
           <div>
-            <h1 class="text-base font-bold text-slate-900 tracking-tight font-medieval">Sentry</h1>
+            <h1 class="text-base font-bold text-slate-900 tracking-tight font-medieval">Il Cavaliere</h1>
             <span class="text-[10px] text-red-600 font-semibold tracking-wider uppercase">Dashboard Moderatori</span>
           </div>
         </div>
@@ -63,7 +63,7 @@
 
         <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-ai">
           <i data-lucide="sparkles" class="w-4 h-4 shrink-0"></i>
-          <span class="flex-grow truncate">Sentry AI</span>
+          <span class="flex-grow truncate">Cavaliere AI</span>
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-semibold uppercase border border-red-200 shrink-0">70B</span>
         </button>
 
@@ -251,7 +251,7 @@
             <div class="flex items-center justify-between pb-3 border-b border-white/5">
               <div>
                 <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                  <i data-lucide="bot" class="w-5 h-5 text-purple-400"></i> Intelligenza Artificiale Sentry AI
+                  <i data-lucide="bot" class="w-5 h-5 text-purple-400"></i> Intelligenza Artificiale de Il Cavaliere
                 </h3>
                 <p class="text-xs text-slate-400">Personalizza stile, modello e ricerca web in tempo reale</p>
               </div>
@@ -261,7 +261,7 @@
               </label>
             </div>
 
-            <!-- Model Selector & Web Search -->
+            
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="text-xs font-semibold text-slate-300 block mb-1.5">Modello AI (Cloudflare Workers)</label>
@@ -280,7 +280,7 @@
               </div>
             </div>
 
-            <!-- Personality Presets -->
+            
             <div>
               <label class="text-xs font-semibold text-slate-300 block mb-2">Preset di Personalità Rapidi</label>
               <div class="flex flex-wrap gap-2">
@@ -288,7 +288,7 @@
                   <i data-lucide="sword" class="w-3.5 h-3.5 text-red-600"></i> Cinico &amp; Spietato (Default)
                 </button>
                 <button type="button" class="btn-preset btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5" data-preset="noble">
-                  <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-600"></i> Sentinella &amp; Guardiano
+                  <i data-lucide="shield" class="w-3.5 h-3.5 text-amber-600"></i> Nobile Cavaliere
                 </button>
                 <button type="button" class="btn-preset btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5" data-preset="technical">
                   <i data-lucide="bot" class="w-3.5 h-3.5 text-cyan-600"></i> Assistente Tecnico
@@ -296,10 +296,10 @@
               </div>
             </div>
 
-            <!-- System Prompt with Toolbar -->
+            
             <div>
               <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
-                <label class="text-xs font-semibold text-slate-700 block">System Prompt / Identità di Sentry</label>
+                <label class="text-xs font-semibold text-slate-700 block">System Prompt / Identità de Il Cavaliere</label>
                 <div id="ai-prompt-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
               </div>
               <textarea id="ai-system-prompt" class="form-textarea h-44 text-xs font-mono"></textarea>
@@ -311,7 +311,7 @@
           </div>
         </div>
 
-        <!-- Playground Live Chat -->
+        
         <div class="lg:col-span-5">
           <div class="glass-card p-5 h-full flex flex-col justify-between">
             <div>
@@ -324,21 +324,21 @@
                 </button>
               </div>
 
-              <!-- Messages container -->
+              
               <div id="ai-chat-history" class="space-y-3 overflow-y-auto max-h-[380px] p-2 pr-1">
                 <div class="flex gap-2.5">
                   <div class="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs shrink-0 font-bold">🛡️</div>
                   <div class="p-3 rounded-2xl bg-purple-950/40 border border-purple-500/20 text-xs text-slate-200 leading-relaxed">
-                    Salute. Sono <strong>Sentry</strong>. Metti alla prova la mia logica o poni una domanda.
+                    Salute. Sono <strong>Il Cavaliere</strong>. Metti alla prova la mia logica o poni una domanda.
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Chat input -->
+            
             <div class="pt-4 border-t border-white/5 mt-4">
               <form id="ai-chat-form" class="flex gap-2">
-                <input type="text" id="ai-chat-input" class="form-input text-xs" placeholder="Scrivi un messaggio a Sentry...">
+                <input type="text" id="ai-chat-input" class="form-input text-xs" placeholder="Scrivi un messaggio a Il Cavaliere...">
                 <button type="submit" class="btn-cyber text-xs py-2 px-3 shrink-0">
                   <i data-lucide="send" class="w-4 h-4"></i>
                 </button>
@@ -664,7 +664,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">Nome Autore</label>
-                <input type="text" id="embed-author-name" class="form-input text-xs" placeholder="es. Sentry News">
+                <input type="text" id="embed-author-name" class="form-input text-xs" placeholder="es. Il Cavaliere News">
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">URL Icona Autore</label>
@@ -675,7 +675,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Embed</label>
-                <input type="text" id="embed-title" class="form-input text-xs" value="🛡️ Annuncio Ufficiale | Sentry">
+                <input type="text" id="embed-title" class="form-input text-xs" value="🛡️ Annuncio Ufficiale | Il Cavaliere">
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">URL Titolo</label>
@@ -731,7 +731,7 @@
                   </div>
                 </div>
               </div>
-              <textarea id="embed-description" class="form-textarea text-xs h-28" placeholder="Scrivi la descrizione... usa **grassetto**, *corsivo*, <#canale> o i pulsanti sopra.">Benvenuti! Questo è un messaggio generato dal **Live Embed Builder** di *Sentry*.</textarea>
+              <textarea id="embed-description" class="form-textarea text-xs h-28" placeholder="Scrivi la descrizione... usa **grassetto**, *corsivo*, <#canale> o i pulsanti sopra.">Benvenuti nel reame! Questo è un messaggio generato dal **Live Embed Builder** de *Il Cavaliere*.</textarea>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -748,7 +748,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Footer</label>
-                <input type="text" id="embed-footer-text" class="form-input text-xs" value="Sentry • Notifiche">
+                <input type="text" id="embed-footer-text" class="form-input text-xs" value="Il Cavaliere • Notifiche">
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-300 block mb-1">URL Icona Footer</label>
@@ -802,7 +802,7 @@
                 <img src="/logo.svg?v=25" class="discord-avatar" alt="Avatar">
                 <div class="discord-msg-content">
                   <div class="discord-header">
-                    <span class="discord-author">Sentry</span>
+                    <span class="discord-author">Il Cavaliere</span>
                     <span class="discord-bot-badge">Bot</span>
                     <span class="discord-timestamp">Oggi alle 15:30</span>
                   </div>
@@ -821,7 +821,7 @@
                     <img id="prev-image" class="discord-embed-image hidden" src="" alt="Image">
                     <div id="prev-footer" class="discord-embed-footer">
                       <img id="prev-footer-icon" class="hidden" src="" alt="Footer Icon">
-                      <span id="prev-footer-text">Sentry • Notifiche</span>
+                      <span id="prev-footer-text">Il Cavaliere • Notifiche</span>
                     </div>
                   </div>
                 </div>
@@ -1124,14 +1124,14 @@
                 <img src="/logo.svg?v=25" class="discord-avatar" alt="Avatar">
                 <div class="discord-msg-content">
                   <div class="discord-header">
-                    <span class="discord-author">Sentry</span>
+                    <span class="discord-author">Il Cavaliere</span>
                     <span class="discord-bot-badge">Bot</span>
                     <span class="discord-timestamp">Oggi alle 15:30</span>
                   </div>
 
                   <!-- Simulated User Mention Ping -->
                   <div class="text-xs mb-1.5 font-mono" id="prev-wel-mention">
-                    <span class="discord-mention-pill user">@NuovoUtente</span>
+                    <span class="discord-mention-pill user">@NuovoCavaliere</span>
                   </div>
 
                   <div id="prev-wel-embed-box" class="discord-embed-box" style="border-left-color: #dc2626;">
@@ -1143,10 +1143,10 @@
                       </div>
 
                       <!-- Title preview -->
-                      <div id="prev-wel-title" class="discord-embed-title">👋 Benvenuto nel Server, NuovoUtente!</div>
+                      <div id="prev-wel-title" class="discord-embed-title">⚔️ Benvenuto nel Reame, NuovoCavaliere!</div>
                       
                       <!-- Description preview -->
-                      <div id="prev-wel-desc" class="discord-embed-desc">Benvenuto @NuovoUtente in **Sentry Community**! Siamo felici di averti tra noi. Sei il membro **#128**!</div>
+                      <div id="prev-wel-desc" class="discord-embed-desc">Benvenuto @NuovoCavaliere in **Il Cavaliere Realm**! Siamo felici di averti tra noi. Sei il membro **#128**!</div>
                       
                       <!-- Dynamic Fields Grid preview -->
                       <div id="prev-wel-fields" class="discord-embed-fields"></div>
@@ -1155,7 +1155,7 @@
                     <img id="prev-wel-image" class="discord-embed-image hidden" src="" alt="Image">
                     <div id="prev-wel-footer" class="discord-embed-footer">
                       <img id="prev-wel-footer-icon" class="hidden" src="/logo.svg?v=25" alt="Footer Icon">
-                      <span id="prev-wel-footer-text">Membro #128 • Sentry Community</span>
+                      <span id="prev-wel-footer-text">Membro #128 • Il Cavaliere Realm</span>
                     </div>
                   </div>
                 </div>
@@ -1394,10 +1394,10 @@
 
                 <div>
                   <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1.5">
-                    <label class="text-xs font-semibold text-slate-700 block">Descrizione Pannello</label>
+                    <label class="text-xs font-semibold text-slate-700 block">Descrizione / Istruzioni del Pannello</label>
                     <div id="tk-desc-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
                   </div>
-                  <textarea id="tk-description" class="form-textarea h-24 text-xs">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri moderatori.</textarea>
+                  <textarea id="tk-description" class="form-textarea h-24 text-xs">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri cavalieri e moderatori.</textarea>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1407,7 +1407,7 @@
                   </div>
                   <div>
                     <label class="text-xs font-semibold text-slate-700 block mb-1">Testo Footer</label>
-                    <input type="text" id="tk-footer" class="form-input text-xs" value="Sentry • Sistema Ticket">
+                    <input type="text" id="tk-footer" class="form-input text-xs" value="Il Cavaliere • Sistema Ticket">
                   </div>
                 </div>
               </div>
@@ -1507,7 +1507,7 @@
                 <img src="/logo.svg?v=25" class="discord-avatar" alt="Avatar">
                 <div class="discord-msg-content">
                   <div class="discord-header">
-                    <span class="discord-author">Sentry</span>
+                    <span class="discord-author">Il Cavaliere</span>
                     <span class="discord-bot-badge">Bot</span>
                     <span class="discord-timestamp">Oggi alle 12:00</span>
                   </div>
@@ -1515,12 +1515,12 @@
                   <div id="prev-tk-embed-box" class="discord-embed-box" style="border-left-color: #dc2626;">
                     <div>
                       <div id="prev-tk-title" class="discord-embed-title">🎫 Centro Supporto &amp; Assistenza</div>
-                      <div id="prev-tk-desc" class="discord-embed-desc">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri moderatori.</div>
+                      <div id="prev-tk-desc" class="discord-embed-desc">Clicca sul pulsante sottostante per aprire una richiesta di supporto privata con i nostri cavalieri e moderatori.</div>
                     </div>
                     <img id="prev-tk-image" class="discord-embed-image hidden" src="" alt="Banner">
                     <div id="prev-tk-footer" class="discord-embed-footer">
                       <img src="/logo.svg?v=25" class="w-4 h-4 rounded-full" alt="Icon">
-                      <span id="prev-tk-footer-text">Sentry • Sistema Ticket</span>
+                      <span id="prev-tk-footer-text">Il Cavaliere • Sistema Ticket</span>
                     </div>
                   </div>
 

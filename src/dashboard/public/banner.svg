@@ -1,35 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@800;900&amp;display=swap');
-      
-      .brand-gotisch {
-        font-family: 'Grenze Gotisch', Georgia, serif;
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&amp;display=swap');
+      .banner-title {
+        font-family: 'Montserrat', system-ui, sans-serif;
         font-weight: 900;
-        letter-spacing: 3px;
+        letter-spacing: -0.5px;
+      }
+      .banner-sub {
+        font-family: 'Montserrat', system-ui, sans-serif;
+        font-weight: 700;
+        letter-spacing: 2px;
+      }
+      .banner-tags {
+        font-family: 'Montserrat', system-ui, sans-serif;
+        font-weight: 600;
+        letter-spacing: 1px;
       }
     </style>
 
     <!-- Clean Crisp Silver & Light Slate Gradient -->
     <linearGradient id="silverPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="35%" stop-color="#f8fafc" />
-      <stop offset="75%" stop-color="#f1f5f9" />
+      <stop offset="40%" stop-color="#f8fafc" />
+      <stop offset="80%" stop-color="#f1f5f9" />
       <stop offset="100%" stop-color="#e2e8f0" />
-    </linearGradient>
-
-    <!-- Soft Central Radial Light Halo -->
-    <radialGradient id="centerGlow" cx="50%" cy="50%" r="55%">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
-      <stop offset="50%" stop-color="#f8fafc" stop-opacity="0.6" />
-      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0" />
-    </radialGradient>
-
-    <!-- Polished Gunmetal & Dark Steel Text Gradient -->
-    <linearGradient id="steelTextGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#090d16" />
-      <stop offset="45%" stop-color="#0f172a" />
-      <stop offset="100%" stop-color="#1e293b" />
     </linearGradient>
 
     <!-- Hero Crusader Blood-Red Gradient for Cross -->
@@ -55,68 +50,56 @@
                C -140 40 -140 -40 -165 -92 
                C -115 -45 -55 -20 -15 -15 Z" />
     </g>
-
-    <!-- Elongated Knights Templar Cross specifically sculpted for letter "t" -->
-    <g id="elongatedTemplarT">
-      <path d="M -4.2 -4.2 
-               C -5.6 -14 -12 -30 -24 -42 
-               C -10 -35 10 -35 24 -42 
-               C 12 -30 5.6 -14 4.2 -4.2 
-               C 14 -5.6 30 -12 42 -24 
-               C 35 -10 35 10 42 24 
-               C 30 12 14 5.6 4.2 4.2 
-               C 5.6 24 14 52 26 72 
-               C 11 60 -11 60 -26 72 
-               C -14 52 -5.6 24 -4.2 4.2 
-               C -14 5.6 -30 12 -42 24 
-               C -35 10 -35 -10 -42 -24 
-               C -30 -12 -14 -5.6 -4.2 -4.2 Z" />
-    </g>
   </defs>
 
   <!-- Base Clean Silver Plate Background -->
   <rect width="600" height="240" fill="url(#silverPlateGrad)" />
-  <rect width="600" height="240" fill="url(#centerGlow)" />
 
-  <!-- Heraldic Watermark Ring Aligned Perfectly with the Crimson Cross -->
-  <g transform="translate(323, 120)" opacity="0.45">
-    <circle cx="0" cy="0" r="95" fill="none" stroke="#cbd5e1" stroke-width="1" />
-    <circle cx="0" cy="0" r="104" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.25" stroke-dasharray="4 8" />
+  <!-- Subtle Clean Hairline Border -->
+  <rect width="598" height="238" x="1" y="1" rx="6" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.8" />
+  <rect width="596" height="236" x="2" y="2" rx="5" fill="none" stroke="#cbd5e1" stroke-width="1" />
+
+  <!-- Left: Crusader Cross Emblem on Silver Armor -->
+  <g transform="translate(130, 120)">
+    <!-- Heraldic Concentric Rings -->
+    <circle cx="0" cy="0" r="76" fill="none" stroke="#cbd5e1" stroke-width="1" />
+    <circle cx="0" cy="0" r="92" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.25" stroke-dasharray="4 6" />
+    
+    <!-- Hero Cross (Authentic Crusader Blood-Red on Silver Armor) -->
+    <g transform="scale(0.46)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 4px 12px rgba(220, 38, 38, 0.35))">
+      <use href="#templarCrossSingle" />
+    </g>
   </g>
 
-  <!-- Architectural Armor Plate Border & Corner Brackets -->
-  <rect width="598" height="238" x="1" y="1" rx="6" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.9" />
-  <rect width="588" height="228" x="6" y="6" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1" />
-  <rect width="582" height="222" x="9" y="9" rx="3" fill="none" stroke="#e2e8f0" stroke-width="0.75" />
+  <!-- Right: Luxury Typography & Subtitle -->
+  <g transform="translate(250, 120)">
+    <!-- Version Tag Pill in Polished Steel & Enamel -->
+    <g transform="translate(0, -65)">
+      <rect x="0" y="0" width="58" height="18" rx="9" fill="rgba(220, 38, 38, 0.08)" stroke="rgba(220, 38, 38, 0.3)" stroke-width="1" />
+      <text x="29" y="12.5" fill="#dc2626" font-size="9" font-family="'Montserrat', sans-serif" font-weight="700" text-anchor="middle" letter-spacing="1px">v2.0</text>
+    </g>
 
-  <!-- Corner Rivets / Diamond Accents -->
-  <g fill="#94a3b8">
-    <polygon points="12,12 15,9 18,12 15,15" />
-    <polygon points="588,12 591,9 594,12 591,15" />
-    <polygon points="12,228 15,225 18,228 15,231" />
-    <polygon points="588,228 591,225 594,228 591,231" />
-  </g>
+    <!-- Main Title: IL CAVALIERE -->
+    <text x="0" y="-12" fill="#0f172a" font-size="34" class="banner-title">
+      Il Cavaliere
+    </text>
 
-  <!-- Centered Grand Monumental Sentry Wordmark (Snug & Cohesive Kerning) -->
-  <g transform="translate(300, 120)">
-    <g transform="translate(-215, 0)">
-      <!-- Left part: sen in Dark Steel -->
-      <text x="0" y="42" fill="url(#steelTextGrad)" font-size="140" class="brand-gotisch" filter="drop-shadow(0 5px 16px rgba(15, 23, 42, 0.22))">
-        sen
+    <!-- Subtitle / Tagline in Crusader Crimson -->
+    <text x="0" y="15" fill="#dc2626" font-size="10.5" class="banner-sub" text-transform="uppercase">
+      Bot Discord &amp; Dashboard Moderatori
+    </text>
+
+    <!-- Feature Badges in Deep Slate Steel -->
+    <g transform="translate(0, 42)" fill="#64748b" font-size="9.5" class="banner-tags">
+      <text x="0" y="0">
+        <tspan fill="#dc2626">✦</tspan> Llama 70B AI  
+        <tspan fill="#94a3b8" dx="6">•</tspan>
+        <tspan fill="#334155" dx="6">Partnerships</tspan>  
+        <tspan fill="#94a3b8" dx="6">•</tspan>
+        <tspan fill="#334155" dx="6">Live Embeds</tspan>
+        <tspan fill="#94a3b8" dx="6">•</tspan>
+        <tspan fill="#334155" dx="6">AutoMod</tspan>
       </text>
-
-      <!-- Center: Elongated Templar Cross as "t" (Snug & Integrated) -->
-      <g transform="translate(238, -6) scale(0.92)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.48))">
-        <use href="#elongatedTemplarT" />
-      </g>
-
-      <!-- Right part: ry in Dark Steel (Snug against t) -->
-      <text x="284" y="42" fill="url(#steelTextGrad)" font-size="140" class="brand-gotisch" filter="drop-shadow(0 5px 16px rgba(15, 23, 42, 0.22))">
-        ry
-      </text>
-
-      <!-- Signature Crimson Period Dot Placed Cleanly After y on Baseline -->
-      <circle cx="422" cy="36" r="7.5" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
     </g>
   </g>
 </svg>
