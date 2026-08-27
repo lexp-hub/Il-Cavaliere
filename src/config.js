@@ -25,10 +25,10 @@ export const CONFIG = {
   SESSION_SECRET: process.env.SESSION_SECRET || 'il_cavaliere_secret_key_change_me_123456789',
   DASHBOARD_URL: (process.env.DASHBOARD_URL && !process.env.DASHBOARD_URL.includes('localhost') && !process.env.DASHBOARD_URL.includes('127.0.0.1'))
     ? process.env.DASHBOARD_URL
-    : 'https://il-cavaliere.wispbyte.app',
-  OAUTH2_CALLBACK_URL: (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost'))
+    : 'https://sentry.wisp.uno',
+  OAUTH2_CALLBACK_URL: (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1'))
     ? process.env.OAUTH2_CALLBACK_URL
-    : 'https://il-cavaliere.wispbyte.app/auth/discord/callback',
+    : 'https://sentry.wisp.uno/auth/discord/callback',
   
   DEFAULT_PREFIX: '!',
   BOT_NAME: 'Sentry',
