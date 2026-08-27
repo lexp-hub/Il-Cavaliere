@@ -78,6 +78,12 @@
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-700 font-semibold uppercase border border-indigo-200 shrink-0">Form</span>
         </button>
 
+        <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-setupshowcase">
+          <i data-lucide="monitor" class="w-4 h-4 shrink-0 text-red-600"></i>
+          <span class="flex-grow truncate">Showcase Setup</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-semibold uppercase border border-red-200 shrink-0">Evento</span>
+        </button>
+
         <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-white/80 transition-all text-left" data-tab="tab-embeds">
           <i data-lucide="scroll" class="w-4 h-4 shrink-0"></i>
           <span class="flex-grow truncate">Embed Builder</span>
@@ -601,6 +607,149 @@
               </tr>
             </thead>
             <tbody id="pres-recent-table" class="divide-y divide-slate-100 text-slate-700"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SETUP SHOWCASE (POSTAZIONI) -->
+    <section id="tab-setupshowcase" class="tab-content hidden space-y-6">
+      <!-- Configuration Card -->
+      <div class="glass-card p-6 space-y-5">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+              <i data-lucide="monitor" class="w-5 h-5 text-red-600"></i> Evento Showcase Postazioni &amp; Setup
+            </h3>
+            <p class="text-xs text-slate-500">I membri condividono foto e specifiche della propria postazione. Il bot le converte in Embed eleganti ed elimina il messaggio originale.</p>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="setup-enabled" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Dedicato Postazioni</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="setup-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+              </div>
+              <select id="setup-channel" class="form-select text-xs"></select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Ruolo Ricompensa (Opzionale)</label>
+            <div class="space-y-1.5">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                <input type="text" id="setup-role-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca ruolo...">
+              </div>
+              <select id="setup-role" class="form-select text-xs"></select>
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1.5">Punti XP Bonus</label>
+            <input type="number" id="setup-xp" class="form-input text-xs" value="50" min="0" step="10">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-200">
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo Embed</label>
+            <input type="text" id="setup-title" class="form-input text-xs" value="🖥️ Setup &amp; Postazione">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Colore Embed (HEX)</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="setup-color-picker" class="w-8 h-8 rounded border border-slate-300 p-0.5 cursor-pointer" value="#dc2626">
+              <input type="text" id="setup-color" class="form-input text-xs font-mono" value="#dc2626">
+            </div>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Reazioni di Voto Automatiche</label>
+            <input type="text" id="setup-reactions" class="form-input text-xs" value="🔥, ⭐, ❤️" placeholder="es. 🔥, ⭐, ❤️ (separate da virgola)">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">Thread di Discussione Automatico</span>
+              <span class="text-[11px] text-slate-500">Crea un thread sotto ogni postazione per permettere ai membri di commentarla</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setup-auto-thread" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div>
+              <span class="text-xs font-bold text-slate-800 block">Elimina Messaggi Senza Foto</span>
+              <span class="text-[11px] text-slate-500">Cancella automaticamente messaggi di testo senza foto per tenere la galleria pulita</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="setup-delete-invalid" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="btn-save-setup-config" class="btn-cyber text-xs py-2.5 px-5">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione Showcase
+          </button>
+        </div>
+      </div>
+
+      <!-- Panel Generator Card -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+          <div>
+            <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2 font-medieval">
+              <i data-lucide="layout-template" class="w-4 h-4 text-red-600"></i> Pannello Istruzioni &amp; Regole Evento
+            </h4>
+            <p class="text-xs text-slate-500">Invia un messaggio Embed informativo nel canale per spiegare alla community come inviare la propria postazione</p>
+          </div>
+          <button id="btn-send-setup-panel" class="btn-secondary text-xs py-2 px-4 border-red-300 bg-red-50 hover:bg-red-100 text-red-900 font-bold">
+            <i data-lucide="send" class="w-3.5 h-3.5 text-red-600"></i> Invia Pannello nel Canale
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Titolo del Pannello</label>
+            <input type="text" id="setup-panel-title" class="form-input text-xs" value="🖥️ Condividi la Tua Postazione da Battaglia">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Banner o Immagine URL (Opzionale)</label>
+            <input type="url" id="setup-panel-image" class="form-input text-xs" placeholder="https://i.imgur.com/...">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Descrizione Personalizzata</label>
+            <textarea id="setup-panel-desc" class="form-textarea h-16 text-xs" placeholder="Lascia vuoto per il messaggio predefinito con premi e istruzioni di partecipazione..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Setup Submissions List -->
+      <div class="glass-card p-6">
+        <h4 class="text-sm font-bold text-slate-900 mb-3 font-medieval flex items-center gap-2">
+          <i data-lucide="image" class="w-4 h-4 text-red-600"></i> Ultime Postazioni Condivise
+        </h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-slate-500 border-b border-slate-200 uppercase tracking-wider">
+              <tr>
+                <th class="py-2">Membro</th>
+                <th class="py-2">Descrizione / Specifiche</th>
+                <th class="py-2">Foto Postazione</th>
+                <th class="py-2">Data</th>
+              </tr>
+            </thead>
+            <tbody id="setup-recent-table" class="divide-y divide-slate-100 text-slate-700"></tbody>
           </table>
         </div>
       </div>

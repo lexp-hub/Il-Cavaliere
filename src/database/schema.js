@@ -326,6 +326,33 @@ CREATE TABLE IF NOT EXISTS presentations (
   timestamp INTEGER DEFAULT (strftime('%s', 'now'))
 );
 
+-- ============================================================
+-- SETUP SHOWCASE / POSTAZIONI MODULE
+-- ============================================================
+CREATE TABLE IF NOT EXISTS setup_showcase_configs (
+  guild_id TEXT PRIMARY KEY,
+  channel_id TEXT,
+  title TEXT DEFAULT '🖥️ Setup & Postazione',
+  color TEXT DEFAULT '#dc2626',
+  auto_reactions TEXT DEFAULT '["🔥","⭐","❤️"]',
+  auto_thread INTEGER DEFAULT 1,
+  reward_role_id TEXT,
+  xp_reward INTEGER DEFAULT 50,
+  require_text INTEGER DEFAULT 0,
+  delete_invalid INTEGER DEFAULT 1,
+  enabled INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS setup_submissions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  description TEXT,
+  embed_message_id TEXT,
+  timestamp INTEGER DEFAULT (strftime('%s', 'now'))
+);
+
 CREATE TABLE IF NOT EXISTS auth_sessions (
   token TEXT PRIMARY KEY,
   user_data TEXT,

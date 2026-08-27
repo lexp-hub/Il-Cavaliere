@@ -2,6 +2,7 @@ import { AutoModManager } from '../modules/automodManager.js';
 import { XPManager } from '../modules/xpManager.js';
 import { AIManager } from '../modules/aiManager.js';
 import { CountingManager } from '../modules/countingManager.js';
+import { SetupShowcaseManager } from '../modules/setupShowcaseManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 
@@ -10,7 +11,11 @@ export default {
   async execute(message) {
     if (!message.guild || message.author.bot) return;
 
-    // 1. Counting minigame handler
+    // 1. Setup Showcase & BattleStation module handler
+    const handledByShowcase = await SetupShowcaseManager.handleMessage(message);
+    if (handledByShowcase) return;
+
+    // 2. Counting minigame handler
     await CountingManager.handleMessage(message);
 
     const violated = await AutoModManager.handleMessage(message);

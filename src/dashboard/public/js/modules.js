@@ -24,6 +24,7 @@
       loadTicketsData(guildId),
       loadGiveawaysAndLeveling(guildId),
       loadPresentationsData(guildId),
+      loadSetupShowcaseData(guildId),
       loadMinigamesData(guildId),
       loadEmojiStats(guildId)
     ]);
@@ -39,8 +40,9 @@
       if (!grid) return;
 
       const moduleLabels = {
-        ai: { name: 'Il Cavaliere AI', desc: 'Chat neurale e ricerca web', icon: 'sparkles', color: 'text-red-600' },
+        ai: { name: 'Sentry AI', desc: 'Chat neurale e ricerca web', icon: 'sparkles', color: 'text-red-600' },
         partnerships: { name: 'Partnership System', desc: 'Form modale e statistiche manager', icon: 'handshake', color: 'text-red-600' },
+        setups: { name: 'Showcase Setup', desc: 'Foto, specifiche ed embed automatici', icon: 'monitor', color: 'text-red-600' },
         embeds: { name: 'Live Embeds', desc: 'Anteprima live e riquadri', icon: 'scroll', color: 'text-red-600' },
         reaction_roles: { name: 'Reaction Roles', desc: 'Pulsanti e ruoli automatici', icon: 'layers', color: 'text-red-600' },
         welcomer: { name: 'Welcomer & DM', desc: 'Benvenuto, DM e auto-role', icon: 'user-plus', color: 'text-red-600' },
@@ -1066,6 +1068,166 @@
     });
   }
 
+  // === Community Setup Showcase (Postazioni) Handler ===
+  async function loadSetupShowcaseData(guildId) {
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/setup-showcase`);
+      if (!res.ok) return;
+      const data = await res.json();
+
+      const config = data.config || {};
+      const enabledEl = document.getElementById('setup-enabled');
+      const channelEl = document.getElementById('setup-channel');
+      const roleEl = document.getElementById('setup-role');
+      const xpEl = document.getElementById('setup-xp');
+      const titleEl = document.getElementById('setup-title');
+      const colorEl = document.getElementById('setup-color');
+      const pickerEl = document.getElementById('setup-color-picker');
+      const reactionsEl = document.getElementById('setup-reactions');
+      const autoThreadEl = document.getElementById('setup-auto-thread');
+      const deleteInvalidEl = document.getElementById('setup-delete-invalid');
+
+      if (enabledEl) enabledEl.checked = Boolean(config.enabled);
+      if (channelEl && config.channel_id) channelEl.value = config.channel_id;
+      if (roleEl && config.reward_role_id) roleEl.value = config.reward_role_id;
+      if (xpEl) xpEl.value = config.xp_reward !== undefined ? config.xp_reward : 50;
+      if (titleEl) titleEl.value = config.title || '🖥️ Setup & Postazione';
+      if (colorEl) colorEl.value = config.color || '#dc2626';
+      if (pickerEl) pickerEl.value = config.color || '#dc2626';
+      if (reactionsEl) {
+        reactionsEl.value = Array.isArray(config.auto_reactions) ? config.auto_reactions.join(', ') : '🔥, ⭐, ❤️';
+      }
+      if (autoThreadEl) autoThreadEl.checked = config.auto_thread !== false;
+      if (deleteInvalidEl) deleteInvalidEl.checked = config.delete_invalid !== false;
+
+      const tbody = document.getElementById('setup-recent-table');
+      if (tbody) {
+        tbody.innerHTML = '';
+        const list = data.submissions || [];
+        if (list.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="py-4 text-center text-slate-400 italic">Nessun setup condiviso finora. Configura il canale e invita la community a postare!</td></tr>';
+        } else {
+          list.forEach(s => {
+            const tr = document.createElement('tr');
+            const dateStr = new Date(s.timestamp * 1000).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            const desc = s.description ? escapeHtml(s.description) : '<span class="italic text-slate-400">Nessuna descrizione</span>';
+            tr.innerHTML = `
+              <td class="py-2.5 font-mono text-slate-900 font-bold">&lt;@${s.user_id}&gt;</td>
+              <td class="py-2.5 text-slate-700 max-w-xs truncate" title="${escapeHtml(s.description || '')}">${desc}</td>
+              <td class="py-2.5">
+                <a href="${escapeHtml(s.image_url)}" target="_blank" class="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-800 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Vedi Foto
+                </a>
+              </td>
+              <td class="py-2.5 text-slate-400 text-[11px]">${dateStr}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+    } catch (e) {
+      console.error('Error loading setup showcase:', e);
+    }
+  }
+
+  // Color picker synchronization for Setup Showcase
+  const setupColorPicker = document.getElementById('setup-color-picker');
+  const setupColorInput = document.getElementById('setup-color');
+  if (setupColorPicker && setupColorInput) {
+    setupColorPicker.addEventListener('input', () => {
+      setupColorInput.value = setupColorPicker.value;
+    });
+    setupColorInput.addEventListener('input', () => {
+      if (/^#[0-9A-F]{6}$/i.test(setupColorInput.value)) {
+        setupColorPicker.value = setupColorInput.value;
+      }
+    });
+  }
+
+  const btnSaveSetupConfig = document.getElementById('btn-save-setup-config');
+  if (btnSaveSetupConfig) {
+    btnSaveSetupConfig.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Nessun server selezionato.', 'error');
+
+      const channel_id = document.getElementById('setup-channel')?.value || null;
+      const reward_role_id = document.getElementById('setup-role')?.value || null;
+      const xp_reward = parseInt(document.getElementById('setup-xp')?.value || '50', 10);
+      const title = document.getElementById('setup-title')?.value || '🖥️ Setup & Postazione';
+      const color = document.getElementById('setup-color')?.value || '#dc2626';
+      const rawReactions = document.getElementById('setup-reactions')?.value || '🔥, ⭐, ❤️';
+      const auto_reactions = rawReactions.split(',').map(r => r.trim()).filter(Boolean);
+      const auto_thread = document.getElementById('setup-auto-thread')?.checked;
+      const delete_invalid = document.getElementById('setup-delete-invalid')?.checked;
+      const enabled = document.getElementById('setup-enabled')?.checked;
+
+      const res = await fetch(`/api/guilds/${guildId}/setup-showcase/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          channel_id,
+          reward_role_id,
+          xp_reward,
+          title,
+          color,
+          auto_reactions,
+          auto_thread,
+          delete_invalid,
+          enabled
+        })
+      });
+
+      if (res.ok) {
+        window.showToast('Configurazione Showcase Postazioni salvata con successo!');
+        await loadSetupShowcaseData(guildId);
+      } else {
+        window.showToast('Errore durante il salvataggio.', 'error');
+      }
+    });
+  }
+
+  const btnSendSetupPanel = document.getElementById('btn-send-setup-panel');
+  if (btnSendSetupPanel) {
+    btnSendSetupPanel.addEventListener('click', async () => {
+      const guildId = window.AppState?.currentGuildId;
+      if (!guildId) return window.showToast('Nessun server selezionato. Seleziona prima un server dal menu in alto.', 'error');
+
+      const channelId = document.getElementById('setup-channel')?.value;
+      if (!channelId) return window.showToast('Seleziona un canale per inviare il pannello regole setup.', 'error');
+
+      const title = document.getElementById('setup-panel-title')?.value || '🖥️ Condividi la Tua Postazione da Battaglia';
+      const description = document.getElementById('setup-panel-desc')?.value?.trim() || null;
+      const image = document.getElementById('setup-panel-image')?.value?.trim() || null;
+      const color = document.getElementById('setup-color')?.value || '#dc2626';
+
+      try {
+        btnSendSetupPanel.disabled = true;
+        btnSendSetupPanel.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Invio in corso...';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/setup-showcase/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId, title, description, image, color })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Pannello Regole Setup inviato su Discord con successo!');
+        } else {
+          window.showToast(`Errore invio: ${data.error || 'Fallito'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnSendSetupPanel.disabled = false;
+        btnSendSetupPanel.innerHTML = '<i data-lucide="send" class="w-3.5 h-3.5 text-red-600"></i> Invia Pannello nel Canale';
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
   // === Minigames & Medieval Community Handler ===
   async function loadMinigamesData(guildId) {
     try {
@@ -1321,7 +1483,26 @@
         })
       });
 
-      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8]);
+      // 9. Setup Showcase Module Config
+      const rawReactions = document.getElementById('setup-reactions')?.value || '🔥, ⭐, ❤️';
+      const auto_reactions = rawReactions.split(',').map(r => r.trim()).filter(Boolean);
+      const p9 = fetch(`/api/guilds/${guildId}/setup-showcase/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled: document.getElementById('setup-enabled')?.checked,
+          channel_id: document.getElementById('setup-channel')?.value || null,
+          reward_role_id: document.getElementById('setup-role')?.value || null,
+          xp_reward: parseInt(document.getElementById('setup-xp')?.value || '50', 10),
+          title: document.getElementById('setup-title')?.value || '🖥️ Setup & Postazione',
+          color: document.getElementById('setup-color')?.value || '#dc2626',
+          auto_reactions,
+          auto_thread: document.getElementById('setup-auto-thread')?.checked,
+          delete_invalid: document.getElementById('setup-delete-invalid')?.checked
+        })
+      });
+
+      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8, p9]);
       window.showToast('🛡️ Tutte le impostazioni del server sono state salvate permanentemente nel database!');
     } catch (err) {
       window.showToast('Errore durante il salvataggio.', 'error');
@@ -1382,6 +1563,10 @@
       // Community Presentations Channels & Roles
       window.setupSearchableSelect('pres-channel-search', 'pres-channel', 'text');
       window.setupSearchableSelect('pres-role-search', 'pres-role', 'role');
+
+      // Community Setup Showcase Channels & Roles
+      window.setupSearchableSelect('setup-channel-search', 'setup-channel', 'text');
+      window.setupSearchableSelect('setup-role-search', 'setup-role', 'role');
 
       // Reaction Roles Channels & Roles
       window.setupSearchableSelect('rr-channel-search', 'rr-channel', 'text');

@@ -96,7 +96,8 @@ export const DatabaseHelper = {
       giveaways: true,
       leveling: true,
       starboard: true,
-      ai: true
+      ai: true,
+      setups: true
     };
     const parsed = JSON.parse(row.modules_enabled || '{}');
     return {
@@ -108,7 +109,7 @@ export const DatabaseHelper = {
   initGuildSettings(guildId) {
     const stmt = db.prepare(`
       INSERT OR IGNORE INTO guild_settings (guild_id, prefix, language, modules_enabled)
-      VALUES (?, '!', 'it', '{"partnerships":true,"embeds":true,"reaction_roles":true,"welcomer":true,"autoresponder":true,"moderation":true,"tickets":true,"giveaways":true,"leveling":true,"starboard":true,"ai":true}')
+      VALUES (?, '!', 'it', '{"partnerships":true,"embeds":true,"reaction_roles":true,"welcomer":true,"autoresponder":true,"moderation":true,"tickets":true,"giveaways":true,"leveling":true,"starboard":true,"ai":true,"setups":true}')
     `);
     stmt.run(guildId);
   },
@@ -941,6 +942,79 @@ export const DatabaseHelper = {
 
   getUserPresentation(guildId, userId) {
     return db.prepare('SELECT * FROM presentations WHERE guild_id = ? AND user_id = ? ORDER BY timestamp DESC LIMIT 1').get(guildId, userId);
+  },
+
+  getSetupShowcaseConfig(guildId) {
+    const row = db.prepare('SELECT * FROM setup_showcase_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare(`
+        INSERT OR IGNORE INTO setup_showcase_configs (guild_id, title, color, auto_reactions, auto_thread, xp_reward, delete_invalid, enabled)
+        VALUES (?, '🖥️ Setup & Postazione', '#dc2626', '["🔥","⭐","❤️"]', 1, 50, 1, 0)
+      `).run(guildId);
+      return this.getSetupShowcaseConfig(guildId);
+    }
+    return {
+      ...row,
+      enabled: Boolean(row.enabled),
+      auto_thread: Boolean(row.auto_thread),
+      require_text: Boolean(row.require_text),
+      delete_invalid: Boolean(row.delete_invalid),
+      auto_reactions: JSON.parse(row.auto_reactions || '["🔥","⭐","❤️"]')
+    };
+  },
+
+  updateSetupShowcaseConfig(guildId, data) {
+    this.getSetupShowcaseConfig(guildId);
+    const autoReactions = Array.isArray(data.auto_reactions)
+      ? JSON.stringify(data.auto_reactions)
+      : (typeof data.auto_reactions === 'string' ? data.auto_reactions : '["🔥","⭐","❤️"]');
+
+    db.prepare(`
+      UPDATE setup_showcase_configs
+      SET channel_id = ?,
+          title = ?,
+          color = ?,
+          auto_reactions = ?,
+          auto_thread = ?,
+          reward_role_id = ?,
+          xp_reward = ?,
+          require_text = ?,
+          delete_invalid = ?,
+          enabled = ?
+      WHERE guild_id = ?
+    `).run(
+      data.channel_id || null,
+      data.title || '🖥️ Setup & Postazione',
+      data.color || '#dc2626',
+      autoReactions,
+      data.auto_thread ? 1 : 0,
+      data.reward_role_id || null,
+      data.xp_reward !== undefined ? Number(data.xp_reward) : 50,
+      data.require_text ? 1 : 0,
+      data.delete_invalid ? 1 : 0,
+      data.enabled ? 1 : 0,
+      guildId
+    );
+    return this.getSetupShowcaseConfig(guildId);
+  },
+
+  saveSetupSubmission(guildId, data) {
+    const info = db.prepare(`
+      INSERT INTO setup_submissions (guild_id, user_id, image_url, description, embed_message_id, timestamp)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(
+      guildId,
+      data.user_id,
+      data.image_url,
+      data.description || null,
+      data.embed_message_id || null,
+      data.timestamp || Math.floor(Date.now() / 1000)
+    );
+    return { id: info.lastInsertRowid, ...data };
+  },
+
+  getSetupSubmissions(guildId, limit = 20) {
+    return db.prepare('SELECT * FROM setup_submissions WHERE guild_id = ? ORDER BY timestamp DESC LIMIT ?').all(guildId, limit);
   },
 
   saveAuthSession(token, userData, accessToken) {

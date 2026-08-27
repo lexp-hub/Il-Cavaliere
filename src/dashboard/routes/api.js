@@ -2,6 +2,7 @@ import express from 'express';
 import { DatabaseHelper } from '../../database/db.js';
 import { PartnershipManager } from '../../bot/modules/partnershipManager.js';
 import { PresentationManager } from '../../bot/modules/presentationManager.js';
+import { SetupShowcaseManager } from '../../bot/modules/setupShowcaseManager.js';
 import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
@@ -196,6 +197,47 @@ export function createApiRouter(botClient) {
       }
 
       await PresentationManager.sendPresentationPanel(guild, targetChannelId, title, description, color || '#6366f1', image);
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // === Community Setup Showcase (Postazioni) Routes ===
+  router.get('/guilds/:guildId/setup-showcase', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.getSetupShowcaseConfig(req.params.guildId);
+    const list = DatabaseHelper.getSetupSubmissions(req.params.guildId, 25);
+    res.json({ config, submissions: list });
+  });
+
+  router.post('/guilds/:guildId/setup-showcase/config', requireModAuth, (req, res) => {
+    const updated = DatabaseHelper.updateSetupShowcaseConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: updated });
+  });
+
+  router.post('/guilds/:guildId/setup-showcase/panel', requireModAuth, async (req, res) => {
+    const { channelId, title, description, color, image } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Il bot non è presente in questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getSetupShowcaseConfig(guildId);
+      const targetChannelId = channelId || config.channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Nessun canale showcase selezionato o configurato.' });
+      }
+
+      await SetupShowcaseManager.sendShowcaseInfoPanel(guild, targetChannelId, {
+        title,
+        description,
+        color: color || '#dc2626',
+        image
+      });
       res.json({ success: true });
     } catch (err) {
       res.status(500).json({ error: err.message });
