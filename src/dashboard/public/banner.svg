@@ -44,39 +44,21 @@
       <stop offset="100%" stop-color="#991b1b" />
     </linearGradient>
 
-    <!-- Transition Gradient: Dark Steel to Red (Left Bridge) -->
-    <linearGradient id="bridgeLeftGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <!-- Organic Fluid Arch-to-Cross Left Gradient -->
+    <linearGradient id="curvedBridgeLeft" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#0f172a" />
-      <stop offset="40%" stop-color="#1e293b" />
-      <stop offset="75%" stop-color="#b91c1c" />
+      <stop offset="30%" stop-color="#1e293b" />
+      <stop offset="70%" stop-color="#b91c1c" />
       <stop offset="100%" stop-color="#dc2626" />
     </linearGradient>
 
-    <!-- Transition Gradient: Red to Dark Steel (Right Bridge) -->
-    <linearGradient id="bridgeRightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <!-- Organic Fluid Cross-to-Arch Right Gradient -->
+    <linearGradient id="curvedBridgeRight" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#dc2626" />
-      <stop offset="25%" stop-color="#b91c1c" />
-      <stop offset="60%" stop-color="#1e293b" />
+      <stop offset="30%" stop-color="#b91c1c" />
+      <stop offset="70%" stop-color="#1e293b" />
       <stop offset="100%" stop-color="#0f172a" />
     </linearGradient>
-
-    <!-- Elongated Knights Templar Cross with Extended Crossbar Arms -->
-    <g id="elongatedTemplarConnected">
-      <!-- Main Flared Body -->
-      <path d="M -4.2 -4.2 
-               C -5.6 -14 -12 -30 -24 -42 
-               C -10 -35 10 -35 24 -42 
-               C 12 -30 5.6 -14 4.2 -4.2 
-               C 14 -5.6 30 -12 42 -24 
-               C 35 -10 35 10 42 24 
-               C 30 12 14 5.6 4.2 4.2 
-               C 5.6 24 14 52 26 72 
-               C 11 60 -11 60 -26 72 
-               C -14 52 -5.6 24 -4.2 4.2 
-               C -14 5.6 -30 12 -42 24 
-               C -35 10 -35 -10 -42 -24 
-               C -30 -12 -14 -5.6 -4.2 -4.2 Z" />
-    </g>
   </defs>
 
   <!-- Base Clean Silver Plate Background -->
@@ -102,48 +84,83 @@
     <polygon points="588,228 591,225 594,228 591,231" />
   </g>
 
-  <!-- Unified Interconnected Sentry Emblem (sen ──── ⚔️ ──── ry.) -->
+  <!-- Master Curved Ligature Emblem (sen ⌒ ⚔️ ⌒ ry.) -->
   <g transform="translate(300, 120)">
-    <g transform="translate(-228, 0)">
+    <g transform="translate(-230, 0)">
 
-      <!-- Smooth Continuous Bridge Beam (from n right-shoulder, through Cross, into r stem) -->
-      <!-- Left Connecting Flange: joining 'n' stem to Cross Left Arm -->
-      <path d="M 194 -16 
-               Q 214 -10 236 -4 
-               L 236 4 
-               Q 214 0 194 -4 Z" 
-            fill="url(#bridgeLeftGrad)" />
-
-      <!-- Left Horizontal Core Bridge Bar -->
-      <rect x="188" y="-11" width="52" height="14" rx="3" fill="url(#bridgeLeftGrad)" />
-
-      <!-- Right Horizontal Core Bridge Bar (joining Cross Right Arm into 'r' stem) -->
-      <rect x="264" y="-11" width="50" height="14" rx="3" fill="url(#bridgeRightGrad)" />
-
-      <!-- Right Connecting Flange: joining Cross Right Arm into 'r' arch -->
-      <path d="M 264 -4 
-               Q 286 0 308 -16 
-               L 308 -4 
-               Q 286 4 264 4 Z" 
-            fill="url(#bridgeRightGrad)" />
-
-      <!-- Left Wordmark: 'sen' in Dark Steel -->
+      <!-- Text: 'se' in Polished Dark Steel -->
       <text x="0" y="38" fill="url(#steelTextGrad)" font-size="112" class="brand-luxury" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))">
-        sen
+        se
       </text>
 
-      <!-- Center: Elongated Templar Cross connected in-line as 't' -->
-      <g transform="translate(250, -3) scale(0.85)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 18px rgba(220, 38, 38, 0.52))">
-        <use href="#elongatedTemplarConnected" />
+      <!-- CUSTOM SCULPTED 'n' WITH CURVED SHOULDER FLOWING INTO THE CROSS -->
+      <!-- Left Stem of n -->
+      <rect x="136" y="-38" width="21" height="76" rx="2" fill="url(#steelTextGrad)" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))" />
+
+      <!-- Curved Arch of 'n' flowing into the Left Flared Arm of the Cross -->
+      <path d="M 148 -20
+               C 152 -38 180 -46 210 -40
+               C 228 -36 244 -24 250 -4
+               C 246 -18 226 -26 206 -26
+               C 178 -26 160 -12 155 0
+               Z" 
+            fill="url(#curvedBridgeLeft)" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))" />
+
+      <!-- The Lower Inner Arch & Downward Flow of 'n' meeting the Cross Flare -->
+      <path d="M 148 -15
+               C 160 -36 195 -38 220 -28
+               C 238 -20 252 -6 256 0
+               C 248 8 232 4 218 -6
+               C 192 -20 165 -16 155 6
+               Z" 
+            fill="url(#curvedBridgeLeft)" />
+
+      <!-- Center Elongated Crusader Cross -->
+      <g transform="translate(256, -4) scale(0.88)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.55))">
+        <!-- Flared Knights Templar Cross Body -->
+        <path d="M -4.2 -4.2 
+                 C -5.6 -14 -12 -30 -24 -42 
+                 C -10 -35 10 -35 24 -42 
+                 C 12 -30 5.6 -14 4.2 -4.2 
+                 C 14 -5.6 30 -12 42 -24 
+                 C 35 -10 35 10 42 24 
+                 C 30 12 14 5.6 4.2 4.2 
+                 C 5.6 24 14 52 26 72 
+                 C 11 60 -11 60 -26 72 
+                 C -14 52 -5.6 24 -4.2 4.2 
+                 C -14 5.6 -30 12 -42 24 
+                 C -35 10 -35 -10 -42 -24 
+                 C -30 -12 -14 -5.6 -4.2 -4.2 Z" />
       </g>
 
-      <!-- Right Wordmark: 'ry' in Dark Steel -->
-      <text x="282" y="38" fill="url(#steelTextGrad)" font-size="112" class="brand-luxury" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))">
-        ry
+      <!-- CUSTOM SCULPTED 'r' WITH CURVED SHOULDER FLOWING FROM THE CROSS -->
+      <!-- Curved Arch from Right Flared Arm of Cross into 'r' Shoulder -->
+      <path d="M 262 -4
+               C 268 -24 284 -36 302 -40
+               C 332 -46 360 -38 364 -20
+               C 359 -12 341 -26 313 -26
+               C 293 -26 273 -18 269 -4
+               Z" 
+            fill="url(#curvedBridgeRight)" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))" />
+
+      <!-- Stem of r -->
+      <rect x="295" y="-38" width="21" height="76" rx="2" fill="url(#steelTextGrad)" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))" />
+
+      <!-- Curved Head Terminal of 'r' -->
+      <path d="M 314 -24
+               C 330 -38 355 -38 368 -24
+               C 362 -14 346 -18 334 -20
+               C 322 -22 316 -18 314 -14
+               Z" 
+            fill="url(#steelTextGrad)" />
+
+      <!-- Text: 'y' in Polished Dark Steel -->
+      <text x="365" y="38" fill="url(#steelTextGrad)" font-size="112" class="brand-luxury" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.15))">
+        y
       </text>
 
       <!-- Signature Crimson Period Dot Placed Cleanly on Baseline -->
-      <circle cx="418" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
+      <circle cx="435" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
     </g>
   </g>
 </svg>
