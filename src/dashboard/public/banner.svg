@@ -75,7 +75,7 @@
   <rect width="600" height="240" fill="url(#silverPlateGrad)" />
   <rect width="600" height="240" fill="url(#centerGlow)" />
 
-  <!-- Technical Heraldic Watermark Circles & Fill Details -->
+  <!-- Technical Heraldic Watermark Circles centered EXACTLY with the Cross at (300, 120) -->
   <g transform="translate(300, 120)" opacity="0.5">
     <!-- Subtle Crimson Cross Halo -->
     <circle cx="0" cy="0" r="90" fill="url(#crossHalo)" />
@@ -103,25 +103,25 @@
     <polygon points="588,228 591,225 594,228 591,231" />
   </g>
 
-  <!-- Mathematically Centered Sentry Wordmark (X: 73, Y: 120 -> Exact Center 300, 120) -->
-  <g transform="translate(64, 120)">
+  <!-- Unified Sentry Wordmark with Cross Centered at (300, 120) -->
+  <g transform="translate(0, 0)">
 
-    <!-- Left Part: 'sen' in Polished Dark Gunmetal -->
-    <text x="0" y="41" fill="url(#steelTextGrad)" font-size="124" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
+    <!-- Left Part: 'sen' right-aligned cleanly to X = 252 -->
+    <text x="252" y="161" text-anchor="end" fill="url(#steelTextGrad)" font-size="124" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
       sen
     </text>
 
-    <!-- Center: Elongated Templar Cross ('t') with Balanced, Harmonious Gaps -->
-    <g transform="translate(272, -4) scale(0.92)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.52))">
+    <!-- Center: Elongated Templar Cross ('t') centered at EXACT (300, 116) -->
+    <g transform="translate(300, 116) scale(0.92)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.52))">
       <use href="#elongatedTemplarT" />
     </g>
 
-    <!-- Right Part: 'ry' in Polished Dark Gunmetal -->
-    <text x="317" y="41" fill="url(#steelTextGrad)" font-size="124" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
+    <!-- Right Part: 'ry' left-aligned cleanly from X = 348 -->
+    <text x="348" y="161" text-anchor="start" fill="url(#steelTextGrad)" font-size="124" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
       ry
     </text>
 
-    <!-- Signature Crimson Period Dot Placed on Baseline -->
-    <circle cx="463" y="32" r="8.5" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
+    <!-- Signature Crimson Period Dot Placed beside 'y' on Baseline -->
+    <circle cx="494" y="152" r="8.5" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
   </g>
 </svg>
