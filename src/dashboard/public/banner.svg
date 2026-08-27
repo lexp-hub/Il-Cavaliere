@@ -83,24 +83,24 @@
 
   <!-- Mathematically Centered Wordmark Block on Canvas (300, 120) -->
   <g transform="translate(300, 120)">
-    <g transform="translate(-218, 0)">
+    <g transform="translate(-223, 0)">
       <!-- Left Part: 'sen' in Polished Dark Gunmetal -->
-      <text x="10" y="40" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
+      <text x="0" y="40" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
         sen
       </text>
 
       <!-- Center: Elongated Templar Cross ('t') with clean, refined gaps -->
-      <g transform="translate(252, -4) scale(0.90)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.52))">
+      <g transform="translate(262, -4) scale(0.90)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.52))">
         <use href="#elongatedTemplarT" />
       </g>
 
       <!-- Right Part: 'ry' in Polished Dark Gunmetal -->
-      <text x="296" y="40" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
+      <text x="306" y="40" fill="url(#steelTextGrad)" font-size="120" class="brand-luxury" filter="drop-shadow(0 4px 16px rgba(15, 23, 42, 0.2))">
         ry
       </text>
 
       <!-- Signature Crimson Period Dot Placed on Baseline beside 'y' -->
-      <circle cx="428" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
+      <circle cx="438" cy="30" r="8" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
     </g>
   </g>
 </svg>
