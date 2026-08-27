@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 240" width="100%" height="100%">
   <defs>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@800;900&amp;family=Pirata+One&amp;display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@800;900&amp;display=swap');
       
       .brand-gotisch {
-        font-family: 'Grenze Gotisch', 'Pirata One', serif;
+        font-family: 'Grenze Gotisch', Georgia, serif;
         font-weight: 900;
-        letter-spacing: 2px;
+        letter-spacing: 3px;
       }
     </style>
 
@@ -17,6 +17,13 @@
       <stop offset="75%" stop-color="#f1f5f9" />
       <stop offset="100%" stop-color="#e2e8f0" />
     </linearGradient>
+
+    <!-- Soft Central Radial Light Halo -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+      <stop offset="50%" stop-color="#f8fafc" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#e2e8f0" stop-opacity="0" />
+    </radialGradient>
 
     <!-- Polished Gunmetal & Dark Steel Text Gradient -->
     <linearGradient id="steelTextGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -69,28 +76,47 @@
 
   <!-- Base Clean Silver Plate Background -->
   <rect width="600" height="240" fill="url(#silverPlateGrad)" />
+  <rect width="600" height="240" fill="url(#centerGlow)" />
 
-  <!-- Subtle Clean Hairline Border -->
+  <!-- Heraldic Watermark Ring Aligned Perfectly with the Crimson Cross -->
+  <g transform="translate(323, 120)" opacity="0.45">
+    <circle cx="0" cy="0" r="95" fill="none" stroke="#cbd5e1" stroke-width="1" />
+    <circle cx="0" cy="0" r="104" fill="none" stroke="#dc2626" stroke-width="1" stroke-opacity="0.25" stroke-dasharray="4 8" />
+  </g>
+
+  <!-- Architectural Armor Plate Border & Corner Brackets -->
   <rect width="598" height="238" x="1" y="1" rx="6" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.9" />
-  <rect width="596" height="236" x="2" y="2" rx="5" fill="none" stroke="#cbd5e1" stroke-width="1" />
+  <rect width="588" height="228" x="6" y="6" rx="4" fill="none" stroke="#cbd5e1" stroke-width="1" />
+  <rect width="582" height="222" x="9" y="9" rx="3" fill="none" stroke="#e2e8f0" stroke-width="0.75" />
 
-  <!-- Centered Hero Wordmark: Pure Neo-Gothic Sentry with Crimson Templar Cross "t" -->
+  <!-- Corner Rivets / Diamond Accents -->
+  <g fill="#94a3b8">
+    <polygon points="12,12 15,9 18,12 15,15" />
+    <polygon points="588,12 591,9 594,12 591,15" />
+    <polygon points="12,228 15,225 18,228 15,231" />
+    <polygon points="588,228 591,225 594,228 591,231" />
+  </g>
+
+  <!-- Centered Grand Monumental Sentry Wordmark (Snug & Cohesive Kerning) -->
   <g transform="translate(300, 120)">
-    <g transform="translate(-148, 0)">
+    <g transform="translate(-215, 0)">
       <!-- Left part: sen in Dark Steel -->
-      <text x="0" y="30" fill="url(#steelTextGrad)" font-size="102" class="brand-gotisch" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.18))">
+      <text x="0" y="42" fill="url(#steelTextGrad)" font-size="140" class="brand-gotisch" filter="drop-shadow(0 5px 16px rgba(15, 23, 42, 0.22))">
         sen
       </text>
 
-      <!-- Center: Elongated Templar Cross as "t" in Hero Crimson Gradient -->
-      <g transform="translate(178, -4) scale(0.68)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 4px 16px rgba(220, 38, 38, 0.45))">
+      <!-- Center: Elongated Templar Cross as "t" (Snug & Integrated) -->
+      <g transform="translate(238, -6) scale(0.92)" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 6px 20px rgba(220, 38, 38, 0.48))">
         <use href="#elongatedTemplarT" />
       </g>
 
-      <!-- Right part: ry. in Dark Steel with Crimson Dot -->
-      <text x="214" y="30" fill="url(#steelTextGrad)" font-size="102" class="brand-gotisch" filter="drop-shadow(0 4px 14px rgba(15, 23, 42, 0.18))">
-        ry<tspan fill="url(#crusaderCrossGrad)">.</tspan>
+      <!-- Right part: ry in Dark Steel (Snug against t) -->
+      <text x="284" y="42" fill="url(#steelTextGrad)" font-size="140" class="brand-gotisch" filter="drop-shadow(0 5px 16px rgba(15, 23, 42, 0.22))">
+        ry
       </text>
+
+      <!-- Signature Crimson Period Dot Placed Cleanly After y on Baseline -->
+      <circle cx="422" cy="36" r="7.5" fill="url(#crusaderCrossGrad)" filter="drop-shadow(0 3px 10px rgba(220, 38, 38, 0.55))" />
     </g>
   </g>
 </svg>
