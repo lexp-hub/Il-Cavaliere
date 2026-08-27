@@ -48,25 +48,10 @@ export function validateAuthToken(token) {
 }
 
 function getCallbackUrl(req) {
-  const host = req.get('x-forwarded-host') || req.get('host') || 'sentry.wisp.uno';
-  let proto = req.get('x-forwarded-proto') || (req.secure ? 'https' : 'http') || req.protocol || 'http';
-  
-  if (host.includes('wisp.uno') || host.includes('wispbyte.app') || req.headers['x-forwarded-proto'] === 'https' || host.includes('.app') || host.includes('.uno') || host.includes('.com') || host.includes('.it')) {
-    proto = 'https';
-  }
-
-  if (req.originalUrl && req.originalUrl.includes('/auth/discord/callback')) {
-    return `${proto}://${host}/auth/discord/callback`;
-  }
-  if (req.originalUrl && req.originalUrl.includes('/auth/callback')) {
-    return `${proto}://${host}/auth/callback`;
-  }
-
   if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1')) {
     return process.env.OAUTH2_CALLBACK_URL;
   }
-
-  return `https://sentry.wisp.uno/auth/discord/callback`;
+  return 'https://sentry.wisp.uno/auth/discord/callback';
 }
 
 authRouter.get('/login', (req, res) => {

@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard | Sentry</title>
-  <link rel="icon" href="/logo.svg?v=25" type="image/svg+xml">
+  <link rel="icon" href="/logo.svg?v=60" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/css/styles.css?v=50">
+  <link rel="stylesheet" href="/css/styles.css?v=60">
 </head>
 <body class="text-slate-900 bg-slate-50 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
   <div id="toast-container"></div>
@@ -174,67 +174,67 @@
     <section id="tab-overview" class="tab-content block space-y-6">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div class="glass-card p-5">
-          <div class="flex items-center justify-between text-slate-400 mb-2">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
             <span class="text-xs font-semibold uppercase tracking-wider">Membri Server</span>
-            <i data-lucide="users" class="w-4 h-4 text-purple-400"></i>
+            <i data-lucide="users" class="w-4 h-4 text-purple-600"></i>
           </div>
-          <div class="text-2xl font-bold text-white" id="ov-members">1,420</div>
-          <span class="text-xs text-emerald-400 mt-1 block">Tutti i permessi sincronizzati</span>
+          <div class="text-2xl font-bold text-slate-900" id="ov-members">1,420</div>
+          <span class="text-xs text-emerald-600 mt-1 block">Tutti i permessi sincronizzati</span>
         </div>
 
         <div class="glass-card p-5">
-          <div class="flex items-center justify-between text-slate-400 mb-2">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
             <span class="text-xs font-semibold uppercase tracking-wider">Partnership Effettuate</span>
-            <i data-lucide="handshake" class="w-4 h-4 text-cyan-400"></i>
+            <i data-lucide="handshake" class="w-4 h-4 text-cyan-600"></i>
           </div>
-          <div class="text-2xl font-bold text-white" id="ov-partnerships">28</div>
-          <span class="text-xs text-cyan-400 mt-1 block">Modulo attivo</span>
+          <div class="text-2xl font-bold text-slate-900" id="ov-partnerships">28</div>
+          <span class="text-xs text-cyan-600 mt-1 block">Modulo attivo</span>
         </div>
 
         <div class="glass-card p-5">
-          <div class="flex items-center justify-between text-slate-400 mb-2">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
             <span class="text-xs font-semibold uppercase tracking-wider">Reaction Roles</span>
-            <i data-lucide="layers" class="w-4 h-4 text-amber-400"></i>
+            <i data-lucide="layers" class="w-4 h-4 text-amber-600"></i>
           </div>
-          <div class="text-2xl font-bold text-white" id="ov-rr">6</div>
-          <span class="text-xs text-slate-400 mt-1 block">Pannelli configurati</span>
+          <div class="text-2xl font-bold text-slate-900" id="ov-rr">6</div>
+          <span class="text-xs text-slate-500 mt-1 block">Pannelli configurati</span>
         </div>
 
         <div class="glass-card p-5">
-          <div class="flex items-center justify-between text-slate-400 mb-2">
+          <div class="flex items-center justify-between text-slate-500 mb-2">
             <span class="text-xs font-semibold uppercase tracking-wider">Modello AI Attivo</span>
-            <i data-lucide="bot" class="w-4 h-4 text-purple-400"></i>
+            <i data-lucide="bot" class="w-4 h-4 text-purple-600"></i>
           </div>
-          <div class="text-lg font-bold text-purple-300 truncate" id="ov-ai-model">Llama 3.3 70B</div>
-          <span class="text-xs text-purple-400 mt-1 block">Cloudflare Workers AI</span>
+          <div class="text-lg font-bold text-purple-600 truncate" id="ov-ai-model">Llama 3.3 70B</div>
+          <span class="text-xs text-purple-500 mt-1 block">Cloudflare Workers AI</span>
         </div>
       </div>
 
       
       <div class="glass-card p-6">
-        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-          <i data-lucide="sliders" class="w-5 h-5 text-purple-400"></i> Gestione Attivazione Moduli
+        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="sliders" class="w-5 h-5 text-red-600"></i> Gestione Attivazione Moduli
         </h3>
-        <p class="text-xs text-slate-400 mb-6">Attiva o disattiva istantaneamente le funzionalità del bot su questo server</p>
+        <p class="text-xs text-slate-500 mb-6">Attiva o disattiva istantaneamente le funzionalità del bot su questo server</p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="modules-toggle-grid"></div>
       </div>
 
       
       <div class="glass-card p-6">
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <i data-lucide="settings" class="w-5 h-5 text-cyan-400"></i> Impostazioni Generali & Canali di Log
+        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i data-lucide="settings" class="w-5 h-5 text-cyan-600"></i> Impostazioni Generali &amp; Canali di Log
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Canale Audit Log (Mod/Eventi)</label>
-            <select id="gen-log-channel" class="form-select">
+            <label class="text-xs font-semibold text-slate-700 block mb-1.5">Canale Audit Log (Mod/Eventi)</label>
+            <select id="gen-log-channel" class="form-select text-slate-800">
               <option value="">Nessun canale di log</option>
             </select>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1.5">Prefisso Comandi Testuali</label>
-            <input type="text" id="gen-prefix" class="form-input" value="!" placeholder="!">
+            <label class="text-xs font-semibold text-slate-700 block mb-1.5">Prefisso Comandi Testuali</label>
+            <input type="text" id="gen-prefix" class="form-input text-slate-800" value="!" placeholder="!">
           </div>
         </div>
       </div>
@@ -248,12 +248,12 @@
         
         <div class="lg:col-span-7 space-y-6">
           <div class="glass-card p-6 space-y-4">
-            <div class="flex items-center justify-between pb-3 border-b border-white/5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200">
               <div>
-                <h3 class="text-lg font-bold text-white flex items-center gap-2">
-                  <i data-lucide="bot" class="w-5 h-5 text-purple-400"></i> Intelligenza Artificiale Sentry AI
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="bot" class="w-5 h-5 text-purple-600"></i> Intelligenza Artificiale Sentry AI
                 </h3>
-                <p class="text-xs text-slate-400">Personalizza stile, modello e ricerca web in tempo reale</p>
+                <p class="text-xs text-slate-500">Personalizza stile, modello e ricerca web in tempo reale</p>
               </div>
               <label class="switch">
                 <input type="checkbox" id="ai-enabled" checked>
@@ -264,17 +264,17 @@
             <!-- Model Selector & Web Search -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Modello AI (Cloudflare Workers)</label>
-                <select id="ai-model" class="form-select text-xs">
+                <label class="text-xs font-semibold text-slate-700 block mb-1.5">Modello AI (Cloudflare Workers)</label>
+                <select id="ai-model" class="form-select text-xs text-slate-800">
                   <option value="@cf/meta/llama-3.3-70b-instruct-fp8-fast">Meta Llama 3.3 70B Instruct (Consigliato)</option>
                   <option value="@cf/meta/llama-3-8b-instruct">Meta Llama 3 8B Instruct</option>
                   <option value="@cf/mistral/mistral-7b-instruct-v0.1">Mistral 7B Instruct</option>
                 </select>
               </div>
               <div>
-                <label class="text-xs font-semibold text-slate-300 block mb-1.5">Ricerca Web in Tempo Reale</label>
-                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 border border-white/5">
-                  <span class="text-xs text-slate-300">Attiva Tool Ricerca</span>
+                <label class="text-xs font-semibold text-slate-700 block mb-1.5">Ricerca Web in Tempo Reale</label>
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span class="text-xs text-slate-700 font-medium">Attiva Tool Ricerca</span>
                   <label class="switch"><input type="checkbox" id="ai-web-search" checked><span class="slider"></span></label>
                 </div>
               </div>
@@ -282,7 +282,7 @@
 
             <!-- Personality Presets -->
             <div>
-              <label class="text-xs font-semibold text-slate-300 block mb-2">Preset di Personalità Rapidi</label>
+              <label class="text-xs font-semibold text-slate-700 block mb-2">Preset di Personalità Rapidi</label>
               <div class="flex flex-wrap gap-2">
                 <button type="button" class="btn-preset btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5" data-preset="cynical">
                   <i data-lucide="sword" class="w-3.5 h-3.5 text-red-600"></i> Cinico &amp; Spietato (Default)
@@ -305,7 +305,7 @@
               <textarea id="ai-system-prompt" class="form-textarea h-44 text-xs font-mono"></textarea>
             </div>
 
-            <button id="btn-save-ai-config" class="btn-cyber text-xs py-2.5 px-5">
+            <button id="btn-save-ai-config" class="btn-knight text-xs py-2.5 px-5 rounded-xl shadow-sm">
               <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione AI
             </button>
           </div>
@@ -315,11 +315,11 @@
         <div class="lg:col-span-5">
           <div class="glass-card p-5 h-full flex flex-col justify-between">
             <div>
-              <div class="flex items-center justify-between pb-3 border-b border-white/5 mb-4">
-                <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                  <i data-lucide="message-square" class="w-4 h-4 text-cyan-400"></i> Test Chat Playground
+              <div class="flex items-center justify-between pb-3 border-b border-slate-200 mb-4">
+                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <i data-lucide="message-square" class="w-4 h-4 text-cyan-600"></i> Test Chat Playground
                 </h4>
-                <button id="btn-clear-playground" class="text-xs text-slate-400 hover:text-white p-1" title="Azzera Chat">
+                <button id="btn-clear-playground" class="text-xs text-slate-500 hover:text-slate-900 p-1" title="Azzera Chat">
                   <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
@@ -327,8 +327,8 @@
               <!-- Messages container -->
               <div id="ai-chat-history" class="space-y-3 overflow-y-auto max-h-[380px] p-2 pr-1">
                 <div class="flex gap-2.5">
-                  <div class="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs shrink-0 font-bold">🛡️</div>
-                  <div class="p-3 rounded-2xl bg-purple-950/40 border border-purple-500/20 text-xs text-slate-200 leading-relaxed">
+                  <div class="w-7 h-7 rounded-lg bg-red-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">🛡️</div>
+                  <div class="p-3 rounded-2xl bg-red-50 border border-red-100 text-xs text-slate-800 leading-relaxed">
                     Salute. Sono <strong>Sentry</strong>. Metti alla prova la mia logica o poni una domanda.
                   </div>
                 </div>
@@ -336,10 +336,10 @@
             </div>
 
             <!-- Chat input -->
-            <div class="pt-4 border-t border-white/5 mt-4">
+            <div class="pt-4 border-t border-slate-200 mt-4">
               <form id="ai-chat-form" class="flex gap-2">
                 <input type="text" id="ai-chat-input" class="form-input text-xs" placeholder="Scrivi un messaggio a Sentry...">
-                <button type="submit" class="btn-cyber text-xs py-2 px-3 shrink-0">
+                <button type="submit" class="btn-knight text-xs py-2 px-3 shrink-0 rounded-lg shadow-sm">
                   <i data-lucide="send" class="w-4 h-4"></i>
                 </button>
               </form>
@@ -356,10 +356,10 @@
       <div class="glass-card p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-lg font-bold text-white flex items-center gap-2">
-              <i data-lucide="handshake" class="w-5 h-5 text-cyan-400"></i> Configurazione Modulo Partnership
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="handshake" class="w-5 h-5 text-red-600"></i> Configurazione Modulo Partnership
             </h3>
-            <p class="text-xs text-slate-400">Automatizza annunci, verifica membri e ruoli ping per le partnership</p>
+            <p class="text-xs text-slate-500">Automatizza annunci, verifica membri e ruoli ping per le partnership</p>
           </div>
           <label class="switch">
             <input type="checkbox" id="part-enabled" checked>
@@ -492,8 +492,8 @@
         </div>
 
         <div class="glass-card p-6">
-          <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-            <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> Top Partner Manager
+          <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <i data-lucide="trophy" class="w-4 h-4 text-amber-600"></i> Top Partner Manager
           </h4>
           <div id="part-leaderboard-list" class="space-y-2 text-xs"></div>
         </div>
@@ -856,10 +856,10 @@
     
     <section id="tab-reactionroles" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
-        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-          <i data-lucide="layers" class="w-5 h-5 text-amber-400"></i> Crea Pulsante Ruolo Interattivo
+        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="layers" class="w-5 h-5 text-amber-600"></i> Crea Pulsante Ruolo Interattivo
         </h3>
-        <p class="text-xs text-slate-400 mb-6">Invia un messaggio con pulsante per assegnazione automatica ruoli</p>
+        <p class="text-xs text-slate-500 mb-6">Invia un messaggio con pulsante per assegnazione automatica ruoli</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
@@ -916,7 +916,7 @@
       </div>
 
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-3">Reaction Roles Attivi nel Server</h4>
+        <h4 class="text-sm font-bold text-slate-900 mb-3">Reaction Roles Attivi nel Server</h4>
         <div id="rr-list-container" class="space-y-2"></div>
       </div>
     </section>
@@ -1171,18 +1171,18 @@
     
     <section id="tab-autoresponder" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
-        <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
-          <i data-lucide="zap" class="w-5 h-5 text-purple-400"></i> Aggiungi Risposta Automatica o Reazione
+        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="zap" class="w-5 h-5 text-purple-600"></i> Aggiungi Risposta Automatica o Reazione
         </h3>
-        <p class="text-xs text-slate-400 mb-6">Configura risposte su parole chiave o reazioni emoji</p>
+        <p class="text-xs text-slate-500 mb-6">Configura risposte su parole chiave o reazioni emoji</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Trigger (Parola Chiave)</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Trigger (Parola Chiave)</label>
             <input type="text" id="ar-trigger" class="form-input text-xs" placeholder="es. orari apertura, !ip">
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Tipo di Confronto</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Tipo di Confronto</label>
             <select id="ar-match" class="form-select text-xs">
               <option value="CONTAINS">Contiene la parola (Contains)</option>
               <option value="EXACT">Corrispondenza Esatta (Exact)</option>
@@ -1190,7 +1190,7 @@
             </select>
           </div>
           <div>
-            <label class="text-xs font-semibold text-slate-300 block mb-1">Reazioni Emoji Automatiche</label>
+            <label class="text-xs font-semibold text-slate-700 block mb-1">Reazioni Emoji Automatiche</label>
             <input type="text" id="ar-reactions" class="form-input text-xs" placeholder="es. 👍, 🔥, 🛡️">
           </div>
           <div class="md:col-span-3">
@@ -1208,14 +1208,14 @@
           </div>
         </div>
 
-        <button id="btn-add-autoresponder" class="btn-cyber text-xs py-2.5 px-4">
+        <button id="btn-add-autoresponder" class="btn-knight text-xs py-2.5 px-4 rounded-xl shadow-sm">
           <i data-lucide="plus" class="w-3.5 h-3.5"></i> Salva Risposta Automatica
         </button>
       </div>
 
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
-          <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i> Canale Auto-Reaction (es. Suggerimenti 👍 👎)
+        <h4 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i data-lucide="sparkles" class="w-4 h-4 text-cyan-600"></i> Canale Auto-Reaction (es. Suggerimenti 👍 👎)
         </h4>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
           <div class="space-y-1.5">
@@ -1232,11 +1232,10 @@
             <button id="btn-set-autoreact-chan" class="btn-secondary text-xs py-2 w-full justify-center">Applica al Canale</button>
           </div>
         </div>
-        </div>
       </div>
 
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-3">Trigger & Risposte Configurate</h4>
+        <h4 class="text-sm font-bold text-slate-900 mb-3">Trigger &amp; Risposte Configurate</h4>
         <div id="ar-list-container" class="space-y-2"></div>
       </div>
     </section>
@@ -1246,59 +1245,59 @@
     
     <section id="tab-automod" class="tab-content hidden space-y-6">
       <div class="glass-card p-6">
-        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-          <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400"></i> Protezione Automatica AutoMod
+        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-5 h-5 text-rose-600"></i> Protezione Automatica AutoMod
         </h3>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div>
-              <p class="font-semibold text-sm text-white">Filtro Anti-Invite</p>
-              <p class="text-xs text-slate-400">Elimina automaticamente inviti Discord non autorizzati</p>
+              <p class="font-semibold text-sm text-slate-900">Filtro Anti-Invite</p>
+              <p class="text-xs text-slate-500">Elimina automaticamente inviti Discord non autorizzati</p>
             </div>
             <label class="switch"><input type="checkbox" id="am-invite" checked><span class="slider"></span></label>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div>
-              <p class="font-semibold text-sm text-white">Filtro Anti-Link</p>
-              <p class="text-xs text-slate-400">Elimina link web esterni non autorizzati</p>
+              <p class="font-semibold text-sm text-slate-900">Filtro Anti-Link</p>
+              <p class="text-xs text-slate-500">Elimina link web esterni non autorizzati</p>
             </div>
             <label class="switch"><input type="checkbox" id="am-link"><span class="slider"></span></label>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div>
-              <p class="font-semibold text-sm text-white">Anti-Spam Rapido</p>
-              <p class="text-xs text-slate-400">Blocca 5 o più messaggi in 3 secondi</p>
+              <p class="font-semibold text-sm text-slate-900">Anti-Spam Rapido</p>
+              <p class="text-xs text-slate-500">Blocca 5 o più messaggi in 3 secondi</p>
             </div>
             <label class="switch"><input type="checkbox" id="am-spam" checked><span class="slider"></span></label>
           </div>
 
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-white/5 flex items-center justify-between">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
             <div>
-              <p class="font-semibold text-sm text-white">Anti-Caps</p>
-              <p class="text-xs text-slate-400">Blocca oltre il 70% di testo in MAIUSCOLO</p>
+              <p class="font-semibold text-sm text-slate-900">Anti-Caps</p>
+              <p class="text-xs text-slate-500">Blocca oltre il 70% di testo in MAIUSCOLO</p>
             </div>
             <label class="switch"><input type="checkbox" id="am-caps"><span class="slider"></span></label>
           </div>
         </div>
 
         <div>
-          <label class="text-xs font-semibold text-slate-300 block mb-1.5">Parole Vietate (Separate da virgola)</label>
+          <label class="text-xs font-semibold text-slate-700 block mb-1.5">Parole Vietate (Separate da virgola)</label>
           <input type="text" id="am-badwords" class="form-input text-xs" placeholder="parolaccia1, parola2, insulto3">
         </div>
 
-        <button id="btn-save-automod" class="btn-cyber text-xs py-2.5 px-4 mt-4">
+        <button id="btn-save-automod" class="btn-knight text-xs py-2.5 px-4 mt-4 rounded-xl shadow-sm">
           <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Regole AutoMod
         </button>
       </div>
 
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-3">Cronologia Sanzioni & Audit Moderazione</h4>
+        <h4 class="text-sm font-bold text-slate-900 mb-3">Cronologia Sanzioni &amp; Audit Moderazione</h4>
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="text-slate-400 border-b border-white/10 uppercase tracking-wider">
+            <thead class="text-slate-500 border-b border-slate-200 uppercase tracking-wider">
               <tr>
                 <th class="py-2">ID</th>
                 <th class="py-2">Azione</th>
@@ -1308,7 +1307,7 @@
                 <th class="py-2">Data</th>
               </tr>
             </thead>
-            <tbody id="am-cases-table" class="divide-y divide-white/5 text-slate-300"></tbody>
+            <tbody id="am-cases-table" class="divide-y divide-slate-100 text-slate-700"></tbody>
           </table>
         </div>
       </div>
@@ -1322,10 +1321,10 @@
         <!-- Settings Form Column -->
         <div class="lg:col-span-7 space-y-6">
           <div class="glass-card p-6">
-            <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2 font-medieval">
-              <i data-lucide="ticket" class="w-5 h-5 text-amber-400"></i> Personalizzazione Pannello Ticket
+            <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+              <i data-lucide="ticket" class="w-5 h-5 text-amber-600"></i> Personalizzazione Pannello Ticket
             </h3>
-            <p class="text-xs text-slate-400 mb-6">Configura stile, canali e messaggi di benvenuto del sistema di supporto</p>
+            <p class="text-xs text-slate-500 mb-6">Configura stile, canali e messaggi di benvenuto del sistema di supporto</p>
 
             <div class="space-y-4">
               <!-- Basic Channels & Roles -->
@@ -1540,8 +1539,8 @@
 
       <!-- Active Tickets List Section -->
       <div class="glass-card p-6">
-        <h4 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-          <i data-lucide="list" class="w-4 h-4 text-amber-400"></i> Ticket Aperti di Recente
+        <h4 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4 text-amber-600"></i> Ticket Aperti di Recente
         </h4>
         <div id="tk-list-container" class="space-y-2"></div>
       </div>
@@ -1562,29 +1561,26 @@
               <div class="space-y-1.5">
                 <div class="relative">
                   <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                  <input type="text" id="ga-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                  <input type="text" id="gw-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
                 </div>
-                <select id="ga-channel" class="form-select text-xs"></select>
+                <select id="gw-channel" class="form-select text-xs"></select>
               </div>
             </div>
             <div>
-              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
-                <label class="text-xs font-semibold text-slate-700 block">Premio in Palio</label>
-                <div id="ga-prize-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
-              </div>
-              <input type="text" id="ga-prize" class="form-input text-xs" value="Discord Nitro 1 Mese">
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Premio</label>
+              <input type="text" id="gw-prize" class="form-input text-xs" placeholder="es. Nitro Basic, 1000 Monete">
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="text-xs font-semibold text-slate-700 block mb-1">Durata</label>
-                <input type="text" id="ga-duration" class="form-input text-xs" value="1h">
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Durata (Minuti)</label>
+                <input type="number" id="gw-duration" class="form-input text-xs" value="60" min="1">
               </div>
               <div>
                 <label class="text-xs font-semibold text-slate-700 block mb-1">Vincitori</label>
-                <input type="number" id="ga-winners" class="form-input text-xs" value="1" min="1">
+                <input type="number" id="gw-winners" class="form-input text-xs" value="1" min="1">
               </div>
             </div>
-            <button id="btn-start-giveaway" class="btn-cyber text-xs py-2 px-4 w-full justify-center">
+            <button id="btn-start-giveaway" class="btn-knight text-xs py-2.5 px-4 w-full justify-center rounded-xl shadow-sm">
               <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Avvia Giveaway
             </button>
           </div>
@@ -1592,41 +1588,27 @@
 
         <div class="glass-card p-6">
           <h3 class="text-base font-bold text-slate-900 mb-3 flex items-center gap-2 font-medieval">
-            <i data-lucide="star" class="w-4 h-4 text-amber-500"></i> Configurazione XP &amp; Leveling
+            <i data-lucide="award" class="w-4 h-4 text-amber-600"></i> Sistema XP &amp; Leveling
           </h3>
-          <div class="space-y-3">
+          <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-xs text-slate-700 font-semibold">Modulo Leveling Attivo</span>
+              <div>
+                <p class="font-semibold text-xs text-slate-900">Guadagno XP per Messaggio</p>
+                <p class="text-[11px] text-slate-500">I membri accumulano XP chattando nei canali di testo</p>
+              </div>
               <label class="switch"><input type="checkbox" id="lvl-enabled" checked><span class="slider"></span></label>
             </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-700 block mb-1">Moltiplicatore XP</label>
-              <input type="number" id="lvl-rate" class="form-input text-xs" value="1.0" step="0.1" min="0.1">
-            </div>
-            <div>
-              <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Annunci Level-Up</label>
-              <div class="space-y-1.5">
-                <div class="relative">
-                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
-                  <input type="text" id="lvl-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
-                </div>
-                <select id="lvl-channel" class="form-select text-xs"></select>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">XP Minimo per Messaggio</label>
+                <input type="number" id="lvl-min-xp" class="form-input text-xs" value="15" min="1">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">XP Massimo per Messaggio</label>
+                <input type="number" id="lvl-max-xp" class="form-input text-xs" value="25" min="1">
               </div>
             </div>
-            <div>
-              <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
-                <label class="text-xs font-semibold text-slate-700 block">Messaggio Annuncio Level-Up</label>
-                <div id="lvl-msg-toolbar-container" class="flex flex-wrap items-center gap-1"></div>
-              </div>
-              <textarea id="lvl-message" class="form-textarea h-20 text-xs">🎉 Complimenti {user.mention}, hai raggiunto il **Livello {level}** nel reame!</textarea>
-              <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
-                <span class="text-[11px] font-semibold text-slate-500">Tag Rapidi:</span>
-                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="lvl-message" data-var="{user.mention}">{user.mention}</button>
-                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="lvl-message" data-var="{level}">{level}</button>
-                <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-200 hover:bg-slate-300 font-mono text-slate-700 font-bold" data-target="lvl-message" data-var="{server.name}">{server.name}</button>
-              </div>
-            </div>
-            <button id="btn-save-leveling" class="btn-secondary text-xs py-2 px-4 w-full justify-center">
+            <button id="btn-save-leveling" class="btn-knight text-xs py-2.5 px-4 w-full justify-center rounded-xl shadow-sm">
               <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Leveling
             </button>
           </div>

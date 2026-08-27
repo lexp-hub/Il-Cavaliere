@@ -6,7 +6,7 @@
       .brand-gotisch {
         font-family: 'Grenze Gotisch', Georgia, serif;
         font-weight: 900;
-        letter-spacing: 3px;
+        letter-spacing: 2px;
       }
     </style>
 
