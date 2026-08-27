@@ -1,79 +1,111 @@
 <div align="center">
-  <img src="src/dashboard/public/banner.svg" alt="Sentry" width="100%" />
+  <img src="src/dashboard/public/banner.svg" alt="sentry" width="100%" />
+  <p align="center">
+    <strong>Sentinella Intelligente, Sicurezza &amp; Gestione Community per Discord</strong>
+  </p>
+  <p align="center">
+    <a href="https://sentry.wisp.uno"><img src="https://img.shields.io/badge/Dashboard-sentry.wisp.uno-dc2626?style=flat-square&logo=safari" alt="Dashboard" /></a>
+    <img src="https://img.shields.io/badge/Discord.js-v14.16-5865F2?style=flat-square&logo=discord" alt="Discord.js" />
+    <img src="https://img.shields.io/badge/AI-Llama_3.3_70B-red?style=flat-square" alt="Llama 70B" />
+    <img src="https://img.shields.io/badge/Database-SQLite_WAL-003B57?style=flat-square&logo=sqlite" alt="SQLite" />
+    <img src="https://img.shields.io/badge/License-MIT-emerald?style=flat-square" alt="License" />
+  </p>
 </div>
 
 <br>
 
-# Sentry
+# 🛡️ Sentry
 
-Bot Discord e Sentinella di Sicurezza con AI (Llama 70B), gestione partnership, embed builder, automod e dashboard web per moderatori.
+**Sentry** è una sentinella multifunzione all-in-one per Discord, dotata di Intelligenza Artificiale (Llama 3.3 70B), gestione automatica delle partnership, live embed builder, reaction roles, welcomer personalizzato, sistema di ticket, automod avanzato e una **Dashboard Web moderna in stile acciaio nobile**.
 
----
-
-## Funzionalità
-
-- **AI**: Risposte alle menzioni con stile medievale e ricerca web.
-- **Partnership**: Verifica automatica dei link di invito, requisiti minimi e statistiche.
-- **Embed Builder**: Creazione e invio di messaggi embed con pulsanti dalla dashboard.
-- **AutoMod**: Filtri anti-spam, anti-invite, anti-link e comandi di moderazione (`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`, `/nuke`).
-- **Reaction Roles**: Assegnazione ruoli con pulsanti ed emoji.
-- **Welcomer**: Messaggi di benvenuto nei canali e nei DM con auto-role.
-- **Tickets**: Apertura ticket privati e transcript.
-- **Giveaways & XP**: Concorsi a premi e livelli in chat.
+🌐 **Dashboard Ufficiale:** [https://sentry.wisp.uno](https://sentry.wisp.uno)
 
 ---
 
-## Comandi Slash
+## ✨ Funzionalità Principali
+
+- **🧠 Sentry AI (Llama 70B)**: Risponde alle menzioni e ai comandi slash con memoria contestuale, intelligenza conversazionale e ricerca web in tempo reale.
+- **🤝 Sistema Partnership**: Verifica automatica dei link di invito Discord, rispetto dei requisiti minimi di membri e statistiche aggregate.
+- **🎨 Live Embed Builder**: Editor visuale WYSIWYG per creare, salvare e inviare annunci ed embed interattivi direttamente dalla dashboard.
+- **🛡️ AutoMod & Sicurezza**: Filtri anti-spam, anti-invite, anti-link e comandi completi di moderazione (`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`, `/nuke`).
+- **🎭 Reaction Roles**: Assegnazione e rimozione ruoli tramite pulsanti Discord interattivi ed emoji personalizzate.
+- **👋 Welcomer & Auto-Role**: Messaggi di benvenuto con schede grafiche, DM privati e auto-assegnazione ruoli all'ingresso.
+- **🎫 Sistema Ticket**: Supporto con canali privati dedicati, transcript automatici e gestione staff.
+- **⭐ Leveling & Minigiochi**: Sistema di XP in chat con card `/rank`, `/leaderboard`, gioco del counting, dadi e pesca.
+
+---
+
+## ⚡ Comandi Slash Principali
 
 | Categoria | Comando | Descrizione |
 | :--- | :--- | :--- |
-| **AI** | `/ai ask` | Pone una domanda al bot |
-| | `/ai search` | Ricerca informazioni sul web |
-| | `/ai reset` | Azzera la cronologia del canale |
-| | `/ai prompt` | Mostra o modifica il prompt del bot |
-| **Generale** | `/help` | Elenco dei comandi |
-| | `/ping` | Latenza del bot |
-| | `/serverinfo` | Informazioni sul server |
-| | `/userinfo` | Informazioni sull'utente |
-| **Partnership** | `/partner add` | Registra e invia una partnership |
-| | `/partner config` | Imposta canale, ruolo e requisiti |
-| | `/partner stats` | Statistiche delle partnership |
-| **Embeds** | `/embed send` | Invia un template embed |
-| | `/embed create` | Crea un messaggio embed |
-| **Reaction Roles** | `/reactionrole button` | Crea pannello ruoli con pulsanti |
-| | `/reactionrole list` | Mostra i ruoli interattivi |
-| **Welcomer** | `/welcomer config` | Imposta messaggi e canali di benvenuto |
-| | `/welcomer autorole` | Imposta i ruoli assegnati all'ingresso |
-| **Moderazione** | `/ban`, `/kick` | Banna o espelli un utente |
-| | `/timeout` | Mette in timeout temporaneo |
-| | `/warn`, `/warnings` | Assegna o visualizza gli avvertimenti |
-| | `/clear` | Elimina messaggi |
-| | `/lock`, `/unlock` | Blocca o sblocca il canale |
-| | `/nuke` | Ricrea il canale |
-| **Tickets** | `/ticket panel` | Invia il pannello ticket |
-| | `/ticket close` | Chiude il ticket |
-| **Giveaways** | `/giveaway start` | Avvia un giveaway |
-| | `/giveaway reroll` | Estrae un nuovo vincitore |
-| **Leveling** | `/rank` | Mostra il livello e i punti XP |
-| | `/leaderboard` | Classifica dei punti XP |
+| **🧠 AI** | `/ai ask <domanda>` | Pone una domanda diretta a Sentry AI |
+| | `/ai search <query>` | Effettua una ricerca web in tempo reale |
+| | `/ai reset` | Azzera la memoria del canale corrente |
+| | `/ai prompt` | Visualizza o modifica l'identità di Sentry |
+| **🛡️ Generale** | `/help` | Centro comandi con link alla dashboard |
+| | `/botinfo` | Informazioni su Sentry e statistiche sistema |
+| | `/ping` | Latenza del bot e delle API |
+| | `/serverinfo` | Informazioni dettagliate sul server |
+| **🤝 Partnership** | `/partnership` | Registra e invia una partnership con modal |
+| | `/partner config` | Configura canale, ruolo e requisiti |
+| | `/partner stats` | Statistiche e cronologia partnership |
+| **🎨 Embeds** | `/embed` | Crea e invia annunci embed |
+| **🎭 Ruoli** | `/reactionrole button` | Crea un pannello ruoli con pulsanti |
+| **👋 Benvenuto** | `/welcomer config` | Imposta canale e messaggi di benvenuto |
+| | `/welcomer autorole` | Configura i ruoli automatici all'ingresso |
+| **⚔️ Moderazione** | `/ban`, `/kick`, `/timeout` | Sanzioni rapide per violazioni |
+| | `/warn`, `/warnings` | Assegna e gestisci gli avvertimenti |
+| | `/clear`, `/nuke` | Pulizia messaggi o ricreazione del canale |
+| **🎫 Ticket** | `/ticket panel` | Invia il pannello per l'apertura dei ticket |
+| **⭐ Community** | `/presentati` | Scheda di presentazione per nuovi membri |
+| | `/rank`, `/leaderboard` | Livello XP e classifica del server |
 
 ---
 
-## Struttura del Progetto
+## 📂 Struttura del Progetto
 
 ```
-Il Cavaliere/
-├── index.js                   # Entry point root per Wispbyte / bot & dashboard
-├── package.json               # Dipendenze e script di avvio
-├── README.md                  # Documentazione e comandi
+Sentry/
+├── index.js                   # Entry point unificato per Bot & Dashboard Express
+├── package.json               # Configurazione dipendenze e script npm
+├── README.md                  # Documentazione e guida comandi
 ├── src/
-│   ├── config.js              # Configurazione globale e porte
-│   ├── database/              # SQLite database adapter (node:sqlite / WAL)
-│   ├── bot/                   # Bot Discord (comandi, eventi e moduli)
-│   └── dashboard/             # Server Express e frontend Dashboard
+│   ├── config.js              # Parametri globali, colori e URL (sentry.wisp.uno)
+│   ├── config/prompt.json     # Sistema di identità e prompt di Sentry AI
+│   ├── database/              # SQLite Database Adapter (WAL mode, query atomiche)
+│   ├── bot/
+│   │   ├── index.js           # Client Discord.js e caricamento handler
+│   │   ├── deployCommands.js  # Registrazione comandi REST su Discord
+│   │   ├── commands/          # Comandi slash divisi per categoria
+│   │   ├── events/            # Eventi Discord (ready, interactionCreate, messageCreate)
+│   │   └── modules/           # Moduli logici (AI, AutoMod, Ticket, Welcomer, Partnership)
+│   └── dashboard/
+│       ├── server.js          # Server Express (porte automatiche 3000 / 8080)
+│       ├── routes/            # Router API e autenticazione OAuth2 Discord
+│       └── public/            # Frontend Web (HTML, Tailwind, SVG Asset Kit, JS)
 ```
 
 ---
 
-## Licenza
-MIT
+## 🚀 Avvio & Deployment
+
+### 1. Installazione Dipendenze
+```bash
+npm install
+```
+
+### 2. Registrazione Comandi Slash
+```bash
+npm run deploy-commands
+```
+
+### 3. Avvio
+```bash
+npm start
+```
+
+---
+
+## 📜 Licenza
+Rilasciato sotto licenza [MIT](LICENSE).
