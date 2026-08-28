@@ -1,67 +1,10 @@
 import {
   SlashCommandBuilder,
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle
+  ChannelType,
+  PermissionsBitField
 } from 'discord.js';
+import { FishingManager, FISHING_RODS } from '../../modules/fishingManager.js';
 import { DatabaseHelper } from '../../../database/db.js';
-import { CONFIG } from '../../../config.js';
-
-// Rod Configurations
-const RODS = {
-  1: { name: 'Canna di Legno Grezzo', cost: 0, catchBonus: 0, desc: 'Una semplice canna di legno intagliata a mano.' },
-  2: { name: 'Canna in Ferro Rinforzato', cost: 300, catchBonus: 10, desc: 'Filo in canapa resistente e amo d\'acciaio.' },
-  3: { name: 'Canna d\'Argento Crociato', cost: 1000, catchBonus: 25, desc: 'Benedetta con amuleti, aumenta la probabilità di tesori.' },
-  4: { name: 'Canna Sacra del Reale Cavaliere', cost: 3500, catchBonus: 50, desc: 'Forgiata nel fuoco crociato, cattura creature mitiche.' }
-};
-
-// Catch Loot Table
-const FISH_TABLE = [
-  // Common (50%)
-  { name: '🐟 Trota di Fiume', rarity: 'Comune', value: 15, weight: 30, emoji: '🐟' },
-  { name: '🐟 Carpa Medievale', rarity: 'Comune', value: 20, weight: 25, emoji: '🐟' },
-  { name: '🐡 Pesce Gatto Melmoso', rarity: 'Comune', value: 18, weight: 20, emoji: '🐡' },
-  // Junk (15%)
-  { name: '👢 Vecchio Stivale di Cuoio', rarity: 'Spazzatura', value: 2, weight: 10, emoji: '👢' },
-  { name: '🌿 Alga Fradicia', rarity: 'Spazzatura', value: 1, weight: 10, emoji: '🌿' },
-  { name: '🥫 Scatoletta Arrugginita', rarity: 'Spazzatura', value: 3, weight: 8, emoji: '🥫' },
-  // Rare (20%)
-  { name: '🐠 Salmone Dorato', rarity: 'Raro', value: 65, weight: 15, emoji: '🐠' },
-  { name: '⚡ Anguilla Elettrica', rarity: 'Raro', value: 85, weight: 12, emoji: '⚡' },
-  { name: '🦞 Astice del Fossato Reale', rarity: 'Raro', value: 110, weight: 10, emoji: '🦞' },
-  // Epic / Mythic (10%)
-  { name: '🦈 Squalo dei Laghi Sacri', rarity: 'Epico', value: 300, weight: 5, emoji: '🦈' },
-  { name: '🐉 Piccolo Leviatano dei Crociati', rarity: 'Mitico', value: 750, weight: 2, emoji: '🐉' },
-  // Treasures (5%)
-  { name: '💎 Rubino dei Cavalieri', rarity: 'Tesoro', value: 250, weight: 4, emoji: '💎' },
-  { name: '👑 Corona Perduta nel Fiume', rarity: 'Tesoro', value: 500, weight: 2, emoji: '👑' },
-  { name: '🗝️ Forziere Misterioso Antico', rarity: 'Tesoro', value: 1000, weight: 1, emoji: '🗝️' }
-];
-
-function getRandomCatch(rodLevel = 1) {
-  const bonus = RODS[rodLevel]?.catchBonus || 0;
-  
-  // Adjust weight based on rod level
-  const pool = FISH_TABLE.map(item => {
-    let w = item.weight;
-    if (item.rarity === 'Raro') w += bonus * 0.3;
-    if (item.rarity === 'Epico' || item.rarity === 'Mitico' || item.rarity === 'Tesoro') w += bonus * 0.2;
-    if (item.rarity === 'Spazzatura') w = Math.max(1, w - bonus * 0.2);
-    return { ...item, calculatedWeight: w };
-  });
-
-  const totalWeight = pool.reduce((sum, item) => sum + item.calculatedWeight, 0);
-  let random = Math.random() * totalWeight;
-
-  for (const item of pool) {
-    if (random < item.calculatedWeight) {
-      return item;
-    }
-    random -= item.calculatedWeight;
-  }
-  return pool[0];
-}
 
 export default {
   data: new SlashCommandBuilder()
@@ -96,188 +39,181 @@ export default {
       sub
         .setName('classifica')
         .setDescription('Classifica dei pescatori più ricchi del server')
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('panel')
+        .setDescription('Invia il pannello interattivo permanente di pesca con pulsanti')
+        .addChannelOption(opt =>
+          opt
+            .setName('canale')
+            .setDescription('Canale in cui inviare il pannello di pesca')
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('titolo')
+            .setDescription('Titolo personalizzato del pannello')
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('descrizione')
+            .setDescription('Descrizione personalizzata del pannello')
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('immagine')
+            .setDescription('URL del banner o immagine del pannello')
+            .setRequired(false)
+        )
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('config')
+        .setDescription('Configura il canale dedicato e i parametri del modulo pesca')
+        .addChannelOption(opt =>
+          opt
+            .setName('canale')
+            .setDescription('Canale dedicato alla pesca')
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(false)
+        )
+        .addBooleanOption(opt =>
+          opt
+            .setName('attivo')
+            .setDescription('Abilita o disabilita il modulo di pesca nel server')
+            .setRequired(false)
+        )
+        .addIntegerOption(opt =>
+          opt
+            .setName('cooldown')
+            .setDescription('Secondi di attesa tra un lancio e l\'altro (es. 15)')
+            .setMinValue(3)
+            .setMaxValue(300)
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('titolo')
+            .setDescription('Titolo personalizzato per il modulo pesca')
+            .setRequired(false)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('colore')
+            .setDescription('Colore HEX del modulo (es. #38bdf8)')
+            .setRequired(false)
+        )
     ),
 
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
-    const profile = DatabaseHelper.getFishingProfile(interaction.guild.id, interaction.user.id);
-    const now = Math.floor(Date.now() / 1000);
+    const guild = interaction.guild;
+    const user = interaction.user;
+    const channelId = interaction.channelId;
 
+    // 1. CAST ROD
     if (subcommand === 'lancia') {
-      const cooldown = 30; // 30 seconds cooldown
-      const elapsed = now - (profile.last_fished || 0);
+      const result = await FishingManager.castRod(guild, user, channelId);
+      if (!result.success) {
+        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+      }
+      return interaction.reply({ embeds: [result.embed] });
+    }
 
-      if (elapsed < cooldown) {
-        const remaining = cooldown - elapsed;
-        return interaction.reply({
-          content: `⏳ I pesci sono diffidenti! Attendi ancora **${remaining} secondi** prima di lanciare di nuovo l'amo.`,
-          ephemeral: true
-        });
+    // 2. INVENTORY
+    if (subcommand === 'inventario') {
+      const embed = FishingManager.getInventoryEmbed(guild, user);
+      return interaction.reply({ embeds: [embed] });
+    }
+
+    // 3. SELL
+    if (subcommand === 'vendi') {
+      const result = FishingManager.sellCatch(guild, user);
+      if (!result.success) {
+        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+      }
+      return interaction.reply({ embeds: [result.embed] });
+    }
+
+    // 4. SHOP
+    if (subcommand === 'shop') {
+      const embed = FishingManager.getShopEmbed(guild, user);
+      return interaction.reply({ embeds: [embed] });
+    }
+
+    // 5. UPGRADE
+    if (subcommand === 'upgrade') {
+      const result = FishingManager.upgradeRod(guild, user);
+      if (!result.success) {
+        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+      }
+      return interaction.reply({ embeds: [result.embed] });
+    }
+
+    // 6. LEADERBOARD
+    if (subcommand === 'classifica') {
+      const embed = FishingManager.getLeaderboardEmbed(guild);
+      return interaction.reply({ embeds: [embed] });
+    }
+
+    // 7. PANEL (Admin)
+    if (subcommand === 'panel') {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+        return interaction.reply({ content: '❌ Solo gli amministratori possono inviare il pannello di pesca.', ephemeral: true });
       }
 
-      const caught = getRandomCatch(profile.rod_level || 1);
-      const inventory = profile.inventory || [];
-      inventory.push({
-        name: caught.name,
-        rarity: caught.rarity,
-        value: caught.value,
-        emoji: caught.emoji,
-        timestamp: now
-      });
+      const targetChannel = interaction.options.getChannel('canale') || interaction.channel;
+      const title = interaction.options.getString('titolo');
+      const description = interaction.options.getString('descrizione');
+      const image = interaction.options.getString('immagine');
 
-      profile.inventory = inventory;
-      profile.total_fish_caught = (profile.total_fish_caught || 0) + 1;
-      profile.last_fished = now;
-
-      // Add leveling XP if leveling enabled
       try {
-        DatabaseHelper.addXP(interaction.guild.id, interaction.user.id, 15);
-      } catch (e) {}
-
-      DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
-
-      const rarityColors = {
-        'Spazzatura': '#64748b',
-        'Comune': '#38bdf8',
-        'Raro': '#a855f7',
-        'Epico': '#ec4899',
-        'Mitico': '#eab308',
-        'Tesoro': '#10b981'
-      };
-
-      const embed = new EmbedBuilder()
-        .setColor(rarityColors[caught.rarity] || '#dc2626')
-        .setTitle(`🎣 Splendida Cattura, ${interaction.user.username}!`)
-        .setDescription(`Hai lanciato la tua **${RODS[profile.rod_level]?.name}** e tirato su:\n\n### ${caught.emoji} **${caught.name}**\n- **Rarità:** \`${caught.rarity}\`\n- **Valore di Mercato:** 🪙 **${caught.value} Monete**\n\n*Il pescato è stato aggiunto al tuo cestino. Usa \`/pesca vendi\` per incassare!*`)
-        .setThumbnail('https://cdn-icons-png.flaticon.com/512/3076/3076126.png')
-        .setFooter({ text: `Pescati Totali: ${profile.total_fish_caught} | Monete: ${profile.coins}`, iconURL: interaction.user.displayAvatarURL() })
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [embed] });
-    } else if (subcommand === 'inventario') {
-      const inv = profile.inventory || [];
-      const currentRod = RODS[profile.rod_level] || RODS[1];
-
-      let totalValue = 0;
-      let itemsSummary = {};
-
-      inv.forEach(item => {
-        totalValue += item.value;
-        itemsSummary[item.name] = (itemsSummary[item.name] || 0) + 1;
-      });
-
-      let invList = Object.entries(itemsSummary).map(([name, count]) => `• **${name}** x${count}`).join('\n');
-      if (!invList) invList = '*Il tuo cestino è vuoto. Vai a pescare con `/pesca lancia`!*';
-
-      const embed = new EmbedBuilder()
-        .setColor(CONFIG.EMBED_COLOR || '#dc2626')
-        .setTitle(`🧺 Cestino da Pesca di ${interaction.user.username}`)
-        .addFields(
-          { name: '🪙 Monete Reali', value: `\`${profile.coins} Monete\``, inline: true },
-          { name: '🎣 Canna Attuale', value: `\`${currentRod.name}\` *(Livello ${profile.rod_level})*`, inline: true },
-          { name: '🐟 Catture Totali', value: `\`${profile.total_fish_caught} Pescati\``, inline: true },
-          { name: `📦 Contenuto Cestino (${inv.length} oggetti - Valore: 🪙 ${totalValue})`, value: invList }
-        )
-        .setFooter({ text: 'Sentry • Economia', iconURL: interaction.guild.iconURL() })
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [embed] });
-    } else if (subcommand === 'vendi') {
-      const inv = profile.inventory || [];
-      if (inv.length === 0) {
-        return interaction.reply({ content: '❌ Il tuo cestino è vuoto! Non hai pesci o tesori da vendere al mercante.', ephemeral: true });
-      }
-
-      let totalGain = 0;
-      inv.forEach(item => totalGain += item.value);
-
-      profile.coins = (profile.coins || 0) + totalGain;
-      profile.inventory = [];
-
-      DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
-
-      const embed = new EmbedBuilder()
-        .setColor('#10b981')
-        .setTitle('💰 Vendita al Mercato Reale')
-        .setDescription(`Hai venduto **${inv.length}** oggetti del tuo pescato al mercante per un totale di **🪙 ${totalGain} Monete d'Oro**!\n\nIl tuo saldo attuale è di **🪙 ${profile.coins} Monete**.`)
-        .setFooter({ text: 'Affare concluso!', iconURL: interaction.user.displayAvatarURL() })
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [embed] });
-    } else if (subcommand === 'shop') {
-      let shopDesc = 'Benvenuto al molo dei pescatori! Acquista o potenzia la tua canna da pesca per catturare pesci più rari e tesori leggendari:\n\n';
-
-      Object.entries(RODS).forEach(([lvl, rod]) => {
-        const isOwned = profile.rod_level >= parseInt(lvl, 10);
-        const status = isOwned ? '✅ *(Posseduta)*' : `🪙 **${rod.cost} Monete**`;
-        shopDesc += `### Livello ${lvl}: ${rod.name} ${status}\n${rod.desc}\n*Bonus Fortuna:* \`+${rod.catchBonus}%\`\n\n`;
-      });
-
-      const nextLevel = profile.rod_level + 1;
-      if (RODS[nextLevel]) {
-        shopDesc += `\n👉 *Per acquistare il livello successivo usa* \`/pesca upgrade\` *(Costo: 🪙 ${RODS[nextLevel].cost})*`;
-      } else {
-        shopDesc += '\n👑 *Hai già raggiunto il livello massimo dell\'equipaggiamento da pesca!*';
-      }
-
-      const embed = new EmbedBuilder()
-        .setColor('#38bdf8')
-        .setTitle('🎣 Bottega del Marinaio Crociato')
-        .setDescription(shopDesc)
-        .setFooter({ text: `Le tue monete: 🪙 ${profile.coins}`, iconURL: interaction.user.displayAvatarURL() })
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [embed] });
-    } else if (subcommand === 'upgrade') {
-      const nextLevel = profile.rod_level + 1;
-      const nextRod = RODS[nextLevel];
-
-      if (!nextRod) {
-        return interaction.reply({ content: '👑 Possiedi già la canna da pesca di massimo livello!', ephemeral: true });
-      }
-
-      if (profile.coins < nextRod.cost) {
+        await FishingManager.sendFishingPanel(guild, targetChannel.id, { title, description, image });
         return interaction.reply({
-          content: `❌ Monete insufficienti! Ti servono **🪙 ${nextRod.cost} Monete** per acquistare la **${nextRod.name}** (Attualmente possiedi: 🪙 ${profile.coins}).`,
+          content: `✅ Pannello interattivo di pesca inviato con successo in <#${targetChannel.id}>!`,
+          ephemeral: true
+        });
+      } catch (err) {
+        return interaction.reply({
+          content: `❌ Errore durante l'invio del pannello: ${err.message}`,
           ephemeral: true
         });
       }
+    }
 
-      profile.coins -= nextRod.cost;
-      profile.rod_level = nextLevel;
-
-      DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
-
-      const embed = new EmbedBuilder()
-        .setColor('#eab308')
-        .setTitle('🎉 Upgrade Canna da Pesca Effettuato!')
-        .setDescription(`Complimenti! Hai sbloccato la **${nextRod.name}** per **🪙 ${nextRod.cost} Monete**!\n\n*Nuovo Bonus Fortuna:* \`+${nextRod.catchBonus}%\`\nSaldo rimanente: 🪙 **${profile.coins} Monete**.`)
-        .setFooter({ text: 'Buona pesca!', iconURL: interaction.user.displayAvatarURL() })
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [embed] });
-    } else if (subcommand === 'classifica') {
-      const leaderboard = DatabaseHelper.getFishingLeaderboard(interaction.guild.id, 10);
-
-      if (!leaderboard || leaderboard.length === 0) {
-        return interaction.reply({ content: 'Nessun pescatore registrato in questo server.', ephemeral: true });
+    // 8. CONFIG (Admin)
+    if (subcommand === 'config') {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+        return interaction.reply({ content: '❌ Solo gli amministratori possono configurare la pesca.', ephemeral: true });
       }
 
-      let desc = '';
-      leaderboard.forEach((entry, idx) => {
-        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
-        desc += `${medal} <@${entry.user_id}> — 🪙 **${entry.coins} Monete** *(🎣 ${entry.total_fish_caught} pescati)*\n`;
+      const channel = interaction.options.getChannel('canale');
+      const enabled = interaction.options.getBoolean('attivo');
+      const cooldown = interaction.options.getInteger('cooldown');
+      const title = interaction.options.getString('titolo');
+      const color = interaction.options.getString('colore');
+
+      const updates = {};
+      if (channel) updates.channel_id = channel.id;
+      if (enabled !== null) updates.enabled = enabled;
+      if (cooldown !== null) updates.cooldown_seconds = cooldown;
+      if (title) updates.title = title;
+      if (color) updates.color = color;
+
+      const newConfig = DatabaseHelper.updateFishingConfig(guild.id, updates);
+
+      return interaction.reply({
+        content: `✅ **Configurazione Pesca Aggiornata:**\n` +
+                 `• **Stato:** ${newConfig.enabled ? '🟢 Attivo' : '🔴 Disattivato'}\n` +
+                 `• **Canale Dedicato:** ${newConfig.channel_id ? `<#${newConfig.channel_id}>` : '*Tutti i canali permessi*'}\n` +
+                 `• **Cooldown:** \`${newConfig.cooldown_seconds}s\`\n` +
+                 `• **Titolo:** \`${newConfig.title}\``,
+        ephemeral: true
       });
-
-      const embed = new EmbedBuilder()
-        .setColor('#eab308')
-        .setTitle('🏆 Classifica Pescatori del Reame')
-        .setDescription(desc)
-        .setFooter({ text: interaction.guild.name, iconURL: interaction.guild.iconURL() })
-        .setTimestamp();
-
-      await interaction.reply({ embeds: [embed] });
     }
   }
 };
-

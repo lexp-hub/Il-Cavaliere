@@ -1,6 +1,8 @@
 import { TicketManager } from '../modules/ticketManager.js';
 import { PartnershipManager } from '../modules/partnershipManager.js';
 import { PresentationManager } from '../modules/presentationManager.js';
+import { FishingManager } from '../modules/fishingManager.js';
+import { BlackjackManager } from '../modules/blackjackManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
@@ -136,6 +138,270 @@ export default {
 
       if (customId.startsWith('ticket_claim_')) {
         return TicketManager.handleTicketClaim(interaction);
+      }
+
+      // Fishing Module Buttons
+      if (customId.startsWith('btn_fish_')) {
+        return FishingManager.handleButtonInteraction(interaction);
+      }
+
+      // Blackjack Module Buttons
+      if (customId.startsWith('btn_bj_')) {
+        return BlackjackManager.handleButtonInteraction(interaction);
+      }
+
+      // Slots Replay Button
+      if (customId.startsWith('btn_slot_again_')) {
+        const bet = parseInt(customId.replace('btn_slot_again_', ''), 10) || 50;
+        const profile = DatabaseHelper.getFishingProfile(interaction.guild.id, interaction.user.id);
+        const config = DatabaseHelper.getMinigamesConfig(interaction.guild.id);
+
+        if ((profile.coins || 0) < bet) {
+          return interaction.reply({
+            content: `❌ Non hai abbastanza monete! Il tuo saldo è di **${(profile.coins || 0).toLocaleString()} 🪙** monete.`,
+            ephemeral: true
+          });
+        }
+
+        profile.coins -= bet;
+        DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
+
+        const SYMBOLS = [
+          { emoji: '👑', name: 'Corona Reale', weight: 4, mult3: 10, mult2: 2 },
+          { emoji: '💎', name: 'Diamante Sacro', weight: 6, mult3: 7, mult2: 1.5 },
+          { emoji: '⚔️', name: 'Spade Crociate', weight: 10, mult3: 5, mult2: 1.2 },
+          { emoji: '🔔', name: 'Campana d\'Oro', weight: 14, mult3: 3.5, mult2: 1 },
+          { emoji: '🍇', name: 'Uva del Banchetto', weight: 20, mult3: 2.5, mult2: 0.8 },
+          { emoji: '🍒', name: 'Ciliegia', weight: 26, mult3: 2, mult2: 0.5 }
+        ];
+
+        const getRandomSymbol = () => {
+          const total = SYMBOLS.reduce((sum, s) => sum + s.weight, 0);
+          let rand = Math.random() * total;
+          for (const s of SYMBOLS) {
+            if (rand < s.weight) return s;
+            rand -= s.weight;
+          }
+          return SYMBOLS[SYMBOLS.length - 1];
+        };
+
+        const reel1 = getRandomSymbol();
+        const reel2 = getRandomSymbol();
+        const reel3 = getRandomSymbol();
+
+        let multiplier = 0;
+        let winType = 'loss';
+
+        if (reel1.emoji === reel2.emoji && reel2.emoji === reel3.emoji) {
+          multiplier = reel1.mult3;
+          winType = 'jackpot';
+        } else if (reel1.emoji === reel2.emoji || reel2.emoji === reel3.emoji || reel1.emoji === reel3.emoji) {
+          const matchSymbol = (reel1.emoji === reel2.emoji) ? reel1 : ((reel2.emoji === reel3.emoji) ? reel2 : reel1);
+          multiplier = matchSymbol.mult2;
+          winType = 'match2';
+        }
+
+        const wonCoins = Math.floor(bet * multiplier);
+        const netCoins = wonCoins - bet;
+
+        if (wonCoins > 0) {
+          profile.coins += wonCoins;
+          DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
+        }
+
+        DatabaseHelper.recordMinigameResult(interaction.guild.id, interaction.user.id, 'slots', wonCoins > bet, netCoins);
+
+        const isWin = wonCoins > bet;
+        const isPush = wonCoins === bet;
+        const resultColor = winType === 'jackpot' ? '#eab308' : (isWin ? '#10b981' : (isPush ? '#38bdf8' : '#ef4444'));
+        const resultTitle = winType === 'jackpot' ? '🎰 JACKPOT REALE! TRIS PERFETTO! 👑' : (isWin ? '🎉 VITTORIA ALLA SLOT!' : (isPush ? '🤝 PAREGGIO!' : '💀 NESSUNA COMBINAZIONE!'));
+
+        const embed = new EmbedBuilder()
+          .setColor(resultColor)
+          .setAuthor({
+            name: `🎰 Slot Machine Medievale • ${interaction.user.displayName || interaction.user.username}`,
+            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+          })
+          .setTitle(resultTitle)
+          .setDescription(
+            `╭───────────────────╮\n` +
+            `│   ${reel1.emoji}   ┆   ${reel2.emoji}   ┆   ${reel3.emoji}   │\n` +
+            `╰───────────────────╯\n\n` +
+            (winType === 'jackpot' ? `🌟 **TRIS DI ${reel1.name.toUpperCase()}! Moltiplicatore: \`x${multiplier}\`!**\n\n` : (winType === 'match2' ? `✨ **COPPIA DI ${reel1.emoji}! Moltiplicatore: \`x${multiplier}\`**\n\n` : '')) +
+            `> 💸 **Puntata:** \`${bet.toLocaleString()}\` 🪙\n` +
+            `> 💰 **Incasso:** \`${wonCoins.toLocaleString()}\` 🪙\n` +
+            `> 🪙 **Nuovo Saldo:** \`${profile.coins.toLocaleString()}\` 🪙 monete`
+          )
+          .setFooter({ text: `${interaction.guild.name} • Sentry Casino`, iconURL: interaction.guild.iconURL() })
+          .setTimestamp();
+
+        return interaction.reply({ embeds: [embed] });
+      }
+
+      // Minigames Hub Buttons
+      if (customId === 'btn_hub_fishing') {
+        const result = await FishingManager.castRod(interaction.guild, interaction.user, interaction.channelId);
+        if (!result.success) {
+          return interaction.reply({ content: result.message, ephemeral: true });
+        }
+        return interaction.reply({ embeds: [result.embed] });
+      }
+
+      if (customId === 'btn_hub_blackjack') {
+        const result = await BlackjackManager.startGame(interaction.guild, interaction.user, interaction.channelId, 50);
+        if (!result.success) {
+          return interaction.reply({ content: result.message, ephemeral: true });
+        }
+        const comp = result.row ? [result.row] : [];
+        return interaction.reply({ embeds: [result.embed], components: comp });
+      }
+
+      if (customId === 'btn_hub_slots') {
+        const profile = DatabaseHelper.getFishingProfile(interaction.guild.id, interaction.user.id);
+        const bet = 50;
+
+        if ((profile.coins || 0) < bet) {
+          return interaction.reply({
+            content: `❌ Non hai abbastanza monete! Il tuo saldo è di **${(profile.coins || 0).toLocaleString()} 🪙** monete.`,
+            ephemeral: true
+          });
+        }
+
+        profile.coins -= bet;
+        DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
+
+        const SYMBOLS = [
+          { emoji: '👑', name: 'Corona Reale', weight: 4, mult3: 10, mult2: 2 },
+          { emoji: '💎', name: 'Diamante Sacro', weight: 6, mult3: 7, mult2: 1.5 },
+          { emoji: '⚔️', name: 'Spade Crociate', weight: 10, mult3: 5, mult2: 1.2 },
+          { emoji: '🔔', name: 'Campana d\'Oro', weight: 14, mult3: 3.5, mult2: 1 },
+          { emoji: '🍇', name: 'Uva del Banchetto', weight: 20, mult3: 2.5, mult2: 0.8 },
+          { emoji: '🍒', name: 'Ciliegia', weight: 26, mult3: 2, mult2: 0.5 }
+        ];
+
+        const getRandomSymbol = () => {
+          const total = SYMBOLS.reduce((sum, s) => sum + s.weight, 0);
+          let rand = Math.random() * total;
+          for (const s of SYMBOLS) {
+            if (rand < s.weight) return s;
+            rand -= s.weight;
+          }
+          return SYMBOLS[SYMBOLS.length - 1];
+        };
+
+        const reel1 = getRandomSymbol();
+        const reel2 = getRandomSymbol();
+        const reel3 = getRandomSymbol();
+
+        let multiplier = 0;
+        let winType = 'loss';
+
+        if (reel1.emoji === reel2.emoji && reel2.emoji === reel3.emoji) {
+          multiplier = reel1.mult3;
+          winType = 'jackpot';
+        } else if (reel1.emoji === reel2.emoji || reel2.emoji === reel3.emoji || reel1.emoji === reel3.emoji) {
+          const matchSymbol = (reel1.emoji === reel2.emoji) ? reel1 : ((reel2.emoji === reel3.emoji) ? reel2 : reel1);
+          multiplier = matchSymbol.mult2;
+          winType = 'match2';
+        }
+
+        const wonCoins = Math.floor(bet * multiplier);
+        const netCoins = wonCoins - bet;
+
+        if (wonCoins > 0) {
+          profile.coins += wonCoins;
+          DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
+        }
+
+        DatabaseHelper.recordMinigameResult(interaction.guild.id, interaction.user.id, 'slots', wonCoins > bet, netCoins);
+
+        const isWin = wonCoins > bet;
+        const isPush = wonCoins === bet;
+        const resultColor = winType === 'jackpot' ? '#eab308' : (isWin ? '#10b981' : (isPush ? '#38bdf8' : '#ef4444'));
+        const resultTitle = winType === 'jackpot' ? '🎰 JACKPOT REALE! TRIS PERFETTO! 👑' : (isWin ? '🎉 VITTORIA ALLA SLOT!' : (isPush ? '🤝 PAREGGIO!' : '💀 NESSUNA COMBINAZIONE!'));
+
+        const embed = new EmbedBuilder()
+          .setColor(resultColor)
+          .setAuthor({
+            name: `🎰 Slot Machine Medievale • ${interaction.user.displayName || interaction.user.username}`,
+            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+          })
+          .setTitle(resultTitle)
+          .setDescription(
+            `╭───────────────────╮\n` +
+            `│   ${reel1.emoji}   ┆   ${reel2.emoji}   ┆   ${reel3.emoji}   │\n` +
+            `╰───────────────────╯\n\n` +
+            (winType === 'jackpot' ? `🌟 **TRIS DI ${reel1.name.toUpperCase()}! Moltiplicatore: \`x${multiplier}\`!**\n\n` : (winType === 'match2' ? `✨ **COPPIA DI ${reel1.emoji}! Moltiplicatore: \`x${multiplier}\`**\n\n` : '')) +
+            `> 💸 **Puntata:** \`${bet.toLocaleString()}\` 🪙\n` +
+            `> 💰 **Incasso:** \`${wonCoins.toLocaleString()}\` 🪙\n` +
+            `> 🪙 **Nuovo Saldo:** \`${profile.coins.toLocaleString()}\` 🪙 monete`
+          )
+          .setFooter({ text: `${interaction.guild.name} • Sentry Casino`, iconURL: interaction.guild.iconURL() })
+          .setTimestamp();
+
+        return interaction.reply({ embeds: [embed] });
+      }
+
+      if (customId === 'btn_hub_daily') {
+        const profile = DatabaseHelper.getFishingProfile(interaction.guild.id, interaction.user.id);
+        const config = DatabaseHelper.getMinigamesConfig(interaction.guild.id);
+        const now = Math.floor(Date.now() / 1000);
+        const cooldown = 86400; // 24 hours
+
+        if (now - (profile.last_daily || 0) < cooldown) {
+          const hoursLeft = Math.ceil((cooldown - (now - profile.last_daily)) / 3600);
+          return interaction.reply({
+            content: `⏳ Hai già riscosso la tua ricompensa giornaliera! Torna tra **${hoursLeft} ore**.`,
+            ephemeral: true
+          });
+        }
+
+        const reward = config.daily_reward || 150;
+        profile.coins = (profile.coins || 0) + reward;
+        profile.last_daily = now;
+        DatabaseHelper.saveFishingProfile(interaction.guild.id, interaction.user.id, profile);
+
+        const embed = new EmbedBuilder()
+          .setColor('#10b981')
+          .setTitle('🎁 Ricompensa Giornaliera Riscossa!')
+          .setDescription(`Hai ricevuto **+${reward.toLocaleString()} 🪙** monete!\n💰 **Nuovo Saldo:** \`${profile.coins.toLocaleString()}\` 🪙`)
+          .setFooter({ text: `${interaction.guild.name} • Sentry Daily Reward`, iconURL: interaction.guild.iconURL() })
+          .setTimestamp();
+
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
+      if (customId === 'btn_hub_profile') {
+        const profile = DatabaseHelper.getFishingProfile(interaction.guild.id, interaction.user.id);
+        const bjStats = DatabaseHelper.getMinigameStats(interaction.guild.id, interaction.user.id, 'blackjack');
+        const slotStats = DatabaseHelper.getMinigameStats(interaction.guild.id, interaction.user.id, 'slots');
+
+        const embed = new EmbedBuilder()
+          .setColor('#eab308')
+          .setAuthor({
+            name: `🎒 Profilo Economico • ${interaction.user.displayName || interaction.user.username}`,
+            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+          })
+          .setTitle('🪙 Tesoro & Imprese del Cavaliere')
+          .addFields(
+            { name: '🪙 Monete Possedute', value: `**${(profile.coins || 0).toLocaleString()} 🪙**`, inline: true },
+            { name: '🎣 Pesci Catturati', value: `**${profile.total_fish_caught || 0}** prede`, inline: true },
+            { name: '🎒 Oggetti nel Cestino', value: `**${(profile.inventory || []).length}** oggetti`, inline: true },
+            {
+              name: '🃏 Blackjack',
+              value: `> Partite: **${bjStats.games_played}** (Vinte: **${bjStats.games_won}**)\n> Saldo Vinto: **+${bjStats.total_won_coins.toLocaleString()} 🪙**`,
+              inline: false
+            },
+            {
+              name: '🎰 Slot Machine',
+              value: `> Giri: **${slotStats.games_played}** (Vinti: **${slotStats.games_won}**)\n> Record: **${slotStats.highest_win.toLocaleString()} 🪙**`,
+              inline: false
+            }
+          )
+          .setFooter({ text: `${interaction.guild.name} • Sentry Minigiochi`, iconURL: interaction.guild.iconURL() })
+          .setTimestamp();
+
+        return interaction.reply({ embeds: [embed], ephemeral: true });
       }
     }
 

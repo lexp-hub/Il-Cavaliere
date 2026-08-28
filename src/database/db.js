@@ -1047,6 +1047,129 @@ export const DatabaseHelper = {
     try {
       db.prepare('DELETE FROM auth_sessions WHERE token = ?').run(token);
     } catch (e) {}
+  },
+
+  // === FISHING MODULE CONFIG ===
+  getFishingConfig(guildId) {
+    let row = db.prepare('SELECT * FROM fishing_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare(`
+        INSERT OR IGNORE INTO fishing_configs (guild_id, title, color, cooldown_seconds, enabled)
+        VALUES (?, '🎣 Pesca Medievale dei Cavalieri', '#38bdf8', 15, 1)
+      `).run(guildId);
+      return this.getFishingConfig(guildId);
+    }
+    return {
+      ...row,
+      enabled: Boolean(row.enabled),
+      cooldown_seconds: Number(row.cooldown_seconds || 15)
+    };
+  },
+
+  updateFishingConfig(guildId, data) {
+    this.getFishingConfig(guildId);
+    db.prepare(`
+      UPDATE fishing_configs
+      SET channel_id = ?,
+          title = ?,
+          color = ?,
+          cooldown_seconds = ?,
+          enabled = ?
+      WHERE guild_id = ?
+    `).run(
+      data.channel_id ?? null,
+      data.title ?? '🎣 Pesca Medievale dei Cavalieri',
+      data.color ?? '#38bdf8',
+      data.cooldown_seconds !== undefined ? Number(data.cooldown_seconds) : 15,
+      data.enabled !== undefined ? (data.enabled ? 1 : 0) : 1,
+      guildId
+    );
+    return this.getFishingConfig(guildId);
+  },
+
+  // === MINIGAMES & CASINO CONFIG ===
+  getMinigamesConfig(guildId) {
+    let row = db.prepare('SELECT * FROM minigames_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare(`
+        INSERT OR IGNORE INTO minigames_configs (guild_id, max_bet, min_bet, daily_reward, enabled)
+        VALUES (?, 5000, 10, 150, 1)
+      `).run(guildId);
+      return this.getMinigamesConfig(guildId);
+    }
+    return {
+      ...row,
+      enabled: Boolean(row.enabled),
+      max_bet: Number(row.max_bet || 5000),
+      min_bet: Number(row.min_bet || 10),
+      daily_reward: Number(row.daily_reward || 150)
+    };
+  },
+
+  updateMinigamesConfig(guildId, data) {
+    this.getMinigamesConfig(guildId);
+    db.prepare(`
+      UPDATE minigames_configs
+      SET general_channel_id = ?,
+          blackjack_channel_id = ?,
+          slots_channel_id = ?,
+          dice_channel_id = ?,
+          max_bet = ?,
+          min_bet = ?,
+          daily_reward = ?,
+          enabled = ?
+      WHERE guild_id = ?
+    `).run(
+      data.general_channel_id ?? null,
+      data.blackjack_channel_id ?? null,
+      data.slots_channel_id ?? null,
+      data.dice_channel_id ?? null,
+      data.max_bet !== undefined ? Number(data.max_bet) : 5000,
+      data.min_bet !== undefined ? Number(data.min_bet) : 10,
+      data.daily_reward !== undefined ? Number(data.daily_reward) : 150,
+      data.enabled !== undefined ? (data.enabled ? 1 : 0) : 1,
+      guildId
+    );
+    return this.getMinigamesConfig(guildId);
+  },
+
+  getMinigameStats(guildId, userId, gameType) {
+    let row = db.prepare('SELECT * FROM minigame_stats WHERE guild_id = ? AND user_id = ? AND game_type = ?').get(guildId, userId, gameType);
+    if (!row) {
+      return {
+        guild_id: guildId,
+        user_id: userId,
+        game_type: gameType,
+        games_played: 0,
+        games_won: 0,
+        total_won_coins: 0,
+        total_lost_coins: 0,
+        highest_win: 0
+      };
+    }
+    return row;
+  },
+
+  recordMinigameResult(guildId, userId, gameType, won, coinsDelta) {
+    const stats = this.getMinigameStats(guildId, userId, gameType);
+    const newPlayed = stats.games_played + 1;
+    const newWon = won ? stats.games_won + 1 : stats.games_won;
+    const wonDelta = won && coinsDelta > 0 ? coinsDelta : 0;
+    const lostDelta = !won && coinsDelta < 0 ? Math.abs(coinsDelta) : 0;
+    const newTotalWon = stats.total_won_coins + wonDelta;
+    const newTotalLost = stats.total_lost_coins + lostDelta;
+    const newHighest = Math.max(stats.highest_win, wonDelta);
+
+    db.prepare(`
+      INSERT INTO minigame_stats (guild_id, user_id, game_type, games_played, games_won, total_won_coins, total_lost_coins, highest_win)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id, user_id, game_type) DO UPDATE SET
+        games_played = excluded.games_played,
+        games_won = excluded.games_won,
+        total_won_coins = excluded.total_won_coins,
+        total_lost_coins = excluded.total_lost_coins,
+        highest_win = excluded.highest_win
+    `).run(guildId, userId, gameType, newPlayed, newWon, newTotalWon, newTotalLost, newHighest);
   }
 };
 

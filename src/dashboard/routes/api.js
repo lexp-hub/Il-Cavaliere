@@ -3,6 +3,8 @@ import { DatabaseHelper } from '../../database/db.js';
 import { PartnershipManager } from '../../bot/modules/partnershipManager.js';
 import { PresentationManager } from '../../bot/modules/presentationManager.js';
 import { SetupShowcaseManager } from '../../bot/modules/setupShowcaseManager.js';
+import { FishingManager } from '../../bot/modules/fishingManager.js';
+import { BlackjackManager } from '../../bot/modules/blackjackManager.js';
 import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
@@ -701,10 +703,108 @@ export function createApiRouter(botClient) {
     res.json({ success: true, config: DatabaseHelper.getCountingConfig(req.params.guildId) });
   });
 
-  // Fishing Economy API Endpoints
+  // === Fishing & Medieval Economy API Endpoints ===
   router.get('/guilds/:guildId/fishing', requireModAuth, (req, res) => {
-    const leaderboard = DatabaseHelper.getFishingLeaderboard(req.params.guildId, 15);
-    res.json({ leaderboard });
+    const config = DatabaseHelper.getFishingConfig(req.params.guildId);
+    const leaderboard = DatabaseHelper.getFishingLeaderboard(req.params.guildId, 20);
+    res.json({ config, leaderboard });
+  });
+
+  router.post('/guilds/:guildId/fishing/config', requireModAuth, (req, res) => {
+    const saved = DatabaseHelper.updateFishingConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: saved });
+  });
+
+  router.post('/guilds/:guildId/fishing/panel', requireModAuth, async (req, res) => {
+    const { channelId, title, description, image } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Bot non collegato a questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getFishingConfig(guildId);
+      const targetChannelId = channelId || config.channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Seleziona prima il canale in cui inviare il pannello di pesca.' });
+      }
+
+      await FishingManager.sendFishingPanel(guild, targetChannelId, { title, description, image });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // === Minigames & Casino Hub API Endpoints ===
+  router.get('/guilds/:guildId/minigames', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.getMinigamesConfig(req.params.guildId);
+    res.json({ config });
+  });
+
+  router.post('/guilds/:guildId/minigames/config', requireModAuth, (req, res) => {
+    const saved = DatabaseHelper.updateMinigamesConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: saved });
+  });
+
+  router.post('/guilds/:guildId/minigames/panel', requireModAuth, async (req, res) => {
+    const { channelId, title, description, gameType } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Bot non collegato a questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getMinigamesConfig(guildId);
+      const targetChannelId = channelId || config.general_channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Seleziona prima il canale in cui inviare il pannello.' });
+      }
+
+      if (gameType === 'blackjack') {
+        await BlackjackManager.sendBlackjackPanel(guild, targetChannelId, { title, description });
+      } else {
+        const channel = guild.channels.cache.get(targetChannelId) || await guild.channels.fetch(targetChannelId).catch(() => null);
+        if (!channel) return res.status(400).json({ error: 'Canale non trovato.' });
+
+        const embed = new EmbedBuilder()
+          .setColor('#eab308')
+          .setTitle(title || '🏰 Sala Giochi & Casinò del Regno')
+          .setDescription(description ||
+            `Benvenuto nella **Sala Giochi Ufficiale** di **${guild.name}**!\n\n` +
+            `Metti alla prova la tua fortuna e abilità nei minigiochi medievali di Sentry!\n\n` +
+            `🎮 **Attività Disponibili:**\n` +
+            `• 🎣 **Pesca Medievale**: Lancia l'amo nel Lago Sacro per pescare oltre 25 specie e tesori sommersi.\n` +
+            `• 🃏 **Tavolo da Blackjack**: Sfida il Banco a 21 con raddoppio e vincite reali.\n` +
+            `• 🎰 **Slot Machine**: Gira i rulli alla ricerca del Tris Reale (Jackpot x10).\n` +
+            `• 🎁 **Ricompensa Giornaliera**: Riscatta le tue monete quotidiane gratuite ogni 24h!`
+          )
+          .setThumbnail(guild.iconURL({ dynamic: true, size: 256 }))
+          .setImage('https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=1200&q=80')
+          .setFooter({ text: `${guild.name} • Sentry Game Hub`, iconURL: guild.iconURL() })
+          .setTimestamp();
+
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId('btn_hub_fishing').setLabel('Pesca Medievale').setEmoji('🎣').setStyle(ButtonStyle.Primary),
+          new ButtonBuilder().setCustomId('btn_hub_blackjack').setLabel('Blackjack (50 🪙)').setEmoji('🃏').setStyle(ButtonStyle.Success),
+          new ButtonBuilder().setCustomId('btn_hub_slots').setLabel('Slot Machine (50 🪙)').setEmoji('🎰').setStyle(ButtonStyle.Secondary),
+          new ButtonBuilder().setCustomId('btn_hub_daily').setLabel('Daily Reward').setEmoji('🎁').setStyle(ButtonStyle.Secondary),
+          new ButtonBuilder().setCustomId('btn_hub_profile').setLabel('Profilo & Monete').setEmoji('🎒').setStyle(ButtonStyle.Secondary)
+        );
+
+        await channel.send({ embeds: [embed], components: [row] });
+      }
+
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   router.get('/guilds/:guildId/giveaways', requireModAuth, (req, res) => {

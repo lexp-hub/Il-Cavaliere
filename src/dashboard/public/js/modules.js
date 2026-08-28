@@ -1268,11 +1268,13 @@
   // === Minigames & Medieval Community Handler ===
   async function loadMinigamesData(guildId) {
     try {
-      const [cntRes, fishRes] = await Promise.allSettled([
+      const [cntRes, fishRes, mgRes] = await Promise.allSettled([
         fetch(`/api/guilds/${guildId}/counting`),
-        fetch(`/api/guilds/${guildId}/fishing`)
+        fetch(`/api/guilds/${guildId}/fishing`),
+        fetch(`/api/guilds/${guildId}/minigames`)
       ]);
 
+      // 1. Counting
       if (cntRes.status === 'fulfilled' && cntRes.value.ok) {
         const data = await cntRes.value.json();
         const cfg = data.config || {};
@@ -1313,14 +1315,24 @@
         }
       }
 
+      // 2. Fishing
       if (fishRes.status === 'fulfilled' && fishRes.value.ok) {
         const data = await fishRes.value.json();
+        const cfg = data.config || {};
+        const fishEnabled = document.getElementById('fish-enabled');
+        const fishChannel = document.getElementById('fish-channel');
+        const fishCooldown = document.getElementById('fish-cooldown');
+
+        if (fishEnabled) fishEnabled.checked = Boolean(cfg.enabled);
+        if (fishChannel && cfg.channel_id) fishChannel.value = cfg.channel_id;
+        if (fishCooldown) fishCooldown.value = cfg.cooldown_seconds || 15;
+
         const lbList = document.getElementById('fish-leaderboard-list');
         if (lbList) {
           lbList.innerHTML = '';
           const lb = data.leaderboard || [];
           if (lb.length === 0) {
-            lbList.innerHTML = '<p class="text-slate-400 italic">Nessun pescatore registrato.</p>';
+            lbList.innerHTML = '<p class="text-slate-400 italic">Nessun pescatore registrato finora.</p>';
           } else {
             lb.forEach((item, idx) => {
               const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
@@ -1332,8 +1344,8 @@
                   <span class="font-mono text-slate-900">&lt;@${item.user_id}&gt;</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="font-bold text-amber-600">🪙 ${item.coins} Monete</span>
-                  <span class="text-slate-500 text-[10px]">🎣 ${item.total_fish_caught} pescati</span>
+                  <span class="font-bold text-amber-600">🪙 ${(item.coins || 0).toLocaleString()} Monete</span>
+                  <span class="text-slate-500 text-[10px]">🎣 ${item.total_fish_caught || 0} prede</span>
                 </div>
               `;
               lbList.appendChild(div);
@@ -1341,11 +1353,192 @@
           }
         }
       }
+
+      // 3. Minigames & Casino
+      if (mgRes.status === 'fulfilled' && mgRes.value.ok) {
+        const data = await mgRes.value.json();
+        const cfg = data.config || {};
+        const mgEnabled = document.getElementById('mg-enabled');
+        const mgGeneralChannel = document.getElementById('mg-general-channel');
+        const mgBjChannel = document.getElementById('mg-bj-channel');
+        const mgSlotChannel = document.getElementById('mg-slot-channel');
+        const mgMinBet = document.getElementById('mg-min-bet');
+        const mgMaxBet = document.getElementById('mg-max-bet');
+        const mgDailyReward = document.getElementById('mg-daily-reward');
+
+        if (mgEnabled) mgEnabled.checked = Boolean(cfg.enabled);
+        if (mgGeneralChannel && cfg.general_channel_id) mgGeneralChannel.value = cfg.general_channel_id;
+        if (mgBjChannel && cfg.blackjack_channel_id) mgBjChannel.value = cfg.blackjack_channel_id;
+        if (mgSlotChannel && cfg.slots_channel_id) mgSlotChannel.value = cfg.slots_channel_id;
+        if (mgMinBet) mgMinBet.value = cfg.min_bet || 10;
+        if (mgMaxBet) mgMaxBet.value = cfg.max_bet || 5000;
+        if (mgDailyReward) mgDailyReward.value = cfg.daily_reward || 150;
+      }
     } catch (e) {
       console.error('Error loading minigames:', e);
     }
   }
 
+  // Save Fishing Config
+  const btnSaveFishing = document.getElementById('btn-save-fishing');
+  if (btnSaveFishing) {
+    btnSaveFishing.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('fish-channel')?.value;
+      const enabled = document.getElementById('fish-enabled')?.checked;
+      const cooldown = parseInt(document.getElementById('fish-cooldown')?.value, 10) || 15;
+
+      const res = await fetch(`/api/guilds/${guildId}/fishing/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ channel_id: channelId, enabled, cooldown_seconds: cooldown })
+      });
+
+      if (res.ok) {
+        window.showToast('Configurazione Pesca Medievale salvata con successo!');
+        await loadMinigamesData(guildId);
+      } else {
+        window.showToast('Errore durante il salvataggio.', 'error');
+      }
+    });
+  }
+
+  // Send Fishing Panel
+  const btnSendFishingPanel = document.getElementById('btn-send-fishing-panel');
+  if (btnSendFishingPanel) {
+    btnSendFishingPanel.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('fish-channel')?.value;
+
+      if (!channelId) {
+        return window.showToast('Seleziona e salva prima il canale dedicato alla pesca!', 'error');
+      }
+
+      btnSendFishingPanel.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/fishing/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId })
+        });
+
+        if (res.ok) {
+          window.showToast('Pannello di pesca interattivo inviato nel canale!');
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante l\'invio.', 'error');
+        }
+      } catch (e) {
+        window.showToast(e.message, 'error');
+      } finally {
+        btnSendFishingPanel.disabled = false;
+      }
+    });
+  }
+
+  // Save Casino & Minigames Config
+  const btnSaveMinigames = document.getElementById('btn-save-minigames');
+  if (btnSaveMinigames) {
+    btnSaveMinigames.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const enabled = document.getElementById('mg-enabled')?.checked;
+      const generalChannelId = document.getElementById('mg-general-channel')?.value;
+      const bjChannelId = document.getElementById('mg-bj-channel')?.value;
+      const slotChannelId = document.getElementById('mg-slot-channel')?.value;
+      const minBet = parseInt(document.getElementById('mg-min-bet')?.value, 10) || 10;
+      const maxBet = parseInt(document.getElementById('mg-max-bet')?.value, 10) || 5000;
+      const dailyReward = parseInt(document.getElementById('mg-daily-reward')?.value, 10) || 150;
+
+      const res = await fetch(`/api/guilds/${guildId}/minigames/config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enabled,
+          general_channel_id: generalChannelId,
+          blackjack_channel_id: bjChannelId,
+          slots_channel_id: slotChannelId,
+          min_bet: minBet,
+          max_bet: maxBet,
+          daily_reward: dailyReward
+        })
+      });
+
+      if (res.ok) {
+        window.showToast('Configurazione Casinò e Minigiochi salvata con successo!');
+        await loadMinigamesData(guildId);
+      } else {
+        window.showToast('Errore durante il salvataggio.', 'error');
+      }
+    });
+  }
+
+  // Send Blackjack Panel
+  const btnSendBjPanel = document.getElementById('btn-send-bj-panel');
+  if (btnSendBjPanel) {
+    btnSendBjPanel.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('mg-bj-channel')?.value || document.getElementById('mg-general-channel')?.value;
+
+      if (!channelId) {
+        return window.showToast('Seleziona prima il canale per il Blackjack o il canale generale!', 'error');
+      }
+
+      btnSendBjPanel.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/minigames/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId, gameType: 'blackjack' })
+        });
+
+        if (res.ok) {
+          window.showToast('Tavolo interattivo di Blackjack inviato con successo!');
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante l\'invio.', 'error');
+        }
+      } catch (e) {
+        window.showToast(e.message, 'error');
+      } finally {
+        btnSendBjPanel.disabled = false;
+      }
+    });
+  }
+
+  // Send Minigames Hub
+  const btnSendMinigamesHub = document.getElementById('btn-send-minigames-hub');
+  if (btnSendMinigamesHub) {
+    btnSendMinigamesHub.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const channelId = document.getElementById('mg-general-channel')?.value;
+
+      if (!channelId) {
+        return window.showToast('Seleziona prima il canale generale dei minigiochi!', 'error');
+      }
+
+      btnSendMinigamesHub.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/minigames/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId, gameType: 'hub' })
+        });
+
+        if (res.ok) {
+          window.showToast('Hub dei Minigiochi inviato nel canale!');
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante l\'invio.', 'error');
+        }
+      } catch (e) {
+        window.showToast(e.message, 'error');
+      } finally {
+        btnSendMinigamesHub.disabled = false;
+      }
+    });
+  }
+
+  // Counting Handlers
   const btnSaveCounting = document.getElementById('btn-save-counting');
   if (btnSaveCounting) {
     btnSaveCounting.addEventListener('click', async () => {
@@ -1618,6 +1811,10 @@
 
       // Minigames & Counting Channel
       window.setupSearchableSelect('cnt-channel-search', 'cnt-channel', 'text');
+      window.setupSearchableSelect('fish-channel-search', 'fish-channel', 'text');
+      window.setupSearchableSelect('mg-general-channel-search', 'mg-general-channel', 'text');
+      window.setupSearchableSelect('mg-bj-channel-search', 'mg-bj-channel', 'text');
+      window.setupSearchableSelect('mg-slot-channel-search', 'mg-slot-channel', 'text');
     }
   }
 

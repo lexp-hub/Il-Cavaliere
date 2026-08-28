@@ -359,4 +359,40 @@ CREATE TABLE IF NOT EXISTS auth_sessions (
   access_token TEXT,
   created_at INTEGER
 );
+
+-- ============================================================
+-- FISHING & MINIGAMES CONFIGS
+-- ============================================================
+CREATE TABLE IF NOT EXISTS fishing_configs (
+  guild_id TEXT PRIMARY KEY,
+  channel_id TEXT,
+  cooldown_seconds INTEGER DEFAULT 15,
+  title TEXT DEFAULT '🎣 Pesca Medievale dei Cavalieri',
+  color TEXT DEFAULT '#38bdf8',
+  enabled INTEGER DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS minigames_configs (
+  guild_id TEXT PRIMARY KEY,
+  general_channel_id TEXT,
+  blackjack_channel_id TEXT,
+  slots_channel_id TEXT,
+  dice_channel_id TEXT,
+  max_bet INTEGER DEFAULT 5000,
+  min_bet INTEGER DEFAULT 10,
+  daily_reward INTEGER DEFAULT 150,
+  enabled INTEGER DEFAULT 1
+);
+
+CREATE TABLE IF NOT EXISTS minigame_stats (
+  guild_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  game_type TEXT NOT NULL,
+  games_played INTEGER DEFAULT 0,
+  games_won INTEGER DEFAULT 0,
+  total_won_coins INTEGER DEFAULT 0,
+  total_lost_coins INTEGER DEFAULT 0,
+  highest_win INTEGER DEFAULT 0,
+  PRIMARY KEY (guild_id, user_id, game_type)
+);
 `;

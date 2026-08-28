@@ -1790,7 +1790,138 @@
     <!-- Minigames & Medieval Community Section -->
     <section id="tab-minigames" class="tab-content hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
+
+        <!-- Fishing & Medieval Economy Dedicated Card -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+                <i data-lucide="fish" class="w-4 h-4 text-cyan-600"></i> Modulo Pesca Medievale
+              </h3>
+              <p class="text-xs text-slate-500">Minigioco RPG con oltre 25 specie, tesori sommersi, potenziamenti e pannello interattivo</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="fish-enabled" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Dedicato alla Pesca</label>
+              <div class="space-y-1.5">
+                <div class="relative">
+                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                  <input type="text" id="fish-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                </div>
+                <select id="fish-channel" class="form-select text-xs"></select>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Cooldown tra Lanci (secondi)</label>
+              <input type="number" id="fish-cooldown" class="form-input text-xs bg-white" min="3" max="300" value="15">
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-2">
+              <button id="btn-save-fishing" class="btn-cyber text-xs py-2 px-4 flex-1 justify-center">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione Pesca
+              </button>
+              <button id="btn-send-fishing-panel" type="button" class="btn-secondary text-xs py-2 px-3 bg-white hover:bg-slate-100 text-cyan-700 border-cyan-200">
+                <i data-lucide="send" class="w-3.5 h-3.5 text-cyan-600"></i> Invia Pannello Pesca
+              </button>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-slate-300">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-500"></i> Classifica Pescatori Più Ricchi del Reame
+            </h4>
+            <div id="fish-leaderboard-list" class="space-y-1.5 text-xs">
+              <p class="text-slate-500 italic">Caricamento classifica pescatori...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Casino, Blackjack & Slots Card -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-300">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
+                <i data-lucide="dice-5" class="w-4 h-4 text-amber-600"></i> Casinò, Blackjack &amp; Slot
+              </h3>
+              <p class="text-xs text-slate-500">Tavoli interattivi da Blackjack, Slot Machine, Dadi e Hub giochi del Regno</p>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="mg-enabled" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Generale Casinò / Minigiochi</label>
+              <div class="space-y-1.5">
+                <div class="relative">
+                  <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                  <input type="text" id="mg-general-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca canale...">
+                </div>
+                <select id="mg-general-channel" class="form-select text-xs"></select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Dedicato Blackjack</label>
+                <div class="space-y-1.5">
+                  <div class="relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                    <input type="text" id="mg-bj-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca...">
+                  </div>
+                  <select id="mg-bj-channel" class="form-select text-xs"></select>
+                </div>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-slate-700 block mb-1">Canale Dedicato Slot Machine</label>
+                <div class="space-y-1.5">
+                  <div class="relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5"></i>
+                    <input type="text" id="mg-slot-channel-search" class="form-input text-xs pl-8 py-1.5 bg-white" placeholder="🔍 Cerca...">
+                  </div>
+                  <select id="mg-slot-channel" class="form-select text-xs"></select>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 block mb-1">Puntata Min (🪙)</label>
+                <input type="number" id="mg-min-bet" class="form-input text-xs bg-white" min="1" value="10">
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 block mb-1">Puntata Max (🪙)</label>
+                <input type="number" id="mg-max-bet" class="form-input text-xs bg-white" min="50" value="5000">
+              </div>
+              <div>
+                <label class="text-[11px] font-semibold text-slate-600 block mb-1">Daily Reward (🪙)</label>
+                <input type="number" id="mg-daily-reward" class="form-input text-xs bg-white" min="10" value="150">
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 pt-2">
+              <button id="btn-save-minigames" class="btn-cyber text-xs py-2 px-4 flex-1 justify-center">
+                <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Configurazione
+              </button>
+              <button id="btn-send-bj-panel" type="button" class="btn-secondary text-xs py-2 px-3 bg-white hover:bg-slate-100 text-blue-700 border-blue-200">
+                <i data-lucide="layers" class="w-3.5 h-3.5 text-blue-600"></i> Tavolo Blackjack
+              </button>
+              <button id="btn-send-minigames-hub" type="button" class="btn-secondary text-xs py-2 px-3 bg-white hover:bg-slate-100 text-amber-700 border-amber-200">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5 text-amber-600"></i> Hub Giochi
+              </button>
+            </div>
+          </div>
+        </div>
+
         <!-- Counting Game Card -->
         <div class="glass-card p-6 space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-slate-300">
@@ -1849,40 +1980,41 @@
           </div>
         </div>
 
-        <!-- Fishing & Medieval Economy Card -->
+        <!-- Minigames Slash Commands Guide Card -->
         <div class="glass-card p-6 space-y-4">
           <div class="flex items-center justify-between pb-3 border-b border-slate-300">
             <div>
               <h3 class="text-base font-bold text-slate-900 flex items-center gap-2 font-medieval">
-                <i data-lucide="fish" class="w-4 h-4 text-cyan-600"></i> Pesca &amp; Economia Medievale
+                <i data-lucide="swords" class="w-4 h-4 text-purple-600"></i> Elenco Minigiochi &amp; Comandi
               </h3>
-              <p class="text-xs text-slate-500">Minigioco RPG: cattura pesci rari, raccogli monete e potenzia le canne!</p>
+              <p class="text-xs text-slate-500">Panoramica completa di tutti i comandi di gioco disponibili per la community</p>
             </div>
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-100 text-cyan-800 border border-cyan-200">Attivo</span>
           </div>
 
-          <div class="space-y-3">
-            <div class="p-3 rounded-xl bg-white border border-slate-300 space-y-2">
-              <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                <i data-lucide="terminal" class="w-3.5 h-3.5 text-red-600"></i> Comandi Slash Minigiochi Attivi
-              </h4>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-700">
-                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/pesca</strong> — Lancia l'amo e pesca bottini</div>
-                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/daily</strong> — Riscatta stipendio giornaliero</div>
-                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/duello</strong> — Sfida membri a singolar tenzone</div>
-                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/moneta</strong> — Testa o croce con puntate</div>
-                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/dado</strong> — Lancia dadi da gioco d6/d20</div>
-                <div class="p-2 rounded bg-slate-100"><strong class="text-red-700">/counting</strong> — Statistiche e setup conteggio</div>
-              </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs text-slate-700">
+            <div class="p-3 rounded-xl bg-white border border-slate-200">
+              <strong class="text-cyan-700 font-bold block">🎣 /pesca</strong>
+              <span class="text-slate-500 text-[11px]">Lancia l'amo, vendi pescato, compra canne migliori e scala la classifica.</span>
             </div>
-
-            <div>
-              <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-500"></i> Pescatori Più Ricchi del Reame
-              </h4>
-              <div id="fish-leaderboard-list" class="space-y-1.5 text-xs">
-                <p class="text-slate-500 italic">Caricamento classifica pescatori...</p>
-              </div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200">
+              <strong class="text-blue-700 font-bold block">🃏 /blackjack</strong>
+              <span class="text-slate-500 text-[11px]">Sfida il Banco a 21 con pulsanti Carta, Stai, Raddoppia e puntate reali.</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200">
+              <strong class="text-amber-700 font-bold block">🎰 /slots</strong>
+              <span class="text-slate-500 text-[11px]">Gira i rulli della slot medievale e punta al Jackpot Reale (10x).</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200">
+              <strong class="text-emerald-700 font-bold block">🎁 /daily</strong>
+              <span class="text-slate-500 text-[11px]">Riscatta la ricompensa quotidiana di monete ogni 24 ore.</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200">
+              <strong class="text-red-700 font-bold block">⚔️ /duello</strong>
+              <span class="text-slate-500 text-[11px]">Sfida un altro membro in un duello cavalleresco con scommessa di monete.</span>
+            </div>
+            <div class="p-3 rounded-xl bg-white border border-slate-200">
+              <strong class="text-purple-700 font-bold block">🎲 /dado &amp; /moneta</strong>
+              <span class="text-slate-500 text-[11px]">Lancio dadi e testa o croce veloci.</span>
             </div>
           </div>
         </div>
