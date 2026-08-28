@@ -479,7 +479,15 @@ export const BlackjackManager = {
         .setStyle(ButtonStyle.Danger)
     );
 
-    return await channel.send({ embeds: [embed], components: [row] });
+    const row2 = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId('btn_bj_profile')
+        .setLabel('Controlla Saldo & Statistiche')
+        .setEmoji('🎒')
+        .setStyle(ButtonStyle.Secondary)
+    );
+
+    return await channel.send({ embeds: [embed], components: [row, row2] });
   },
 
   async handleButtonInteraction(interaction) {

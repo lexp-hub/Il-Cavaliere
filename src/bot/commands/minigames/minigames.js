@@ -98,6 +98,11 @@ export default {
     )
     .addSubcommand(sub =>
       sub
+        .setName('saldo')
+        .setDescription('Mostra il tuo saldo monete d\'oro e patrimonio attuale')
+    )
+    .addSubcommand(sub =>
+      sub
         .setName('setcoins')
         .setDescription('Aggiungi, rimuovi o imposta le monete di un utente (Solo Amministratori)')
         .addUserOption(opt =>
@@ -131,8 +136,8 @@ export default {
     const guild = interaction.guild;
     const user = interaction.user;
 
-    // 1. STATS
-    if (subcommand === 'statistiche') {
+    // 1. STATS & SALDO
+    if (subcommand === 'statistiche' || subcommand === 'saldo') {
       const profile = DatabaseHelper.getFishingProfile(guild.id, user.id);
       const bjStats = DatabaseHelper.getMinigameStats(guild.id, user.id, 'blackjack');
       const slotStats = DatabaseHelper.getMinigameStats(guild.id, user.id, 'slots');

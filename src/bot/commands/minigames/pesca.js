@@ -42,6 +42,11 @@ export default {
     )
     .addSubcommand(sub =>
       sub
+        .setName('saldo')
+        .setDescription('Mostra il tuo saldo monete d\'oro, canna attuale e valore del pescato')
+    )
+    .addSubcommand(sub =>
+      sub
         .setName('panel')
         .setDescription('Invia il pannello interattivo permanente di pesca con pulsanti')
         .addChannelOption(opt =>
@@ -157,6 +162,39 @@ export default {
     // 6. LEADERBOARD
     if (subcommand === 'classifica') {
       const embed = FishingManager.getLeaderboardEmbed(guild);
+      return interaction.reply({ embeds: [embed], ephemeral: true });
+    }
+
+    // 7. BALANCE / SALDO
+    if (subcommand === 'saldo') {
+      const profile = DatabaseHelper.getFishingProfile(guild.id, user.id);
+      const inventory = profile.inventory || [];
+      const inventoryValue = inventory.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+      const ROD_TIERS = [
+        { level: 1, name: 'Canna di Legno Grezza' },
+        { level: 2, name: 'Canna di Quercia Rinforzata' },
+        { level: 3, name: 'Canna d\'Argento Lucido' },
+        { level: 4, name: 'Canna d\'Oro Regale' },
+        { level: 5, name: 'Canna Mitica del Leviatano' }
+      ];
+      const rodInfo = ROD_TIERS.find(r => r.level === (profile.rod_level || 1)) || ROD_TIERS[0];
+
+      const embed = new EmbedBuilder()
+        .setColor('#38bdf8')
+        .setAuthor({
+          name: `🎣 Saldo Pesca • ${user.displayName || user.username}`,
+          iconURL: user.displayAvatarURL({ dynamic: true })
+        })
+        .setTitle('🪙 Forziere & Equipaggiamento da Pesca')
+        .setDescription(
+          `💰 **Monete Possedute:** \`${(profile.coins || 0).toLocaleString()}\` 🪙\n` +
+          `🎣 **Canna da Pesca:** \`${rodInfo.name}\` (Liv. ${profile.rod_level || 1})\n` +
+          `🎒 **Pescato nel Cestino:** \`${inventory.length} prede\` (Valore stimato: **${inventoryValue.toLocaleString()} 🪙**)\n` +
+          `🐟 **Catture Totali di Sempre:** \`${profile.total_fish_caught || 0}\` prede`
+        )
+        .setFooter({ text: `${guild.name} • Sentry Pesca`, iconURL: guild.iconURL() })
+        .setTimestamp();
+
       return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
