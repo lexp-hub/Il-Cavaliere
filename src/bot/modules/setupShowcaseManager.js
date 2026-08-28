@@ -1,5 +1,5 @@
 import { DatabaseHelper } from '../../database/db.js';
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, AttachmentBuilder } from 'discord.js';
 import { XPManager } from './xpManager.js';
 
 export const SetupShowcaseManager = {
@@ -95,16 +95,34 @@ export const SetupShowcaseManager = {
       })
       .setTitle(config.title || '🖥️ Setup & Postazione')
       .setDescription(`**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n*Condiviso da <@${message.author.id}>*`)
-      .setImage(imageUrl)
       .setFooter({
         text: `${message.guild.name} • Sentry Showcase`,
         iconURL: guildIcon || undefined
       })
       .setTimestamp();
 
+    // Attach file directly to bot message so Discord CDN doesn't delete it when user message is deleted!
+    let fileAttachment = null;
+    if (imageAttachment) {
+      const ext = imageAttachment.name?.split('.').pop() || 'png';
+      fileAttachment = new AttachmentBuilder(imageAttachment.url, { name: `setup_${message.id}.${ext}` });
+      embed.setImage(`attachment://setup_${message.id}.${ext}`);
+    } else if (imageUrl) {
+      if (imageUrl.includes('cdn.discordapp.com') || imageUrl.includes('media.discordapp.net')) {
+        fileAttachment = new AttachmentBuilder(imageUrl, { name: `setup_${message.id}.png` });
+        embed.setImage(`attachment://setup_${message.id}.png`);
+      } else {
+        embed.setImage(imageUrl);
+      }
+    }
+
     try {
-      // 5. Send the Embed to the channel
-      const embedMessage = await message.channel.send({ embeds: [embed] });
+      // 5. Send the Embed (and re-hosted image attachment) to the channel
+      const sendPayload = { embeds: [embed] };
+      if (fileAttachment) {
+        sendPayload.files = [fileAttachment];
+      }
+      const embedMessage = await message.channel.send(sendPayload);
 
       // 6. Delete the original user message to keep gallery clean
       await message.delete().catch(() => {});
@@ -148,10 +166,11 @@ export const SetupShowcaseManager = {
         }
       }
 
-      // 10. Persist submission in database
+      // 10. Persist submission in database with permanent image URL
+      const permanentImageUrl = embedMessage.attachments.first()?.url || imageUrl;
       DatabaseHelper.saveSetupSubmission(message.guild.id, {
         user_id: message.author.id,
-        image_url: imageUrl,
+        image_url: permanentImageUrl,
         description: description || null,
         embed_message_id: embedMessage.id,
         timestamp: Math.floor(Date.now() / 1000)
@@ -274,16 +293,33 @@ export const SetupShowcaseManager = {
         })
         .setTitle(config.title || '🖥️ Setup & Postazione')
         .setDescription(`**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n*Condiviso da <@${msg.author.id}>*`)
-        .setImage(imageUrl)
         .setFooter({
           text: `${guild.name} • Sentry Showcase`,
           iconURL: guildIcon || undefined
         })
         .setTimestamp(msg.createdAt);
 
+      let fileAttachment = null;
+      if (imageAttachment) {
+        const ext = imageAttachment.name?.split('.').pop() || 'png';
+        fileAttachment = new AttachmentBuilder(imageAttachment.url, { name: `setup_${msg.id}.${ext}` });
+        embed.setImage(`attachment://setup_${msg.id}.${ext}`);
+      } else if (imageUrl) {
+        if (imageUrl.includes('cdn.discordapp.com') || imageUrl.includes('media.discordapp.net')) {
+          fileAttachment = new AttachmentBuilder(imageUrl, { name: `setup_${msg.id}.png` });
+          embed.setImage(`attachment://setup_${msg.id}.png`);
+        } else {
+          embed.setImage(imageUrl);
+        }
+      }
+
       try {
-        // Send the Embed to the channel
-        const embedMessage = await channel.send({ embeds: [embed] });
+        // Send the Embed (and re-hosted image attachment) to the channel
+        const sendPayload = { embeds: [embed] };
+        if (fileAttachment) {
+          sendPayload.files = [fileAttachment];
+        }
+        const embedMessage = await channel.send(sendPayload);
 
         // Delete the original raw message
         await msg.delete().catch(() => {});
@@ -322,9 +358,10 @@ export const SetupShowcaseManager = {
         }
 
         // Persist submission
+        const permanentImageUrl = embedMessage.attachments.first()?.url || imageUrl;
         DatabaseHelper.saveSetupSubmission(guild.id, {
           user_id: msg.author.id,
-          image_url: imageUrl,
+          image_url: permanentImageUrl,
           description: description || null,
           embed_message_id: embedMessage.id,
           timestamp: Math.floor(msg.createdTimestamp / 1000)
