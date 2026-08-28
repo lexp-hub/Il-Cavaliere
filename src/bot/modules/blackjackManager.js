@@ -491,19 +491,25 @@ export const BlackjackManager = {
       if (result.inProgress) {
         return interaction.update({ embeds: [result.embed], components: [result.row] });
       }
-      return interaction.update({ embeds: [result.embed], components: [result.row] });
+      await interaction.update({ embeds: [result.embed], components: [result.row] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     if (customId === 'btn_bj_stand') {
       const result = await this.handleStand(guild, user);
       if (!result.success) return interaction.reply({ content: result.message, ephemeral: true });
-      return interaction.update({ embeds: [result.embed], components: [result.row] });
+      await interaction.update({ embeds: [result.embed], components: [result.row] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     if (customId === 'btn_bj_double') {
       const result = await this.handleDouble(guild, user);
       if (!result.success) return interaction.reply({ content: result.message, ephemeral: true });
-      return interaction.update({ embeds: [result.embed], components: [result.row] });
+      await interaction.update({ embeds: [result.embed], components: [result.row] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     if (customId.startsWith('btn_bj_again_')) {
@@ -511,7 +517,11 @@ export const BlackjackManager = {
       const result = await this.startGame(guild, user, channelId, bet);
       if (!result.success) return interaction.reply({ content: result.message, ephemeral: true });
       const comp = result.row ? [result.row] : [];
-      return interaction.reply({ embeds: [result.embed], components: comp });
+      await interaction.reply({ embeds: [result.embed], components: comp });
+      if (result.inProgress === false) {
+        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      }
+      return;
     }
 
     if (customId.startsWith('btn_bj_quick_')) {
@@ -519,7 +529,11 @@ export const BlackjackManager = {
       const result = await this.startGame(guild, user, channelId, bet);
       if (!result.success) return interaction.reply({ content: result.message, ephemeral: true });
       const comp = result.row ? [result.row] : [];
-      return interaction.reply({ embeds: [result.embed], components: comp });
+      await interaction.reply({ embeds: [result.embed], components: comp });
+      if (result.inProgress === false) {
+        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      }
+      return;
     }
 
     if (customId === 'btn_bj_profile') {

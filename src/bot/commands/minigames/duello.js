@@ -147,6 +147,7 @@ export default {
         .setTimestamp();
 
       await i.update({ content: null, embeds: [duelEmbed], components: [] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
     });
 
     collector.on('end', async (collected, reason) => {
@@ -156,6 +157,7 @@ export default {
           embeds: [],
           components: []
         }).catch(() => {});
+        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
       }
     });
   }

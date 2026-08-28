@@ -94,7 +94,11 @@ export default {
       }
 
       const components = result.row ? [result.row] : [];
-      return interaction.reply({ embeds: [result.embed], components });
+      await interaction.reply({ embeds: [result.embed], components });
+      if (result.inProgress === false) {
+        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      }
+      return;
     }
 
     // 2. STATS
@@ -103,7 +107,7 @@ export default {
       const stats = DatabaseHelper.getMinigameStats(guild.id, user.id, 'blackjack');
       const winRate = stats.games_played > 0 ? ((stats.games_won / stats.games_played) * 100).toFixed(1) : '0.0';
 
-      return interaction.reply({
+      await interaction.reply({
         embeds: [{
           color: 0x3b82f6,
           title: `🃏 Statistiche Blackjack • ${user.displayName || user.username}`,
@@ -119,6 +123,8 @@ export default {
           timestamp: new Date()
         }]
       });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 3. PANEL (Admin)

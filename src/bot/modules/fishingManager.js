@@ -414,7 +414,9 @@ export const FishingManager = {
       if (!result.success) {
         return interaction.reply({ content: result.message, ephemeral: true });
       }
-      return interaction.reply({ embeds: [result.embed], ephemeral: false });
+      await interaction.reply({ embeds: [result.embed], ephemeral: false });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     if (customId === 'btn_fish_inv') {
@@ -427,7 +429,9 @@ export const FishingManager = {
       if (!result.success) {
         return interaction.reply({ content: result.message, ephemeral: true });
       }
-      return interaction.reply({ embeds: [result.embed], ephemeral: false });
+      await interaction.reply({ embeds: [result.embed], ephemeral: false });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     if (customId === 'btn_fish_shop') {
@@ -447,7 +451,9 @@ export const FishingManager = {
       if (!result.success) {
         return interaction.reply({ content: result.message, ephemeral: true });
       }
-      return interaction.reply({ embeds: [result.embed], ephemeral: false });
+      await interaction.reply({ embeds: [result.embed], ephemeral: false });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     if (customId === 'btn_fish_top') {

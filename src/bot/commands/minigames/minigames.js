@@ -133,7 +133,9 @@ export default {
         .setFooter({ text: `${guild.name} • Sentry Minigiochi`, iconURL: guild.iconURL() })
         .setTimestamp();
 
-      return interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 2. PANEL (Admin)

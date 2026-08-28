@@ -50,6 +50,7 @@ export default {
       .setTimestamp();
 
     await interaction.reply({ embeds: [embed] });
+    setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
   }
 };
 

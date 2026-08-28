@@ -121,13 +121,17 @@ export default {
       if (!result.success) {
         return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
       }
-      return interaction.reply({ embeds: [result.embed] });
+      await interaction.reply({ embeds: [result.embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 2. INVENTORY
     if (subcommand === 'inventario') {
       const embed = FishingManager.getInventoryEmbed(guild, user);
-      return interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 3. SELL
@@ -136,13 +140,17 @@ export default {
       if (!result.success) {
         return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
       }
-      return interaction.reply({ embeds: [result.embed] });
+      await interaction.reply({ embeds: [result.embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 4. SHOP
     if (subcommand === 'shop') {
       const embed = FishingManager.getShopEmbed(guild, user);
-      return interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 5. UPGRADE
@@ -151,13 +159,17 @@ export default {
       if (!result.success) {
         return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
       }
-      return interaction.reply({ embeds: [result.embed] });
+      await interaction.reply({ embeds: [result.embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 6. LEADERBOARD
     if (subcommand === 'classifica') {
       const embed = FishingManager.getLeaderboardEmbed(guild);
-      return interaction.reply({ embeds: [embed] });
+      await interaction.reply({ embeds: [embed] });
+      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+      return;
     }
 
     // 7. PANEL (Admin)
