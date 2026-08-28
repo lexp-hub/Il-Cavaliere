@@ -195,5 +195,149 @@ export const SetupShowcaseManager = {
     }
 
     return await channel.send({ embeds: [embed] });
+  },
+
+  /**
+   * Reads existing past messages in the showcase channel, converts them into Embeds,
+   * creates discussion threads, adds reactions, and deletes the original raw messages.
+   * @param {import('discord.js').Guild} guild
+   * @param {string} channelId
+   * @param {number} limit Max number of messages to scan (default 50)
+   * @returns {Promise<{ success: boolean, convertedCount: number, deletedCount: number, totalProcessed: number }>}
+   */
+  async convertChannelMessages(guild, channelId, limit = 50) {
+    const channel = guild.channels.cache.get(channelId) || await guild.channels.fetch(channelId).catch(() => null);
+    if (!channel) throw new Error('Canale showcase non trovato.');
+
+    const config = DatabaseHelper.getSetupShowcaseConfig(guild.id);
+    const fetched = await channel.messages.fetch({ limit: Math.min(limit, 100) });
+    
+    // Process messages from oldest to newest so they appear in correct chronological order
+    const messages = Array.from(fetched.values()).reverse();
+    let convertedCount = 0;
+    let deletedCount = 0;
+    let totalProcessed = 0;
+
+    for (const msg of messages) {
+      // Skip bot messages or already converted embeds
+      if (msg.author.bot || msg.embeds.length > 0) continue;
+
+      totalProcessed++;
+
+      // 1. Detect image
+      let imageUrl = null;
+      const imageAttachment = msg.attachments.find(att => {
+        const ct = att.contentType?.toLowerCase() || '';
+        const url = att.url?.toLowerCase() || '';
+        return ct.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif)$/i.test(url);
+      });
+
+      if (imageAttachment) {
+        imageUrl = imageAttachment.url;
+      } else {
+        const urlMatch = msg.content.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|webp|gif)(\?[^\s]*)?/i);
+        if (urlMatch) {
+          imageUrl = urlMatch[0];
+        }
+      }
+
+      // If no image found
+      if (!imageUrl) {
+        if (config.delete_invalid) {
+          await msg.delete().catch(() => {});
+          deletedCount++;
+        }
+        continue;
+      }
+
+      // 2. Extract description text
+      let description = msg.content.trim();
+      if (description.includes(imageUrl)) {
+        description = description.replace(imageUrl, '').trim();
+      }
+
+      const displayDesc = description || '*Nessuna descrizione o specifica aggiuntiva fornita.*';
+      const member = msg.member || await guild.members.fetch(msg.author.id).catch(() => null);
+      const authorName = member?.displayName || msg.author.username;
+      const authorAvatar = msg.author.displayAvatarURL({ dynamic: true, size: 256 });
+      const guildIcon = guild.iconURL({ dynamic: true, size: 256 });
+
+      // 3. Construct the official Sentry Embed
+      const embed = new EmbedBuilder()
+        .setColor(config.color || '#dc2626')
+        .setAuthor({
+          name: `🖥️ Postazione di ${authorName}`,
+          iconURL: authorAvatar
+        })
+        .setTitle(config.title || '🖥️ Setup & Postazione')
+        .setDescription(`**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n*Condiviso da <@${msg.author.id}>*`)
+        .setImage(imageUrl)
+        .setFooter({
+          text: `${guild.name} • Sentry Showcase`,
+          iconURL: guildIcon || undefined
+        })
+        .setTimestamp(msg.createdAt);
+
+      try {
+        // Send the Embed to the channel
+        const embedMessage = await channel.send({ embeds: [embed] });
+
+        // Delete the original raw message
+        await msg.delete().catch(() => {});
+
+        // Add auto-reactions
+        const reactions = Array.isArray(config.auto_reactions) ? config.auto_reactions : ['🔥', '⭐', '❤️'];
+        for (const emoji of reactions) {
+          try {
+            await embedMessage.react(emoji);
+          } catch (e) {}
+        }
+
+        // Auto-create discussion thread if enabled
+        if (config.auto_thread && channel.threads) {
+          try {
+            await embedMessage.startThread({
+              name: `💬 Discussione: Setup di ${authorName}`,
+              autoArchiveDuration: 1440
+            });
+          } catch (threadErr) {}
+        }
+
+        // Reward role & XP
+        if (config.reward_role_id && member) {
+          try {
+            if (!member.roles.cache.has(config.reward_role_id)) {
+              await member.roles.add(config.reward_role_id);
+            }
+          } catch (e) {}
+        }
+
+        if (config.xp_reward && config.xp_reward > 0) {
+          try {
+            await XPManager.addXP(guild.id, msg.author.id, Number(config.xp_reward));
+          } catch (e) {}
+        }
+
+        // Persist submission
+        DatabaseHelper.saveSetupSubmission(guild.id, {
+          user_id: msg.author.id,
+          image_url: imageUrl,
+          description: description || null,
+          embed_message_id: embedMessage.id,
+          timestamp: Math.floor(msg.createdTimestamp / 1000)
+        });
+
+        convertedCount++;
+      } catch (err) {
+        console.error('[SetupShowcase] Error converting message:', err);
+      }
+    }
+
+    return {
+      success: true,
+      convertedCount,
+      deletedCount,
+      totalProcessed
+    };
   }
 };

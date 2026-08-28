@@ -1228,6 +1228,43 @@
     });
   }
 
+  const btnConvertSetupMsgs = document.getElementById('btn-convert-setup-msgs');
+  if (btnConvertSetupMsgs) {
+    btnConvertSetupMsgs.addEventListener('click', async () => {
+      const guildId = window.AppState?.currentGuildId;
+      if (!guildId) return window.showToast('Nessun server selezionato.', 'error');
+
+      const channelId = document.getElementById('setup-channel')?.value;
+      if (!channelId) return window.showToast('Seleziona prima il canale in cui scansionare i setup.', 'error');
+
+      try {
+        btnConvertSetupMsgs.disabled = true;
+        btnConvertSetupMsgs.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Scansione in corso...';
+        if (window.lucide) lucide.createIcons();
+
+        const res = await fetch(`/api/guilds/${guildId}/setup-showcase/convert`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId, limit: 100 })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast(`✨ Conversione completata! ${data.convertedCount} setup convertiti in Embed.`);
+          await loadSetupShowcaseData(guildId);
+        } else {
+          window.showToast(`Errore: ${data.error || 'Scansione fallita'}`, 'error');
+        }
+      } catch (err) {
+        window.showToast(`Errore: ${err.message}`, 'error');
+      } finally {
+        btnConvertSetupMsgs.disabled = false;
+        btnConvertSetupMsgs.innerHTML = '<i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-red-600"></i> Scansiona e Converti Messaggi del Canale';
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
   // === Minigames & Medieval Community Handler ===
   async function loadMinigamesData(guildId) {
     try {

@@ -85,6 +85,7 @@ export default {
 
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand(false) || 'form';
+
     const config = DatabaseHelper.getPresentationConfig(interaction.guild.id);
 
     // 1. OPEN FORM MODAL

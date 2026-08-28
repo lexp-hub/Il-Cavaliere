@@ -244,6 +244,30 @@ export function createApiRouter(botClient) {
     }
   });
 
+  router.post('/guilds/:guildId/setup-showcase/convert', requireModAuth, async (req, res) => {
+    const { channelId, limit } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Il bot non è presente in questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getSetupShowcaseConfig(guildId);
+      const targetChannelId = channelId || config.channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Nessun canale showcase configurato o selezionato.' });
+      }
+
+      const result = await SetupShowcaseManager.convertChannelMessages(guild, targetChannelId, limit || 50);
+      res.json({ success: true, ...result });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
   router.get('/guilds/:guildId/embeds', requireModAuth, (req, res) => {
     const templates = DatabaseHelper.getEmbedTemplates(req.params.guildId);
     res.json(templates);

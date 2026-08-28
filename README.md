@@ -88,24 +88,5 @@ Sentry/
 
 ---
 
-## 🚀 Avvio & Deployment
-
-### 1. Installazione Dipendenze
-```bash
-npm install
-```
-
-### 2. Registrazione Comandi Slash
-```bash
-npm run deploy-commands
-```
-
-### 3. Avvio
-```bash
-npm start
-```
-
----
-
 ## 📜 Licenza
 Rilasciato sotto licenza [MIT](LICENSE).

@@ -99,6 +99,26 @@ export default {
     )
     .addSubcommand(sub =>
       sub
+        .setName('convert')
+        .setDescription('Scansiona e converte i messaggi e foto già presenti nel canale in Embed ufficiali')
+        .addChannelOption(opt =>
+          opt
+            .setName('canale')
+            .setDescription('Canale da scansionare (default: canale configurato per i setup)')
+            .addChannelTypes(ChannelType.GuildText)
+            .setRequired(false)
+        )
+        .addIntegerOption(opt =>
+          opt
+            .setName('limite')
+            .setDescription('Numero massimo di messaggi da esaminare (default: 50, max: 100)')
+            .setMinValue(1)
+            .setMaxValue(100)
+            .setRequired(false)
+        )
+    )
+    .addSubcommand(sub =>
+      sub
         .setName('info')
         .setDescription('Mostra la configurazione e le statistiche dello Showcase Postazioni')
     )
@@ -179,7 +199,44 @@ export default {
       }
     }
 
-    // 3. INFO SUBCOMMAND
+    // 3. CONVERT SUBCOMMAND
+    if (subcommand === 'convert') {
+      const targetChannel = interaction.options.getChannel('canale') || (config.channel_id ? interaction.guild.channels.cache.get(config.channel_id) : null) || interaction.channel;
+      const limit = interaction.options.getInteger('limite') || 50;
+
+      if (!targetChannel) {
+        return interaction.reply({
+          content: '❌ Nessun canale valido selezionato o configurato per i setup.',
+          ephemeral: true
+        });
+      }
+
+      await interaction.deferReply({ ephemeral: true });
+
+      try {
+        const result = await SetupShowcaseManager.convertChannelMessages(interaction.guild, targetChannel.id, limit);
+
+        const embed = new EmbedBuilder()
+          .setColor(config.color || '#dc2626')
+          .setTitle('🔄 Scansione & Conversione Setup Completata!')
+          .setDescription(`I messaggi presenti nel canale <#${targetChannel.id}> sono stati analizzati e convertiti con successo!`)
+          .addFields(
+            { name: '✨ Embed Convertiti', value: `**${result.convertedCount}** setup`, inline: true },
+            { name: '🗑️ Messaggi Non Validi Rimossi', value: `**${result.deletedCount}** messaggi`, inline: true },
+            { name: '📊 Totale Esaminati', value: `**${result.totalProcessed}** messaggi`, inline: true }
+          )
+          .setFooter({ text: 'Sentry • Setup Showcase Retroattivo', iconURL: interaction.guild.iconURL() })
+          .setTimestamp();
+
+        return interaction.editReply({ embeds: [embed] });
+      } catch (err) {
+        return interaction.editReply({
+          content: `❌ Errore durante la conversione dei messaggi: ${err.message}`
+        });
+      }
+    }
+
+    // 4. INFO SUBCOMMAND
     if (subcommand === 'info') {
       const submissions = DatabaseHelper.getSetupSubmissions(interaction.guild.id, 100);
 
