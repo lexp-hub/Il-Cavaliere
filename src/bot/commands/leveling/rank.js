@@ -25,14 +25,16 @@ export default {
     const barLength = 15;
     const filledLength = Math.round((progressPercent / 100) * barLength);
     const bar = '█'.repeat(filledLength) + '░'.repeat(barLength - filledLength);
+    const coins = DatabaseHelper.getUserCoins(interaction.guild.id, target.id);
 
     const embed = new EmbedBuilder()
-      .setColor(CONFIG.EMBED_COLOR)
-      .setTitle(`⭐ Scheda Livello | ${target.tag}`)
+      .setColor('#f59e0b')
+      .setTitle(`⭐ Scheda Cavaliere | ${target.tag}`)
       .setThumbnail(target.displayAvatarURL({ dynamic: true, size: 256 }))
       .addFields(
         { name: '🏆 Posizione', value: `\`#${rankPos}\``, inline: true },
         { name: '🎖️ Livello', value: `\`Livello ${stats.level}\``, inline: true },
+        { name: '🪙 Monete d\'Oro', value: `\`${coins.toLocaleString()} 🪙\``, inline: true },
         { name: '✨ XP Totali', value: `\`${stats.xp.toLocaleString()} XP\``, inline: true },
         { name: '💬 Messaggi Inviati', value: `\`${stats.total_messages.toLocaleString()}\``, inline: true },
         { name: '📈 Progresso Livello Successivo', value: `\`[${bar}]\` **${progressPercent}%**\n(${xpInLevel.toLocaleString()} / ${xpNeededInLevel.toLocaleString()} XP)`, inline: false }

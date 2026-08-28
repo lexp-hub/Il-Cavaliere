@@ -27,7 +27,11 @@ export const XPManager = {
     const result = DatabaseHelper.addXp(guildId, userId, xpToAdd);
 
     if (result.leveledUp) {
-      
+      // Award Coins for Leveling Up
+      const coinsPerLvl = config.coins_per_level !== undefined && config.coins_per_level !== null ? config.coins_per_level : 100;
+      const coinsReward = Math.max(50, result.newLevel * coinsPerLvl);
+      const profile = DatabaseHelper.modifyUserCoins(guildId, userId, coinsReward, 'add');
+
       const rewards = DatabaseHelper.getLevelRewards(guildId);
       for (const reward of rewards) {
         if (result.newLevel >= reward.level) {
@@ -39,11 +43,15 @@ export const XPManager = {
       }
 
       const levelEmbed = new EmbedBuilder()
-        .setColor(CONFIG.EMBED_COLOR)
-        .setTitle('⭐ Level Up!')
-        .setDescription(`🎉 Congratulazioni ${message.author}! Sei salito al **Livello ${result.newLevel}**!`)
+        .setColor('#eab308')
+        .setTitle('⭐ Level Up del Cavaliere!')
+        .setDescription(
+          `🎉 Congratulazioni ${message.author}! Sei avanzato al **Livello ${result.newLevel}**!\n\n` +
+          `💰 **Ricompensa Reale:** +**${coinsReward.toLocaleString()} 🪙** Monete d'Oro accreditate al tuo conto!\n` +
+          `🪙 **Nuovo Saldo Totale:** \`${(profile.coins || 0).toLocaleString()}\` 🪙 monete`
+        )
         .setThumbnail(message.author.displayAvatarURL({ dynamic: true }))
-        .setFooter({ text: message.guild.name, iconURL: message.guild.iconURL() })
+        .setFooter({ text: `${message.guild.name} • Sentry Leveling & Economia`, iconURL: message.guild.iconURL() })
         .setTimestamp();
 
       if (config.dm_notifications) {
@@ -58,7 +66,6 @@ export const XPManager = {
   },
 
   getXpNeededForLevel(level) {
-    
     return Math.pow(level * 10, 2);
   },
 
@@ -74,7 +81,16 @@ export const XPManager = {
    */
   async addXP(guildId, userId, amount) {
     if (!guildId || !userId || !amount || Number(amount) <= 0) return null;
-    return DatabaseHelper.addXp(guildId, userId, Number(amount));
+    const result = DatabaseHelper.addXp(guildId, userId, Number(amount));
+
+    if (result && result.leveledUp) {
+      const config = DatabaseHelper.getLevelConfig(guildId);
+      const coinsPerLvl = config.coins_per_level !== undefined && config.coins_per_level !== null ? config.coins_per_level : 100;
+      const coinsReward = Math.max(50, result.newLevel * coinsPerLvl);
+      DatabaseHelper.modifyUserCoins(guildId, userId, coinsReward, 'add');
+    }
+
+    return result;
   },
 
   async addXp(guildId, userId, amount) {

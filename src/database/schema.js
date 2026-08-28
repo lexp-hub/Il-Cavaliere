@@ -216,7 +216,8 @@ CREATE TABLE IF NOT EXISTS level_configs (
   enabled INTEGER DEFAULT 1,
   xp_rate REAL DEFAULT 1.0,
   channel_id TEXT,
-  dm_notifications INTEGER DEFAULT 0
+  dm_notifications INTEGER DEFAULT 0,
+  coins_per_level INTEGER DEFAULT 100
 );
 
 CREATE TABLE IF NOT EXISTS levels (

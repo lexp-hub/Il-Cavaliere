@@ -55,6 +55,9 @@ export const CountingManager = {
     if (parsedNumber === expectedNumber) {
       DatabaseHelper.recordCountSuccess(message.guild.id, message.author.id, expectedNumber);
       
+      // Award Coins for active counting
+      DatabaseHelper.addCoins(message.guild.id, message.author.id, 2);
+
       // Fun reactions on milestones
       if (expectedNumber % 100 === 0) {
         await message.react('💯').catch(() => {});
@@ -67,10 +70,11 @@ export const CountingManager = {
 
       // Bonus milestone announcement
       if (expectedNumber > 0 && expectedNumber % 50 === 0) {
+        DatabaseHelper.addCoins(message.guild.id, message.author.id, 50);
         const milestoneEmbed = new EmbedBuilder()
           .setColor('#10b981')
           .setTitle(`🏆 Traguardo Raggiunto: ${expectedNumber}!`)
-          .setDescription(`Grande lavoro, cavalieri! Avete raggiunto quota **${expectedNumber}** senza errori. Continuate così!`)
+          .setDescription(`Grande lavoro, cavalieri! **${message.author}** ha raggiunto quota **${expectedNumber}** senza errori e riceve **+50 🪙** monete bonus!`)
           .setTimestamp();
         await message.channel.send({ embeds: [milestoneEmbed] });
       }

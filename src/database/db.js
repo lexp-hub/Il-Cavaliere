@@ -73,8 +73,8 @@ try { db.exec("ALTER TABLE ticket_panels ADD COLUMN color TEXT DEFAULT '#ea580c'
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN image TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN footer TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN button_style TEXT DEFAULT 'Primary';"); } catch (e) {}
-try { db.exec("ALTER TABLE ticket_panels ADD COLUMN naming_scheme TEXT DEFAULT 'ticket-{user}';"); } catch (e) {}
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN log_channel_id TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE level_configs ADD COLUMN coins_per_level INTEGER DEFAULT 100;"); } catch (e) {}
 
 export const DatabaseHelper = {
   db,
@@ -649,7 +649,9 @@ export const DatabaseHelper = {
     return {
       ...row,
       enabled: Boolean(row.enabled),
-      dm_notifications: Boolean(row.dm_notifications)
+      dm_notifications: Boolean(row.dm_notifications),
+      xp_rate: Number(row.xp_rate || 1.0),
+      coins_per_level: Number(row.coins_per_level !== undefined && row.coins_per_level !== null ? row.coins_per_level : 100)
     };
   },
 
@@ -657,14 +659,15 @@ export const DatabaseHelper = {
     const current = this.getLevelConfig(guildId);
     const updated = { ...current, ...data };
     db.prepare(`
-      INSERT OR REPLACE INTO level_configs (guild_id, enabled, xp_rate, channel_id, dm_notifications)
-      VALUES (?, ?, ?, ?, ?)
+      INSERT OR REPLACE INTO level_configs (guild_id, enabled, xp_rate, channel_id, dm_notifications, coins_per_level)
+      VALUES (?, ?, ?, ?, ?, ?)
     `).run(
       guildId,
       updated.enabled ? 1 : 0,
       updated.xp_rate || 1.0,
       updated.channel_id || null,
-      updated.dm_notifications ? 1 : 0
+      updated.dm_notifications ? 1 : 0,
+      updated.coins_per_level !== undefined ? Number(updated.coins_per_level) : 100
     );
     return this.getLevelConfig(guildId);
   },
@@ -869,6 +872,19 @@ export const DatabaseHelper = {
 
     this.saveFishingProfile(guildId, userId, profile);
     return profile;
+  },
+
+  getUserCoins(guildId, userId) {
+    const profile = this.getFishingProfile(guildId, userId);
+    return profile.coins || 0;
+  },
+
+  addCoins(guildId, userId, amount) {
+    return this.modifyUserCoins(guildId, userId, amount, 'add');
+  },
+
+  removeCoins(guildId, userId, amount) {
+    return this.modifyUserCoins(guildId, userId, amount, 'remove');
   },
 
   // === Ticket Automation Helpers ===

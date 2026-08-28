@@ -918,13 +918,46 @@
       const enLvl = document.getElementById('lvl-enabled');
       const rateLvl = document.getElementById('lvl-rate');
       const chLvl = document.getElementById('lvl-channel');
+      const coinsLvl = document.getElementById('lvl-coins');
 
       if (enLvl) enLvl.checked = Boolean(config.enabled);
       if (rateLvl) rateLvl.value = config.xp_rate || 1.0;
       if (chLvl && config.channel_id) chLvl.value = config.channel_id;
+      if (coinsLvl) coinsLvl.value = config.coins_per_level !== undefined ? config.coins_per_level : 100;
     } catch (e) {
       console.error('Error loading giveaways and leveling:', e);
     }
+  }
+
+  // Save Leveling Config
+  const btnSaveLeveling = document.getElementById('btn-save-leveling');
+  if (btnSaveLeveling) {
+    btnSaveLeveling.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const enabled = document.getElementById('lvl-enabled')?.checked;
+      const xp_rate = parseFloat(document.getElementById('lvl-rate')?.value || '1.0');
+      const channel_id = document.getElementById('lvl-channel')?.value || null;
+      const coins_per_level = parseInt(document.getElementById('lvl-coins')?.value || '100', 10);
+
+      btnSaveLeveling.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/leveling`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled, xp_rate, channel_id, coins_per_level })
+        });
+
+        if (res.ok) {
+          window.showToast('Configurazione Leveling & Ricompense Monete salvata con successo!');
+        } else {
+          window.showToast('Errore durante il salvataggio.', 'error');
+        }
+      } catch (e) {
+        window.showToast(e.message, 'error');
+      } finally {
+        btnSaveLeveling.disabled = false;
+      }
+    });
   }
 
   const btnStartGiveaway = document.getElementById('btn-start-giveaway');
@@ -1738,7 +1771,8 @@
         body: JSON.stringify({
           enabled: document.getElementById('lvl-enabled')?.checked,
           channel_id: document.getElementById('lvl-channel')?.value || null,
-          xp_rate: parseFloat(document.getElementById('lvl-rate')?.value || '1.0')
+          xp_rate: parseFloat(document.getElementById('lvl-rate')?.value || '1.0'),
+          coins_per_level: parseInt(document.getElementById('lvl-coins')?.value || '100', 10)
         })
       });
 

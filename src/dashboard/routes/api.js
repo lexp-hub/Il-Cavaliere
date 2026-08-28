@@ -860,6 +860,11 @@ export function createApiRouter(botClient) {
     res.json({ config, leaderboard, rewards });
   });
 
+  router.post('/guilds/:guildId/leveling', requireModAuth, (req, res) => {
+    const updated = DatabaseHelper.updateLevelConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: updated });
+  });
+
   router.post('/guilds/:guildId/leveling/config', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateLevelConfig(req.params.guildId, req.body);
     res.json({ success: true, config: updated });
