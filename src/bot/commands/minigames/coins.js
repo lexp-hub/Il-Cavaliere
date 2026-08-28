@@ -16,3 +16,4 @@ export default {
     return saldoCommand.execute(interaction);
   }
 };
+
