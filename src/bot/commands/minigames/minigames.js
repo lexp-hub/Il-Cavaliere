@@ -129,6 +129,11 @@ export default {
             )
             .setRequired(false)
         )
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('reset')
+        .setDescription('Azzera completamente l\'economia e le monete di tutti i membri (Solo Amministratori)')
     ),
 
   async execute(interaction) {
@@ -306,6 +311,24 @@ export default {
         content: `✅ **Tesoreria Aggiornata:** Hai ${opLabels[op] || 'modificato le monete di'} ${targetUser}.\n💰 **Nuovo Saldo:** \`${profile.coins.toLocaleString()}\` 🪙 monete.`,
         ephemeral: true
       });
+    }
+
+    // 5. RESET (Admin)
+    if (subcommand === 'reset') {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+        return interaction.reply({ content: '❌ Solo gli amministratori del server possono azzerare l\'economia.', ephemeral: true });
+      }
+
+      DatabaseHelper.resetEconomy(guild.id);
+
+      const embed = new EmbedBuilder()
+        .setColor('#ef4444')
+        .setTitle('🔄 Economia del Server Azzerata')
+        .setDescription('Tutti i forzieri, monete e statistiche dei minigiochi sono stati azzerati con successo per tutti i cavalieri.')
+        .setFooter({ text: `${guild.name} • Sentry Economia`, iconURL: guild.iconURL() })
+        .setTimestamp();
+
+      return interaction.reply({ embeds: [embed] });
     }
   }
 };

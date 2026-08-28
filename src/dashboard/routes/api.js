@@ -736,6 +736,16 @@ export function createApiRouter(botClient) {
     }
   });
 
+  router.post('/guilds/:guildId/economy/reset', requireModAuth, (req, res) => {
+    const guildId = req.params.guildId;
+    try {
+      DatabaseHelper.resetEconomy(guildId);
+      res.json({ success: true, message: 'Economia e ricchezza del server azzerate con successo!' });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   router.get('/guilds/:guildId/my-profile', (req, res) => {
     const user = req.user || req.session?.user;
     if (!user) {

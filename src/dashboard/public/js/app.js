@@ -236,6 +236,7 @@ window.switchGuild = async function(guildId) {
     window.AppState.currentGuildData = guildData;
     window.AppState.channels = guildData.channels || [];
     window.AppState.roles = guildData.roles || [];
+    window.AppState.members = guildData.members || [];
 
     const nameEl = document.getElementById('current-guild-name');
     if (nameEl) {
@@ -246,7 +247,7 @@ window.switchGuild = async function(guildId) {
     const membersEl = document.getElementById('ov-members');
     if (membersEl) membersEl.textContent = (guildData.memberCount || 0).toLocaleString();
 
-    populateDropdowns(guildData.channels, guildData.roles);
+    populateDropdowns(guildData.channels, guildData.roles, guildData.members);
 
     if (window.loadEmbedBuilderData) {
       window.loadEmbedBuilderData(guildId);
@@ -295,7 +296,7 @@ window.updateUserCoinsDisplay = async function(guildId) {
   }
 };
 
-function populateDropdowns(channels = [], roles = []) {
+function populateDropdowns(channels = [], roles = [], members = []) {
   const textChannels = channels.filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
   const categories = channels.filter(c => c.type === 'category' || c.type === 4);
 
@@ -363,4 +364,21 @@ function populateDropdowns(channels = [], roles = []) {
       select.value = currentVal;
     }
   });
+
+  // Populate Member Dropdown for Treasury
+  const memberSelect = document.getElementById('coin-target-user');
+  if (memberSelect) {
+    const currentMember = memberSelect.value;
+    memberSelect.innerHTML = '<option value="">-- Seleziona un Membro --</option>';
+    (members || []).forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.id;
+      const coinText = m.coins !== undefined ? ` — ${Number(m.coins).toLocaleString()} 🪙` : '';
+      opt.textContent = `${m.displayName || m.name} (@${m.name})${coinText}`;
+      memberSelect.appendChild(opt);
+    });
+    if (currentMember && (members || []).some(m => m.id === currentMember)) {
+      memberSelect.value = currentMember;
+    }
+  }
 }

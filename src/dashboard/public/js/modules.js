@@ -1580,17 +1580,65 @@
     });
   }
 
+  // Member search in Treasury
+  const coinMemberSearch = document.getElementById('coin-member-search');
+  if (coinMemberSearch) {
+    coinMemberSearch.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase().trim();
+      const select = document.getElementById('coin-target-user');
+      if (!select) return;
+
+      Array.from(select.options).forEach((opt, idx) => {
+        if (idx === 0) return; // Keep placeholder
+        const text = opt.textContent.toLowerCase();
+        const val = opt.value.toLowerCase();
+        const match = !term || text.includes(term) || val.includes(term);
+        opt.style.display = match ? '' : 'none';
+      });
+    });
+  }
+
+  // Toggle manual user ID entry
+  const btnToggleManualUser = document.getElementById('btn-toggle-manual-user');
+  if (btnToggleManualUser) {
+    btnToggleManualUser.addEventListener('click', () => {
+      const dropdownCont = document.getElementById('coin-member-dropdown-container');
+      const manualCont = document.getElementById('coin-manual-user-container');
+      if (!dropdownCont || !manualCont) return;
+
+      const isManual = !manualCont.classList.contains('hidden');
+      if (isManual) {
+        manualCont.classList.add('hidden');
+        dropdownCont.classList.remove('hidden');
+        btnToggleManualUser.textContent = 'Inserisci ID manuale';
+      } else {
+        dropdownCont.classList.add('hidden');
+        manualCont.classList.remove('hidden');
+        btnToggleManualUser.textContent = 'Seleziona dalla lista';
+      }
+    });
+  }
+
   // Update Player Coins (Treasury Management)
   const btnUpdatePlayerCoins = document.getElementById('btn-update-player-coins');
   if (btnUpdatePlayerCoins) {
     btnUpdatePlayerCoins.addEventListener('click', async () => {
       const guildId = window.AppState.currentGuildId;
-      const targetUser = document.getElementById('coin-target-user')?.value?.trim();
+      const manualCont = document.getElementById('coin-manual-user-container');
+      const isManual = manualCont && !manualCont.classList.contains('hidden');
+      
+      let targetUser = '';
+      if (isManual) {
+        targetUser = document.getElementById('coin-target-user-manual')?.value?.trim();
+      } else {
+        targetUser = document.getElementById('coin-target-user')?.value?.trim();
+      }
+
       const operation = document.getElementById('coin-operation')?.value || 'add';
       const amount = parseInt(document.getElementById('coin-amount')?.value, 10);
 
       if (!targetUser) {
-        return window.showToast('Specifica l\'ID dell\'utente o membro a cui modificare il saldo!', 'error');
+        return window.showToast('Seleziona un membro o inserisci un ID valido!', 'error');
       }
 
       if (isNaN(amount) || amount < 0) {
@@ -1608,9 +1656,13 @@
         if (res.ok) {
           const data = await res.json();
           window.showToast(`Saldo monete aggiornato con successo! Nuovo saldo: ${data.profile.coins.toLocaleString()} 🪙`);
-          document.getElementById('coin-target-user').value = '';
+          if (isManual) {
+            document.getElementById('coin-target-user-manual').value = '';
+          }
           await loadMinigamesData(guildId);
-          if (window.updateUserCoinsDisplay) {
+          if (window.switchGuild && guildId) {
+            await window.switchGuild(guildId);
+          } else if (window.updateUserCoinsDisplay) {
             await window.updateUserCoinsDisplay(guildId);
           }
         } else {
@@ -1621,6 +1673,40 @@
         window.showToast(e.message, 'error');
       } finally {
         btnUpdatePlayerCoins.disabled = false;
+      }
+    });
+  }
+
+  // Reset Server Economy Handler
+  const btnResetServerEconomy = document.getElementById('btn-reset-server-economy');
+  if (btnResetServerEconomy) {
+    btnResetServerEconomy.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!confirm('⚠️ ATTENZIONE: Sei sicuro di voler azzerare completamente la ricchezza, le monete e le statistiche dei minigiochi di TUTTI i membri del server? L\'operazione non è reversibile.')) {
+        return;
+      }
+
+      btnResetServerEconomy.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/economy/reset`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (res.ok) {
+          window.showToast('Economia e forzieri del server azzerati con successo!');
+          await loadMinigamesData(guildId);
+          if (window.switchGuild && guildId) {
+            await window.switchGuild(guildId);
+          }
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante il reset.', 'error');
+        }
+      } catch (e) {
+        window.showToast(e.message, 'error');
+      } finally {
+        btnResetServerEconomy.disabled = false;
       }
     });
   }

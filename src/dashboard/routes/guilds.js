@@ -138,13 +138,46 @@ export function createGuildsRouter(botClient) {
       }))
       .sort((a, b) => b.position - a.position);
 
+    let members = [];
+    try {
+      const fetched = await guild.members.fetch({ limit: 1000 }).catch(() => guild.members.cache);
+      members = fetched
+        .filter(m => !m.user?.bot)
+        .map(m => {
+          const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
+          return {
+            id: m.id,
+            name: m.user.username,
+            displayName: m.displayName || m.user.username,
+            avatar: m.user.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
+            coins: coins
+          };
+        })
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+    } catch (e) {
+      members = guild.members.cache
+        .filter(m => !m.user?.bot)
+        .map(m => {
+          const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
+          return {
+            id: m.id,
+            name: m.user.username,
+            displayName: m.displayName || m.user.username,
+            avatar: m.user.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
+            coins: coins
+          };
+        })
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+    }
+
     res.json({
       id: guild.id,
       name: guild.name,
       icon: guild.iconURL ? guild.iconURL({ size: 128 }) : null,
       memberCount: guild.memberCount,
       channels,
-      roles
+      roles,
+      members
     });
   });
 

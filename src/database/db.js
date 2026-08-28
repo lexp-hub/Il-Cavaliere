@@ -887,6 +887,19 @@ export const DatabaseHelper = {
     return this.modifyUserCoins(guildId, userId, amount, 'remove');
   },
 
+  resetEconomy(guildId) {
+    if (guildId) {
+      db.prepare('DELETE FROM fishing_profiles WHERE guild_id = ?').run(guildId);
+      db.prepare('DELETE FROM minigame_stats WHERE guild_id = ?').run(guildId);
+      db.prepare('DELETE FROM rpg_duels WHERE guild_id = ?').run(guildId);
+    } else {
+      db.prepare('DELETE FROM fishing_profiles').run();
+      db.prepare('DELETE FROM minigame_stats').run();
+      db.prepare('DELETE FROM rpg_duels').run();
+    }
+    return true;
+  },
+
   // === Ticket Automation Helpers ===
   getTicketAutomation(guildId) {
     const row = db.prepare('SELECT * FROM ticket_automations WHERE guild_id = ?').get(guildId);
