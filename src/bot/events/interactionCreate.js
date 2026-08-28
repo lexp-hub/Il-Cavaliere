@@ -371,9 +371,6 @@ export default {
         return interaction.reply({ embeds: [embed], ephemeral: true });
       }
 
-        return interaction.reply({ embeds: [embed], ephemeral: true });
-      }
-
       if (customId === 'btn_hub_profile' || customId === 'btn_hub_saldo' || customId === 'btn_balance_refresh') {
         const guild = interaction.guild;
         const user = interaction.user;
