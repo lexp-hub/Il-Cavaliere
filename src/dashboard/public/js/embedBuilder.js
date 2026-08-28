@@ -348,6 +348,8 @@
     const input = typeof searchInputId === 'string' ? document.getElementById(searchInputId) : searchInputId;
     const select = typeof selectId === 'string' ? document.getElementById(selectId) : selectId;
     if (!input || !select) return;
+    if (input.dataset.searchBound === select.id) return;
+    input.dataset.searchBound = select.id;
 
     input.addEventListener('input', (e) => {
       const query = e.target.value.toLowerCase().trim().replace(/^[#@]/, '');

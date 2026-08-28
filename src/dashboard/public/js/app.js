@@ -281,7 +281,7 @@ function populateDropdowns(channels = [], roles = []) {
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',
     'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel', 'tk-log-channel',
-    'ga-channel', 'lvl-channel', 'cnt-channel', 'pres-channel'
+    'ga-channel', 'lvl-channel', 'cnt-channel', 'pres-channel', 'setup-channel'
   ];
 
   channelSelectIds.forEach(id => {
@@ -298,11 +298,14 @@ function populateDropdowns(channels = [], roles = []) {
       select.appendChild(opt);
     });
 
-    if (currentVal) select.value = currentVal;
+    if (currentVal && textChannels.some(c => c.id === currentVal)) {
+      select.value = currentVal;
+    }
   });
 
   const catSelect = document.getElementById('tk-category');
   if (catSelect) {
+    const currentCat = catSelect.value;
     catSelect.innerHTML = '<option value="">-- Nessuna Categoria --</option>';
     categories.forEach(c => {
       const opt = document.createElement('option');
@@ -310,9 +313,16 @@ function populateDropdowns(channels = [], roles = []) {
       opt.textContent = `📁 ${c.name}`;
       catSelect.appendChild(opt);
     });
+    if (currentCat && categories.some(c => c.id === currentCat)) {
+      catSelect.value = currentCat;
+    }
   }
 
-  const roleSelectIds = ['part-ping-role', 'part-manager-role', 'rr-role', 'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role', 'pres-role'];
+  const roleSelectIds = [
+    'part-ping-role', 'part-manager-role', 'rr-role',
+    'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role',
+    'pres-role', 'setup-role'
+  ];
   roleSelectIds.forEach(id => {
     const select = document.getElementById(id);
     if (!select) return;
@@ -327,6 +337,8 @@ function populateDropdowns(channels = [], roles = []) {
       select.appendChild(opt);
     });
 
-    if (currentVal) select.value = currentVal;
+    if (currentVal && roles.some(r => r.id === currentVal)) {
+      select.value = currentVal;
+    }
   });
 }
