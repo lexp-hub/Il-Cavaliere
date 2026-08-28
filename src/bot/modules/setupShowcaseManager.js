@@ -43,8 +43,9 @@ export const SetupShowcaseManager = {
       }
     }
 
-    // 2. If no image found in the showcase channel
+    // 2. If no image found in the message
     if (!imageUrl) {
+      // If delete_invalid is explicitly turned on by admin, delete clutter; otherwise ignore completely
       if (config.delete_invalid) {
         try {
           await message.delete();
@@ -55,8 +56,10 @@ export const SetupShowcaseManager = {
         } catch (e) {
           console.warn('[SetupShowcase] Could not delete non-image message:', e.message);
         }
+        return true;
       }
-      return true;
+      // If delete_invalid is disabled, let normal messages pass through without touching them
+      return false;
     }
 
     // 3. Extract and clean description text

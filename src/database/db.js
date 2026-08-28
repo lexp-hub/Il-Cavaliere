@@ -949,7 +949,7 @@ export const DatabaseHelper = {
     if (!row) {
       db.prepare(`
         INSERT OR IGNORE INTO setup_showcase_configs (guild_id, title, color, auto_reactions, auto_thread, xp_reward, delete_invalid, enabled)
-        VALUES (?, '🖥️ Setup & Postazione', '#dc2626', '["🔥","⭐","❤️"]', 1, 50, 1, 0)
+        VALUES (?, '🖥️ Setup & Postazione', '#dc2626', '["🔥","⭐","❤️"]', 1, 50, 0, 0)
       `).run(guildId);
       return this.getSetupShowcaseConfig(guildId);
     }

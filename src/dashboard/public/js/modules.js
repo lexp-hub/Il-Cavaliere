@@ -1098,7 +1098,7 @@
         reactionsEl.value = Array.isArray(config.auto_reactions) ? config.auto_reactions.join(', ') : '🔥, ⭐, ❤️';
       }
       if (autoThreadEl) autoThreadEl.checked = config.auto_thread !== false;
-      if (deleteInvalidEl) deleteInvalidEl.checked = config.delete_invalid !== false;
+      if (deleteInvalidEl) deleteInvalidEl.checked = Boolean(config.delete_invalid);
 
       const tbody = document.getElementById('setup-recent-table');
       if (tbody) {
