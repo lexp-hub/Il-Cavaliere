@@ -10,7 +10,7 @@ import { DatabaseHelper } from '../../../database/db.js';
 export default {
   data: new SlashCommandBuilder()
     .setName('setupshowcase')
-    .setDescription('Gestione dell'evento Showcase Postazioni & Setup')
+    .setDescription('Gestione dell\'evento Showcase Postazioni & Setup')
     .setDefaultMemberPermissions(PermissionsBitField.Flags.ManageGuild)
     .addSubcommand(sub =>
       sub
@@ -57,13 +57,13 @@ export default {
         .addStringOption(opt =>
           opt
             .setName('titolo')
-            .setDescription('Titolo dell'embed (es. 🖥️ Setup & Postazione)')
+            .setDescription('Titolo dell\'embed (es. 🖥️ Setup & Postazione)')
             .setRequired(false)
         )
         .addStringOption(opt =>
           opt
             .setName('colore')
-            .setDescription('Colore HEX dell'embed (es. #dc2626)')
+            .setDescription('Colore HEX dell\'embed (es. #dc2626)')
             .setRequired(false)
         )
     )
