@@ -715,6 +715,27 @@ export function createApiRouter(botClient) {
     res.json({ success: true, config: saved });
   });
 
+  router.post('/guilds/:guildId/economy/coins', requireModAuth, (req, res) => {
+    const { userId, amount, operation } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'Specifica l\'ID dell\'utente o membro.' });
+    }
+
+    const cleanUserId = userId.replace(/[<@!>]/g, '').trim();
+    if (!cleanUserId || cleanUserId.length < 5) {
+      return res.status(400).json({ error: 'ID utente non valido.' });
+    }
+
+    try {
+      const profile = DatabaseHelper.modifyUserCoins(guildId, cleanUserId, amount, operation || 'add');
+      res.json({ success: true, profile });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
   router.post('/guilds/:guildId/fishing/panel', requireModAuth, async (req, res) => {
     const { channelId, title, description, image } = req.body;
     const guildId = req.params.guildId;

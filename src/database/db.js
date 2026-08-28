@@ -855,6 +855,22 @@ export const DatabaseHelper = {
     return db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? ORDER BY coins DESC, total_fish_caught DESC LIMIT ?').all(guildId, limit);
   },
 
+  modifyUserCoins(guildId, userId, amount, operation = 'add') {
+    const profile = this.getFishingProfile(guildId, userId);
+    const numAmount = Math.max(0, Math.floor(Number(amount) || 0));
+
+    if (operation === 'add') {
+      profile.coins = (profile.coins || 0) + numAmount;
+    } else if (operation === 'remove') {
+      profile.coins = Math.max(0, (profile.coins || 0) - numAmount);
+    } else if (operation === 'set') {
+      profile.coins = numAmount;
+    }
+
+    this.saveFishingProfile(guildId, userId, profile);
+    return profile;
+  },
+
   // === Ticket Automation Helpers ===
   getTicketAutomation(guildId) {
     const row = db.prepare('SELECT * FROM ticket_automations WHERE guild_id = ?').get(guildId);

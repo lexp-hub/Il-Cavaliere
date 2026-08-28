@@ -119,57 +119,45 @@ export default {
     if (subcommand === 'lancia') {
       const result = await FishingManager.castRod(guild, user, channelId);
       if (!result.success) {
-        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+        return interaction.reply({ content: result.message, ephemeral: true });
       }
-      await interaction.reply({ embeds: [result.embed] });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
+      return interaction.reply({ embeds: [result.embed], ephemeral: true });
     }
 
     // 2. INVENTORY
     if (subcommand === 'inventario') {
       const embed = FishingManager.getInventoryEmbed(guild, user);
-      await interaction.reply({ embeds: [embed] });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
     // 3. SELL
     if (subcommand === 'vendi') {
       const result = FishingManager.sellCatch(guild, user);
       if (!result.success) {
-        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+        return interaction.reply({ content: result.message, ephemeral: true });
       }
-      await interaction.reply({ embeds: [result.embed] });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
+      return interaction.reply({ embeds: [result.embed], ephemeral: true });
     }
 
     // 4. SHOP
     if (subcommand === 'shop') {
       const embed = FishingManager.getShopEmbed(guild, user);
-      await interaction.reply({ embeds: [embed] });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
     // 5. UPGRADE
     if (subcommand === 'upgrade') {
       const result = FishingManager.upgradeRod(guild, user);
       if (!result.success) {
-        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+        return interaction.reply({ content: result.message, ephemeral: true });
       }
-      await interaction.reply({ embeds: [result.embed] });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
+      return interaction.reply({ embeds: [result.embed], ephemeral: true });
     }
 
     // 6. LEADERBOARD
     if (subcommand === 'classifica') {
       const embed = FishingManager.getLeaderboardEmbed(guild);
-      await interaction.reply({ embeds: [embed] });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
+      return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 
     // 7. PANEL (Admin)

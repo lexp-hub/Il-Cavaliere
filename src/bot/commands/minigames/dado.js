@@ -31,8 +31,7 @@ export default {
       .setFooter({ text: 'Sentry • Minigiochi', iconURL: interaction.guild.iconURL() })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed] });
-    setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 };
 

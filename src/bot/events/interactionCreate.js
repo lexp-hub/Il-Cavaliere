@@ -235,9 +235,7 @@ export default {
           .setFooter({ text: `${interaction.guild.name} • Sentry Casino`, iconURL: interaction.guild.iconURL() })
           .setTimestamp();
 
-        await interaction.reply({ embeds: [embed] });
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-        return;
+        return interaction.reply({ embeds: [embed], ephemeral: true });
       }
 
       // Minigames Hub Buttons
@@ -246,9 +244,7 @@ export default {
         if (!result.success) {
           return interaction.reply({ content: result.message, ephemeral: true });
         }
-        await interaction.reply({ embeds: [result.embed] });
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-        return;
+        return interaction.reply({ embeds: [result.embed], ephemeral: true });
       }
 
       if (customId === 'btn_hub_blackjack') {
@@ -257,11 +253,7 @@ export default {
           return interaction.reply({ content: result.message, ephemeral: true });
         }
         const comp = result.row ? [result.row] : [];
-        await interaction.reply({ embeds: [result.embed], components: comp });
-        if (result.inProgress === false) {
-          setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-        }
-        return;
+        return interaction.reply({ embeds: [result.embed], components: comp, ephemeral: true });
       }
 
       if (customId === 'btn_hub_slots') {
@@ -347,9 +339,7 @@ export default {
           .setFooter({ text: `${interaction.guild.name} • Sentry Casino`, iconURL: interaction.guild.iconURL() })
           .setTimestamp();
 
-        await interaction.reply({ embeds: [embed] });
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-        return;
+        return interaction.reply({ embeds: [embed], ephemeral: true });
       }
 
       if (customId === 'btn_hub_daily') {
@@ -377,11 +367,6 @@ export default {
           .setDescription(`Hai ricevuto **+${reward.toLocaleString()} 🪙** monete!\n💰 **Nuovo Saldo:** \`${profile.coins.toLocaleString()}\` 🪙`)
           .setFooter({ text: `${interaction.guild.name} • Sentry Daily Reward`, iconURL: interaction.guild.iconURL() })
           .setTimestamp();
-
-        await interaction.reply({ embeds: [embed], ephemeral: false });
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-        return;
-      }
 
         return interaction.reply({ embeds: [embed], ephemeral: true });
       }

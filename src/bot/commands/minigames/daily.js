@@ -49,8 +49,7 @@ export default {
       .setFooter({ text: 'Torna domani per un altro bonus!', iconURL: interaction.user.displayAvatarURL() })
       .setTimestamp();
 
-    await interaction.reply({ embeds: [embed] });
-    setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
+    return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 };
 

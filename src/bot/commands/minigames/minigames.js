@@ -95,6 +95,35 @@ export default {
       sub
         .setName('statistiche')
         .setDescription('Panoramica completa del tuo profilo economico e di gioco')
+    )
+    .addSubcommand(sub =>
+      sub
+        .setName('setcoins')
+        .setDescription('Aggiungi, rimuovi o imposta le monete di un utente (Solo Amministratori)')
+        .addUserOption(opt =>
+          opt
+            .setName('utente')
+            .setDescription('Utente a cui modificare il saldo monete')
+            .setRequired(true)
+        )
+        .addIntegerOption(opt =>
+          opt
+            .setName('quantita')
+            .setDescription('Quantità di monete')
+            .setMinValue(0)
+            .setRequired(true)
+        )
+        .addStringOption(opt =>
+          opt
+            .setName('operazione')
+            .setDescription('Operazione da eseguire')
+            .addChoices(
+              { name: '➕ Aggiungi (+)', value: 'add' },
+              { name: '➖ Rimuovi (-)', value: 'remove' },
+              { name: '🟰 Imposta Saldo Esatto (=)', value: 'set' }
+            )
+            .setRequired(false)
+        )
     ),
 
   async execute(interaction) {
@@ -238,6 +267,30 @@ export default {
                  `• 🎰 **Canale Slot Machine Dedicato:** ${newMgConfig.slots_channel_id ? `<#${newMgConfig.slots_channel_id}>` : '*Nessuno (Canale Generale)*'}\n` +
                  `• 💸 **Limiti Puntata:** \`${newMgConfig.min_bet} 🪙\` min — \`${newMgConfig.max_bet} 🪙\` max\n` +
                  `• 🎁 **Ricompensa Daily:** \`+${newMgConfig.daily_reward} 🪙\` monete`,
+        ephemeral: true
+      });
+    }
+
+    // 4. SETCOINS (Admin)
+    if (subcommand === 'setcoins') {
+      if (!interaction.member.permissions.has(PermissionsBitField.Flags.ManageGuild)) {
+        return interaction.reply({ content: '❌ Solo gli amministratori possono gestire la tesoreria.', ephemeral: true });
+      }
+
+      const targetUser = interaction.options.getUser('utente');
+      const amount = interaction.options.getInteger('quantita');
+      const op = interaction.options.getString('operazione') || 'add';
+
+      const profile = DatabaseHelper.modifyUserCoins(guild.id, targetUser.id, amount, op);
+
+      const opLabels = {
+        add: `accreditato **+${amount.toLocaleString()} 🪙** monete a`,
+        remove: `sottratto **-${amount.toLocaleString()} 🪙** monete da`,
+        set: `impostato il saldo a **${amount.toLocaleString()} 🪙** per`
+      };
+
+      return interaction.reply({
+        content: `✅ **Tesoreria Aggiornata:** Hai ${opLabels[op] || 'modificato le monete di'} ${targetUser}.\n💰 **Nuovo Saldo:** \`${profile.coins.toLocaleString()}\` 🪙 monete.`,
         ephemeral: true
       });
     }

@@ -90,15 +90,11 @@ export default {
       const result = await BlackjackManager.startGame(guild, user, channelId, bet);
 
       if (!result.success) {
-        return interaction.reply({ content: result.message, ephemeral: Boolean(result.ephemeral) });
+        return interaction.reply({ content: result.message, ephemeral: true });
       }
 
       const components = result.row ? [result.row] : [];
-      await interaction.reply({ embeds: [result.embed], components });
-      if (result.inProgress === false) {
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      }
-      return;
+      return interaction.reply({ embeds: [result.embed], components, ephemeral: true });
     }
 
     // 2. STATS
@@ -107,7 +103,7 @@ export default {
       const stats = DatabaseHelper.getMinigameStats(guild.id, user.id, 'blackjack');
       const winRate = stats.games_played > 0 ? ((stats.games_won / stats.games_played) * 100).toFixed(1) : '0.0';
 
-      await interaction.reply({
+      return interaction.reply({
         embeds: [{
           color: 0x3b82f6,
           title: `🃏 Statistiche Blackjack • ${user.displayName || user.username}`,
@@ -121,10 +117,9 @@ export default {
           ],
           footer: { text: `${guild.name} • Sentry Casino` },
           timestamp: new Date()
-        }]
+        }],
+        ephemeral: true
       });
-      setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      return;
     }
 
     // 3. PANEL (Admin)

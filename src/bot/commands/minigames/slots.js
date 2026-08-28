@@ -148,8 +148,6 @@ export default {
         .setStyle(ButtonStyle.Primary)
     );
 
-    await interaction.reply({ embeds: [embed], components: [row] });
-    setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-    return;
+    return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
   }
 };

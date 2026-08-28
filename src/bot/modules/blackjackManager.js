@@ -517,11 +517,7 @@ export const BlackjackManager = {
       const result = await this.startGame(guild, user, channelId, bet);
       if (!result.success) return interaction.reply({ content: result.message, ephemeral: true });
       const comp = result.row ? [result.row] : [];
-      await interaction.reply({ embeds: [result.embed], components: comp });
-      if (result.inProgress === false) {
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      }
-      return;
+      return interaction.reply({ embeds: [result.embed], components: comp, ephemeral: true });
     }
 
     if (customId.startsWith('btn_bj_quick_')) {
@@ -529,11 +525,7 @@ export const BlackjackManager = {
       const result = await this.startGame(guild, user, channelId, bet);
       if (!result.success) return interaction.reply({ content: result.message, ephemeral: true });
       const comp = result.row ? [result.row] : [];
-      await interaction.reply({ embeds: [result.embed], components: comp });
-      if (result.inProgress === false) {
-        setTimeout(() => { interaction.deleteReply().catch(() => {}); }, 15000);
-      }
-      return;
+      return interaction.reply({ embeds: [result.embed], components: comp, ephemeral: true });
     }
 
     if (customId === 'btn_bj_profile') {

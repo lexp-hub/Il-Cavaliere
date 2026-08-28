@@ -1337,7 +1337,8 @@
             lb.forEach((item, idx) => {
               const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
               const div = document.createElement('div');
-              div.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs';
+              div.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-amber-50/50 border border-slate-200 text-xs cursor-pointer transition-colors';
+              div.title = 'Clicca per selezionare questo utente nella gestione tesoreria';
               div.innerHTML = `
                 <div class="flex items-center gap-2">
                   <span class="font-bold text-slate-700">${medal}</span>
@@ -1348,6 +1349,14 @@
                   <span class="text-slate-500 text-[10px]">🎣 ${item.total_fish_caught || 0} prede</span>
                 </div>
               `;
+              div.addEventListener('click', () => {
+                const targetInput = document.getElementById('coin-target-user');
+                if (targetInput) {
+                  targetInput.value = item.user_id;
+                  targetInput.focus();
+                  window.showToast(`Utente <@${item.user_id}> selezionato per la modifica monete!`);
+                }
+              });
               lbList.appendChild(div);
             });
           }
@@ -1534,6 +1543,48 @@
         window.showToast(e.message, 'error');
       } finally {
         btnSendMinigamesHub.disabled = false;
+      }
+    });
+  }
+
+  // Update Player Coins (Treasury Management)
+  const btnUpdatePlayerCoins = document.getElementById('btn-update-player-coins');
+  if (btnUpdatePlayerCoins) {
+    btnUpdatePlayerCoins.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      const targetUser = document.getElementById('coin-target-user')?.value?.trim();
+      const operation = document.getElementById('coin-operation')?.value || 'add';
+      const amount = parseInt(document.getElementById('coin-amount')?.value, 10);
+
+      if (!targetUser) {
+        return window.showToast('Specifica l\'ID dell\'utente o membro a cui modificare il saldo!', 'error');
+      }
+
+      if (isNaN(amount) || amount < 0) {
+        return window.showToast('Inserisci un importo valido di monete!', 'error');
+      }
+
+      btnUpdatePlayerCoins.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/economy/coins`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: targetUser, operation, amount })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          window.showToast(`Saldo monete aggiornato con successo! Nuovo saldo: ${data.profile.coins.toLocaleString()} 🪙`);
+          document.getElementById('coin-target-user').value = '';
+          await loadMinigamesData(guildId);
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante l\'aggiornamento saldo.', 'error');
+        }
+      } catch (e) {
+        window.showToast(e.message, 'error');
+      } finally {
+        btnUpdatePlayerCoins.disabled = false;
       }
     });
   }
