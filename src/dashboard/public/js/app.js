@@ -268,9 +268,30 @@ window.switchGuild = async function(guildId) {
       window.initModuleToolbars();
     }
 
+    if (window.updateUserCoinsDisplay) {
+      await window.updateUserCoinsDisplay(guildId);
+    }
+
     lucide.createIcons();
   } catch (e) {
     console.error('Error switching guild:', e);
+  }
+};
+
+window.updateUserCoinsDisplay = async function(guildId) {
+  if (!guildId) return;
+  try {
+    const res = await fetch(`/api/guilds/${guildId}/my-profile`);
+    if (res.ok) {
+      const data = await res.json();
+      const coins = (data.profile?.coins !== undefined ? data.profile.coins : 100).toLocaleString();
+      const sidebarCoinsEl = document.getElementById('user-sidebar-coins');
+      const headerCoinsEl = document.getElementById('user-header-coins');
+      if (sidebarCoinsEl) sidebarCoinsEl.textContent = coins;
+      if (headerCoinsEl) headerCoinsEl.textContent = `${coins} 🪙`;
+    }
+  } catch (e) {
+    console.error('Error updating user coins display:', e);
   }
 };
 

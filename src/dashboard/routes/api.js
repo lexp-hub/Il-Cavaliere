@@ -736,6 +736,46 @@ export function createApiRouter(botClient) {
     }
   });
 
+  router.get('/guilds/:guildId/my-profile', (req, res) => {
+    const user = req.user || req.session?.user;
+    if (!user) {
+      return res.status(401).json({ error: 'Non autenticato' });
+    }
+    const guildId = req.params.guildId;
+    const profile = DatabaseHelper.getFishingProfile(guildId, user.id);
+    const level = DatabaseHelper.getUserLevel(guildId, user.id);
+    const bjStats = DatabaseHelper.getMinigameStats(guildId, user.id, 'blackjack');
+    const slotStats = DatabaseHelper.getMinigameStats(guildId, user.id, 'slots');
+
+    res.json({
+      user,
+      profile,
+      level,
+      stats: {
+        blackjack: bjStats,
+        slots: slotStats
+      }
+    });
+  });
+
+  router.get('/guilds/:guildId/economy/user/:userId', requireModAuth, (req, res) => {
+    const guildId = req.params.guildId;
+    const userId = req.params.userId.replace(/[<@!>]/g, '').trim();
+    const profile = DatabaseHelper.getFishingProfile(guildId, userId);
+    const level = DatabaseHelper.getUserLevel(guildId, userId);
+    const bjStats = DatabaseHelper.getMinigameStats(guildId, userId, 'blackjack');
+    const slotStats = DatabaseHelper.getMinigameStats(guildId, userId, 'slots');
+
+    res.json({
+      profile,
+      level,
+      stats: {
+        blackjack: bjStats,
+        slots: slotStats
+      }
+    });
+  });
+
   router.post('/guilds/:guildId/fishing/panel', requireModAuth, async (req, res) => {
     const { channelId, title, description, image } = req.body;
     const guildId = req.params.guildId;

@@ -1610,6 +1610,9 @@
           window.showToast(`Saldo monete aggiornato con successo! Nuovo saldo: ${data.profile.coins.toLocaleString()} 🪙`);
           document.getElementById('coin-target-user').value = '';
           await loadMinigamesData(guildId);
+          if (window.updateUserCoinsDisplay) {
+            await window.updateUserCoinsDisplay(guildId);
+          }
         } else {
           const err = await res.json();
           window.showToast(err.error || 'Errore durante l\'aggiornamento saldo.', 'error');
