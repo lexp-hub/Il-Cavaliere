@@ -64,6 +64,21 @@ export const XPManager = {
 
   getXpNeededForNextLevel(currentLevel) {
     return this.getXpNeededForLevel(currentLevel + 1);
+  },
+
+  /**
+   * Adds XP directly to a user from events/modules (Showcase, Presentati, Minigiochi, etc.)
+   * @param {string} guildId
+   * @param {string} userId
+   * @param {number} amount
+   */
+  async addXP(guildId, userId, amount) {
+    if (!guildId || !userId || !amount || Number(amount) <= 0) return null;
+    return DatabaseHelper.addXp(guildId, userId, Number(amount));
+  },
+
+  async addXp(guildId, userId, amount) {
+    return this.addXP(guildId, userId, amount);
   }
 };
 
