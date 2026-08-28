@@ -94,7 +94,11 @@ export const SetupShowcaseManager = {
         iconURL: authorAvatar
       })
       .setTitle(config.title || '🖥️ Setup & Postazione')
-      .setDescription(`**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n*Condiviso da <@${message.author.id}>*`)
+      .setDescription(
+        `**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n` +
+        `*Condiviso da <@${message.author.id}>*\n\n` +
+        `> 💡 **P.S.** *Per condividere la tua postazione, invia in questo canale la foto e (opzionalmente) il testo descrittivo tutto in un unico messaggio!*`
+      )
       .setFooter({
         text: `${message.guild.name} • Sentry Showcase`,
         iconURL: guildIcon || undefined
@@ -292,7 +296,11 @@ export const SetupShowcaseManager = {
           iconURL: authorAvatar
         })
         .setTitle(config.title || '🖥️ Setup & Postazione')
-        .setDescription(`**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n*Condiviso da <@${msg.author.id}>*`)
+        .setDescription(
+          `**Descrizione & Dettagli:**\n>>> ${displayDesc}\n\n` +
+          `*Condiviso da <@${msg.author.id}>*\n\n` +
+          `> 💡 **P.S.** *Per condividere la tua postazione, invia in questo canale la foto e (opzionalmente) il testo descrittivo tutto in un unico messaggio!*`
+        )
         .setFooter({
           text: `${guild.name} • Sentry Showcase`,
           iconURL: guildIcon || undefined
