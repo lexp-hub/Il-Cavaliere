@@ -198,7 +198,7 @@ export default {
         .setFooter({ text: `${guild.name} • Sentry Game Hub`, iconURL: guild.iconURL() })
         .setTimestamp();
 
-      const row = new ActionRowBuilder().addComponents(
+      const row1 = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId('btn_hub_fishing')
           .setLabel('Pesca Medievale')
@@ -218,15 +218,23 @@ export default {
           .setCustomId('btn_hub_daily')
           .setLabel('Daily Reward')
           .setEmoji('🎁')
-          .setStyle(ButtonStyle.Secondary),
-        new ButtonBuilder()
-          .setCustomId('btn_hub_profile')
-          .setLabel('Profilo & Monete')
-          .setEmoji('🎒')
           .setStyle(ButtonStyle.Secondary)
       );
 
-      await targetChannel.send({ embeds: [embed], components: [row] });
+      const row2 = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId('btn_hub_profile')
+          .setLabel('Controlla Saldo & Forziere')
+          .setEmoji('🪙')
+          .setStyle(ButtonStyle.Primary),
+        new ButtonBuilder()
+          .setCustomId('btn_hub_top')
+          .setLabel('Classifica Ricchezza')
+          .setEmoji('🏆')
+          .setStyle(ButtonStyle.Secondary)
+      );
+
+      await targetChannel.send({ embeds: [embed], components: [row1, row2] });
 
       return interaction.reply({
         content: `✅ Hub dei Minigiochi inviato con successo in <#${targetChannel.id}>!`,

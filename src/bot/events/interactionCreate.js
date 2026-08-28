@@ -4,7 +4,7 @@ import { PresentationManager } from '../modules/presentationManager.js';
 import { FishingManager } from '../modules/fishingManager.js';
 import { BlackjackManager } from '../modules/blackjackManager.js';
 import { DatabaseHelper } from '../../database/db.js';
-import { EmbedBuilder, PermissionsBitField } from 'discord.js';
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
 export default {
@@ -371,37 +371,121 @@ export default {
         return interaction.reply({ embeds: [embed], ephemeral: true });
       }
 
-      if (customId === 'btn_hub_profile') {
-        const profile = DatabaseHelper.getFishingProfile(interaction.guild.id, interaction.user.id);
-        const bjStats = DatabaseHelper.getMinigameStats(interaction.guild.id, interaction.user.id, 'blackjack');
-        const slotStats = DatabaseHelper.getMinigameStats(interaction.guild.id, interaction.user.id, 'slots');
+        return interaction.reply({ embeds: [embed], ephemeral: true });
+      }
+
+      if (customId === 'btn_hub_profile' || customId === 'btn_hub_saldo' || customId === 'btn_balance_refresh') {
+        const guild = interaction.guild;
+        const user = interaction.user;
+        const profile = DatabaseHelper.getFishingProfile(guild.id, user.id);
+        const userLevel = DatabaseHelper.getUserLevel(guild.id, user.id);
+        const bjStats = DatabaseHelper.getMinigameStats(guild.id, user.id, 'blackjack');
+        const slotStats = DatabaseHelper.getMinigameStats(guild.id, user.id, 'slots');
+        const allProfiles = DatabaseHelper.getFishingLeaderboard(guild.id, 1000);
+        const rankPos = allProfiles.findIndex(p => p.user_id === user.id) + 1 || allProfiles.length + 1;
+
+        const inventory = profile.inventory || [];
+        const inventoryValue = inventory.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
+
+        const ROD_TIERS = [
+          { level: 1, name: 'Canna di Legno Grezza' },
+          { level: 2, name: 'Canna di Quercia Rinforzata' },
+          { level: 3, name: 'Canna d\'Argento Lucido' },
+          { level: 4, name: 'Canna d\'Oro Regale' },
+          { level: 5, name: 'Canna Mitica del Leviatano' }
+        ];
+        const rodInfo = ROD_TIERS.find(r => r.level === (profile.rod_level || 1)) || ROD_TIERS[0];
 
         const embed = new EmbedBuilder()
           .setColor('#eab308')
           .setAuthor({
-            name: `🎒 Profilo Economico • ${interaction.user.displayName || interaction.user.username}`,
-            iconURL: interaction.user.displayAvatarURL({ dynamic: true })
+            name: `Forziere Reale • ${user.displayName || user.username}`,
+            iconURL: user.displayAvatarURL({ dynamic: true })
           })
-          .setTitle('🪙 Tesoro & Imprese del Cavaliere')
+          .setTitle('🪙 Patrimonio & Saldo Sincronizzato')
+          .setDescription(
+            `### 💰 Saldo Attuale: **\`${(profile.coins || 0).toLocaleString()}\` Monete d'Oro 🪙**\n` +
+            `> 🏆 **Posizione nel Reame:** \`#${rankPos}\` su ${allProfiles.length} cavalieri\n` +
+            `> ⭐ **Livello Attuale:** \`Livello ${userLevel.level}\` (${userLevel.xp.toLocaleString()} XP)\n` +
+            `> 🎣 **Canna da Pesca:** \`${rodInfo.name}\` (Liv. ${profile.rod_level || 1})\n` +
+            `> 🎒 **Pescato nel Cestino:** \`${inventory.length} prede\` (Valore stimato: **${inventoryValue.toLocaleString()} 🪙**)`
+          )
           .addFields(
-            { name: '🪙 Monete Possedute', value: `**${(profile.coins || 0).toLocaleString()} 🪙**`, inline: true },
-            { name: '🎣 Pesci Catturati', value: `**${profile.total_fish_caught || 0}** prede`, inline: true },
-            { name: '🎒 Oggetti nel Cestino', value: `**${(profile.inventory || []).length}** oggetti`, inline: true },
             {
-              name: '🃏 Blackjack',
-              value: `> Partite: **${bjStats.games_played}** (Vinte: **${bjStats.games_won}**)\n> Saldo Vinto: **+${bjStats.total_won_coins.toLocaleString()} 🪙**`,
-              inline: false
+              name: '🃏 Casinò & Blackjack',
+              value: `Partite: **${bjStats.games_played}** (Vinte: **${bjStats.games_won}**)\nVincite: **+${bjStats.total_won_coins.toLocaleString()} 🪙**`,
+              inline: true
             },
             {
               name: '🎰 Slot Machine',
-              value: `> Giri: **${slotStats.games_played}** (Vinti: **${slotStats.games_won}**)\n> Record: **${slotStats.highest_win.toLocaleString()} 🪙**`,
-              inline: false
+              value: `Giri: **${slotStats.games_played}** (Vinti: **${slotStats.games_won}**)\nRecord: **${slotStats.highest_win.toLocaleString()} 🪙**`,
+              inline: true
+            },
+            {
+              name: '🎣 Lago di Pesca',
+              value: `Prede Catturate: **${profile.total_fish_caught || 0}**\nCanna: **Livello ${profile.rod_level || 1}/5**`,
+              inline: true
             }
           )
-          .setFooter({ text: `${interaction.guild.name} • Sentry Minigiochi`, iconURL: interaction.guild.iconURL() })
+          .setFooter({ text: `${guild.name} • Sentry Economia Sincronizzata • Ultimo Aggiornamento`, iconURL: guild.iconURL() })
           .setTimestamp();
 
-        return interaction.reply({ embeds: [embed], ephemeral: true });
+        const row = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId('btn_balance_refresh')
+            .setLabel('Aggiorna Saldo')
+            .setEmoji('🔄')
+            .setStyle(ButtonStyle.Primary),
+          new ButtonBuilder()
+            .setCustomId('btn_hub_fishing')
+            .setLabel('Pesca')
+            .setEmoji('🎣')
+            .setStyle(ButtonStyle.Secondary),
+          new ButtonBuilder()
+            .setCustomId('btn_hub_blackjack')
+            .setLabel('Blackjack')
+            .setEmoji('🃏')
+            .setStyle(ButtonStyle.Success),
+          new ButtonBuilder()
+            .setCustomId('btn_hub_slots')
+            .setLabel('Slot')
+            .setEmoji('🎰')
+            .setStyle(ButtonStyle.Secondary),
+          new ButtonBuilder()
+            .setCustomId('btn_hub_daily')
+            .setLabel('Daily')
+            .setEmoji('🎁')
+            .setStyle(ButtonStyle.Secondary)
+        );
+
+        if (customId === 'btn_balance_refresh') {
+          return interaction.update({ embeds: [embed], components: [row] });
+        }
+
+        return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+      }
+
+      if (customId === 'btn_hub_top') {
+        const leaderboard = DatabaseHelper.getFishingLeaderboard(interaction.guild.id, 10);
+        let desc = 'Ecco i cavalieri e pescatori più facoltosi del Reame:\n\n';
+
+        if (leaderboard.length === 0) {
+          desc += '*Nessun cavaliere ha ancora accumulato monete nel forziere.*';
+        } else {
+          leaderboard.forEach((item, idx) => {
+            const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `**#${idx + 1}**`;
+            desc += `${medal} <@${item.user_id}> — **${(item.coins || 0).toLocaleString()} 🪙** *(🎣 ${item.total_fish_caught || 0} prede)*\n`;
+          });
+        }
+
+        const topEmbed = new EmbedBuilder()
+          .setColor('#eab308')
+          .setTitle(`🏆 Classifica Ricchezza & Pescatori • ${interaction.guild.name}`)
+          .setDescription(desc)
+          .setFooter({ text: `${interaction.guild.name} • Sentry Leaderboard`, iconURL: interaction.guild.iconURL() })
+          .setTimestamp();
+
+        return interaction.reply({ embeds: [topEmbed], ephemeral: true });
       }
     }
 

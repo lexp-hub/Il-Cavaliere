@@ -851,15 +851,19 @@ export function createApiRouter(botClient) {
           .setFooter({ text: `${guild.name} • Sentry Game Hub`, iconURL: guild.iconURL() })
           .setTimestamp();
 
-        const row = new ActionRowBuilder().addComponents(
+        const row1 = new ActionRowBuilder().addComponents(
           new ButtonBuilder().setCustomId('btn_hub_fishing').setLabel('Pesca Medievale').setEmoji('🎣').setStyle(ButtonStyle.Primary),
           new ButtonBuilder().setCustomId('btn_hub_blackjack').setLabel('Blackjack (50 🪙)').setEmoji('🃏').setStyle(ButtonStyle.Success),
           new ButtonBuilder().setCustomId('btn_hub_slots').setLabel('Slot Machine (50 🪙)').setEmoji('🎰').setStyle(ButtonStyle.Secondary),
-          new ButtonBuilder().setCustomId('btn_hub_daily').setLabel('Daily Reward').setEmoji('🎁').setStyle(ButtonStyle.Secondary),
-          new ButtonBuilder().setCustomId('btn_hub_profile').setLabel('Profilo & Monete').setEmoji('🎒').setStyle(ButtonStyle.Secondary)
+          new ButtonBuilder().setCustomId('btn_hub_daily').setLabel('Daily Reward').setEmoji('🎁').setStyle(ButtonStyle.Secondary)
         );
 
-        await channel.send({ embeds: [embed], components: [row] });
+        const row2 = new ActionRowBuilder().addComponents(
+          new ButtonBuilder().setCustomId('btn_hub_profile').setLabel('Controlla Saldo & Forziere').setEmoji('🪙').setStyle(ButtonStyle.Primary),
+          new ButtonBuilder().setCustomId('btn_hub_top').setLabel('Classifica Ricchezza').setEmoji('🏆').setStyle(ButtonStyle.Secondary)
+        );
+
+        await channel.send({ embeds: [embed], components: [row1, row2] });
       }
 
       res.json({ success: true });
