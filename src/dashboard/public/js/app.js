@@ -265,6 +265,10 @@ window.switchGuild = async function(guildId) {
       window.loadModuleData(guildId);
     }
 
+    if (window.loadTempChannelsData) {
+      window.loadTempChannelsData(guildId);
+    }
+
     if (window.initModuleToolbars) {
       window.initModuleToolbars();
     }
@@ -298,13 +302,15 @@ window.updateUserCoinsDisplay = async function(guildId) {
 
 function populateDropdowns(channels = [], roles = [], members = []) {
   const textChannels = channels.filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
+  const voiceChannels = channels.filter(c => c.type === 'voice' || c.rawType === 2 || c.rawType === 13);
   const categories = channels.filter(c => c.type === 'category' || c.type === 4);
 
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',
     'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel', 'tk-log-channel',
     'ga-channel', 'lvl-channel', 'cnt-channel', 'pres-channel', 'setup-channel',
-    'fish-channel', 'mg-general-channel', 'mg-bj-channel', 'mg-slot-channel'
+    'fish-channel', 'mg-general-channel', 'mg-bj-channel', 'mg-slot-channel',
+    'tc-panel-channel'
   ];
 
   channelSelectIds.forEach(id => {
@@ -326,8 +332,29 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     }
   });
 
-  const catSelect = document.getElementById('tk-category');
-  if (catSelect) {
+  // Voice Channels Selector for Temp Channels Generator
+  const genVoiceSelect = document.getElementById('tc-gen-voice-channel');
+  if (genVoiceSelect) {
+    const currentVal = genVoiceSelect.value;
+    genVoiceSelect.innerHTML = '<option value="">-- Seleziona Canale Vocale Generator --</option>';
+
+    voiceChannels.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = `🔊 ${c.name}`;
+      genVoiceSelect.appendChild(opt);
+    });
+
+    if (currentVal && voiceChannels.some(c => c.id === currentVal)) {
+      genVoiceSelect.value = currentVal;
+    }
+  }
+
+  const categorySelectIds = ['tk-category', 'tc-category'];
+  categorySelectIds.forEach(id => {
+    const catSelect = document.getElementById(id);
+    if (!catSelect) return;
+
     const currentCat = catSelect.value;
     catSelect.innerHTML = '<option value="">-- Nessuna Categoria --</option>';
     categories.forEach(c => {
@@ -339,7 +366,7 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     if (currentCat && categories.some(c => c.id === currentCat)) {
       catSelect.value = currentCat;
     }
-  }
+  });
 
   const roleSelectIds = [
     'part-ping-role', 'part-manager-role', 'rr-role',

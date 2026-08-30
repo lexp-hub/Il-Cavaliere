@@ -3,6 +3,7 @@ import { PartnershipManager } from '../modules/partnershipManager.js';
 import { PresentationManager } from '../modules/presentationManager.js';
 import { FishingManager } from '../modules/fishingManager.js';
 import { BlackjackManager } from '../modules/blackjackManager.js';
+import { TempChannelManager } from '../modules/tempChannelManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
@@ -484,11 +485,19 @@ export default {
 
         return interaction.reply({ embeds: [topEmbed], ephemeral: true });
       }
+
+      if (customId.startsWith('btn_tc_')) {
+        return TempChannelManager.handleButtonInteraction(interaction);
+      }
     }
 
     // 3. Modal Submissions
     if (interaction.isModalSubmit()) {
       const customId = interaction.customId;
+
+      if (customId.startsWith('modal_tc_')) {
+        return TempChannelManager.handleModalSubmit(interaction);
+      }
 
       if (customId.startsWith('modal_partnership_submit')) {
         return PartnershipManager.handlePartnershipModalSubmit(interaction);
@@ -499,9 +508,13 @@ export default {
       }
     }
 
-    // 4. String Select Menus
-    if (interaction.isStringSelectMenu()) {
+    // 4. Select Menus (String & User Selects)
+    if (interaction.isAnySelectMenu && interaction.isAnySelectMenu() || interaction.isStringSelectMenu() || interaction.isUserSelectMenu()) {
       const customId = interaction.customId;
+
+      if (customId.startsWith('select_tc_')) {
+        return TempChannelManager.handleSelectMenu(interaction);
+      }
 
       if (customId.startsWith('rr_select_')) {
         const selectedRoleId = interaction.values[0];

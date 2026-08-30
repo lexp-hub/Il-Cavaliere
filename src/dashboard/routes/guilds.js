@@ -125,7 +125,7 @@ export function createGuildsRouter(botClient) {
           parentId: c.parentId
         };
       })
-      .filter(c => c.type === 'text' || c.type === 'category')
+      .filter(c => c.type === 'text' || c.type === 'category' || c.type === 'voice')
       .sort((a, b) => a.name.localeCompare(b.name));
 
     const roles = guild.roles.cache

@@ -1215,6 +1215,111 @@ export const DatabaseHelper = {
         total_lost_coins = excluded.total_lost_coins,
         highest_win = excluded.highest_win
     `).run(guildId, userId, gameType, newPlayed, newWon, newTotalWon, newTotalLost, newHighest);
+  },
+
+  // === Temporary & Private Channels Helpers ===
+  getTempChannelConfig(guildId) {
+    let row = db.prepare('SELECT * FROM temp_channel_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare(`
+        INSERT INTO temp_channel_configs (guild_id, enabled, naming_scheme_voice, naming_scheme_text, default_user_limit, default_bitrate, auto_delete_delay)
+        VALUES (?, 1, '🔊 Stanza di {user}', '💬 chat-{user}', 0, 64000, 0)
+      `).run(guildId);
+      row = db.prepare('SELECT * FROM temp_channel_configs WHERE guild_id = ?').get(guildId);
+    }
+    return {
+      ...row,
+      enabled: Boolean(row.enabled)
+    };
+  },
+
+  updateTempChannelConfig(guildId, config) {
+    const current = this.getTempChannelConfig(guildId);
+    const updated = { ...current, ...config };
+    db.prepare(`
+      INSERT INTO temp_channel_configs (
+        guild_id, enabled, voice_generator_id, category_id, panel_channel_id,
+        default_user_limit, default_bitrate, naming_scheme_voice, naming_scheme_text, auto_delete_delay
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id) DO UPDATE SET
+        enabled = excluded.enabled,
+        voice_generator_id = excluded.voice_generator_id,
+        category_id = excluded.category_id,
+        panel_channel_id = excluded.panel_channel_id,
+        default_user_limit = excluded.default_user_limit,
+        default_bitrate = excluded.default_bitrate,
+        naming_scheme_voice = excluded.naming_scheme_voice,
+        naming_scheme_text = excluded.naming_scheme_text,
+        auto_delete_delay = excluded.auto_delete_delay
+    `).run(
+      guildId,
+      updated.enabled ? 1 : 0,
+      updated.voice_generator_id || null,
+      updated.category_id || null,
+      updated.panel_channel_id || null,
+      updated.default_user_limit || 0,
+      updated.default_bitrate || 64000,
+      updated.naming_scheme_voice || '🔊 Stanza di {user}',
+      updated.naming_scheme_text || '💬 chat-{user}',
+      updated.auto_delete_delay || 0
+    );
+    return this.getTempChannelConfig(guildId);
+  },
+
+  createTempChannelRecord(guildId, ownerId, voiceChannelId = null, textChannelId = null, userLimit = 0) {
+    const info = db.prepare(`
+      INSERT INTO temp_channels (guild_id, owner_id, voice_channel_id, text_channel_id, is_locked, is_hidden, user_limit, created_at)
+      VALUES (?, ?, ?, ?, 0, 0, ?, ?)
+    `).run(guildId, ownerId, voiceChannelId, textChannelId, userLimit, Math.floor(Date.now() / 1000));
+    return {
+      id: info.lastInsertRowid,
+      guild_id: guildId,
+      owner_id: ownerId,
+      voice_channel_id: voiceChannelId,
+      text_channel_id: textChannelId,
+      is_locked: 0,
+      is_hidden: 0,
+      user_limit: userLimit
+    };
+  },
+
+  getTempChannelByChannelId(channelId) {
+    return db.prepare('SELECT * FROM temp_channels WHERE voice_channel_id = ? OR text_channel_id = ?').get(channelId, channelId);
+  },
+
+  getTempChannelByVoiceId(voiceChannelId) {
+    return db.prepare('SELECT * FROM temp_channels WHERE voice_channel_id = ?').get(voiceChannelId);
+  },
+
+  getTempChannelByTextId(textChannelId) {
+    return db.prepare('SELECT * FROM temp_channels WHERE text_channel_id = ?').get(textChannelId);
+  },
+
+  getActiveTempChannels(guildId) {
+    if (guildId) {
+      return db.prepare('SELECT * FROM temp_channels WHERE guild_id = ? ORDER BY id DESC').all(guildId);
+    }
+    return db.prepare('SELECT * FROM temp_channels ORDER BY id DESC').all();
+  },
+
+  updateTempChannelState(id, updates) {
+    const fields = [];
+    const values = [];
+    for (const [k, v] of Object.entries(updates)) {
+      fields.push(`${k} = ?`);
+      values.push(v);
+    }
+    if (fields.length === 0) return;
+    values.push(id);
+    db.prepare(`UPDATE temp_channels SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+  },
+
+  deleteTempChannelRecord(id) {
+    return db.prepare('DELETE FROM temp_channels WHERE id = ?').run(id);
+  },
+
+  deleteTempChannelByChannelId(channelId) {
+    return db.prepare('DELETE FROM temp_channels WHERE voice_channel_id = ? OR text_channel_id = ?').run(channelId, channelId);
   }
 };
 

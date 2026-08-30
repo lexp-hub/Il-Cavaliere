@@ -1989,7 +1989,179 @@
       window.setupSearchableSelect('mg-general-channel-search', 'mg-general-channel', 'text');
       window.setupSearchableSelect('mg-bj-channel-search', 'mg-bj-channel', 'text');
       window.setupSearchableSelect('mg-slot-channel-search', 'mg-slot-channel', 'text');
+
+      // Temporary & Private Channels
+      window.setupSearchableSelect('tc-gen-voice-search', 'tc-gen-voice-channel', 'voice');
+      window.setupSearchableSelect('tc-category-search', 'tc-category', 'category');
+      window.setupSearchableSelect('tc-panel-channel-search', 'tc-panel-channel', 'text');
     }
+  }
+
+  // Temporary & Private Channels Data Loader
+  async function loadTempChannelsData(guildId) {
+    if (!guildId) return;
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/tempchannels`);
+      if (!res.ok) return;
+
+      const { config, activeRooms } = await res.json();
+
+      const enabledEl = document.getElementById('tc-enabled');
+      const voiceGenEl = document.getElementById('tc-gen-voice-channel');
+      const catEl = document.getElementById('tc-category');
+      const panelEl = document.getElementById('tc-panel-channel');
+      const nameVoiceEl = document.getElementById('tc-name-voice');
+      const nameTextEl = document.getElementById('tc-name-text');
+      const limitEl = document.getElementById('tc-default-limit');
+      const bitrateEl = document.getElementById('tc-bitrate');
+
+      if (enabledEl) enabledEl.checked = Boolean(config.enabled);
+      if (voiceGenEl && config.voice_generator_id) voiceGenEl.value = config.voice_generator_id;
+      if (catEl && config.category_id) catEl.value = config.category_id;
+      if (panelEl && config.panel_channel_id) panelEl.value = config.panel_channel_id;
+      if (nameVoiceEl) nameVoiceEl.value = config.naming_scheme_voice || '🔊 Stanza di {user}';
+      if (nameTextEl) nameTextEl.value = config.naming_scheme_text || '💬 chat-{user}';
+      if (limitEl) limitEl.value = config.default_user_limit || 0;
+      if (bitrateEl) bitrateEl.value = config.default_bitrate || 64000;
+
+      // Render Active Rooms List
+      const roomsContainer = document.getElementById('tc-active-rooms-list');
+      if (roomsContainer) {
+        if (!activeRooms || activeRooms.length === 0) {
+          roomsContainer.innerHTML = '<p class="text-slate-400 italic text-center py-4">Nessuna stanza temporanea attiva al momento.</p>';
+        } else {
+          roomsContainer.innerHTML = activeRooms.map(r => {
+            const isLocked = r.is_locked ? '🔒 Bloccata' : '🔓 Aperta';
+            const isHidden = r.is_hidden ? '👁️ Nascosta' : '👁️ Visibile';
+            return `
+              <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-3">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-900 font-mono">Stanza #${r.id}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">Owner: ${r.owner_id}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold ${r.is_locked ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">${isLocked}</span>
+                    <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700">${isHidden}</span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-1">
+                    ${r.voice_channel_id ? `🔊 Vocale: <code>${r.voice_channel_id}</code>` : ''} 
+                    ${r.text_channel_id ? `💬 Testo: <code>${r.text_channel_id}</code>` : ''}
+                  </p>
+                </div>
+                <button type="button" class="btn-delete-temp-room p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200" data-room-id="${r.id}" title="Elimina forzatamente">
+                  <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+              </div>
+            `;
+          }).join('');
+
+          document.querySelectorAll('.btn-delete-temp-room').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const roomId = e.currentTarget.getAttribute('data-room-id');
+              if (!confirm(`Sei sicuro di voler eliminare forzatamente la stanza #${roomId}?`)) return;
+              try {
+                const delRes = await fetch(`/api/guilds/${guildId}/tempchannels/${roomId}`, { method: 'DELETE' });
+                if (delRes.ok) {
+                  window.showToast('Stanza eliminata con successo!');
+                  await loadTempChannelsData(guildId);
+                } else {
+                  const err = await delRes.json();
+                  window.showToast(err.error || 'Errore eliminazione.', 'error');
+                }
+              } catch (err) {
+                window.showToast(err.message, 'error');
+              }
+            });
+          });
+
+          if (window.lucide) lucide.createIcons();
+        }
+      }
+    } catch (e) {
+      console.error('Error loading temp channels data:', e);
+    }
+  }
+
+  window.loadTempChannelsData = loadTempChannelsData;
+
+  // Temp Channels Event Listeners
+  const btnSaveTempChannels = document.getElementById('btn-save-tempchannels');
+  if (btnSaveTempChannels) {
+    btnSaveTempChannels.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+
+      const payload = {
+        enabled: document.getElementById('tc-enabled')?.checked,
+        voice_generator_id: document.getElementById('tc-gen-voice-channel')?.value || null,
+        category_id: document.getElementById('tc-category')?.value || null,
+        panel_channel_id: document.getElementById('tc-panel-channel')?.value || null,
+        naming_scheme_voice: document.getElementById('tc-name-voice')?.value?.trim() || '🔊 Stanza di {user}',
+        naming_scheme_text: document.getElementById('tc-name-text')?.value?.trim() || '💬 chat-{user}',
+        default_user_limit: parseInt(document.getElementById('tc-default-limit')?.value, 10) || 0,
+        default_bitrate: parseInt(document.getElementById('tc-bitrate')?.value, 10) || 64000
+      };
+
+      btnSaveTempChannels.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/tempchannels/config`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          window.showToast('Configurazione Canali Privati salvata con successo!');
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante il salvataggio.', 'error');
+        }
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        btnSaveTempChannels.disabled = false;
+      }
+    });
+  }
+
+  const btnSendTempChannelsPanel = document.getElementById('btn-send-tempchannels-panel');
+  if (btnSendTempChannelsPanel) {
+    btnSendTempChannelsPanel.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+
+      const channelId = document.getElementById('tc-panel-channel')?.value;
+      if (!channelId) {
+        return window.showToast('Seleziona prima il canale per inviare il pannello!', 'error');
+      }
+
+      btnSendTempChannelsPanel.disabled = true;
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/tempchannels/panel`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channelId })
+        });
+
+        if (res.ok) {
+          window.showToast('Hub Creazione Canali Privati inviato nel canale!');
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante l\'invio del pannello.', 'error');
+        }
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        btnSendTempChannelsPanel.disabled = false;
+      }
+    });
+  }
+
+  const btnRefreshTempChannels = document.getElementById('btn-refresh-tempchannels');
+  if (btnRefreshTempChannels) {
+    btnRefreshTempChannels.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (guildId) await loadTempChannelsData(guildId);
+    });
   }
 
   window.initModuleToolbars = initModuleToolbars;

@@ -8,6 +8,7 @@ import { BlackjackManager } from '../../bot/modules/blackjackManager.js';
 import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
+import { TempChannelManager } from '../../bot/modules/tempChannelManager.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
@@ -927,6 +928,68 @@ export function createApiRouter(botClient) {
   router.get('/guilds/:guildId/emoji-stats', requireModAuth, (req, res) => {
     const stats = DatabaseHelper.getEmojiStats(req.params.guildId, 30);
     res.json(stats);
+  });
+
+  // === Temporary & Private Channels API Endpoints ===
+  router.get('/guilds/:guildId/tempchannels', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.getTempChannelConfig(req.params.guildId);
+    const activeRooms = DatabaseHelper.getActiveTempChannels(req.params.guildId);
+    res.json({ config, activeRooms });
+  });
+
+  router.post('/guilds/:guildId/tempchannels/config', requireModAuth, (req, res) => {
+    const updated = DatabaseHelper.updateTempChannelConfig(req.params.guildId, req.body);
+    res.json({ success: true, config: updated });
+  });
+
+  router.post('/guilds/:guildId/tempchannels/panel', requireModAuth, async (req, res) => {
+    const { channelId, title, description, image } = req.body;
+    const guildId = req.params.guildId;
+
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Bot non connesso a questo server.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const config = DatabaseHelper.getTempChannelConfig(guildId);
+      const targetChannelId = channelId || config.panel_channel_id;
+
+      if (!targetChannelId) {
+        return res.status(400).json({ error: 'Seleziona prima il canale in cui inviare il pannello.' });
+      }
+
+      await TempChannelManager.sendHubPanel(guild, targetChannelId, { title, description, image });
+      res.json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  router.delete('/guilds/:guildId/tempchannels/:id', requireModAuth, async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const guildId = req.params.guildId;
+    const activeRooms = DatabaseHelper.getActiveTempChannels(guildId);
+    const record = activeRooms.find(r => r.id === id);
+
+    if (!record) {
+      return res.status(404).json({ error: 'Stanza temporanea non trovata.' });
+    }
+
+    if (botClient?.isReady() && botClient.guilds.cache.has(guildId)) {
+      const guild = botClient.guilds.cache.get(guildId);
+      if (record.voice_channel_id) {
+        const voice = guild.channels.cache.get(record.voice_channel_id);
+        if (voice) await voice.delete('Eliminazione forzata da dashboard').catch(() => {});
+      }
+      if (record.text_channel_id) {
+        const text = guild.channels.cache.get(record.text_channel_id);
+        if (text) await text.delete('Eliminazione forzata da dashboard').catch(() => {});
+      }
+    }
+
+    DatabaseHelper.deleteTempChannelRecord(id);
+    res.json({ success: true });
   });
 
   return router;

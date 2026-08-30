@@ -396,4 +396,32 @@ CREATE TABLE IF NOT EXISTS minigame_stats (
   highest_win INTEGER DEFAULT 0,
   PRIMARY KEY (guild_id, user_id, game_type)
 );
+
+-- ============================================================
+-- PRIVATE & TEMPORARY CHANNELS (VOICE & TEXT)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS temp_channel_configs (
+  guild_id TEXT PRIMARY KEY,
+  enabled INTEGER DEFAULT 1,
+  voice_generator_id TEXT,
+  category_id TEXT,
+  panel_channel_id TEXT,
+  default_user_limit INTEGER DEFAULT 0,
+  default_bitrate INTEGER DEFAULT 64000,
+  naming_scheme_voice TEXT DEFAULT '🔊 Stanza di {user}',
+  naming_scheme_text TEXT DEFAULT '💬 chat-{user}',
+  auto_delete_delay INTEGER DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS temp_channels (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id TEXT NOT NULL,
+  owner_id TEXT NOT NULL,
+  voice_channel_id TEXT,
+  text_channel_id TEXT,
+  is_locked INTEGER DEFAULT 0,
+  is_hidden INTEGER DEFAULT 0,
+  user_limit INTEGER DEFAULT 0,
+  created_at INTEGER
+);
 `;
