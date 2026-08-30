@@ -48,10 +48,14 @@ export function validateAuthToken(token) {
 }
 
 function getCallbackUrl(req) {
-  if (process.env.OAUTH2_CALLBACK_URL && !process.env.OAUTH2_CALLBACK_URL.includes('localhost') && !process.env.OAUTH2_CALLBACK_URL.includes('127.0.0.1')) {
+  if (process.env.OAUTH2_CALLBACK_URL) {
     return process.env.OAUTH2_CALLBACK_URL;
   }
-  return 'https://sentry.wispbyte.app/auth/discord/callback';
+  if (req?.headers?.host) {
+    const proto = req.headers['x-forwarded-proto'] || (req.headers.host.includes('localhost') || req.headers.host.match(/^[0-9.]+:\d+$/) ? 'http' : 'https');
+    return `${proto}://${req.headers.host}/auth/discord/callback`;
+  }
+  return 'http://78.154.103.2:9272/auth/discord/callback';
 }
 
 authRouter.get('/login', (req, res) => {
