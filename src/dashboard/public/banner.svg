@@ -31,30 +31,6 @@
       <stop offset="45%" stop-color="#ef4444" />
       <stop offset="100%" stop-color="#b91c1c" />
     </linearGradient>
-
-    <!-- Dark Gunmetal / Titanium Emblem Gradient -->
-    <linearGradient id="darkPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1e293b" />
-      <stop offset="50%" stop-color="#151e2e" />
-      <stop offset="100%" stop-color="#0f172a" />
-    </linearGradient>
-
-    <!-- Pure Seamless Knights Templar Cross Path -->
-    <g id="templarCrossSingle">
-      <path d="M -15 -15 
-               C -20 -55 -45 -115 -92 -165 
-               C -40 -140 40 -140 92 -165 
-               C 45 -115 20 -55 15 -15 
-               C 55 -20 115 -45 165 -92 
-               C 140 -40 140 40 165 92 
-               C 115 45 55 20 15 15 
-               C 20 55 45 115 92 165 
-               C 40 140 -40 140 -92 165 
-               C -45 115 -20 55 -15 15 
-               C -55 20 -115 45 -165 92 
-               C -140 40 -140 -40 -165 -92 
-               C -115 -45 -55 -20 -15 -15 Z" />
-    </g>
   </defs>
 
   <!-- 1. Deep Dark Charcoal / Gunmetal Slate Base (#0e1420) -->
@@ -129,32 +105,14 @@
   <!-- 3. Outer Frame Border in Sleek Titanium -->
   <rect width="596" height="236" x="2" y="2" rx="14" fill="none" stroke="#263347" stroke-width="1.5" />
 
-  <!-- 4. OFFICIAL SENTRY LOGO EMBLEM ON THE LEFT (Centered at x=105, y=120) -->
-  <g transform="translate(105, 120)">
-    <!-- Circular Shield Base in Dark Gunmetal / Titanium -->
-    <circle cx="0" cy="0" r="62" fill="url(#darkPlateGrad)" stroke="#334155" stroke-width="1.5" />
-    <circle cx="0" cy="0" r="58" fill="none" stroke="#475569" stroke-width="1" opacity="0.5" />
-    <circle cx="0" cy="0" r="52" fill="none" stroke="#1e293b" stroke-width="1.5" />
-    <circle cx="0" cy="0" r="47" fill="none" stroke="#ef4444" stroke-width="0.75" stroke-dasharray="3 3" stroke-opacity="0.6" />
-
-    <!-- Center Radiant Crimson Templar Cross -->
-    <g scale="0.24" fill="url(#heroGrad)">
-      <use href="#templarCrossSingle" transform="scale(0.24)" />
-    </g>
-
-    <!-- Green Online Status Indicator Dot -->
-    <circle cx="42" cy="42" r="10" fill="#0e1420" />
-    <circle cx="42" cy="42" r="8" fill="#10b981" stroke="#0e1420" stroke-width="1.5" />
-  </g>
-
-  <!-- 5. Top Right 3-Dots Menu -->
+  <!-- 4. Top Right 3-Dots Menu -->
   <g fill="#475569">
     <circle cx="548" cy="36" r="3.5" />
     <circle cx="560" cy="36" r="3.5" />
     <circle cx="572" cy="36" r="3.5" />
   </g>
 
-  <!-- 6. Text Content on the Right Side (Centered at x=380) -->
+  <!-- 5. Text Content on the Right Side (Centered at x=380, leaving left area clean for avatar) -->
   
   <!-- Subtitle: Authentic Functional Tagline in Slate Muted (#94a3b8) -->
   <text x="380" y="54" text-anchor="middle" fill="#94a3b8" font-size="11" class="font-sub">
@@ -174,7 +132,7 @@
     </text>
   </g>
 
-  <!-- 7. Command / URL Pill Badge: Dark Gunmetal Card -->
+  <!-- 6. Command / URL Pill Badge: Dark Gunmetal Card -->
   <g transform="translate(250, 162)">
     <rect width="260" height="40" rx="20" fill="#162030" stroke="#283850" stroke-width="1.5" />
     
