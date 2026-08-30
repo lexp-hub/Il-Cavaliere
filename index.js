@@ -4,7 +4,7 @@ import { CONFIG } from './src/config.js';
 
 async function main() {
   console.log('====================================================');
-  console.log('🛡️  IL CAVALIERE - DISCORD BOT & NOCTALY DASHBOARD  🛡️');
+  console.log('🛡️       SENTRY - DISCORD BOT & DASHBOARD          🛡️');
   console.log('====================================================');
 
   const botClient = createBotClient();
@@ -21,7 +21,7 @@ async function main() {
   server.listen(CONFIG.PORT, '0.0.0.0', () => {
     console.log(`\n🌐 [Dashboard] Web Server attivo con successo su Wispbyte!`);
     console.log(`🔗 In ascolto su: http://0.0.0.0:${CONFIG.PORT}`);
-    console.log(`🎨 Stile UI: Noctaly Cyberpunk & Glassmorphism\n`);
+    console.log(`🛡️ Sentry Management Dashboard Online\n`);
   });
 
   if (CONFIG.BOT_TOKEN && CONFIG.BOT_TOKEN.trim().length > 10) {

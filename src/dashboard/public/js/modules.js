@@ -162,11 +162,11 @@
       if (!promptEl) return;
 
       if (preset === 'cynical') {
-        promptEl.value = "Sei 'Il Cavaliere', un analista cinico, spietato e allergico all'ipocrisia umano-sociale. Smonti la propaganda, i ragionamenti fallati e la mediocrità di chiunque ti si ponga davanti — attaccando senza filtri idee, incoerenze e dignità intellettuale.\n\nRegole:\n- Stile secco, sarcastico e passivo-aggressivo.\n- Zero pietà o sottomissione.\n- Rispondi SEMPRE in massimo 300 caratteri.";
+        promptEl.value = "Sei 'Sentry', un analista cinico, spietato e allergico all'ipocrisia umano-sociale. Smonti la propaganda, i ragionamenti fallati e la mediocrità di chiunque ti si ponga davanti — attaccando senza filtri idee, incoerenze e dignità intellettuale.\n\nRegole:\n- Stile secco, sarcastico e passivo-aggressivo.\n- Zero pietà o sottomissione.\n- Rispondi SEMPRE in massimo 300 caratteri.";
       } else if (preset === 'noble') {
-        promptEl.value = "Sei 'Il Cavaliere', un nobile guardiano d'onore e protettore dei reami Discord. Rispondi con tono fiero, solenne ed epico, dispensando consigli saggi ed elevati per il bene del server. Massimo 300 caratteri.";
+        promptEl.value = "Sei 'Sentry', un nobile guardiano d'onore e protettore dei reami Discord. Rispondi con tono fiero, solenne ed epico, dispensando consigli saggi ed elevati per il bene del server. Massimo 300 caratteri.";
       } else if (preset === 'technical') {
-        promptEl.value = "Sei 'Il Cavaliere', un'intelligenza artificiale focalizzata su precisione logica, programmazione e analisi tecnica oggettiva. Rispondi in modo asciutto, preciso ed impeccabile.";
+        promptEl.value = "Sei 'Sentry', un'intelligenza artificiale focalizzata su precisione logica, programmazione e analisi tecnica oggettiva. Rispondi in modo asciutto, preciso ed impeccabile.";
       }
       window.showToast(`Preset applicato all'editor! Ricordati di salvare.`);
     });
@@ -192,7 +192,7 @@
       });
 
       if (res.ok) {
-        window.showToast('Configurazione de Il Cavaliere AI salvata!');
+        window.showToast('Configurazione di Sentry AI salvata!');
       } else {
         window.showToast('Errore nel salvataggio AI.', 'error');
       }
@@ -227,7 +227,7 @@
       botLoading.innerHTML = `
         <div class="w-7 h-7 rounded-lg bg-purple-600 flex items-center justify-center text-xs shrink-0 font-bold">🛡️</div>
         <div class="p-2.5 rounded-2xl bg-purple-950/40 border border-purple-500/20 text-xs text-purple-300 italic flex items-center gap-1.5">
-          <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Il Cavaliere sta analizzando...
+          <i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Sentry sta analizzando...
         </div>
       `;
       aiChatHistory.appendChild(botLoading);
@@ -685,7 +685,7 @@
     const desc = document.getElementById('tk-description')?.value || 'Clicca sul pulsante sottostante per aprire un ticket.';
     const color = document.getElementById('tk-color')?.value || '#dc2626';
     const image = document.getElementById('tk-image')?.value?.trim();
-    const footer = document.getElementById('tk-footer')?.value || 'Il Cavaliere • Sistema Ticket';
+    const footer = document.getElementById('tk-footer')?.value || 'Sentry • Sistema Ticket';
     const btnLabel = document.getElementById('tk-btn-label')?.value || 'Apri Ticket';
     const btnEmoji = document.getElementById('tk-btn-emoji')?.value || '📩';
     const btnStyle = document.getElementById('tk-btn-style')?.value || 'Primary';

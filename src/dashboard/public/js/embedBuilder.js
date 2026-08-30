@@ -80,14 +80,14 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;');
 
-    const guildName = window.AppState?.currentGuildData?.name || 'Il Cavaliere Realm';
+    const guildName = window.AppState?.currentGuildData?.name || 'Sentry Realm';
 
     // 3.1 Resolve Welcomer & Dynamic Placeholders
     text = text
-      .replace(/{user\.mention}/g, '<span class="discord-mention-pill user">@NuovoCavaliere</span>')
-      .replace(/{user}/g, 'NuovoCavaliere')
-      .replace(/{user\.name}/g, 'NuovoCavaliere')
-      .replace(/{user\.tag}/g, 'NuovoCavaliere#0000')
+      .replace(/{user\.mention}/g, '<span class="discord-mention-pill user">@NuovoMembro</span>')
+      .replace(/{user}/g, 'NuovoMembro')
+      .replace(/{user\.name}/g, 'NuovoMembro')
+      .replace(/{user\.tag}/g, 'NuovoMembro#0000')
       .replace(/{user\.id}/g, '123456789012345678')
       .replace(/{server\.name}/g, guildName)
       .replace(/{server\.memberCount}/g, '128')
@@ -939,14 +939,14 @@
       const guildId = window.AppState?.currentGuildId;
       if (guildId) localStorage.removeItem(`cavaliere_draft_embed_${guildId}`);
 
-      if (titleInput) titleInput.value = '🛡️ Annuncio Ufficiale | Il Cavaliere';
+      if (titleInput) titleInput.value = '🛡️ Annuncio Ufficiale | Sentry';
       if (titleUrlInput) titleUrlInput.value = '';
-      if (descInput) descInput.value = 'Benvenuti nel reame! Questo è un messaggio generato dal **Live Embed Builder** de *Il Cavaliere*.';
+      if (descInput) descInput.value = 'Benvenuti nel server! Questo è un messaggio generato dal **Live Embed Builder** di *Sentry*.';
       if (authorNameInput) authorNameInput.value = '';
       if (authorIconInput) authorIconInput.value = '';
       if (imageInput) imageInput.value = '';
       if (thumbInput) thumbInput.value = '';
-      if (footerTextInput) footerTextInput.value = 'Il Cavaliere • Notifiche';
+      if (footerTextInput) footerTextInput.value = 'Sentry • Notifiche';
       if (footerIconInput) footerIconInput.value = '';
       if (colorInput) colorInput.value = '#DC2626';
       if (colorHexInput) colorHexInput.value = '#DC2626';
