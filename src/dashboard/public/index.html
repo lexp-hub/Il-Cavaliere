@@ -9,24 +9,24 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/css/styles.css?v=105">
 </head>
-<body class="relative min-h-screen text-slate-900 flex flex-col justify-between overflow-x-hidden">
+<body class="relative min-h-screen text-slate-100 flex flex-col justify-between overflow-x-hidden">
 
   <header class="glass-nav sticky top-0 z-50 w-full px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <img src="/logo.svg?v=25" alt="Sentry" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-sm border border-slate-300">
+      <img src="/logo.svg?v=110" alt="Sentry" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full shadow-sm border border-slate-700">
       <div>
-        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-medieval">
-          Sentry <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-800 border border-slate-300 font-sans font-bold">v2.0</span>
+        <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2 font-medieval">
+          Sentry <span class="text-[10px] sm:text-xs px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 font-sans font-bold">v2.0</span>
         </h1>
-        <p class="text-[11px] sm:text-xs text-slate-500 hidden sm:block">Dashboard Ufficiale per Moderatori Discord</p>
+        <p class="text-[11px] sm:text-xs text-slate-400 hidden sm:block">Dashboard Ufficiale per Moderatori Discord</p>
       </div>
     </div>
 
-    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-700">
-      <a href="#servers" class="hover:text-red-600 transition-colors">I Tuoi Server</a>
-      <a href="#moduli" class="hover:text-red-600 transition-colors">Moduli</a>
-      <a href="/export.html" class="hover:text-red-600 transition-colors">Asset Grafici</a>
-      <a id="nav-dash-link" href="/dashboard.html" class="hover:text-red-600 transition-colors font-bold text-red-600">Dashboard</a>
+    <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-300">
+      <a href="#servers" class="hover:text-red-500 transition-colors">I Tuoi Server</a>
+      <a href="#moduli" class="hover:text-red-500 transition-colors">Moduli</a>
+      <a href="/export.html" class="hover:text-red-500 transition-colors">Asset Grafici</a>
+      <a id="nav-dash-link" href="/dashboard.html" class="hover:text-red-500 transition-colors font-bold text-red-500">Dashboard</a>
     </div>
 
     <div class="flex items-center gap-2 sm:gap-3">
@@ -42,17 +42,17 @@
   </header>
 
   <main class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-10 sm:pt-14 pb-20 sm:pb-24 text-center">
-    <div id="hero-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-200/80 border border-slate-300 text-slate-800 text-xs font-semibold mb-5 shadow-sm">
-      <i data-lucide="shield" class="w-3.5 h-3.5 text-red-600"></i>
+    <div id="hero-badge" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-slate-700 text-slate-200 text-xs font-semibold mb-5 shadow-sm">
+      <i data-lucide="shield" class="w-3.5 h-3.5 text-red-500"></i>
       <span>Sentry • Centro di Gestione &amp; Moderazione</span>
     </div>
 
-    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 leading-tight text-slate-900 font-medieval">
+    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-5 leading-tight text-white font-medieval">
       Controllo completo e sicurezza <br class="hidden sm:inline">
-      per la tua community con <span class="text-red-600">Sentry</span>
+      per la tua community con <span class="text-red-500">Sentry</span>
     </h1>
 
-    <p class="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-600 mb-8 leading-relaxed px-2">
+    <p class="max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-slate-300 mb-8 leading-relaxed px-2">
       Pannello di controllo in tempo reale: gestisci partnership con form modale, crea live embed avanzati a colonne, attiva la moderazione automatica e chatta con l'AI neurale Llama 70B.
     </p>
 
@@ -68,33 +68,33 @@
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto mb-16 sm:mb-20">
-      <div class="glass-card p-4 sm:p-5 text-center border-slate-300 shadow-sm">
-        <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1 font-medieval" id="stat-servers">0</div>
-        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-600 font-bold">Server Connessi</div>
+      <div class="glass-card p-4 sm:p-5 text-center border-slate-800 shadow-sm">
+        <div class="text-2xl sm:text-3xl font-extrabold text-white mb-1 font-medieval" id="stat-servers">0</div>
+        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-bold">Server Connessi</div>
       </div>
-      <div class="glass-card p-4 sm:p-5 text-center border-slate-300 shadow-sm">
-        <div class="text-2xl sm:text-3xl font-extrabold text-red-600 mb-1 font-medieval" id="stat-users">0</div>
-        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-600 font-bold">Membri Totali</div>
+      <div class="glass-card p-4 sm:p-5 text-center border-slate-800 shadow-sm">
+        <div class="text-2xl sm:text-3xl font-extrabold text-red-500 mb-1 font-medieval" id="stat-users">0</div>
+        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-bold">Membri Totali</div>
       </div>
-      <div class="glass-card p-4 sm:p-5 text-center border-slate-300 shadow-sm">
-        <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1 font-medieval" id="stat-ai">Llama 70B</div>
-        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-600 font-bold">Cloudflare AI</div>
+      <div class="glass-card p-4 sm:p-5 text-center border-slate-800 shadow-sm">
+        <div class="text-2xl sm:text-3xl font-extrabold text-white mb-1 font-medieval" id="stat-ai">Llama 70B</div>
+        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-bold">Cloudflare AI</div>
       </div>
-      <div class="glass-card p-4 sm:p-5 text-center border-slate-300 shadow-sm">
-        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-600 mb-1 font-medieval" id="stat-ping">0ms</div>
-        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-600 font-bold">Latenza API</div>
+      <div class="glass-card p-4 sm:p-5 text-center border-slate-800 shadow-sm">
+        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 mb-1 font-medieval" id="stat-ping">0ms</div>
+        <div class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-bold">Latenza API</div>
       </div>
     </div>
 
     <section id="servers" class="max-w-5xl mx-auto text-left mb-16 sm:mb-24 pt-6">
       <div class="flex items-center justify-between mb-6 sm:mb-8">
         <div>
-          <h2 class="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2 font-medieval">
-            <i data-lucide="server" class="w-5 h-5 sm:w-6 sm:h-6 text-red-600"></i> I Tuoi Server
+          <h2 class="text-xl sm:text-2xl font-bold text-white flex items-center gap-2 font-medieval">
+            <i data-lucide="server" class="w-5 h-5 sm:w-6 sm:h-6 text-red-500"></i> I Tuoi Server
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600">Seleziona un server per accedere alle impostazioni dei moduli</p>
+          <p class="text-xs sm:text-sm text-slate-400">Seleziona un server per accedere alle impostazioni dei moduli</p>
         </div>
-        <a id="btn-servers-dash" href="/dashboard.html" class="text-xs sm:text-sm font-bold text-red-600 hover:text-red-700 flex items-center gap-1 font-medieval">
+        <a id="btn-servers-dash" href="/dashboard.html" class="text-xs sm:text-sm font-bold text-red-500 hover:text-red-400 flex items-center gap-1 font-medieval">
           Apri Dashboard <i data-lucide="arrow-right" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
         </a>
       </div>
@@ -104,71 +104,71 @@
 
     <section id="moduli" class="max-w-6xl mx-auto text-left pt-6">
       <div class="text-center max-w-2xl mx-auto mb-12 sm:mb-14">
-        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mb-2 sm:mb-3 font-medieval">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white mb-2 sm:mb-3 font-medieval">
           Moduli di Gestione &amp; Sicurezza
         </h2>
-        <p class="text-slate-600 text-xs sm:text-sm md:text-base font-medium">
+        <p class="text-slate-400 text-xs sm:text-sm md:text-base font-medium">
           Tutti i moduli integrati configurabili direttamente dalla dashboard.
         </p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
         <div id="ai" class="glass-card p-5 sm:p-6">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-950/40 border border-red-800/50 flex items-center justify-center mb-3 sm:mb-4 text-red-500">
             <i data-lucide="sparkles" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Sentry AI</h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold text-white mb-1.5 font-medieval">Sentry AI</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
             AI conversazionale basata su Llama 3.3 70B con ricerca web in tempo reale e risposte alle menzioni.
           </p>
         </div>
 
         <div class="glass-card p-5 sm:p-6">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-950/40 border border-red-800/50 flex items-center justify-center mb-3 sm:mb-4 text-red-500">
             <i data-lucide="scroll" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Live Embed Builder</h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold text-white mb-1.5 font-medieval">Live Embed Builder</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
             Crea annunci ed Embed con anteprima Discord live, riquadri a 2 o 3 colonne e formattazione rapida.
           </p>
         </div>
 
         <div class="glass-card p-5 sm:p-6">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-950/40 border border-red-800/50 flex items-center justify-center mb-3 sm:mb-4 text-red-500">
             <i data-lucide="handshake" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Sistema Partnership</h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold text-white mb-1.5 font-medieval">Sistema Partnership</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
             Form modale rapido su Discord, verifica automatica degli inviti, requisiti minimi e statistiche manager.
           </p>
         </div>
 
         <div class="glass-card p-5 sm:p-6">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-950/40 border border-red-800/50 flex items-center justify-center mb-3 sm:mb-4 text-red-500">
             <i data-lucide="shield-alert" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">AutoMod &amp; Sicurezza</h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold text-white mb-1.5 font-medieval">AutoMod &amp; Sicurezza</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
             Filtri anti-link, anti-invite, anti-spam, parole vietate e comandi di moderazione completi.
           </p>
         </div>
 
         <div class="glass-card p-5 sm:p-6">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-950/40 border border-red-800/50 flex items-center justify-center mb-3 sm:mb-4 text-red-500">
             <i data-lucide="layers" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Reaction Roles</h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold text-white mb-1.5 font-medieval">Reaction Roles</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
             Assegna ruoli con pulsanti colorati e reazioni emoji per tutti i membri del server.
           </p>
         </div>
 
         <div class="glass-card p-5 sm:p-6">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center mb-3 sm:mb-4 text-red-600">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-red-950/40 border border-red-800/50 flex items-center justify-center mb-3 sm:mb-4 text-red-500">
             <i data-lucide="user-plus" class="w-5 h-5"></i>
           </div>
-          <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 font-medieval">Welcomer &amp; Auto-Role</h3>
-          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <h3 class="text-base sm:text-lg font-bold text-white mb-1.5 font-medieval">Welcomer &amp; Auto-Role</h3>
+          <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">
             Messaggi di benvenuto personalizzati nei canali e nei DM con assegnazione automatica del ruolo.
           </p>
         </div>
@@ -176,7 +176,7 @@
     </section>
   </main>
 
-  <footer class="relative z-10 border-t border-slate-300 bg-slate-900 px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-400">
+  <footer class="relative z-10 border-t border-slate-800 bg-[#080d16] px-4 sm:px-6 py-6 sm:py-8 text-center text-xs text-slate-400">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
         <img src="/logo.svg?v=25" class="w-5 h-5 rounded-full" alt="Sentry">

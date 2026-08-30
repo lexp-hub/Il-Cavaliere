@@ -9,22 +9,22 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="/css/styles.css?v=105">
 </head>
-<body class="text-slate-900 min-h-screen flex flex-col md:flex-row overflow-x-hidden">
+<body class="text-slate-100 min-h-screen flex flex-col md:flex-row overflow-x-hidden bg-[#0c121e]">
   <div id="toast-container"></div>
 
   <!-- Mobile Backdrop Overlay -->
-  <div id="drawer-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+  <div id="drawer-backdrop" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
 
   <!-- Mobile Top Header Bar -->
-  <header class="md:hidden flex items-center justify-between p-3.5 border-b border-slate-300 bg-slate-100/95 sticky top-0 z-40">
+  <header class="md:hidden flex items-center justify-between p-3.5 border-b border-slate-800 bg-[#0e1624]/95 sticky top-0 z-40">
     <div class="flex items-center gap-2.5">
-      <button id="btn-toggle-drawer" class="p-2 rounded-xl bg-white/80 border border-slate-300 text-red-600 hover:bg-red-50">
+      <button id="btn-toggle-drawer" class="p-2 rounded-xl bg-slate-800 border border-slate-700 text-red-500 hover:bg-slate-700">
         <i data-lucide="menu" class="w-5 h-5"></i>
       </button>
-      <img src="/logo.svg?v=25" alt="Sentry" class="w-8 h-8 rounded-full border border-slate-300">
+      <img src="/logo.svg?v=110" alt="Sentry" class="w-8 h-8 rounded-full border border-slate-700">
       <div>
-        <h1 class="text-sm font-bold text-slate-900 font-medieval">Sentry</h1>
-        <span class="text-[9px] text-red-600 font-semibold uppercase">Dashboard</span>
+        <h1 class="text-sm font-bold text-white font-medieval">Sentry</h1>
+        <span class="text-[9px] text-red-500 font-semibold uppercase">Dashboard</span>
       </div>
     </div>
     <button id="btn-save-all-mobile" class="btn-knight text-xs py-1.5 px-3 flex items-center gap-1.5">
@@ -32,25 +32,25 @@
     </button>
   </header>
 
-  <!-- Sidebar / Mobile Drawer Navigation (Silver Armor Theme) -->
-  <aside id="sidebar-drawer" class="fixed md:sticky top-0 left-0 z-50 h-screen w-72 md:w-64 bg-slate-100/95 backdrop-blur-2xl border-r border-slate-300 flex flex-col justify-between shrink-0 shadow-2xl md:shadow-none transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
+  <!-- Sidebar / Mobile Drawer Navigation (Dark Charcoal & Ruby Theme) -->
+  <aside id="sidebar-drawer" class="fixed md:sticky top-0 left-0 z-50 h-screen w-72 md:w-64 bg-[#0e1624]/95 backdrop-blur-2xl border-r border-slate-800 flex flex-col justify-between shrink-0 shadow-2xl md:shadow-none transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out">
     <div>
-      <div class="p-4 border-b border-slate-300/80 flex items-center justify-between">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <img src="/logo.svg?v=25" alt="Sentry" class="w-10 h-10 rounded-full shadow-sm border border-slate-300">
+          <img src="/logo.svg?v=110" alt="Sentry" class="w-10 h-10 rounded-full shadow-sm border border-slate-700">
           <div>
-            <h1 class="text-base font-bold text-slate-900 tracking-tight font-medieval">Sentry</h1>
-            <span class="text-[10px] text-red-600 font-semibold tracking-wider uppercase">Dashboard Moderatori</span>
+            <h1 class="text-base font-bold text-white tracking-tight font-medieval">Sentry</h1>
+            <span class="text-[10px] text-red-500 font-semibold tracking-wider uppercase">Dashboard Moderatori</span>
           </div>
         </div>
-        <button id="btn-close-drawer" class="md:hidden p-1.5 rounded-lg bg-white text-slate-600 hover:text-slate-900">
+        <button id="btn-close-drawer" class="md:hidden p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="p-4 border-b border-slate-300/80">
-        <label class="text-[11px] uppercase tracking-wider text-slate-600 font-bold block mb-1.5">Server Selezionato</label>
-        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-white border-slate-300 text-slate-800">
+      <div class="p-4 border-b border-slate-800">
+        <label class="text-[11px] uppercase tracking-wider text-slate-400 font-bold block mb-1.5">Server Selezionato</label>
+        <select id="server-selector" class="form-select text-xs py-2 px-3 bg-slate-900 border-slate-700 text-slate-100">
           <option value="loading">Caricamento server...</option>
         </select>
       </div>
@@ -152,10 +152,10 @@
           </div>
         </div>
         <div class="flex items-center gap-1">
-          <a href="/" class="p-2 rounded-lg bg-white/80 hover:bg-white text-slate-600 hover:text-slate-900 transition-colors shadow-sm" title="Torna alla Home">
+          <a href="/" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors shadow-sm" title="Torna alla Home">
             <i data-lucide="home" class="w-4 h-4"></i>
           </a>
-          <a href="/auth/logout" onclick="localStorage.removeItem('cavaliere_auth_token');" class="p-2 rounded-lg bg-rose-100 hover:bg-rose-200 text-rose-700 transition-colors shadow-sm" title="Disconnetti">
+          <a href="/auth/logout" onclick="localStorage.removeItem('cavaliere_auth_token');" class="p-2 rounded-lg bg-rose-950/50 hover:bg-rose-900/70 text-rose-400 transition-colors shadow-sm" title="Disconnetti">
             <i data-lucide="log-out" class="w-4 h-4"></i>
           </a>
         </div>
@@ -164,19 +164,19 @@
   </aside>
 
   <main class="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full relative z-10">
-    <div class="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-300">
+    <div class="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800">
       <div>
-        <h2 id="current-guild-name" class="text-2xl font-bold text-slate-900 flex items-center gap-2 font-medieval">
-          <i data-lucide="shield" class="w-6 h-6 text-red-600"></i> Server Discord
+        <h2 id="current-guild-name" class="text-2xl font-bold text-white flex items-center gap-2 font-medieval">
+          <i data-lucide="shield" class="w-6 h-6 text-red-500"></i> Server Discord
         </h2>
-        <p class="text-xs text-slate-600 mt-1">Configurazione modulare in tempo reale per il server</p>
+        <p class="text-xs text-slate-400 mt-1">Configurazione modulare in tempo reale per il server</p>
       </div>
 
       <div class="flex items-center gap-3">
-        <div id="user-coins-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 font-bold text-xs shadow-sm">
-          <i data-lucide="coins" class="w-4 h-4 text-amber-600"></i>
+        <div id="user-coins-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 border border-amber-800/60 text-amber-200 font-bold text-xs shadow-sm">
+          <i data-lucide="coins" class="w-4 h-4 text-amber-400"></i>
           <span>Il Tuo Saldo:</span>
-          <span id="user-header-coins" class="text-amber-800 font-mono font-bold">100 🪙</span>
+          <span id="user-header-coins" class="text-amber-300 font-mono font-bold">100 🪙</span>
         </div>
         <div class="badge-online">
           <div class="pulse-dot"></div>
