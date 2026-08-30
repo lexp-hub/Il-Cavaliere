@@ -25,18 +25,18 @@
       }
     </style>
 
-    <!-- Authentic Sentry Crimson Gradient -->
-    <linearGradient id="crimsonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ef4444" />
-      <stop offset="50%" stop-color="#dc2626" />
-      <stop offset="100%" stop-color="#991b1b" />
+    <!-- Radiant Cyber Ruby / Crimson Gradient -->
+    <linearGradient id="heroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4d79" />
+      <stop offset="45%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#b91c1c" />
     </linearGradient>
 
-    <!-- Logo Silver Plate Gradient -->
-    <linearGradient id="logoPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="40%" stop-color="#f8fafc" />
-      <stop offset="100%" stop-color="#e2e8f0" />
+    <!-- Dark Gunmetal / Titanium Emblem Gradient -->
+    <linearGradient id="darkPlateGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="50%" stop-color="#151e2e" />
+      <stop offset="100%" stop-color="#0f172a" />
     </linearGradient>
 
     <!-- Pure Seamless Knights Templar Cross Path -->
@@ -57,109 +57,98 @@
     </g>
   </defs>
 
-  <!-- 1. Site Palette Light Silver/Slate Background Base -->
-  <rect width="600" height="240" rx="16" fill="#f8fafc" />
+  <!-- 1. Deep Dark Charcoal / Gunmetal Slate Base (#0e1420) -->
+  <rect width="600" height="240" rx="16" fill="#0e1420" />
 
-  <!-- 2. Low-Opacity Geometric Polygon Network in Background (Opacity 0.28) -->
-  <g opacity="0.28">
+  <!-- 2. Dark Geometric Mosaic & Low-Poly Tessellations (Opacity 0.18) -->
+  <g opacity="0.18">
     <!-- Left Section: Tessellated Geometric Triangles & Facets -->
-    <polygon points="0,0 90,0 45,65" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="90,0 170,0 125,55" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="170,0 245,0 195,45" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="0,0 45,65 0,95" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
-    <polygon points="45,65 125,55 85,120" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="125,55 195,45 155,110" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="195,45 260,30 215,95" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="0,0 90,0 45,65" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="90,0 170,0 125,55" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="170,0 245,0 195,45" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="0,0 45,65 0,95" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="45,65 125,55 85,120" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="125,55 195,45 155,110" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="195,45 260,30 215,95" fill="#1e293b" stroke="#334155" stroke-width="1" />
     
-    <polygon points="0,95 45,65 35,145" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="45,65 85,120 35,145" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="85,120 155,110 105,175" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
-    <polygon points="155,110 215,95 170,160" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="0,95 35,145 0,180" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="35,145 105,175 60,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="105,175 170,160 140,240" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="0,180 35,145 60,240" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
-    <polygon points="0,180 60,240 0,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="60,240 140,240 100,200" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="140,240 220,240 175,190" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="0,95 45,65 35,145" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="45,65 85,120 35,145" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="85,120 155,110 105,175" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="155,110 215,95 170,160" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="0,95 35,145 0,180" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="35,145 105,175 60,240" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="105,175 170,160 140,240" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="0,180 35,145 60,240" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="0,180 60,240 0,240" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="60,240 140,240 100,200" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="140,240 220,240 175,190" fill="#0f172a" stroke="#334155" stroke-width="1" />
 
     <!-- Right Section: Tessellated Geometric Triangles & Facets -->
-    <polygon points="600,0 510,0 555,65" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="510,0 430,0 475,55" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="430,0 355,0 405,45" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="600,0 555,65 600,95" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
-    <polygon points="555,65 475,55 515,120" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="475,55 405,45 445,110" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="405,45 340,30 385,95" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="600,0 510,0 555,65" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="510,0 430,0 475,55" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="430,0 355,0 405,45" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="600,0 555,65 600,95" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="555,65 475,55 515,120" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="475,55 405,45 445,110" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="405,45 340,30 385,95" fill="#1e293b" stroke="#334155" stroke-width="1" />
 
-    <polygon points="600,95 555,65 565,145" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="555,65 515,120 565,145" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="515,120 445,110 495,175" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
-    <polygon points="445,110 385,95 430,160" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="600,95 565,145 600,180" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="565,145 495,175 540,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="495,175 430,160 460,240" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="600,180 565,145 540,240" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
-    <polygon points="600,180 540,240 600,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="540,240 460,240 500,200" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="460,240 380,240 425,190" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="600,95 555,65 565,145" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="555,65 515,120 565,145" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="515,120 445,110 495,175" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="445,110 385,95 430,160" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="600,95 565,145 600,180" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="565,145 495,175 540,240" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="495,175 430,160 460,240" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="600,180 565,145 540,240" fill="#334155" stroke="#475569" stroke-width="1" />
+    <polygon points="600,180 540,240 600,240" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="540,240 460,240 500,200" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="460,240 380,240 425,190" fill="#0f172a" stroke="#334155" stroke-width="1" />
 
     <!-- Center Top & Bottom Tessellations -->
-    <polygon points="245,0 300,0 270,35" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="300,0 355,0 330,35" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="270,35 330,35 300,60" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="245,0 300,0 270,35" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="300,0 355,0 330,35" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="270,35 330,35 300,60" fill="#1e293b" stroke="#334155" stroke-width="1" />
 
-    <polygon points="220,240 300,240 260,200" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="300,240 380,240 340,200" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
-    <polygon points="260,200 340,200 300,175" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="220,240 300,240 260,200" fill="#0f172a" stroke="#334155" stroke-width="1" />
+    <polygon points="300,240 380,240 340,200" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <polygon points="260,200 340,200 300,175" fill="#1e293b" stroke="#334155" stroke-width="1" />
 
-    <!-- Accent Geometric Crimson & Slate Diamonds -->
-    <polygon points="42,28 54,16 66,28 54,40" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5" />
-    <polygon points="142,82 152,72 162,82 152,92" fill="#dc2626" />
-    <polygon points="25,115 35,105 45,115 35,125" fill="#0f172a" />
-    <polygon points="92,148 104,136 116,148 104,160" fill="#fecaca" stroke="#dc2626" stroke-width="1" />
-    <polygon points="30,200 40,190 50,200 40,210" fill="#dc2626" />
-    <polygon points="178,212 188,202 198,212 188,222" fill="#0f172a" />
+    <!-- Subtle Accent Diamonds -->
+    <polygon points="42,28 54,16 66,28 54,40" fill="#ef4444" opacity="0.4" />
+    <polygon points="142,82 152,72 162,82 152,92" fill="#ef4444" opacity="0.5" />
+    <polygon points="558,28 546,16 534,28 546,40" fill="#ef4444" opacity="0.4" />
+    <polygon points="458,82 448,72 438,82 448,92" fill="#ef4444" opacity="0.5" />
 
-    <polygon points="558,28 546,16 534,28 546,40" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5" />
-    <polygon points="458,82 448,72 438,82 448,92" fill="#dc2626" />
-    <polygon points="575,115 565,105 555,115 565,125" fill="#0f172a" />
-    <polygon points="508,148 496,136 484,148 496,160" fill="#fecaca" stroke="#dc2626" stroke-width="1" />
-    <polygon points="570,200 560,190 550,200 560,210" fill="#dc2626" />
-    <polygon points="422,212 412,202 402,212 412,222" fill="#0f172a" />
-
-    <!-- Hexagons & Precision Grid Lines -->
-    <polygon points="90,20 105,12 120,20 120,38 105,46 90,38" fill="none" stroke="#64748b" stroke-width="1.5" />
-    <polygon points="480,20 495,12 510,20 510,38 495,46 480,38" fill="none" stroke="#64748b" stroke-width="1.5" />
-    <line x1="0" y1="35" x2="220" y2="35" stroke="#64748b" stroke-width="1" stroke-dasharray="4 4" />
-    <line x1="380" y1="35" x2="600" y2="35" stroke="#64748b" stroke-width="1" stroke-dasharray="4 4" />
-    <line x1="65" y1="0" x2="0" y2="130" stroke="#dc2626" stroke-width="1.5" />
-    <line x1="535" y1="0" x2="600" y2="130" stroke="#dc2626" stroke-width="1.5" />
+    <!-- Grid Lines -->
+    <line x1="0" y1="35" x2="220" y2="35" stroke="#334155" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="380" y1="35" x2="600" y2="35" stroke="#334155" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="65" y1="0" x2="0" y2="130" stroke="#ef4444" stroke-width="1.5" opacity="0.4" />
+    <line x1="535" y1="0" x2="600" y2="130" stroke="#ef4444" stroke-width="1.5" opacity="0.4" />
   </g>
 
-  <!-- 3. Outer Frame Border matching site cards -->
-  <rect width="596" height="236" x="2" y="2" rx="14" fill="none" stroke="#cbd5e1" stroke-width="1.5" />
+  <!-- 3. Outer Frame Border in Sleek Titanium -->
+  <rect width="596" height="236" x="2" y="2" rx="14" fill="none" stroke="#263347" stroke-width="1.5" />
 
   <!-- 4. OFFICIAL SENTRY LOGO EMBLEM ON THE LEFT (Centered at x=105, y=120) -->
   <g transform="translate(105, 120)">
-    <!-- Circular Shield Base with Silver Gradient -->
-    <circle cx="0" cy="0" r="62" fill="url(#logoPlateGrad)" stroke="#cbd5e1" stroke-width="1.5" />
-    <circle cx="0" cy="0" r="59" fill="none" stroke="#ffffff" stroke-width="1" />
-    <circle cx="0" cy="0" r="54" fill="none" stroke="#94a3b8" stroke-width="0.75" />
-    <circle cx="0" cy="0" r="48" fill="none" stroke="#dc2626" stroke-width="0.75" stroke-dasharray="3 3" stroke-opacity="0.4" />
+    <!-- Circular Shield Base in Dark Gunmetal / Titanium -->
+    <circle cx="0" cy="0" r="62" fill="url(#darkPlateGrad)" stroke="#334155" stroke-width="1.5" />
+    <circle cx="0" cy="0" r="58" fill="none" stroke="#475569" stroke-width="1" opacity="0.5" />
+    <circle cx="0" cy="0" r="52" fill="none" stroke="#1e293b" stroke-width="1.5" />
+    <circle cx="0" cy="0" r="47" fill="none" stroke="#ef4444" stroke-width="0.75" stroke-dasharray="3 3" stroke-opacity="0.6" />
 
-    <!-- Center Crimson Templar Cross -->
-    <g scale="0.24" fill="url(#crimsonGrad)">
+    <!-- Center Radiant Crimson Templar Cross -->
+    <g scale="0.24" fill="url(#heroGrad)">
       <use href="#templarCrossSingle" transform="scale(0.24)" />
     </g>
 
-    <!-- Green Online Status Indicator Dot on Lower-Right of Avatar -->
-    <circle cx="42" cy="42" r="10" fill="#f8fafc" />
-    <circle cx="42" cy="42" r="8" fill="#10b981" stroke="#f8fafc" stroke-width="1.5" />
+    <!-- Green Online Status Indicator Dot -->
+    <circle cx="42" cy="42" r="10" fill="#0e1420" />
+    <circle cx="42" cy="42" r="8" fill="#10b981" stroke="#0e1420" stroke-width="1.5" />
   </g>
 
   <!-- 5. Top Right 3-Dots Menu -->
-  <g fill="#94a3b8">
+  <g fill="#475569">
     <circle cx="548" cy="36" r="3.5" />
     <circle cx="560" cy="36" r="3.5" />
     <circle cx="572" cy="36" r="3.5" />
@@ -167,33 +156,33 @@
 
   <!-- 6. Text Content on the Right Side (Centered at x=380) -->
   
-  <!-- Subtitle: Authentic Functional Tagline -->
-  <text x="380" y="54" text-anchor="middle" fill="#64748b" font-size="11" class="font-sub">
+  <!-- Subtitle: Authentic Functional Tagline in Slate Muted (#94a3b8) -->
+  <text x="380" y="54" text-anchor="middle" fill="#94a3b8" font-size="11" class="font-sub">
     Advanced Moderation &amp; Community Suite
   </text>
 
-  <!-- Headline Line 1: 'Most Powerful' in Deep Navy/Slate text-main (#0f172a) -->
-  <text x="380" y="92" text-anchor="middle" fill="#0f172a" font-size="32" class="font-title">
+  <!-- Headline Line 1: 'Most Powerful' in Pure Crisp White (#ffffff) -->
+  <text x="380" y="92" text-anchor="middle" fill="#ffffff" font-size="32" class="font-title">
     Most Powerful
   </text>
 
-  <!-- Headline Line 2: 'Sentry Bot' with Crimson Gradient -->
+  <!-- Headline Line 2: 'Sentry Bot' with Radiant Crimson Gradient -->
   <g transform="translate(380, 134)">
     <text x="0" y="0" text-anchor="middle" class="font-title" font-size="32">
-      <tspan fill="url(#crimsonGrad)">Sentry</tspan>
-      <tspan fill="#0f172a"> Bot</tspan>
+      <tspan fill="url(#heroGrad)">Sentry</tspan>
+      <tspan fill="#ffffff"> Bot</tspan>
     </text>
   </g>
 
-  <!-- 7. Command / URL Pill Badge -->
+  <!-- 7. Command / URL Pill Badge: Dark Gunmetal Card -->
   <g transform="translate(250, 162)">
-    <rect width="260" height="40" rx="20" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <rect width="260" height="40" rx="20" fill="#162030" stroke="#283850" stroke-width="1.5" />
     
-    <!-- Slash command icon + text in site palette -->
+    <!-- Slash command icon + text -->
     <text x="130" y="25" text-anchor="middle" class="font-pill" font-size="13.5">
-      <tspan fill="#dc2626" font-weight="800">/</tspan><tspan fill="#0f172a" font-weight="700">help</tspan>
-      <tspan fill="#94a3b8">  |  </tspan>
-      <tspan fill="#475569">sentry.wispbyte.app</tspan>
+      <tspan fill="#f87171" font-weight="800">/</tspan><tspan fill="#ffffff" font-weight="700">help</tspan>
+      <tspan fill="#475569">  |  </tspan>
+      <tspan fill="#94a3b8">sentry.wispbyte.app</tspan>
     </text>
   </g>
 
