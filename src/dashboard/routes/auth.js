@@ -51,11 +51,11 @@ function getCallbackUrl(req) {
   if (process.env.OAUTH2_CALLBACK_URL) {
     return process.env.OAUTH2_CALLBACK_URL;
   }
-  if (req?.headers?.host) {
-    const proto = req.headers['x-forwarded-proto'] || (req.headers.host.includes('localhost') || req.headers.host.match(/^[0-9.]+:\d+$/) ? 'http' : 'https');
+  if (req?.headers?.host && !req.headers.host.includes('localhost') && !req.headers.host.match(/^[0-9.]+:\d+$/)) {
+    const proto = req.headers['x-forwarded-proto'] || 'https';
     return `${proto}://${req.headers.host}/auth/discord/callback`;
   }
-  return 'http://78.154.103.2:9272/auth/discord/callback';
+  return CONFIG.OAUTH2_CALLBACK_URL || 'https://sentry.wispbyte.app/auth/discord/callback';
 }
 
 authRouter.get('/login', (req, res) => {
