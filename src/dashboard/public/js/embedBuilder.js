@@ -217,7 +217,7 @@
           <button type="button" class="btn-open-ch-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un canale">
             <span class="text-red-600 font-extrabold text-xs">#</span> Inserisci Canale
           </button>
-          <div class="ch-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-white border border-slate-300 shadow-2xl z-50 p-2 space-y-2">
+          <div class="ch-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-slate-900/80 border border-slate-800 shadow-2xl z-50 p-2 space-y-2">
             <input type="text" class="ch-pick-search form-input text-xs py-1 px-2 bg-white" placeholder="🔍 Cerca canale...">
             <div class="ch-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
           </div>
@@ -228,7 +228,7 @@
           <button type="button" class="btn-open-role-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un ruolo">
             <span class="text-slate-600 font-extrabold text-xs">@</span> Ruolo
           </button>
-          <div class="role-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-white border border-slate-300 shadow-2xl z-50 p-2 space-y-2">
+          <div class="role-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-slate-900/80 border border-slate-800 shadow-2xl z-50 p-2 space-y-2">
             <input type="text" class="role-pick-search form-input text-xs py-1 px-2 bg-white" placeholder="🔍 Cerca ruolo...">
             <div class="role-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
           </div>
@@ -645,7 +645,7 @@
 
     fields.forEach((field, index) => {
       const row = document.createElement('div');
-      row.className = 'p-3.5 rounded-xl bg-white/90 border border-slate-300 shadow-sm space-y-2.5 transition-all';
+      row.className = 'p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 shadow-sm space-y-2.5 transition-all';
       row.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
           <div class="flex items-center gap-2">
@@ -978,7 +978,7 @@
 
       if (!templates || templates.length === 0) {
         savedTemplatesContainer.innerHTML = `
-          <div class="col-span-full text-center py-8 border border-dashed border-slate-300 rounded-xl p-6 bg-white/40">
+          <div class="col-span-full text-center py-8 border border-dashed border-slate-300 rounded-xl p-6 bg-slate-900/40">
             <i data-lucide="bookmark" class="w-8 h-8 text-slate-400 mx-auto mb-2"></i>
             <p class="text-sm font-bold text-slate-700 mb-1">Nessun template salvato per questo server</p>
             <p class="text-xs text-slate-500">Crea il tuo messaggio personalizzato e clicca su "Salva Embed Corrente" per ritrovarlo sempre qui.</p>
@@ -994,7 +994,7 @@
         const dateStr = tpl.created_at ? new Date(tpl.created_at * 1000).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'Recente';
 
         const card = document.createElement('div');
-        card.className = 'p-4 rounded-xl bg-white/90 border border-slate-300 shadow-md flex flex-col justify-between space-y-3 hover:border-red-500/50 transition-all';
+        card.className = 'p-4 rounded-xl bg-slate-900/80 border border-slate-800 shadow-md flex flex-col justify-between space-y-3 hover:border-red-500/50 transition-all';
         card.innerHTML = `
           <div class="space-y-1.5">
             <div class="flex items-center justify-between gap-2">
@@ -1387,7 +1387,7 @@
 
     welFields.forEach((field, index) => {
       const row = document.createElement('div');
-      row.className = 'p-3.5 rounded-xl bg-white/90 border border-slate-300 shadow-sm space-y-2.5 transition-all';
+      row.className = 'p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 shadow-sm space-y-2.5 transition-all';
       row.innerHTML = `
         <div class="flex flex-wrap items-center justify-between gap-2 pb-1.5 border-b border-slate-200">
           <div class="flex items-center gap-2">

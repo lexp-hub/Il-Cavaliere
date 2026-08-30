@@ -62,10 +62,10 @@
         const isEnabled = enabledMap[key] !== false;
 
         const card = document.createElement('div');
-        card.className = 'p-3.5 rounded-xl bg-white/90 border border-slate-300 shadow-sm flex items-center justify-between gap-3';
+        card.className = 'p-3.5 rounded-xl bg-slate-900/80 border border-slate-800 shadow-sm flex items-center justify-between gap-3';
         card.innerHTML = `
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center ${info.color} shrink-0">
+            <div class="w-8 h-8 rounded-lg bg-slate-800/80 border border-slate-700 flex items-center justify-center ${info.color} shrink-0">
               <i data-lucide="${info.icon}" class="w-4 h-4"></i>
             </div>
             <div>
@@ -330,7 +330,7 @@
           lb.forEach((entry, idx) => {
             const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
             const item = document.createElement('div');
-            item.className = 'p-2.5 rounded-lg bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
+            item.className = 'p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 shadow-sm flex items-center justify-between';
             item.innerHTML = `
               <div class="flex items-center gap-2">
                 <span class="font-bold text-sm">${medal}</span>
@@ -473,7 +473,7 @@
       } else {
         list.forEach(item => {
           const card = document.createElement('div');
-          card.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
+          card.className = 'p-3 rounded-xl bg-slate-900/80 border border-slate-800 shadow-sm flex items-center justify-between';
           card.innerHTML = `
             <div class="flex items-center gap-3">
               <span class="text-base">${item.emoji || '🔘'}</span>
@@ -552,7 +552,7 @@
       } else {
         list.forEach(ar => {
           const card = document.createElement('div');
-          card.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
+          card.className = 'p-3 rounded-xl bg-slate-900/80 border border-slate-800 shadow-sm flex items-center justify-between';
           card.innerHTML = `
             <div>
               <p class="font-bold text-xs text-white">Trigger: <code class="text-purple-300 font-mono">${ar.trigger}</code> <span class="text-[10px] text-slate-400 font-normal">(${ar.match_type})</span></p>
@@ -771,7 +771,7 @@
             const card = document.createElement('div');
             const dateStr = new Date(tk.created_at * 1000).toLocaleString('it-IT');
             const badgeClass = tk.status === 'OPEN' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-700 text-slate-300';
-            card.className = 'p-3 rounded-xl bg-white/80 border border-slate-300 shadow-sm flex items-center justify-between';
+            card.className = 'p-3 rounded-xl bg-slate-900/80 border border-slate-800 shadow-sm flex items-center justify-between';
             card.innerHTML = `
               <div>
                 <div class="flex items-center gap-2">
@@ -1331,14 +1331,14 @@
             lb.forEach((item, idx) => {
               const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
               const div = document.createElement('div');
-              div.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 text-xs';
+              div.className = 'flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 border border-slate-800 text-xs';
               div.innerHTML = `
                 <div class="flex items-center gap-2">
-                  <span class="font-bold text-slate-700">${medal}</span>
-                  <span class="font-mono text-slate-900">&lt;@${item.user_id}&gt;</span>
+                  <span class="font-bold text-slate-300">${medal}</span>
+                  <span class="font-mono text-white">&lt;@${item.user_id}&gt;</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="font-bold text-emerald-600">${item.correct_counts} corretti</span>
+                  <span class="font-bold text-emerald-400">${item.correct_counts} corretti</span>
                   <span class="text-slate-400 text-[10px]">(${item.ruined_counts} errori)</span>
                 </div>
               `;
@@ -1370,16 +1370,16 @@
             lb.forEach((item, idx) => {
               const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
               const div = document.createElement('div');
-              div.className = 'flex items-center justify-between p-2 rounded-lg bg-slate-50 hover:bg-amber-50/50 border border-slate-200 text-xs cursor-pointer transition-colors';
+              div.className = 'flex items-center justify-between p-2.5 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-800 text-xs cursor-pointer transition-colors';
               div.title = 'Clicca per selezionare questo utente nella gestione tesoreria';
               div.innerHTML = `
                 <div class="flex items-center gap-2">
-                  <span class="font-bold text-slate-700">${medal}</span>
-                  <span class="font-mono text-slate-900">&lt;@${item.user_id}&gt;</span>
+                  <span class="font-bold text-slate-300">${medal}</span>
+                  <span class="font-mono text-white">&lt;@${item.user_id}&gt;</span>
                 </div>
                 <div class="flex items-center gap-3">
-                  <span class="font-bold text-amber-600">🪙 ${(item.coins || 0).toLocaleString()} Monete</span>
-                  <span class="text-slate-500 text-[10px]">🎣 ${item.total_fish_caught || 0} prede</span>
+                  <span class="font-bold text-amber-400">🪙 ${(item.coins || 0).toLocaleString()} Monete</span>
+                  <span class="text-slate-400 text-[10px]">🎣 ${item.total_fish_caught || 0} prede</span>
                 </div>
               `;
               div.addEventListener('click', () => {
@@ -2034,7 +2034,7 @@
             const isLocked = r.is_locked ? '🔒 Bloccata' : '🔓 Aperta';
             const isHidden = r.is_hidden ? '👁️ Nascosta' : '👁️ Visibile';
             return `
-              <div class="p-3 rounded-xl bg-white border border-slate-200 flex items-center justify-between gap-3">
+              <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex items-center justify-between gap-3">
                 <div>
                   <div class="flex items-center gap-2">
                     <span class="font-bold text-slate-900 font-mono">Stanza #${r.id}</span>
