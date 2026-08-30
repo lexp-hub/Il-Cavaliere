@@ -19,10 +19,13 @@ export const AutoModManager = {
     if (config.ignored_channels.includes(message.channel.id)) return false;
     if (message.member && message.member.roles.cache.some(r => config.ignored_roles.includes(r.id))) return false;
 
+    const isTicket = this.isTicketChannel(message.guild, message.channel);
+
     let violated = false;
     let reason = '';
 
-    if (config.anti_invite) {
+    // Anti-Invite (Bypassed in ticket channels so users can send Discord links and invites to staff)
+    if (config.anti_invite && !isTicket) {
       const inviteRegex = /(discord\.(gg|io|me|li)|discordapp\.com\/invite|discord\.com\/invite)\/[a-zA-Z0-9-]+/gi;
       if (inviteRegex.test(content)) {
         violated = true;
@@ -30,7 +33,8 @@ export const AutoModManager = {
       }
     }
 
-    if (!violated && config.anti_link) {
+    // Anti-Link (Bypassed in ticket channels so users can send links/screenshots to staff)
+    if (!violated && config.anti_link && !isTicket) {
       const linkRegex = /(https?:\/\/[^\s]+)/gi;
       if (linkRegex.test(content)) {
         violated = true;
@@ -128,6 +132,45 @@ export const AutoModManager = {
         }
       }
 
+      return true;
+    }
+
+    return false;
+  },
+
+  isTicketChannel(guild, channel) {
+    if (!channel) return false;
+
+    // 1. Check if channel is registered in tickets table
+    try {
+      const ticket = DatabaseHelper.getTicketByChannel(channel.id);
+      if (ticket) return true;
+    } catch (e) {}
+
+    // 2. Check channel name convention
+    const channelName = (channel.name || '').toLowerCase();
+    if (
+      channelName.startsWith('ticket-') ||
+      channelName.startsWith('tk-') ||
+      channelName.startsWith('ticket_') ||
+      channelName.startsWith('chiuso-') ||
+      channelName.startsWith('closed-')
+    ) {
+      return true;
+    }
+
+    // 3. Check if channel's parent category matches any ticket panel or ticket config
+    if (channel.parentId) {
+      try {
+        const panels = DatabaseHelper.getTicketPanels(guild.id);
+        if (panels && panels.some(p => p.category_id && p.category_id === channel.parentId)) {
+          return true;
+        }
+      } catch (e) {}
+    }
+
+    // 4. Check channel topic
+    if (channel.topic && (channel.topic.includes('Ticket di') || channel.topic.includes('Ticket ID:'))) {
       return true;
     }
 
