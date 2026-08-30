@@ -225,21 +225,21 @@ export default {
         const result = await TempChannelManager.createVoiceRoom(guild, member, { name: customName, userLimit, withText: false });
         if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
         return interaction.reply({
-          content: `✅ Canale vocale privato creato con successo: <#${result.voiceChannel.id}>! Entra per iniziare a parlare.`,
+          content: `✅ Stanza vocale privata creata: <#${result.voiceChannel.id}>!\n💡 *Apri la chat del canale per trovare l'**Hub di Controllo Rapido** con tutti i pulsanti.*`,
           ephemeral: true
         });
       } else if (tipo === 'text') {
         const result = await TempChannelManager.createTextRoom(guild, member, { name: customName });
         if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
         return interaction.reply({
-          content: `✅ Canale testuale privato creato con successo: <#${result.textChannel.id}>!`,
+          content: `✅ Canale testuale privato creato: <#${result.textChannel.id}>!\n💡 *L'**Hub di Controllo Rapido** con tutti i pulsanti è disponibile nella chat.*`,
           ephemeral: true
         });
       } else {
         const result = await TempChannelManager.createVoiceRoom(guild, member, { name: customName, userLimit, withText: true });
         if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
         return interaction.reply({
-          content: `✅ Stanza completa creata: Vocale <#${result.voiceChannel.id}> e Chat Privata <#${result.textChannel.id}>!`,
+          content: `✅ Stanza completa creata: Vocale <#${result.voiceChannel.id}> e Chat Privata <#${result.textChannel.id}>!\n💡 *Usa l'**Hub di Controllo Rapido** nella chat per gestire blocchi, amici e permessi.*`,
           ephemeral: true
         });
       }

@@ -108,6 +108,9 @@ export const TempChannelManager = {
         await this.sendControlPanel(textChannel, member, voiceChannel.id, textChannel.id);
       }
 
+      // Always send the Quick Control Hub in the Voice Channel's text chat as well
+      await this.sendControlPanel(voiceChannel, member, voiceChannel.id, textChannel ? textChannel.id : null).catch(() => {});
+
       const record = DatabaseHelper.createTempChannelRecord(
         guild.id,
         member.id,
@@ -195,22 +198,23 @@ export const TempChannelManager = {
     const embed = new EmbedBuilder()
       .setColor('#6366f1')
       .setAuthor({
-        name: `Pannello di Controllo Stanza Privata • ${member.displayName || member.user.username}`,
+        name: `Proprietario: ${member.displayName || member.user.username}`,
         iconURL: member.user.displayAvatarURL({ dynamic: true })
       })
-      .setTitle('🛡️ Gestione Stanza & Permessi')
+      .setTitle('🛡️ Hub di Controllo Rapido • Stanza Privata')
       .setDescription(
         `Benvenuto nella tua **Stanza Privata**!\n\n` +
-        `Usa i pulsanti sottostanti per gestire chi può accedere, parlare o visualizzare la stanza:\n\n` +
-        `• 🔒 **Blocca / Sblocca**: Blocca l'ingresso a nuovi utenti\n` +
-        `• 👁️ **Nascondi / Mostra**: Rendi il canale invisibile agli altri membri\n` +
-        `• 👥 **Limite Utenti**: Imposta il numero massimo di partecipanti\n` +
-        `• ➕ **Aggiungi Utente**: Dai accesso a un amico specifico\n` +
-        `• 🚫 **Revoca Accesso**: Rimuovi o espelli un utente dalla stanza\n` +
-        `• ✏️ **Rinomina**: Modifica il nome del canale\n` +
-        `• 🗑️ **Elimina Stanza**: Chiudi e cancella immediatamente la stanza`
+        `Usa i pulsanti interattivi sottostanti per gestire la stanza in tempo reale senza dover digitare comandi:\n\n` +
+        `• 🔒 **Blocca / Sblocca**: Blocca l'ingresso a tutti i nuovi membri\n` +
+        `• 👁️ **Nascondi / Mostra**: Rendi la stanza invisibile/visibile nell'elenco\n` +
+        `• 👥 **Limite Utenti**: Modifica il numero massimo di partecipanti\n` +
+        `• ➕ **Aggiungi Amico**: Concedi l'accesso a un utente specifico\n` +
+        `• 🚫 **Revoca / Espelli**: Espelli un membro o revoca i suoi permessi\n` +
+        `• ✏️ **Rinomina**: Cambia il nome della tua stanza\n` +
+        `• 👑 **Passa Proprietà**: Trasferisci il controllo della stanza a un amico\n` +
+        `• 🗑️ **Elimina Stanza**: Chiudi e cancella definitivamente il canale`
       )
-      .setFooter({ text: 'Solo il proprietario della stanza o gli admin possono usare questi comandi' })
+      .setFooter({ text: 'Sentry • Quick Room Control Hub | Solo il proprietario o gli admin possono usare i tasti' })
       .setTimestamp();
 
     const row1 = new ActionRowBuilder().addComponents(
@@ -238,7 +242,13 @@ export const TempChannelManager = {
     const title = options.title || '🔊 Hub Creazione Canali Privati & Vocali';
     const description = options.description ||
       `Crea all'istante la tua **Stanza Privata** (vocale, testuale o entrambe) personalizzata!\n\n` +
-      `Tutte le stanze create ti daranno i **permessi da proprietario** per invitare amici, bloccare l'accesso, impostare limiti e gestire il canale liberamente.\n\n` +
+      `⚡ **Hub di Controllo Rapido in Chat**:\n` +
+      `Ogni stanza creata riceverà automaticamente all'interno della sua chat un **Pannello di Gestione con Pulsanti Rapidi** per:\n` +
+      `• 🔒 Bloccare o sbloccare l'ingresso\n` +
+      `• 👁️ Nascondere o mostrare il canale\n` +
+      `• 👥 Impostare il limite partecipanti\n` +
+      `• ➕ Aggiungere amici ed espellere utenti indesiderati\n` +
+      `• ✏️ Rinominare la stanza con un click!\n\n` +
       `👇 **Scegli il tipo di stanza che desideri creare:**`;
 
     const embed = new EmbedBuilder()
@@ -280,7 +290,7 @@ export const TempChannelManager = {
       const result = await this.createVoiceRoom(guild, member, { withText: false });
       if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
       return interaction.reply({
-        content: `✅ Stanza vocale creata con successo: <#${result.voiceChannel.id}>! Entra per iniziare a parlare.`,
+        content: `✅ Stanza vocale creata: <#${result.voiceChannel.id}>!\n💡 *Apri la chat del canale per trovare l'**Hub di Controllo Rapido** con i pulsanti di gestione.*`,
         ephemeral: true
       });
     }
@@ -289,7 +299,7 @@ export const TempChannelManager = {
       const result = await this.createTextRoom(guild, member);
       if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
       return interaction.reply({
-        content: `✅ Canale testuale privato creato con successo: <#${result.textChannel.id}>!`,
+        content: `✅ Canale testuale privato creato: <#${result.textChannel.id}>!\n💡 *Troverai l'**Hub di Controllo Rapido** con tutti i pulsanti fissato nella chat.*`,
         ephemeral: true
       });
     }
@@ -298,7 +308,7 @@ export const TempChannelManager = {
       const result = await this.createVoiceRoom(guild, member, { withText: true });
       if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
       return interaction.reply({
-        content: `✅ Stanza completa creata con successo: <#${result.voiceChannel.id}> e chat <#${result.textChannel.id}>!`,
+        content: `✅ Stanza completa creata: Vocale <#${result.voiceChannel.id}> e Chat Privata <#${result.textChannel.id}>!\n💡 *Usa l'**Hub di Controllo Rapido** nella chat per gestire accessi, blocchi e permessi.*`,
         ephemeral: true
       });
     }
