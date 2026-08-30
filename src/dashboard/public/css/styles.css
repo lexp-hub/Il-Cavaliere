@@ -143,8 +143,6 @@ body {
   border-bottom: 1px solid #cbd5e1;
 }
 
-.text-gradient {
-  color: #0f172a;
 }
 
 .text-crimson {
@@ -152,7 +150,6 @@ body {
 }
 
 .btn-cyber, .btn-knight {
-  background: #dc2626;
   color: #fff !important;
   font-weight: 700;
   border-radius: 8px;
