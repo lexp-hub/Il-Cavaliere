@@ -14,7 +14,14 @@
       }
     </style>
 
-    <!-- Master Refined Elongated Knights Templar Cross ('t') with Solid Flat Fill -->
+    <!-- Crimson Gradient exclusively for the Templar Cross 't' -->
+    <linearGradient id="crusaderCrossGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="50%" stop-color="#dc2626" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+
+    <!-- Master Refined Elongated Knights Templar Cross ('t') -->
     <g id="elongatedTemplarT">
       <path d="M -4 -4 
                C -5.5 -15 -12 -32 -25 -44 
@@ -32,63 +39,63 @@
     </g>
   </defs>
 
-  <!-- 1. Pure Flat Background Base (Zero Gradients, Zero Shadows) -->
+  <!-- 1. Pure Flat Background Base -->
   <rect width="600" height="240" fill="#f8fafc" />
 
-  <!-- 2. Dense Geometric Mosaic & Tessellations Filling the Canvas -->
-  <g id="geometric-figures-layer">
+  <!-- 2. Dense Geometric Mosaic & Tessellations with Low Opacity (0.28) -->
+  <g id="geometric-figures-layer" opacity="0.28">
     <!-- Left Section: Tessellated Geometric Triangles & Facets -->
-    <polygon points="0,0 90,0 45,65" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="90,0 170,0 125,55" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="170,0 245,0 195,45" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="0,0 45,65 0,95" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="45,65 125,55 85,120" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="125,55 195,45 155,110" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="195,45 260,30 215,95" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
+    <polygon points="0,0 90,0 45,65" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="90,0 170,0 125,55" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="170,0 245,0 195,45" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="0,0 45,65 0,95" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
+    <polygon points="45,65 125,55 85,120" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="125,55 195,45 155,110" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="195,45 260,30 215,95" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
     
-    <polygon points="0,95 45,65 35,145" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="45,65 85,120 35,145" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="85,120 155,110 105,175" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="155,110 215,95 170,160" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="0,95 35,145 0,180" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="35,145 105,175 60,240" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="105,175 170,160 140,240" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="0,180 35,145 60,240" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="0,180 60,240 0,240" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="60,240 140,240 100,200" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="140,240 220,240 175,190" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <polygon points="0,95 45,65 35,145" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="45,65 85,120 35,145" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="85,120 155,110 105,175" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
+    <polygon points="155,110 215,95 170,160" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="0,95 35,145 0,180" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="35,145 105,175 60,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="105,175 170,160 140,240" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="0,180 35,145 60,240" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
+    <polygon points="0,180 60,240 0,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="60,240 140,240 100,200" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="140,240 220,240 175,190" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
 
     <!-- Right Section: Tessellated Geometric Triangles & Facets -->
-    <polygon points="600,0 510,0 555,65" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="510,0 430,0 475,55" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="430,0 355,0 405,45" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="600,0 555,65 600,95" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="555,65 475,55 515,120" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="475,55 405,45 445,110" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="405,45 340,30 385,95" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
+    <polygon points="600,0 510,0 555,65" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="510,0 430,0 475,55" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="430,0 355,0 405,45" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="600,0 555,65 600,95" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
+    <polygon points="555,65 475,55 515,120" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="475,55 405,45 445,110" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="405,45 340,30 385,95" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
 
-    <polygon points="600,95 555,65 565,145" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="555,65 515,120 565,145" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="515,120 445,110 495,175" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="445,110 385,95 430,160" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="600,95 565,145 600,180" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="565,145 495,175 540,240" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="495,175 430,160 460,240" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="600,180 565,145 540,240" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="600,180 540,240 600,240" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="540,240 460,240 500,200" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="460,240 380,240 425,190" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
+    <polygon points="600,95 555,65 565,145" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="555,65 515,120 565,145" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="515,120 445,110 495,175" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
+    <polygon points="445,110 385,95 430,160" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="600,95 565,145 600,180" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="565,145 495,175 540,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="495,175 430,160 460,240" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="600,180 565,145 540,240" fill="#94a3b8" stroke="#64748b" stroke-width="1" />
+    <polygon points="600,180 540,240 600,240" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="540,240 460,240 500,200" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="460,240 380,240 425,190" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
 
     <!-- Center Top & Bottom Tessellations -->
-    <polygon points="245,0 300,0 270,35" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="300,0 355,0 330,35" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="270,35 330,35 300,60" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+    <polygon points="245,0 300,0 270,35" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="300,0 355,0 330,35" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="270,35 330,35 300,60" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
 
-    <polygon points="220,240 300,240 260,200" fill="#ffffff" stroke="#cbd5e1" stroke-width="1" />
-    <polygon points="300,240 380,240 340,200" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1" />
-    <polygon points="260,200 340,200 300,175" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1" />
+    <polygon points="220,240 300,240 260,200" fill="#ffffff" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="300,240 380,240 340,200" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1" />
+    <polygon points="260,200 340,200 300,175" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" />
 
-    <!-- Accent Geometric Diamonds & Polygons (Solid Crimson & Dark Slate) -->
+    <!-- Accent Geometric Diamonds & Polygons -->
     <!-- Left Diamonds -->
     <polygon points="42,28 54,16 66,28 54,40" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5" />
     <polygon points="142,82 152,72 162,82 152,92" fill="#dc2626" />
@@ -106,20 +113,20 @@
     <polygon points="422,212 412,202 402,212 412,222" fill="#0f172a" />
 
     <!-- Hexagons & Precision Poly Lines -->
-    <polygon points="90,20 105,12 120,20 120,38 105,46 90,38" fill="none" stroke="#94a3b8" stroke-width="1.5" />
-    <polygon points="480,20 495,12 510,20 510,38 495,46 480,38" fill="none" stroke="#94a3b8" stroke-width="1.5" />
+    <polygon points="90,20 105,12 120,20 120,38 105,46 90,38" fill="none" stroke="#64748b" stroke-width="1.5" />
+    <polygon points="480,20 495,12 510,20 510,38 495,46 480,38" fill="none" stroke="#64748b" stroke-width="1.5" />
     
-    <polygon points="15,145 28,138 41,145 41,160 28,167 15,160" fill="none" stroke="#cbd5e1" stroke-width="1.25" />
-    <polygon points="559,145 572,138 585,145 585,160 572,167 559,160" fill="none" stroke="#cbd5e1" stroke-width="1.25" />
+    <polygon points="15,145 28,138 41,145 41,160 28,167 15,160" fill="none" stroke="#64748b" stroke-width="1.25" />
+    <polygon points="559,145 572,138 585,145 585,160 572,167 559,160" fill="none" stroke="#64748b" stroke-width="1.25" />
 
     <polygon points="110,205 122,198 134,205 134,218 122,225 110,218" fill="none" stroke="#dc2626" stroke-width="1.25" stroke-dasharray="3 3" />
     <polygon points="466,205 478,198 490,205 490,218 478,225 466,218" fill="none" stroke="#dc2626" stroke-width="1.25" stroke-dasharray="3 3" />
 
     <!-- Crisp Geometric Isometric & Grid Lines -->
-    <line x1="0" y1="35" x2="220" y2="35" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4" />
-    <line x1="380" y1="35" x2="600" y2="35" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4" />
-    <line x1="0" y1="205" x2="220" y2="205" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4" />
-    <line x1="380" y1="205" x2="600" y2="205" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="0" y1="35" x2="220" y2="35" stroke="#64748b" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="380" y1="35" x2="600" y2="35" stroke="#64748b" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="0" y1="205" x2="220" y2="205" stroke="#64748b" stroke-width="1" stroke-dasharray="4 4" />
+    <line x1="380" y1="205" x2="600" y2="205" stroke="#64748b" stroke-width="1" stroke-dasharray="4 4" />
 
     <line x1="65" y1="0" x2="0" y2="130" stroke="#dc2626" stroke-width="1.5" />
     <line x1="535" y1="0" x2="600" y2="130" stroke="#dc2626" stroke-width="1.5" />
@@ -127,7 +134,7 @@
     <line x1="600" y1="110" x2="535" y2="240" stroke="#0f172a" stroke-width="1.25" />
   </g>
 
-  <!-- 3. Outer Geometric Frame with Clean Sharp Bevels (Zero Shadows) -->
+  <!-- 3. Outer Geometric Frame with Clean Sharp Bevels -->
   <rect width="596" height="236" x="2" y="2" rx="4" fill="none" stroke="#0f172a" stroke-width="2" />
   <rect width="588" height="228" x="6" y="6" rx="2" fill="none" stroke="#cbd5e1" stroke-width="1" />
   <rect width="582" height="222" x="9" y="9" rx="1" fill="none" stroke="#dc2626" stroke-width="1" stroke-dasharray="6 6" />
@@ -146,7 +153,7 @@
     <polygon points="574,228 578,224 582,228 578,232" />
   </g>
 
-  <!-- 4. Wordmark Block Centered with Flat Solid Colors (Zero Gradients, Zero Shadows) -->
+  <!-- 4. Wordmark Block: Centered with Templar 't' Gradient Fill -->
   <g transform="translate(300, 120)">
     <g transform="translate(-223, 0)">
       <!-- Left Part: 'sen' in Solid Deep Dark Slate/Black -->
@@ -154,8 +161,8 @@
         sen
       </text>
 
-      <!-- Center: Elongated Templar Cross ('t') in Solid Bright Crimson Red -->
-      <g transform="translate(262, -4) scale(0.90)" fill="#dc2626">
+      <!-- Center: Elongated Templar Cross ('t') with Crimson Gradient Fill -->
+      <g transform="translate(262, -4) scale(0.90)" fill="url(#crusaderCrossGrad)">
         <use href="#elongatedTemplarT" />
       </g>
 
@@ -164,8 +171,8 @@
         ry
       </text>
 
-      <!-- Signature Crimson Square/Diamond Period Dot on Baseline -->
-      <polygon points="438,20 448,30 438,40 428,30" fill="#dc2626" />
+      <!-- Signature Crimson Period Dot on Baseline with Gradient Fill -->
+      <polygon points="438,20 448,30 438,40 428,30" fill="url(#crusaderCrossGrad)" />
     </g>
   </g>
 </svg>
