@@ -150,11 +150,12 @@ body {
 }
 
 .btn-cyber, .btn-knight {
-  color: #fff !important;
+  background: #dc2626 !important;
+  color: #ffffff !important;
   font-weight: 700;
   border-radius: 8px;
   border: 1px solid #b91c1c;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2);
   transition: all 0.15s ease;
   display: inline-flex;
   align-items: center;
@@ -162,9 +163,10 @@ body {
   gap: 0.5rem;
 }
 .btn-cyber:hover, .btn-knight:hover {
-  background: #b91c1c;
+  background: #b91c1c !important;
   border-color: #991b1b;
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
   transform: translateY(-1px);
 }
 
