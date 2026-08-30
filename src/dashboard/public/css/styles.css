@@ -228,6 +228,60 @@ select option {
   border-color: #222f44 !important;
 }
 
+/* Formatting Toolbars & Markdown Action Buttons */
+.btn-var-tag, button.btn-var-tag,
+.btn-fmt-b, .btn-fmt-i, .btn-fmt-s, .btn-fmt-c, .btn-fmt-cb, .btn-fmt-q, .btn-fmt-l,
+#btn-fmt-bold, #btn-fmt-italic, #btn-fmt-strike, #btn-fmt-code, #btn-fmt-quote, #btn-fmt-link,
+#btn-reset-embed, #btn-save-template, .btn-open-role-pick, #btn-open-role-picker {
+  background-color: #162032 !important;
+  border: 1px solid #2d3f58 !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25) !important;
+  transition: all 0.15s ease;
+}
+.btn-var-tag:hover, button.btn-var-tag:hover,
+.btn-fmt-b:hover, .btn-fmt-i:hover, .btn-fmt-s:hover, .btn-fmt-c:hover, .btn-fmt-cb:hover, .btn-fmt-q:hover, .btn-fmt-l:hover,
+#btn-fmt-bold:hover, #btn-fmt-italic:hover, #btn-fmt-strike:hover, #btn-fmt-code:hover, #btn-fmt-quote:hover, #btn-fmt-link:hover,
+#btn-reset-embed:hover, #btn-save-template:hover, .btn-open-role-pick:hover, #btn-open-role-picker:hover {
+  background-color: #223046 !important;
+  border-color: #3e5677 !important;
+  color: #ffffff !important;
+}
+
+/* Channel Picker Inserter Button */
+.btn-open-ch-pick, #btn-open-channel-picker {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  color: #fca5a5 !important;
+  transition: all 0.15s ease;
+}
+.btn-open-ch-pick:hover, #btn-open-channel-picker:hover {
+  background-color: rgba(239, 68, 68, 0.25) !important;
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  color: #ffffff !important;
+}
+
+/* Amber Warning & Notice Boxes */
+.glass-card .bg-amber-50,
+.glass-card .bg-amber-100 {
+  background-color: rgba(120, 53, 15, 0.2) !important;
+  border-color: rgba(217, 119, 6, 0.4) !important;
+  color: #fef3c7 !important;
+}
+.glass-card .text-amber-950,
+.glass-card .text-amber-900,
+.glass-card .text-amber-800 {
+  color: #fde68a !important;
+}
+.glass-card .text-amber-700,
+.glass-card .text-amber-600 {
+  color: #fbbf24 !important;
+}
+.glass-card .bg-amber-200 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  border: 1px solid rgba(245, 158, 11, 0.4) !important;
+}
+
 /* Discord preview dark theme preservation */
 .discord-chat-container {
   background-color: var(--discord-dark) !important;

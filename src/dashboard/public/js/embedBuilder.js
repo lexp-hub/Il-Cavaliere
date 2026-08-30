@@ -190,46 +190,46 @@
 
     container.innerHTML = `
       <div class="flex flex-wrap items-center gap-1">
-        <button type="button" class="btn-fmt-b px-2 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Grassetto: **testo**">
+        <button type="button" class="btn-fmt-b px-2 py-0.5 text-[11px] font-bold rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Grassetto: **testo**">
           <b>B</b>
         </button>
-        <button type="button" class="btn-fmt-i px-2 py-0.5 text-[11px] italic rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Corsivo: *testo*">
+        <button type="button" class="btn-fmt-i px-2 py-0.5 text-[11px] italic rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Corsivo: *testo*">
           <i>I</i>
         </button>
-        <button type="button" class="btn-fmt-s px-2 py-0.5 text-[11px] line-through rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Barrato: ~~testo~~">
+        <button type="button" class="btn-fmt-s px-2 py-0.5 text-[11px] line-through rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Barrato: ~~testo~~">
           S
         </button>
-        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Codice Inline: \`codice\`">
+        <button type="button" class="btn-fmt-c px-2 py-0.5 text-[11px] font-mono rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Codice Inline: \`codice\`">
           &lt;/&gt;
         </button>
-        <button type="button" class="btn-fmt-cb px-2 py-0.5 text-[11px] font-mono rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Blocco Codice: \`\`\`...\`\`\`">
+        <button type="button" class="btn-fmt-cb px-2 py-0.5 text-[11px] font-mono rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Blocco Codice: \`\`\`...\`\`\`">
           { }
         </button>
-        <button type="button" class="btn-fmt-q px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Citazione: > testo">
+        <button type="button" class="btn-fmt-q px-2 py-0.5 text-[11px] rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Citazione: > testo">
           &gt; Quote
         </button>
-        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm transition-colors" title="Link Mascherato: [titolo](url)">
+        <button type="button" class="btn-fmt-l px-2 py-0.5 text-[11px] rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm transition-colors" title="Link Mascherato: [titolo](url)">
           🔗 Link
         </button>
 
         <!-- Searchable Channel Inserter -->
         <div class="relative inline-block text-left">
-          <button type="button" class="btn-open-ch-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un canale">
-            <span class="text-red-600 font-extrabold text-xs">#</span> Inserisci Canale
+          <button type="button" class="btn-open-ch-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-red-950/40 hover:bg-red-900/60 text-red-300 border border-red-800/60 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un canale">
+            <span class="text-red-400 font-extrabold text-xs">#</span> Inserisci Canale
           </button>
-          <div class="ch-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-slate-900/80 border border-slate-800 shadow-2xl z-50 p-2 space-y-2">
-            <input type="text" class="ch-pick-search form-input text-xs py-1 px-2 bg-white" placeholder="🔍 Cerca canale...">
+          <div class="ch-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl z-50 p-2 space-y-2">
+            <input type="text" class="ch-pick-search form-input text-xs py-1 px-2" placeholder="🔍 Cerca canale...">
             <div class="ch-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
           </div>
         </div>
 
         <!-- Searchable Role Inserter -->
         <div class="relative inline-block text-left">
-          <button type="button" class="btn-open-role-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-slate-200 hover:bg-slate-300 text-slate-800 border border-slate-300 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un ruolo">
-            <span class="text-slate-600 font-extrabold text-xs">@</span> Ruolo
+          <button type="button" class="btn-open-role-pick px-2.5 py-0.5 text-[11px] font-bold rounded bg-slate-800/90 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow-sm flex items-center gap-1 transition-colors" title="Cerca e inserisci un ruolo">
+            <span class="text-slate-400 font-extrabold text-xs">@</span> Ruolo
           </button>
-          <div class="role-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-slate-900/80 border border-slate-800 shadow-2xl z-50 p-2 space-y-2">
-            <input type="text" class="role-pick-search form-input text-xs py-1 px-2 bg-white" placeholder="🔍 Cerca ruolo...">
+          <div class="role-pick-dropdown hidden absolute right-0 mt-1 w-64 rounded-xl bg-slate-900 border border-slate-800 shadow-2xl z-50 p-2 space-y-2">
+            <input type="text" class="role-pick-search form-input text-xs py-1 px-2" placeholder="🔍 Cerca ruolo...">
             <div class="role-pick-list max-h-48 overflow-y-auto space-y-0.5 text-xs"></div>
           </div>
         </div>
