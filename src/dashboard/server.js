@@ -18,6 +18,10 @@ export function createDashboardServer(botClient) {
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: '/ws' });
 
+  // Cloudflare keep-alive optimizations to prevent Error 522 / timeouts
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
+
   app.set('trust proxy', 1);
 
   app.use(cors({ origin: true, credentials: true }));

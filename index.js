@@ -20,7 +20,7 @@ async function main() {
   
   server.listen(CONFIG.PORT, '0.0.0.0', () => {
     console.log(`\n🌐 [Dashboard] Web Server attivo con successo su Wispbyte!`);
-    console.log(`🔗 In ascolto su: http://0.0.0.0:${CONFIG.PORT}`);
+    console.log(`🔗 In ascolto su: Sentry.wispbyte.app`);
     console.log(`🛡️ Sentry Management Dashboard Online\n`);
   });
 
@@ -36,7 +36,7 @@ async function main() {
       });
   } else {
     console.log('\x1b[33m[Bot Avviso] DISCORD_BOT_TOKEN non impostato nelle variabili d\'ambiente.\x1b[0m');
-    console.log('\x1b[32m[Dashboard] La Dashboard è pienamente accessibile all\'indirizzo: http://0.0.0.0:' + CONFIG.PORT + '\x1b[0m\n');
+    console.log('\x1b[32m[Dashboard] La Dashboard è pienamente accessibile all\'indirizzo: Sentry.wispbyte.app \x1b[0m\n');
   }
 }
 
