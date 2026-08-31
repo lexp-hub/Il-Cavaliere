@@ -1,47 +1,61 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <!-- Drop Shadow Filters -->
-    <filter id="crestShadow" x="-25%" y="-25%" width="150%" height="150%">
-      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.75" />
+    <filter id="crestShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.8" />
     </filter>
-    <filter id="shieldShadow" x="-25%" y="-25%" width="150%" height="150%">
-      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.6" />
+    <filter id="shieldShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+    <filter id="rubyGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#ff4d79" flood-opacity="0.4" />
     </filter>
 
-    <!-- Gradients -->
-    <!-- Sentry Cyber Ruby / Crimson Gradient -->
-    <linearGradient id="sentryRuby" x1="0%" y1="0%" x2="100%" y2="100%">
+    <!-- Sentry Signature Gradients -->
+    <!-- Dark Gunmetal Base (from logo.svg) -->
+    <linearGradient id="logoDarkBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="50%" stop-color="#151e2e" />
+      <stop offset="100%" stop-color="#0b111e" />
+    </linearGradient>
+
+    <!-- Radiant Cyber Ruby / Crimson Gradient (Exact from logo.svg) -->
+    <linearGradient id="crusaderCrossGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ff4d79" />
-      <stop offset="40%" stop-color="#ef4444" />
+      <stop offset="45%" stop-color="#ef4444" />
       <stop offset="100%" stop-color="#b91c1c" />
     </linearGradient>
 
-    <linearGradient id="darkRuby" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#b91c1c" />
-      <stop offset="60%" stop-color="#881337" />
-      <stop offset="100%" stop-color="#4c0519" />
+    <linearGradient id="darkCrimsonShadow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#991b1b" />
+      <stop offset="60%" stop-color="#701a1e" />
+      <stop offset="100%" stop-color="#450a0a" />
     </linearGradient>
 
-    <!-- Antique Gold for Feathers and Trim -->
+    <!-- Metallic Burnished Gold Gradient -->
     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="25%" stop-color="#fbbf24" />
+      <stop offset="65%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#78350f" />
+    </linearGradient>
+
+    <!-- Quarter Imperial Gold Gradient -->
+    <linearGradient id="goldQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fde047" />
-      <stop offset="30%" stop-color="#fbbf24" />
-      <stop offset="75%" stop-color="#d97706" />
+      <stop offset="35%" stop-color="#f59e0b" />
+      <stop offset="80%" stop-color="#d97706" />
       <stop offset="100%" stop-color="#92400e" />
     </linearGradient>
 
-    <linearGradient id="goldQuarter" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="50%" stop-color="#d97706" />
-      <stop offset="100%" stop-color="#b45309" />
-    </linearGradient>
-
-    <linearGradient id="silverQuarter" x1="0%" y1="0%" x2="0%" y2="100%">
+    <!-- Quarter Silver White Gradient -->
+    <linearGradient id="silverQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="50%" stop-color="#f8fafc" />
-      <stop offset="100%" stop-color="#e2e8f0" />
+      <stop offset="40%" stop-color="#f8fafc" />
+      <stop offset="100%" stop-color="#cbd5e1" />
     </linearGradient>
 
+    <!-- Dark Titanium Shield Rim -->
     <linearGradient id="frameDark" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#334155" />
       <stop offset="50%" stop-color="#1e293b" />
@@ -55,17 +69,17 @@
       <stop offset="100%" stop-color="#451a03" />
     </linearGradient>
 
-    <!-- Clean Shield Clip Path -->
-    <clipPath id="shieldClipClean">
+    <!-- Shield Interior Clipping Path (Compact Gothic Heater Shield) -->
+    <clipPath id="shieldClipExact">
       <path d="M 256,118 
                L 366,140 
                C 378,222 364,316 256,402 
                C 148,316 134,222 146,140 Z" />
     </clipPath>
 
-    <!-- EXACT SENTRY OFFICIAL LOGO TEMPLAR CROSS (FROM LOGO.SVG) -->
-    <g id="exactSentryLogoCross">
-      <!-- Dark Red Emboss Shadow Stroke -->
+    <!-- PURE EXACT SENTRY KNIGHTS TEMPLAR CROSS (DIRECT FROM LOGO.SVG) -->
+    <g id="exactSentryCross">
+      <!-- Dark Crimson Base Shadow Rim -->
       <path d="M -15 -15 
                C -20 -55 -45 -115 -92 -165 
                C -40 -140 40 -140 92 -165 
@@ -79,8 +93,8 @@
                C -55 20 -115 45 -165 92 
                C -140 40 -140 -40 -165 -92 
                C -115 -45 -55 -20 -15 -15 Z" 
-            fill="url(#darkRuby)" stroke="#701a1e" stroke-width="4" stroke-linejoin="round" />
-      <!-- Radiant Sentry Cyber Ruby Fill -->
+            fill="url(#darkCrimsonShadow)" stroke="#450a0a" stroke-width="4" stroke-linejoin="round" />
+      <!-- Radiant Sentry Cyber Ruby Body -->
       <path d="M -12 -12 
                C -17 -48 -40 -102 -82 -148 
                C -35 -125 35 -125 82 -148 
@@ -94,15 +108,15 @@
                C -48 17 -102 40 -148 82 
                C -125 35 -125 -35 -148 -82 
                C -102 -40 -48 -17 -12 -12 Z" 
-            fill="url(#sentryRuby)" />
+            fill="url(#crusaderCrossGrad)" />
     </g>
 
-    <!-- Heraldic Castle Tower -->
-    <g id="heraldicCastleTower">
+    <!-- Heraldic Castle Tower in Sentry Crimson & Shading -->
+    <g id="sentryCastleTower">
       <path d="M -25,36 L 25,36 L 20,-14 L 26,-14 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-14 L -20,-14 Z" 
-            fill="url(#darkRuby)" stroke="#701a1e" stroke-width="2" stroke-linejoin="round" />
+            fill="url(#darkCrimsonShadow)" stroke="#450a0a" stroke-width="2" stroke-linejoin="round" />
       <path d="M -23,34 L 23,34 L 18,-12 L 24,-12 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-12 L -18,-12 Z" 
-            fill="url(#sentryRuby)" />
+            fill="url(#crusaderCrossGrad)" />
       <polygon points="-24,-34 -18,-34 -18,-30 -24,-30" fill="#fca5a5" />
       <polygon points="-6,-34 6,-34 6,-30 -6,-30" fill="#fca5a5" />
       <polygon points="18,-34 24,-34 24,-30 18,-30" fill="#fca5a5" />
@@ -111,12 +125,18 @@
     </g>
   </defs>
 
-  <!-- 1. Canvas Base Circle: Dark Obsidian Discord Plate -->
-  <circle cx="256" cy="256" r="254" fill="#080c14" />
+  <!-- 1. Circular Base: Sentry Dark Titanium Plate -->
+  <circle cx="256" cy="256" r="256" fill="url(#logoDarkBg)" />
 
-  <!-- 2. Dense, Overlapping Circular Wing-Blades & Laurel Crest (Ruby & Gold) -->
+  <!-- Sentry Signature Concentric Hairline Borders (from logo.svg) -->
+  <circle cx="256" cy="256" r="254" fill="none" stroke="#334155" stroke-width="1.5" stroke-opacity="0.8" />
+  <circle cx="256" cy="256" r="248" fill="none" stroke="#475569" stroke-width="1" stroke-opacity="0.4" />
+  <circle cx="256" cy="256" r="238" fill="none" stroke="#1e293b" stroke-width="2" />
+  <circle cx="256" cy="256" r="224" fill="none" stroke="#ef4444" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="6 8" />
+
+  <!-- 2. Dense, Overlapping Laurel & Wing Blades (Ruby & Gold) -->
   <g filter="url(#crestShadow)">
-    <!-- === LEFT WING LAUREL (Dense overlapping plumes) === -->
+    <!-- Left Wing Outer Crimson Blades -->
     <path d="M 256,76 
              L 218,65 L 185,85 L 205,108 
              L 155,105 L 128,135 L 158,155 
@@ -125,7 +145,7 @@
              L 72,325 L 78,368 L 120,365 
              L 105,395 L 135,425 L 175,410 
              L 175,432 L 215,448 L 256,478 Z" 
-          fill="url(#darkRuby)" stroke="#450a0a" stroke-width="1.5" />
+          fill="url(#darkCrimsonShadow)" stroke="#450a0a" stroke-width="1.5" />
 
     <path d="M 256,76 
              L 224,72 L 194,90 L 208,110 
@@ -135,9 +155,9 @@
              L 82,325 L 88,365 L 122,365 
              L 115,394 L 140,420 L 176,408 
              L 182,430 L 218,444 L 256,478 Z" 
-          fill="url(#sentryRuby)" />
+          fill="url(#crusaderCrossGrad)" />
 
-    <!-- === RIGHT WING LAUREL (Symmetric) === -->
+    <!-- Right Wing Outer Crimson Blades (Symmetric) -->
     <path d="M 256,76 
              L 294,65 L 327,85 L 307,108 
              L 357,105 L 384,135 L 354,155 
@@ -146,7 +166,7 @@
              L 440,325 L 434,368 L 392,365 
              L 407,395 L 377,425 L 337,410 
              L 337,432 L 297,448 L 256,478 Z" 
-          fill="url(#darkRuby)" stroke="#450a0a" stroke-width="1.5" />
+          fill="url(#darkCrimsonShadow)" stroke="#450a0a" stroke-width="1.5" />
 
     <path d="M 256,76 
              L 288,72 L 318,90 L 304,110 
@@ -156,10 +176,10 @@
              L 430,325 L 424,365 L 390,365 
              L 397,394 L 372,420 L 336,408 
              L 330,430 L 294,444 L 256,478 Z" 
-          fill="url(#sentryRuby)" />
+          fill="url(#crusaderCrossGrad)" />
 
-    <!-- === INNER GOLDEN FACETS (Overlapping Accents) === -->
-    <!-- Left Golden Points -->
+    <!-- Inner Golden Feathers (Overlapping Layer) -->
+    <!-- Left Gold Facets -->
     <polygon points="215,95 185,85 205,108" fill="url(#goldGrad)" />
     <polygon points="180,128 128,135 158,155" fill="url(#goldGrad)" />
     <polygon points="145,190 85,205 122,222" fill="url(#goldGrad)" />
@@ -168,7 +188,7 @@
     <polygon points="180,390 135,425 175,410" fill="url(#goldGrad)" />
     <polygon points="225,430 175,432 215,448" fill="url(#goldGrad)" />
 
-    <!-- Right Golden Points -->
+    <!-- Right Gold Facets -->
     <polygon points="297,95 327,85 307,108" fill="url(#goldGrad)" />
     <polygon points="332,128 384,135 354,155" fill="url(#goldGrad)" />
     <polygon points="367,190 427,205 390,222" fill="url(#goldGrad)" />
@@ -178,19 +198,19 @@
     <polygon points="287,430 337,432 297,448" fill="url(#goldGrad)" />
 
     <!-- Top Crown Apex -->
-    <polygon points="256,50 282,96 256,88 230,96" fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
-    <polygon points="256,50 274,92 256,86 238,92" fill="url(#sentryRuby)" />
-    <polygon points="256,56 268,88 256,84 244,88" fill="#fde047" />
+    <polygon points="256,50 282,96 256,88 230,96" fill="url(#darkCrimsonShadow)" stroke="#991b1b" stroke-width="1.5" />
+    <polygon points="256,50 274,92 256,86 238,92" fill="url(#crusaderCrossGrad)" />
+    <polygon points="256,56 268,88 256,84 244,88" fill="#fef08a" />
 
     <!-- Bottom Spire Apex -->
-    <polygon points="256,488 278,440 256,450 234,440" fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
-    <polygon points="256,488 272,444 256,450 240,444" fill="url(#sentryRuby)" />
-    <polygon points="256,478 266,446 256,450 246,446" fill="#fde047" />
+    <polygon points="256,488 278,440 256,450 234,440" fill="url(#darkCrimsonShadow)" stroke="#991b1b" stroke-width="1.5" />
+    <polygon points="256,488 272,444 256,450 240,444" fill="url(#crusaderCrossGrad)" />
+    <polygon points="256,478 266,446 256,450 246,446" fill="#fef08a" />
   </g>
 
-  <!-- 3. Heavy Shield Frame & Golden Bevel -->
+  <!-- 3. Heavy Shield Outer Frame & Golden Bevel -->
   <g filter="url(#shieldShadow)">
-    <!-- Outer Titanium Dark Rim -->
+    <!-- Outer Titanium Rim -->
     <path d="M 256,106 
              L 376,130 
              C 388,220 374,322 256,414 
@@ -213,7 +233,7 @@
   </g>
 
   <!-- 4. Quatered Shield Field (Inquartato Araldico) -->
-  <g clip-path="url(#shieldClipClean)">
+  <g clip-path="url(#shieldClipExact)">
     <!-- Q1 (Top-Left): Silver/White Field -->
     <rect x="130" y="100" width="126" height="155" fill="url(#silverQuarter)" />
 
@@ -226,25 +246,25 @@
     <!-- Q4 (Bottom-Right): Silver/White Field -->
     <rect x="256" y="255" width="130" height="160" fill="url(#silverQuarter)" />
 
-    <!-- ================= EXACT SYMBOLS IN 4 QUARTERS ================= -->
+    <!-- ================= EXACT SYMBOLS IN THE 4 QUARTERS ================= -->
 
-    <!-- Q1 (Top-Left): EXACT SENTRY OFFICIAL LOGO CROSS -->
-    <g transform="translate(202, 190) scale(0.38)">
+    <!-- Q1 (Top-Left): EXACT SENTRY LOGO CROSS -->
+    <g transform="translate(202, 190) scale(0.38)" filter="url(#rubyGlow)">
       <use href="#exactSentryLogoCross" />
     </g>
 
-    <!-- Q2 (Top-Right): Medieval Castle Tower -->
+    <!-- Q2 (Top-Right): Sentry Castle Tower -->
     <g transform="translate(310, 190) scale(0.88)">
-      <use href="#heraldicCastleTower" />
+      <use href="#sentryCastleTower" />
     </g>
 
-    <!-- Q3 (Bottom-Left): Medieval Castle Tower (Stessa identica dimensione e posizione) -->
+    <!-- Q3 (Bottom-Left): Sentry Castle Tower (Identica e simmetrica) -->
     <g transform="translate(202, 318) scale(0.88)">
-      <use href="#heraldicCastleTower" />
+      <use href="#sentryCastleTower" />
     </g>
 
-    <!-- Q4 (Bottom-Right): EXACT SENTRY OFFICIAL LOGO CROSS (Stessa identica dimensione e posizione) -->
-    <g transform="translate(310, 318) scale(0.38)">
+    <!-- Q4 (Bottom-Right): EXACT SENTRY LOGO CROSS (Identica e simmetrica) -->
+    <g transform="translate(310, 318) scale(0.38)" filter="url(#rubyGlow)">
       <use href="#exactSentryLogoCross" />
     </g>
 
@@ -260,7 +280,10 @@
     <!-- Center Boss / Rosette -->
     <circle cx="256" cy="255" r="9" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
     <circle cx="256" cy="255" r="6.5" fill="url(#goldGrad)" />
-    <circle cx="256" cy="255" r="3" fill="#b91c1c" />
+    <circle cx="256" cy="255" r="3" fill="#ef4444" />
+
+    <!-- Subtle 3D Ambient Shadowing on Right Side -->
+    <path d="M 256,118 L 366,140 C 378,222 364,316 256,402 Z" fill="#000000" opacity="0.08" />
   </g>
 
   <!-- 5. Inner Edge Shading Line around shield -->
