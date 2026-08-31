@@ -26,7 +26,8 @@
       loadPresentationsData(guildId),
       loadSetupShowcaseData(guildId),
       loadMinigamesData(guildId),
-      loadEmojiStats(guildId)
+      loadEmojiStats(guildId),
+      loadServerArchitectData(guildId)
     ]);
   };
 
@@ -2161,6 +2162,296 @@
     btnRefreshTempChannels.addEventListener('click', async () => {
       const guildId = window.AppState.currentGuildId;
       if (guildId) await loadTempChannelsData(guildId);
+    });
+  }
+
+  // === AI SERVER STUDIO (Architetto Server AI & Preview Interattiva) ===
+  let architectTemplates = null;
+  let currentArchitectStructure = null;
+
+  const SENTRY_MODULE_NAMES = {
+    welcomer: { label: '👋 Welcomer & Arrivi', color: 'bg-emerald-950/60 border-emerald-800/60 text-emerald-300' },
+    fish: { label: '🎣 Pesca RPG', color: 'bg-cyan-950/60 border-cyan-800/60 text-cyan-300' },
+    blackjack: { label: '🃏 Tavolo Blackjack & Casinò', color: 'bg-amber-950/60 border-amber-800/60 text-amber-300' },
+    counting: { label: '🔢 Counting Game', color: 'bg-blue-950/60 border-blue-800/60 text-blue-300' },
+    temp_voice_master: { label: '➕ Master Vocale (Join to Create)', color: 'bg-indigo-950/60 border-indigo-800/60 text-indigo-300' },
+    temp_voice_category: { label: '🔊 Categoria Stanze Temporanee', color: 'bg-indigo-950/60 border-indigo-800/60 text-indigo-300' },
+    temp_voice_hub: { label: '💬 Hub Controllo Stanze', color: 'bg-indigo-950/60 border-indigo-800/60 text-indigo-300' },
+    ticket_panel: { label: '🎫 Pannello Ticket Supporto', color: 'bg-purple-950/60 border-purple-800/60 text-purple-300' },
+    ticket_category: { label: '🎫 Categoria Ticket', color: 'bg-purple-950/60 border-purple-800/60 text-purple-300' },
+    partnership: { label: '🤝 Partnership Manager', color: 'bg-pink-950/60 border-pink-800/60 text-pink-300' },
+    moderation_logs: { label: '🛡️ Registri Moderazione & AutoMod', color: 'bg-rose-950/60 border-rose-800/60 text-rose-300' },
+    ai_chat: { label: '🤖 Sentry AI Chatbot (Llama 70B)', color: 'bg-red-950/60 border-red-800/60 text-red-300' },
+    announcements: { label: '📢 Annunci Ufficiali', color: 'bg-amber-950/60 border-amber-800/60 text-amber-300' }
+  };
+
+  async function loadServerArchitectData(guildId) {
+    if (!guildId) return;
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/ai-server/templates`);
+      if (res.ok) {
+        const data = await res.json();
+        architectTemplates = data.templates;
+        if (architectTemplates?.medieval && !currentArchitectStructure) {
+          renderArchitectPreview(architectTemplates.medieval.structure);
+        }
+      }
+    } catch (e) {
+      console.error('[AI Server Studio] Errore caricamento template:', e);
+    }
+  }
+
+  function renderArchitectPreview(structure) {
+    if (!structure) return;
+    currentArchitectStructure = structure;
+
+    const nameEl = document.getElementById('preview-server-name');
+    const descEl = document.getElementById('preview-server-desc');
+    const rolesListEl = document.getElementById('preview-roles-list');
+    const treeListEl = document.getElementById('preview-tree-list');
+
+    if (nameEl) nameEl.textContent = structure.serverName || 'Server Discord • Sentry';
+    if (descEl) descEl.textContent = structure.description || 'Struttura generata con Sentry AI Server Studio.';
+
+    const roles = structure.roles || [];
+    const categories = structure.categories || [];
+    let channelsCount = 0;
+    let modulesCount = 0;
+
+    categories.forEach(cat => {
+      (cat.channels || []).forEach(ch => {
+        channelsCount++;
+        if (ch.sentryModule) modulesCount++;
+      });
+      if (cat.sentryModule) modulesCount++;
+    });
+
+    const badgeRoles = document.getElementById('badge-roles-count');
+    const badgeCats = document.getElementById('badge-cats-count');
+    const badgeChans = document.getElementById('badge-chans-count');
+    const badgeMods = document.getElementById('badge-modules-count');
+
+    if (badgeRoles) badgeRoles.textContent = `👑 ${roles.length} Ruoli`;
+    if (badgeCats) badgeCats.textContent = `📁 ${categories.length} Categorie`;
+    if (badgeChans) badgeChans.textContent = `💬 ${channelsCount} Canali`;
+    if (badgeMods) badgeMods.textContent = `⚡ ${modulesCount} Moduli Auto-Binding`;
+
+    // Render Roles
+    if (rolesListEl) {
+      rolesListEl.innerHTML = '';
+      roles.forEach(role => {
+        const color = role.color || '#94a3b8';
+        const isAdm = (role.permissions || []).includes('Administrator');
+        const roleChip = document.createElement('div');
+        roleChip.className = 'px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-2 border shadow-sm transition-transform hover:scale-105';
+        roleChip.style.background = '#0e1624';
+        roleChip.style.borderColor = color + '66';
+        roleChip.style.color = '#ffffff';
+
+        roleChip.innerHTML = `
+          <span class="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm" style="background: ${color};"></span>
+          <span class="truncate">${escapeHtml(role.name)}</span>
+          ${isAdm ? '<span class="text-[9px] px-1 py-0.2 rounded bg-red-950/80 text-red-400 border border-red-800/60 font-mono">ADMIN</span>' : ''}
+        `;
+        rolesListEl.appendChild(roleChip);
+      });
+    }
+
+    // Render Tree View (Categories & Channels)
+    if (treeListEl) {
+      treeListEl.innerHTML = '';
+
+      categories.forEach(cat => {
+        const catCard = document.createElement('div');
+        catCard.className = 'rounded-xl bg-[#0e1624] border border-slate-800/90 overflow-hidden shadow-sm';
+
+        const catModTag = cat.sentryModule ? SENTRY_MODULE_NAMES[cat.sentryModule] : null;
+
+        let channelsHtml = '';
+        (cat.channels || []).forEach(ch => {
+          const isVoice = ch.type === 'voice';
+          const icon = isVoice ? 'volume-2' : 'hash';
+          const iconColor = isVoice ? 'text-indigo-400' : 'text-slate-400';
+          const modTag = ch.sentryModule ? SENTRY_MODULE_NAMES[ch.sentryModule] : null;
+
+          let permBadge = '';
+          if (ch.overwrites && ch.overwrites.some(o => (o.deny || []).includes('ViewChannel') || (o.deny || []).includes('SendMessages'))) {
+            permBadge = '<span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 flex items-center gap-1"><i data-lucide="lock" class="w-2.5 h-2.5 text-amber-400"></i> Blindato</span>';
+          }
+
+          channelsHtml += `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 py-2 px-3 hover:bg-slate-800/50 rounded-lg transition-colors group">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <i data-lucide="${icon}" class="w-4 h-4 ${iconColor} shrink-0"></i>
+                <span class="text-xs font-semibold text-slate-200 group-hover:text-white truncate">${escapeHtml(ch.name)}</span>
+                ${ch.topic ? `<span class="text-[11px] text-slate-500 hidden md:inline truncate max-w-xs">• ${escapeHtml(ch.topic)}</span>` : ''}
+              </div>
+              <div class="flex items-center gap-2 shrink-0">
+                ${modTag ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-sm ${modTag.color}">${modTag.label}</span>` : ''}
+                ${permBadge}
+              </div>
+            </div>
+          `;
+        });
+
+        catCard.innerHTML = `
+          <div class="p-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="folder" class="w-4 h-4 text-amber-400"></i>
+              <span class="text-xs font-bold text-slate-200 uppercase tracking-wider">${escapeHtml(cat.name)}</span>
+              <span class="text-[11px] text-slate-500 font-mono">(${cat.channels?.length || 0})</span>
+            </div>
+            ${catModTag ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${catModTag.color}">${catModTag.label}</span>` : ''}
+          </div>
+          <div class="p-2 space-y-0.5 divide-y divide-white/5">
+            ${channelsHtml}
+          </div>
+        `;
+
+        treeListEl.appendChild(catCard);
+      });
+    }
+
+    if (window.lucide) lucide.createIcons();
+  }
+
+  // Archetype Card Click Selection
+  document.querySelectorAll('.architect-archetype-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const archKey = card.getAttribute('data-archetype');
+      document.querySelectorAll('.architect-archetype-card').forEach(c => c.classList.remove('ring-2', 'ring-amber-500', 'bg-amber-950/20'));
+      card.classList.add('ring-2', 'ring-amber-500', 'bg-amber-950/20');
+
+      if (architectTemplates && architectTemplates[archKey]) {
+        renderArchitectPreview(architectTemplates[archKey].structure);
+        window.showToast(`Modello "${architectTemplates[archKey].name}" caricato nell'anteprima!`);
+      }
+    });
+  });
+
+  // Prompt AI Generation Button
+  const btnArchitectGenerate = document.getElementById('btn-architect-generate');
+  if (btnArchitectGenerate) {
+    btnArchitectGenerate.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server Discord.', 'error');
+
+      const promptInput = document.getElementById('architect-prompt-input');
+      const promptText = promptInput ? promptInput.value.trim() : '';
+      if (!promptText) {
+        return window.showToast('Inserisci una descrizione o idea per il server.', 'error');
+      }
+
+      const origHtml = btnArchitectGenerate.innerHTML;
+      btnArchitectGenerate.disabled = true;
+      btnArchitectGenerate.innerHTML = '<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Generazione Llama 70B...';
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/ai-server/generate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: promptText })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.structure) {
+            renderArchitectPreview(data.structure);
+            window.showToast('✨ Struttura generata con successo da Sentry AI!');
+          } else {
+            window.showToast('Risposta incompleta dal generatore.', 'error');
+          }
+        } else {
+          const err = await res.json();
+          window.showToast(err.error || 'Errore durante la generazione AI.', 'error');
+        }
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        btnArchitectGenerate.disabled = false;
+        btnArchitectGenerate.innerHTML = origHtml;
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
+  // Build Server on Discord Button
+  const btnArchitectBuild = document.getElementById('btn-architect-build');
+  if (btnArchitectBuild) {
+    btnArchitectBuild.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server Discord.', 'error');
+
+      if (!currentArchitectStructure) {
+        return window.showToast('Nessuna struttura selezionata o generata.', 'error');
+      }
+
+      const cleanModeEl = document.getElementById('architect-clean-mode');
+      const cleanMode = Boolean(cleanModeEl && cleanModeEl.checked);
+
+      if (cleanMode) {
+        const confirmed = confirm('⚠️ ATTENZIONE: La "Modalità Pulizia Totale" cancellerà tutti i canali preesistenti del server prima di creare la nuova struttura Sentry. Sei sicuro di voler procedere?');
+        if (!confirmed) return;
+      }
+
+      const logsBox = document.getElementById('architect-build-logs');
+      const terminal = document.getElementById('architect-terminal');
+      const statusEl = document.getElementById('architect-build-status');
+
+      if (logsBox) logsBox.classList.remove('hidden');
+      if (terminal) terminal.innerHTML = '<div class="text-amber-400">⏳ Inizializzazione Sentry Architect Engine...</div>';
+      if (statusEl) {
+        statusEl.textContent = 'Costruzione in corso...';
+        statusEl.className = 'text-xs font-bold text-amber-300';
+      }
+
+      const origHtml = btnArchitectBuild.innerHTML;
+      btnArchitectBuild.disabled = true;
+      btnArchitectBuild.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Costruzione in corso...';
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/ai-server/build`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ structure: currentArchitectStructure, cleanMode })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          if (terminal && data.results?.logs) {
+            terminal.innerHTML = data.results.logs.map(l => `<div>${escapeHtml(l)}</div>`).join('');
+            terminal.innerHTML += '<div class="text-emerald-300 font-bold mt-2">✨ CONGRATULAZIONI: Tutti i canali, ruoli e moduli Sentry sono ora attivi su Discord!</div>';
+          }
+          if (statusEl) {
+            statusEl.textContent = 'Completato con successo! 🎉';
+            statusEl.className = 'text-xs font-bold text-emerald-400';
+          }
+          window.showToast('🎉 Server costruito e configurato con successo su Discord!');
+
+          // Refresh channels dropdown across the whole dashboard
+          if (window.switchGuild) {
+            await window.switchGuild(guildId);
+          }
+        } else {
+          if (terminal) {
+            terminal.innerHTML += `<div class="text-rose-400 font-bold mt-2">❌ Errore: ${escapeHtml(data.error || 'Impossibile completare la costruzione.')}</div>`;
+          }
+          if (statusEl) {
+            statusEl.textContent = 'Errore durante la costruzione';
+            statusEl.className = 'text-xs font-bold text-rose-400';
+          }
+          window.showToast(data.error || 'Errore durante la costruzione del server.', 'error');
+        }
+      } catch (err) {
+        if (terminal) terminal.innerHTML += `<div class="text-rose-400">❌ ${escapeHtml(err.message)}</div>`;
+        window.showToast(err.message, 'error');
+      } finally {
+        btnArchitectBuild.disabled = false;
+        btnArchitectBuild.innerHTML = origHtml;
+        if (window.lucide) lucide.createIcons();
+      }
     });
   }
 

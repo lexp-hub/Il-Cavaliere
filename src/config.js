@@ -35,6 +35,7 @@ export const CONFIG = {
   
   DB_PATH: process.env.DB_PATH || path.join(__dirname, '../data/cavaliere.db'),
   PROMPT_PATH: path.join(__dirname, 'config/prompt.json'),
+  SERVER_ARCHITECT_PROMPT_PATH: path.join(__dirname, 'config/server_architect_prompt.json'),
   
   DEMO_MODE: process.env.DEMO_MODE === 'true' || (!process.env.DISCORD_BOT_TOKEN && !process.env.DISCORD_TOKEN)
 };

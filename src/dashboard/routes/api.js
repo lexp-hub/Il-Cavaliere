@@ -9,6 +9,7 @@ import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
 import { TempChannelManager } from '../../bot/modules/tempChannelManager.js';
+import { ServerArchitect } from '../../bot/modules/serverArchitect.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
@@ -990,6 +991,59 @@ export function createApiRouter(botClient) {
 
     DatabaseHelper.deleteTempChannelRecord(id);
     res.json({ success: true });
+  });
+
+  // === AI Server Studio Endpoints ===
+  router.get('/guilds/:guildId/ai-server/templates', requireModAuth, (req, res) => {
+    try {
+      const templates = ServerArchitect.getPrebuiltTemplates();
+      res.json({ success: true, templates });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  router.post('/guilds/:guildId/ai-server/generate', requireModAuth, async (req, res) => {
+    try {
+      const { prompt, archetype } = req.body;
+      if (!prompt && !archetype) {
+        return res.status(400).json({ error: 'Specifica un prompt o un archetipo.' });
+      }
+
+      if (archetype && !prompt) {
+        const templates = ServerArchitect.getPrebuiltTemplates();
+        const selected = templates[archetype];
+        if (selected) {
+          return res.json({ success: true, structure: selected.structure });
+        }
+      }
+
+      const result = await ServerArchitect.generateStructureWithAI(prompt || 'Server Discord per Sentry', archetype);
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  router.post('/guilds/:guildId/ai-server/build', requireModAuth, async (req, res) => {
+    try {
+      const { structure, cleanMode = false } = req.body;
+      const guildId = req.params.guildId;
+
+      if (!structure || !structure.categories) {
+        return res.status(400).json({ error: 'Struttura non valida o mancante.' });
+      }
+
+      if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+        return res.status(400).json({ error: 'Il bot Sentry non è online o non si trova in questo server.' });
+      }
+
+      const guild = botClient.guilds.cache.get(guildId);
+      const result = await ServerArchitect.buildServer(guild, structure, { cleanMode: Boolean(cleanMode) });
+      res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   return router;
