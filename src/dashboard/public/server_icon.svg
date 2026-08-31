@@ -2,31 +2,28 @@
   <defs>
     <!-- Shadow & Glow Filters -->
     <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.7" />
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.75" />
     </filter>
-    <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ef4444" flood-opacity="0.4" />
-    </filter>
-    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#d97706" flood-opacity="0.5" />
+    <filter id="crossGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#991b1b" flood-opacity="0.4" />
     </filter>
 
     <!-- Gradients -->
     <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ff4d79" />
       <stop offset="40%" stop-color="#ef4444" />
-      <stop offset="100%" stop-color="#991b1b" />
+      <stop offset="100%" stop-color="#b91c1c" />
     </linearGradient>
 
     <linearGradient id="darkRuby" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#b91c1c" />
-      <stop offset="60%" stop-color="#7f1d1d" />
-      <stop offset="100%" stop-color="#450a0a" />
+      <stop offset="60%" stop-color="#881337" />
+      <stop offset="100%" stop-color="#4c0519" />
     </linearGradient>
 
     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fde047" />
-      <stop offset="30%" stop-color="#fbbf24" />
+      <stop offset="35%" stop-color="#fbbf24" />
       <stop offset="70%" stop-color="#d97706" />
       <stop offset="100%" stop-color="#92400e" />
     </linearGradient>
@@ -39,8 +36,8 @@
 
     <linearGradient id="silverQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="45%" stop-color="#f1f5f9" />
-      <stop offset="100%" stop-color="#cbd5e1" />
+      <stop offset="50%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#e2e8f0" />
     </linearGradient>
 
     <linearGradient id="darkTitanium" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -64,22 +61,54 @@
                C 142,285 130,195 137,110 
                C 167,98 217,92 256,92 Z" />
     </clipPath>
+
+    <!-- Sentry Official Templar Cross Emblem -->
+    <g id="sentryTemplarEmblem">
+      <!-- Outer Drop Layer / Stroke -->
+      <path d="M -15 -15 
+               C -20 -55 -45 -115 -92 -165 
+               C -40 -140 40 -140 92 -165 
+               C 45 -115 20 -55 15 -15 
+               C 55 -20 115 -45 165 -92 
+               C 140 -40 140 40 165 92 
+               C 115 45 55 20 15 15 
+               C 20 55 45 115 92 165 
+               C 40 140 -40 140 -92 165 
+               C -45 115 -20 55 -15 15 
+               C -55 20 -115 45 -165 92 
+               C -140 40 -140 -40 -165 -92 
+               C -115 -45 -55 -20 -15 -15 Z" 
+            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="4" />
+      <!-- Inner Radiant Body -->
+      <path d="M -12 -12 
+               C -17 -48 -40 -102 -82 -148 
+               C -35 -125 35 -125 82 -148 
+               C 40 -102 17 -48 12 -12 
+               C 48 -17 102 -40 148 -82 
+               C 125 -35 125 35 148 82 
+               C 102 40 48 17 12 12 
+               C 17 48 40 102 82 148 
+               C 35 125 -35 125 -82 148 
+               C -40 102 -17 48 -12 12 
+               C -48 17 -102 40 -148 82 
+               C -125 35 -125 -35 -148 -82 
+               C -102 -40 -48 -17 -12 -12 Z" 
+            fill="url(#rubyGrad)" />
+    </g>
   </defs>
 
-  <!-- 1. Background (Subtle dark vignette to enhance Discord rendering) -->
+  <!-- 1. Background (Dark Canvas) -->
   <circle cx="256" cy="256" r="254" fill="#080c14" opacity="0.95" />
 
-  <!-- 2. Outer Heraldic Crest: Radiant Winged Blades & Flames (Crimson & Antique Gold) -->
+  <!-- 2. Outer Heraldic Crest: Sharp Stylized Wing Blades & Flame Laurel (Crimson & Antique Gold) -->
   <g filter="url(#dropShadow)">
-    <!-- Outer Wing Wings / Flames (Left & Right Symmetric) -->
-    
-    <!-- Outer Layer: Crimson Ruby Wings -->
-    <!-- Left Wing Wings -->
+    <!-- Crimson Wing Blades Layer -->
+    <!-- Left Wing -->
     <path d="M 256,48 Q 230,65 215,90 Q 180,85 145,115 Q 165,135 155,160 Q 120,150 95,185 Q 120,205 110,235 Q 75,235 68,275 Q 95,290 92,320 Q 70,335 85,365 Q 115,360 130,385 Q 120,405 148,425 Q 185,415 210,435 Q 235,445 256,470 Z" fill="url(#rubyGrad)" />
-    <!-- Right Wing Wings -->
+    <!-- Right Wing -->
     <path d="M 256,48 Q 282,65 297,90 Q 332,85 367,115 Q 347,135 357,160 Q 392,150 417,185 Q 392,205 402,235 Q 437,235 444,275 Q 417,290 420,320 Q 442,335 427,365 Q 397,360 382,385 Q 392,405 364,425 Q 327,415 302,435 Q 277,445 256,470 Z" fill="url(#rubyGrad)" />
 
-    <!-- Inner Layer: Radiant Gold Accents / Laurel Feathers -->
+    <!-- Radiant Gold Accents Layer -->
     <path d="M 256,60 Q 235,78 225,100 Q 195,98 165,128 Q 180,148 172,170 Q 140,165 120,198 Q 140,215 132,242 Q 102,248 100,282 Q 125,295 120,322 Q 102,338 118,362 Q 142,358 152,380 Q 150,398 172,415 Q 202,405 224,422 Q 242,430 256,450 Z" fill="url(#goldGrad)" />
     <path d="M 256,60 Q 277,78 287,100 Q 317,98 347,128 Q 332,148 340,170 Q 372,165 392,198 Q 372,215 380,242 Q 410,248 412,282 Q 387,295 392,322 Q 410,338 394,362 Q 370,358 360,380 Q 362,398 340,415 Q 310,405 288,422 Q 270,430 256,450 Z" fill="url(#goldGrad)" />
 
@@ -132,39 +161,11 @@
     <!-- Bottom-Right (Q4): Pearl Silver Field -->
     <rect x="256" y="240" width="135" height="170" fill="url(#silverQuarter)" />
 
-    <!-- Subtle Diagonal Shading / Texture -->
-    <path d="M 130,80 L 390,410" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />
-
     <!-- ================= EMBLEMS IN 4 QUARTERS ================= -->
 
-    <!-- Q1 (Top-Left): Red Templar Cross Pattee on Silver -->
-    <g transform="translate(196, 162) scale(0.68)" filter="url(#innerGlow)">
-      <path d="M -6,-6
-               C -16,-34 -32,-42 -44,-46 C -42,-34 -34,-18 -6,-6
-               C -34,-16 -42,-32 -46,-44 C -34,-42 -18,-34 -6,-6
-               Z" fill="url(#rubyGrad)" opacity="0" />
-      <!-- Sharp Cross Pattee Path -->
-      <path d="M 0,-6
-               C 8,-28 18,-38 32,-42 C 28,-30 20,-16 6,-6
-               C 28,-8 38,-18 42,-32 C 30,-28 16,-20 6,0
-               C 28,8 38,18 42,32 C 30,28 16,20 6,6
-               C 8,28 18,38 32,42 C 28,30 20,16 0,6
-               C -8,28 -18,38 -32,42 C -28,30 -20,16 -6,6
-               C -28,8 -38,18 -42,32 C -30,28 -16,20 -6,0
-               C -28,-8 -38,-18 -42,-32 C -30,-28 -16,-20 -6,-6
-               C -8,-28 -18,-38 -32,-42 C -28,-30 -20,-16 0,-6 Z"
-            fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
-      <path d="M 0,-4
-               C 6,-22 14,-30 25,-33 C 22,-24 16,-12 4,-4
-               C 22,-6 30,-14 33,-25 C 24,-22 12,-16 4,0
-               C 22,6 30,14 33,25 C 24,22 12,16 4,4
-               C 6,22 14,30 25,33 C 22,24 16,12 0,4
-               C -6,22 -14,30 -25,33 C -22,24 -16,12 -4,4
-               C -22,6 -30,14 -33,25 C -24,22 -12,16 -4,0
-               C -22,-6 -30,-14 -33,-25 C -24,-22 -12,-16 -4,-4
-               C -6,-22 -14,-30 -25,-33 C -22,-24 -16,-12 0,-4 Z"
-            fill="url(#rubyGrad)" />
-      <circle cx="0" cy="0" r="3.5" fill="#fef08a" />
+    <!-- Q1 (Top-Left): SENTRY OFFICIAL LOGO EMBLEM (Templar Cross) -->
+    <g transform="translate(196, 165) scale(0.32)" filter="url(#crossGlow)">
+      <use href="#sentryTemplarEmblem" />
     </g>
 
     <!-- Q2 (Top-Right): Red Heraldic Castle Tower on Gold -->
@@ -196,29 +197,9 @@
       <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
     </g>
 
-    <!-- Q4 (Bottom-Right): Red Templar Cross Pattee on Silver -->
-    <g transform="translate(310, 310) scale(0.62)" filter="url(#innerGlow)">
-      <path d="M 0,-6
-               C 8,-28 18,-38 32,-42 C 28,-30 20,-16 6,-6
-               C 28,-8 38,-18 42,-32 C 30,-28 16,-20 6,0
-               C 28,8 38,18 42,32 C 30,28 16,20 6,6
-               C 8,28 18,38 32,42 C 28,30 20,16 0,6
-               C -8,28 -18,38 -32,42 C -28,30 -20,16 -6,6
-               C -28,8 -38,18 -42,32 C -30,28 -16,20 -6,0
-               C -28,-8 -38,-18 -42,-32 C -30,-28 -16,-20 -6,-6
-               C -8,-28 -18,-38 -32,-42 C -28,-30 -20,-16 0,-6 Z"
-            fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
-      <path d="M 0,-4
-               C 6,-22 14,-30 25,-33 C 22,-24 16,-12 4,-4
-               C 22,-6 30,-14 33,-25 C 24,-22 12,-16 4,0
-               C 22,6 30,14 33,25 C 24,22 12,16 4,4
-               C 6,22 14,30 25,33 C 22,24 16,12 0,4
-               C -6,22 -14,30 -25,33 C -22,24 -16,12 -4,4
-               C -22,6 -30,14 -33,25 C -24,22 -12,16 -4,0
-               C -22,-6 -30,-14 -33,-25 C -24,-22 -12,-16 -4,-4
-               C -6,-22 -14,-30 -25,-33 C -22,-24 -16,-12 0,-4 Z"
-            fill="url(#rubyGrad)" />
-      <circle cx="0" cy="0" r="3.5" fill="#fef08a" />
+    <!-- Q4 (Bottom-Right): SENTRY OFFICIAL LOGO EMBLEM (Templar Cross) -->
+    <g transform="translate(308, 308) scale(0.28)" filter="url(#crossGlow)">
+      <use href="#sentryTemplarEmblem" />
     </g>
 
     <!-- Center Dividing Filigree Cross (Vertical & Horizontal Divider) -->
