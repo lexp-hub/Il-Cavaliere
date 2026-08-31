@@ -5,10 +5,12 @@ import {
   AudioPlayerStatus,
   VoiceConnectionStatus,
   entersState,
-  StreamType
+  StreamType,
+  NoSubscriberBehavior
 } from "@discordjs/voice";
 import ytSearch from "yt-search";
 import ffmpegStatic from "ffmpeg-static";
+import sodium from "libsodium-wrappers";
 import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
@@ -19,6 +21,14 @@ import {
   ButtonBuilder,
   ButtonStyle
 } from "discord.js";
+
+// Ensure WebAssembly Sodium encryption is 100% initialized
+try {
+  await sodium.ready;
+  console.log("[Music] Sodium encryption engine initialized successfully.");
+} catch (e) {
+  console.warn("[Music] Sodium init notice:", e.message);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -53,7 +63,12 @@ class GuildMusicQueue {
     this.voiceChannel = null;
     this.textChannel = null;
     this.connection = null;
-    this.player = createAudioPlayer();
+    this.player = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Play,
+        maxMissedFrames: 250
+      }
+    });
     this.queue = [];
     this.currentTrack = null;
     this.volume = 100;
@@ -182,6 +197,16 @@ class GuildMusicQueue {
       });
     }
 
+    // Ensure connection enters ready state
+    if (this.connection.state.status !== VoiceConnectionStatus.Ready) {
+      try {
+        await entersState(this.connection, VoiceConnectionStatus.Ready, 15000);
+      } catch (err) {
+        console.warn("[Music] Voice connection handshake notice:", err.message);
+      }
+    }
+
+    this.connection.subscribe(this.player);
     return this.connection;
   }
 
@@ -192,10 +217,17 @@ class GuildMusicQueue {
     this.isPaused = false;
 
     try {
+      if (this.connection) {
+        if (this.connection.state.status !== VoiceConnectionStatus.Ready) {
+          await entersState(this.connection, VoiceConnectionStatus.Ready, 15000).catch(() => {});
+        }
+        this.connection.subscribe(this.player);
+      }
+
       const ytdlpBin = getYtDlpPath();
       const ffmpegBin = getFfmpegPath();
 
-      // Spawn yt-dlp to download raw audio stream
+      // 1. Spawn yt-dlp to stream audio
       this.streamProcess = spawn(ytdlpBin, [
         "-f", "bestaudio/best",
         "-o", "-",
@@ -204,14 +236,14 @@ class GuildMusicQueue {
         track.url
       ]);
 
-      // Spawn FFmpeg to convert stream directly to crystal-clear 48kHz 16-bit stereo PCM
+      // 2. Spawn FFmpeg to encode to native 48kHz Stereo Opus stream (OggOpus)
       this.ffmpegProcess = spawn(ffmpegBin, [
         "-i", "pipe:0",
-        "-analyzeduration", "0",
-        "-loglevel", "0",
-        "-f", "s16le",
+        "-c:a", "libopus",
+        "-b:a", "128k",
         "-ar", "48000",
         "-ac", "2",
+        "-f", "opus",
         "pipe:1"
       ]);
 
@@ -225,9 +257,9 @@ class GuildMusicQueue {
         console.error("[Music FFmpeg error]:", err.message);
       });
 
-      // Create native Raw PCM Audio Resource with inline volume transformer
+      // 3. Create AudioResource with native OggOpus stream and volume support
       this.currentResource = createAudioResource(this.ffmpegProcess.stdout, {
-        inputType: StreamType.Raw,
+        inputType: StreamType.OggOpus,
         inlineVolume: true
       });
 
