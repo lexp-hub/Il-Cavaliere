@@ -73,6 +73,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (select) select.value = targetGuild;
     await switchGuild(targetGuild);
   }
+
+  const btnSyncLive = document.getElementById('btn-sync-live');
+  if (btnSyncLive) {
+    btnSyncLive.addEventListener('click', () => {
+      window.reloadCurrentGuildData(false);
+    });
+  }
 });
 
 function initMobileDrawer() {
@@ -142,11 +149,35 @@ function initTabNavigation() {
   });
 }
 
+let activeWs = null;
+let wsReconnectTimer = null;
+let wsPingInterval = null;
+
 function initWebSocket() {
+  if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+  if (wsPingInterval) clearInterval(wsPingInterval);
+
   try {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws`;
     const ws = new WebSocket(wsUrl);
+    activeWs = ws;
+
+    ws.onopen = () => {
+      console.log('[WebSocket] Connesso al server di sincronizzazione Sentry.');
+      const statusEl = document.getElementById('bot-ws-status');
+      if (statusEl && !statusEl.textContent.includes('Modalità Demo')) {
+        statusEl.textContent = 'Bot Online • Live Sync Attivo';
+      }
+      if (window.AppState.currentGuildId) {
+        ws.send(JSON.stringify({ type: 'SUBSCRIBE_GUILD', guildId: window.AppState.currentGuildId }));
+      }
+      wsPingInterval = setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ type: 'PING' }));
+        }
+      }, 20000);
+    };
 
     ws.onmessage = (event) => {
       try {
@@ -154,12 +185,32 @@ function initWebSocket() {
         if (data.type === 'INIT') {
           const statusEl = document.getElementById('bot-ws-status');
           if (statusEl) {
-            statusEl.textContent = data.botOnline ? 'Bot Online • Connesso' : 'Modalità Demo Attiva';
+            statusEl.textContent = data.botOnline ? 'Bot Online • Live Sync Attivo' : 'Modalità Demo Attiva';
+          }
+        } else if (data.type === 'GUILD_UPDATED') {
+          if (data.guildId === window.AppState.currentGuildId) {
+            console.log(`[WebSocket] Ricevuto aggiornamento in tempo reale per modulo "${data.module}" da ${data.updatedBy}`);
+            window.reloadCurrentGuildData(true);
+            window.showToast(`⚡ Sincronizzazione Live: modulo "${data.module}" aggiornato da ${data.updatedBy}`);
           }
         }
       } catch (e) {}
     };
-  } catch (e) {}
+
+    ws.onclose = () => {
+      clearInterval(wsPingInterval);
+      wsReconnectTimer = setTimeout(() => {
+        console.log('[WebSocket] Tentativo di riconnessione automatica...');
+        initWebSocket();
+      }, 3000);
+    };
+
+    ws.onerror = () => {
+      try { ws.close(); } catch (e) {}
+    };
+  } catch (e) {
+    wsReconnectTimer = setTimeout(initWebSocket, 5000);
+  }
 }
 
 async function loadUserData() {
@@ -223,10 +274,57 @@ async function loadGuilds() {
   }
 }
 
+window.reloadCurrentGuildData = async function(silent = false) {
+  const guildId = window.AppState.currentGuildId;
+  if (!guildId) return;
+
+  const syncIcon = document.getElementById('icon-sync-live');
+  if (syncIcon) syncIcon.classList.add('animate-spin');
+
+  try {
+    const res = await fetch(`/api/guilds/${guildId}`);
+    if (!res.ok) return;
+
+    const guildData = await res.json();
+    window.AppState.currentGuildData = guildData;
+    window.AppState.channels = guildData.channels || [];
+    window.AppState.roles = guildData.roles || [];
+    window.AppState.members = guildData.members || [];
+
+    const membersEl = document.getElementById('ov-members');
+    if (membersEl) membersEl.textContent = (guildData.memberCount || 0).toLocaleString();
+
+    populateDropdowns(guildData.channels, guildData.roles, guildData.members);
+
+    if (window.loadModuleData) {
+      await window.loadModuleData(guildId);
+    }
+    if (window.loadEmbedBuilderData) {
+      await window.loadEmbedBuilderData(guildId);
+    }
+    if (window.loadWelcomerData) {
+      await window.loadWelcomerData(guildId);
+    }
+
+    if (!silent) {
+      window.showToast('✅ Dati sincronizzati con successo dal database!');
+    }
+  } catch (err) {
+    console.error('[Sync] Errore durante la sincronizzazione:', err);
+    if (!silent) window.showToast('Errore durante la sincronizzazione.', 'error');
+  } finally {
+    if (syncIcon) syncIcon.classList.remove('animate-spin');
+  }
+};
+
 window.switchGuild = async function(guildId) {
   if (!guildId) return;
   window.AppState.currentGuildId = guildId;
   localStorage.setItem('cavaliere_last_guild', guildId);
+
+  if (activeWs && activeWs.readyState === WebSocket.OPEN) {
+    activeWs.send(JSON.stringify({ type: 'SUBSCRIBE_GUILD', guildId }));
+  }
 
   try {
     const res = await fetch(`/api/guilds/${guildId}`);

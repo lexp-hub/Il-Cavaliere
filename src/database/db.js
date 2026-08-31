@@ -16,6 +16,9 @@ try {
   rawDb = new DatabaseSync(CONFIG.DB_PATH);
   rawDb.exec('PRAGMA foreign_keys = ON;');
   rawDb.exec('PRAGMA journal_mode = WAL;');
+  rawDb.exec('PRAGMA synchronous = NORMAL;');
+  rawDb.exec('PRAGMA busy_timeout = 5000;');
+  rawDb.exec('PRAGMA temp_store = MEMORY;');
   isNodeSqlite = true;
   console.log(`[Database] Connected using built-in node:sqlite (Node 22+) to ${CONFIG.DB_PATH}`);
 } catch (e1) {
@@ -24,6 +27,9 @@ try {
     rawDb = new BetterSqlite3(CONFIG.DB_PATH);
     rawDb.pragma('journal_mode = WAL');
     rawDb.pragma('foreign_keys = ON');
+    rawDb.pragma('synchronous = NORMAL');
+    rawDb.pragma('busy_timeout = 5000');
+    rawDb.pragma('temp_store = MEMORY');
     console.log(`[Database] Connected using better-sqlite3 to ${CONFIG.DB_PATH}`);
   } catch (e2) {
     console.error('[Database Error] Failed to initialize SQLite database:', e2.message);

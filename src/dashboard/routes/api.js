@@ -14,8 +14,24 @@ import { MusicManager } from '../../bot/modules/musicManager.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
-export function createApiRouter(botClient) {
+export function createApiRouter(botClient, broadcastToGuild = () => {}) {
   const router = express.Router();
+
+  const notifySync = (guildId, module, req, extraData = {}) => {
+    try {
+      const user = req?.user || req?.session?.user;
+      broadcastToGuild(guildId, {
+        type: 'GUILD_UPDATED',
+        guildId,
+        module,
+        updatedBy: user?.username || 'Moderatore',
+        timestamp: Date.now(),
+        ...extraData
+      });
+    } catch (e) {
+      console.error('[API Sync Notify Error]:', e.message);
+    }
+  };
 
   const requireModAuth = async (req, res, next) => {
     const user = req.user || req.session.user;
@@ -70,6 +86,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/settings', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateGuildSettings(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'settings', req);
     res.json({ success: true, settings: updated });
   });
 
@@ -81,6 +98,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/ai', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateAIConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'ai', req);
     res.json({ success: true, config: updated });
   });
 
@@ -120,6 +138,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/partnerships/config', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updatePartnershipConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'partnerships', req);
     res.json({ success: true, config: updated });
   });
 
@@ -181,6 +200,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/presentations/config', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updatePresentationConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'presentations', req);
     res.json({ success: true, config: updated });
   });
 
@@ -217,6 +237,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/setup-showcase/config', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateSetupShowcaseConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'setups', req);
     res.json({ success: true, config: updated });
   });
 
@@ -441,6 +462,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/welcomer', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateWelcomerConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'welcomer', req);
     res.json({ success: true, config: updated });
   });
 
@@ -499,6 +521,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/automod', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateAutomodConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'automod', req);
     res.json({ success: true, config: updated });
   });
 
@@ -703,6 +726,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/counting', requireModAuth, (req, res) => {
     const saved = DatabaseHelper.saveCountingConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'counting', req);
     res.json({ success: true, config: DatabaseHelper.getCountingConfig(req.params.guildId) });
   });
 
@@ -715,6 +739,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/fishing/config', requireModAuth, (req, res) => {
     const saved = DatabaseHelper.updateFishingConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'fishing', req);
     res.json({ success: true, config: saved });
   });
 
@@ -821,6 +846,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/minigames/config', requireModAuth, (req, res) => {
     const saved = DatabaseHelper.updateMinigamesConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'minigames', req);
     res.json({ success: true, config: saved });
   });
 
@@ -919,6 +945,7 @@ export function createApiRouter(botClient) {
 
   router.post('/guilds/:guildId/leveling', requireModAuth, (req, res) => {
     const updated = DatabaseHelper.updateLevelConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'leveling', req);
     res.json({ success: true, config: updated });
   });
 

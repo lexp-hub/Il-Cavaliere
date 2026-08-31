@@ -68,11 +68,48 @@ export function createDashboardServer(botClient) {
 
   app.use(express.static(path.join(__dirname, 'public')));
 
+  // Real-Time WebSocket Broadcaster for Multi-User Live Sync
+  const broadcastToGuild = (guildId, payload) => {
+    const message = JSON.stringify(payload);
+    for (const client of wss.clients) {
+      if (client.readyState === 1) { // OPEN
+        if (!guildId || client.currentGuildId === guildId || payload.type === 'GLOBAL_SYNC') {
+          try {
+            client.send(message);
+          } catch (e) {
+            console.error('[WebSocket] Error broadcasting to client:', e.message);
+          }
+        }
+      }
+    }
+  };
+
   app.use('/auth', authRouter);
   app.use('/api/guilds', createGuildsRouter(botClient));
-  app.use('/api', createApiRouter(botClient));
+  app.use('/api', createApiRouter(botClient, broadcastToGuild));
 
+  // WebSocket Connection Handling & Heartbeat Keepalive
   wss.on('connection', (ws) => {
+    ws.isAlive = true;
+    ws.currentGuildId = null;
+
+    ws.on('pong', () => {
+      ws.isAlive = true;
+    });
+
+    ws.on('message', (msg) => {
+      try {
+        const parsed = JSON.parse(msg.toString());
+        if (parsed.type === 'SUBSCRIBE_GUILD') {
+          ws.currentGuildId = parsed.guildId;
+          ws.send(JSON.stringify({ type: 'SUBSCRIBED', guildId: parsed.guildId }));
+        } else if (parsed.type === 'PING') {
+          ws.isAlive = true;
+          ws.send(JSON.stringify({ type: 'PONG', timestamp: Date.now() }));
+        }
+      } catch (e) {}
+    });
+
     ws.send(JSON.stringify({
       type: 'INIT',
       botOnline: Boolean(botClient?.isReady()),
@@ -81,7 +118,23 @@ export function createDashboardServer(botClient) {
     }));
   });
 
-  return { app, server, wss };
+  // Keep-alive ping interval every 25 seconds
+  const heartbeatInterval = setInterval(() => {
+    for (const ws of wss.clients) {
+      if (ws.isAlive === false) {
+        ws.terminate();
+        continue;
+      }
+      ws.isAlive = false;
+      ws.ping();
+    }
+  }, 25000);
+
+  wss.on('close', () => {
+    clearInterval(heartbeatInterval);
+  });
+
+  return { app, server, wss, broadcastToGuild };
 }
 
 export default createDashboardServer;
