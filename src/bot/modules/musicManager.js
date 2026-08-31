@@ -7,14 +7,29 @@ import {
   entersState,
   StreamType
 } from "@discordjs/voice";
-import play from "play-dl";
 import ytSearch from "yt-search";
+import { spawn } from "child_process";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 import {
   EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle
 } from "discord.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, "../../..");
+const localYtDlp = path.join(projectRoot, "bin/yt-dlp");
+
+function getYtDlpPath() {
+  if (fs.existsSync(localYtDlp)) {
+    return localYtDlp;
+  }
+  return "yt-dlp";
+}
 
 // Map of Guild ID -> GuildMusicQueue
 const queues = new Map();
@@ -34,6 +49,7 @@ class GuildMusicQueue {
     this.isPaused = false;
     this.idleTimer = null;
     this.currentResource = null;
+    this.streamProcess = null;
     this.controllerMessage = null;
 
     this.setupPlayerListeners();
@@ -41,11 +57,13 @@ class GuildMusicQueue {
 
   setupPlayerListeners() {
     this.player.on(AudioPlayerStatus.Idle, () => {
+      this.killStreamProcess();
       this.handleTrackEnd();
     });
 
     this.player.on("error", (error) => {
       console.error("[Music] Errore riproduzione nel server " + this.guildId + ":", error.message);
+      this.killStreamProcess();
       if (this.textChannel) {
         this.textChannel.send({
           embeds: [
@@ -57,6 +75,16 @@ class GuildMusicQueue {
       }
       this.handleTrackEnd();
     });
+  }
+
+  killStreamProcess() {
+    if (this.streamProcess) {
+      try {
+        this.streamProcess.stdout.destroy();
+        this.streamProcess.kill("SIGKILL");
+      } catch {}
+      this.streamProcess = null;
+    }
   }
 
   async handleTrackEnd() {
@@ -138,23 +166,22 @@ class GuildMusicQueue {
 
   async playTrack(track) {
     this.clearIdleTimer();
+    this.killStreamProcess();
     this.currentTrack = track;
     this.isPaused = false;
 
     try {
-      let stream;
-      let streamType = StreamType.Arbitrary;
+      const ytdlpBin = getYtDlpPath();
+      this.streamProcess = spawn(ytdlpBin, [
+        "-f", "bestaudio/best",
+        "-o", "-",
+        "--no-warnings",
+        "--quiet",
+        track.url
+      ]);
 
-      if (play.is_expired()) {
-        await play.refreshToken();
-      }
-
-      const streamInfo = await play.stream(track.url, { quality: 2 });
-      stream = streamInfo.stream;
-      streamType = streamInfo.type;
-
-      this.currentResource = createAudioResource(stream, {
-        inputType: streamType,
+      this.currentResource = createAudioResource(this.streamProcess.stdout, {
+        inputType: StreamType.Arbitrary,
         inlineVolume: true
       });
 
@@ -361,6 +388,7 @@ class GuildMusicQueue {
 
   destroy() {
     this.clearIdleTimer();
+    this.killStreamProcess();
     try {
       this.player.stop(true);
       if (this.connection) {
@@ -387,80 +415,91 @@ export const MusicManager = {
   },
 
   async searchTrack(query, requestedBy = "Utente") {
-    if (play.is_expired()) {
-      await play.refreshToken().catch(() => {});
-    }
+    const isUrl = /^https?:\/\//i.test(query);
 
-    const playValidate = await play.validate(query);
-
-    if (playValidate === "yt_video" || playValidate === "yt_playlist") {
-      if (playValidate === "yt_playlist") {
-        const playlist = await play.playlist_info(query, { incomplete: true });
-        const videos = await playlist.all_videos();
-        return {
-          isPlaylist: true,
-          title: playlist.title,
-          tracks: videos.map(v => ({
-            title: v.title,
-            url: v.url,
-            duration: v.durationRaw,
-            thumbnail: v.thumbnails[0]?.url,
-            author: v.channel?.name || "YouTube",
-            requestedBy
-          }))
-        };
-      } else {
-        const info = await play.video_info(query);
-        const details = info.video_details;
-        return {
-          isPlaylist: false,
-          track: {
-            title: details.title,
-            url: details.url,
-            duration: details.durationRaw,
-            thumbnail: details.thumbnails[0]?.url,
-            author: details.channel?.name || "YouTube",
-            requestedBy
+    // 1. If direct YouTube or SoundCloud or Media URL
+    if (isUrl) {
+      if (query.includes("spotify.com")) {
+        // Spotify URL handling: extract title and artist from URL path
+        let songName = "Spotify Track";
+        try {
+          const res = await fetch(query, { headers: { "User-Agent": "Mozilla/5.0" } });
+          const html = await res.text();
+          const titleMatch = html.match(/<title>([^<]+)<\/title>/i);
+          if (titleMatch && titleMatch[1]) {
+            songName = titleMatch[1].replace(/\s*\|\s*Spotify.*$/i, "").trim();
           }
-        };
-      }
-    }
+        } catch {}
 
-    if (playValidate === "sp_track" || playValidate === "sp_playlist" || playValidate === "sp_album") {
-      const spData = await play.spotify(query);
-      if (spData.type === "track") {
-        const searchQuery = spData.name + " " + (spData.artists?.map(a => a.name).join(" ") || "");
-        const r = await ytSearch(searchQuery);
-        const first = r.videos[0];
-        if (!first) throw new Error("Nessun brano trovato su YouTube per la traccia Spotify \"" + spData.name + "\".");
+        const ytRes = await ytSearch(songName);
+        const first = ytRes.videos?.[0];
+        if (!first) throw new Error("Nessun brano trovato su YouTube per la traccia Spotify \"" + songName + "\".");
+
         return {
           isPlaylist: false,
           track: {
-            title: spData.name + " - " + (spData.artists?.map(a => a.name).join(", ") || ""),
+            title: songName,
             url: first.url,
             duration: first.timestamp,
-            thumbnail: spData.thumbnail?.url || first.thumbnail,
-            author: spData.artists?.[0]?.name || "Spotify",
+            thumbnail: first.thumbnail,
+            author: "Spotify",
             requestedBy
           }
         };
-      } else {
-        const tracks = await spData.all_tracks();
+      }
+
+      // Check if YouTube Playlist
+      if (query.includes("list=")) {
+        try {
+          const listRes = await ytSearch({ listId: new URL(query).searchParams.get("list") });
+          if (listRes.videos && listRes.videos.length > 0) {
+            return {
+              isPlaylist: true,
+              title: listRes.title || "YouTube Playlist",
+              tracks: listRes.videos.map(v => ({
+                title: v.title,
+                url: v.url || ("https://youtube.com/watch?v=" + v.videoId),
+                duration: v.timestamp || v.duration?.timestamp || "3:00",
+                thumbnail: v.thumbnail,
+                author: v.author?.name || "YouTube",
+                requestedBy
+              }))
+            };
+          }
+        } catch {}
+      }
+
+      // Direct YouTube Video URL or other URL
+      const searchRes = await ytSearch(query);
+      const video = searchRes.videos?.[0] || (searchRes.all && searchRes.all[0]);
+      if (video) {
         return {
-          isPlaylist: true,
-          title: spData.name,
-          tracks: tracks.slice(0, 50).map(t => ({
-            title: t.name + " - " + (t.artists?.map(a => a.name).join(", ") || ""),
-            searchQuery: t.name + " " + (t.artists?.map(a => a.name).join(" ") || ""),
-            duration: t.durationInSec ? Math.floor(t.durationInSec / 60) + ":" + (t.durationInSec % 60) : "3:00",
-            thumbnail: t.thumbnail?.url,
-            author: t.artists?.[0]?.name || "Spotify",
+          isPlaylist: false,
+          track: {
+            title: video.title,
+            url: video.url,
+            duration: video.timestamp,
+            thumbnail: video.thumbnail,
+            author: video.author?.name || "YouTube",
             requestedBy
-          }))
+          }
         };
       }
+
+      return {
+        isPlaylist: false,
+        track: {
+          title: query,
+          url: query,
+          duration: "Live / Direct",
+          thumbnail: null,
+          author: "Web Stream",
+          requestedBy
+        }
+      };
     }
 
+    // 2. Keyword Search on YouTube via ytSearch
     const searchRes = await ytSearch(query);
     const firstVideo = searchRes.videos?.[0];
     if (!firstVideo) {

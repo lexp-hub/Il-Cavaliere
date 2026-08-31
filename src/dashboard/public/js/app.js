@@ -332,23 +332,25 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     }
   });
 
-  // Voice Channels Selector for Temp Channels Generator
-  const genVoiceSelect = document.getElementById('tc-gen-voice-channel');
-  if (genVoiceSelect) {
-    const currentVal = genVoiceSelect.value;
-    genVoiceSelect.innerHTML = '<option value="">-- Seleziona Canale Vocale Generator --</option>';
+  // Voice Channels Selectors
+  ['tc-gen-voice-channel', 'music-target-voice'].forEach(id => {
+    const vSelect = document.getElementById(id);
+    if (!vSelect) return;
+
+    const currentVal = vSelect.value;
+    vSelect.innerHTML = '<option value="">-- Seleziona Canale Vocale --</option>';
 
     voiceChannels.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
       opt.textContent = `🔊 ${c.name}`;
-      genVoiceSelect.appendChild(opt);
+      vSelect.appendChild(opt);
     });
 
     if (currentVal && voiceChannels.some(c => c.id === currentVal)) {
-      genVoiceSelect.value = currentVal;
+      vSelect.value = currentVal;
     }
-  }
+  });
 
   const categorySelectIds = ['tk-category', 'tc-category'];
   categorySelectIds.forEach(id => {

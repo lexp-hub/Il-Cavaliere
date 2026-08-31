@@ -2474,8 +2474,8 @@
       const currentVal = voiceSelect.value;
       voiceSelect.innerHTML = '<option value="">-- Seleziona Canale Vocale --</option>';
 
-      // Type 2 = GUILD_VOICE, Type 13 = GUILD_STAGE_VOICE
-      const voiceChannels = window.AppState.channels.filter(c => c.type === 2 || c.type === 13 || c.isVoice);
+      // Type 'voice' from backend, or Discord ChannelType 2/13
+      const voiceChannels = window.AppState.channels.filter(c => c.type === 'voice' || c.type === 2 || c.rawType === 2 || c.rawType === 13 || c.isVoice);
       voiceChannels.forEach(ch => {
         const opt = document.createElement('option');
         opt.value = ch.id;
