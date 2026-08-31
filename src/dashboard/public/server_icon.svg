@@ -1,0 +1,250 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Shadow & Glow Filters -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.7" />
+    </filter>
+    <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#ef4444" flood-opacity="0.4" />
+    </filter>
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#d97706" flood-opacity="0.5" />
+    </filter>
+
+    <!-- Gradients -->
+    <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff4d79" />
+      <stop offset="40%" stop-color="#ef4444" />
+      <stop offset="100%" stop-color="#991b1b" />
+    </linearGradient>
+
+    <linearGradient id="darkRuby" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c" />
+      <stop offset="60%" stop-color="#7f1d1d" />
+      <stop offset="100%" stop-color="#450a0a" />
+    </linearGradient>
+
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047" />
+      <stop offset="30%" stop-color="#fbbf24" />
+      <stop offset="70%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#92400e" />
+    </linearGradient>
+
+    <linearGradient id="goldQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#eab308" />
+      <stop offset="50%" stop-color="#ca8a04" />
+      <stop offset="100%" stop-color="#a16207" />
+    </linearGradient>
+
+    <linearGradient id="silverQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="45%" stop-color="#f1f5f9" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+
+    <linearGradient id="darkTitanium" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="50%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+
+    <linearGradient id="frameGold" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="25%" stop-color="#d97706" />
+      <stop offset="75%" stop-color="#78350f" />
+      <stop offset="100%" stop-color="#451a03" />
+    </linearGradient>
+
+    <!-- Clip Path for Shield Interior -->
+    <clipPath id="shieldClip">
+      <path d="M 256,92 
+               C 295,92 345,98 375,110 
+               C 382,195 370,285 256,396 
+               C 142,285 130,195 137,110 
+               C 167,98 217,92 256,92 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- 1. Background (Subtle dark vignette to enhance Discord rendering) -->
+  <circle cx="256" cy="256" r="254" fill="#080c14" opacity="0.95" />
+
+  <!-- 2. Outer Heraldic Crest: Radiant Winged Blades & Flames (Crimson & Antique Gold) -->
+  <g filter="url(#dropShadow)">
+    <!-- Outer Wing Wings / Flames (Left & Right Symmetric) -->
+    
+    <!-- Outer Layer: Crimson Ruby Wings -->
+    <!-- Left Wing Wings -->
+    <path d="M 256,48 Q 230,65 215,90 Q 180,85 145,115 Q 165,135 155,160 Q 120,150 95,185 Q 120,205 110,235 Q 75,235 68,275 Q 95,290 92,320 Q 70,335 85,365 Q 115,360 130,385 Q 120,405 148,425 Q 185,415 210,435 Q 235,445 256,470 Z" fill="url(#rubyGrad)" />
+    <!-- Right Wing Wings -->
+    <path d="M 256,48 Q 282,65 297,90 Q 332,85 367,115 Q 347,135 357,160 Q 392,150 417,185 Q 392,205 402,235 Q 437,235 444,275 Q 417,290 420,320 Q 442,335 427,365 Q 397,360 382,385 Q 392,405 364,425 Q 327,415 302,435 Q 277,445 256,470 Z" fill="url(#rubyGrad)" />
+
+    <!-- Inner Layer: Radiant Gold Accents / Laurel Feathers -->
+    <path d="M 256,60 Q 235,78 225,100 Q 195,98 165,128 Q 180,148 172,170 Q 140,165 120,198 Q 140,215 132,242 Q 102,248 100,282 Q 125,295 120,322 Q 102,338 118,362 Q 142,358 152,380 Q 150,398 172,415 Q 202,405 224,422 Q 242,430 256,450 Z" fill="url(#goldGrad)" />
+    <path d="M 256,60 Q 277,78 287,100 Q 317,98 347,128 Q 332,148 340,170 Q 372,165 392,198 Q 372,215 380,242 Q 410,248 412,282 Q 387,295 392,322 Q 410,338 394,362 Q 370,358 360,380 Q 362,398 340,415 Q 310,405 288,422 Q 270,430 256,450 Z" fill="url(#goldGrad)" />
+
+    <!-- Top Crown Spire Point -->
+    <polygon points="256,38 274,80 256,72 238,80" fill="url(#rubyGrad)" stroke="#fbbf24" stroke-width="1.5" />
+    <polygon points="256,45 268,76 256,70 244,76" fill="#fef08a" />
+
+    <!-- Bottom Spire Tail Point -->
+    <polygon points="256,478 272,435 256,445 240,435" fill="url(#rubyGrad)" stroke="#fbbf24" stroke-width="1.5" />
+  </g>
+
+  <!-- 3. Heavy Shield Outer Frame / Bevel (Titanium & Gold Border) -->
+  <g filter="url(#dropShadow)">
+    <!-- Outer Dark Titanium Shield Body -->
+    <path d="M 256,76 
+             C 305,76 360,83 392,97 
+             C 402,195 388,300 256,420 
+             C 124,300 110,195 120,97 
+             C 152,83 207,76 256,76 Z" 
+          fill="url(#darkTitanium)" stroke="#0f172a" stroke-width="4" />
+
+    <!-- Gold Inlaid Border -->
+    <path d="M 256,84 
+             C 300,84 352,90 382,103 
+             C 391,192 378,290 256,408 
+             C 134,290 121,192 130,103 
+             C 160,90 212,84 256,84 Z" 
+          fill="url(#frameGold)" />
+
+    <!-- Inner Charcoal Bevel Rim -->
+    <path d="M 256,90 
+             C 296,90 346,96 376,108 
+             C 384,194 372,286 256,398 
+             C 140,286 128,194 136,108 
+             C 166,96 216,90 256,90 Z" 
+          fill="#0c121e" />
+  </g>
+
+  <!-- 4. Quatered Shield Field (Inquartato Araldico) -->
+  <g clip-path="url(#shieldClip)">
+    <!-- Top-Left (Q1): Pearl Silver Field -->
+    <rect x="130" y="80" width="126" height="160" fill="url(#silverQuarter)" />
+
+    <!-- Top-Right (Q2): Imperial Gold Field -->
+    <rect x="256" y="80" width="135" height="160" fill="url(#goldQuarter)" />
+
+    <!-- Bottom-Left (Q3): Imperial Gold Field -->
+    <rect x="130" y="240" width="126" height="170" fill="url(#goldQuarter)" />
+
+    <!-- Bottom-Right (Q4): Pearl Silver Field -->
+    <rect x="256" y="240" width="135" height="170" fill="url(#silverQuarter)" />
+
+    <!-- Subtle Diagonal Shading / Texture -->
+    <path d="M 130,80 L 390,410" stroke="rgba(0,0,0,0.15)" stroke-width="1.5" />
+
+    <!-- ================= EMBLEMS IN 4 QUARTERS ================= -->
+
+    <!-- Q1 (Top-Left): Red Templar Cross Pattee on Silver -->
+    <g transform="translate(196, 162) scale(0.68)" filter="url(#innerGlow)">
+      <path d="M -6,-6
+               C -16,-34 -32,-42 -44,-46 C -42,-34 -34,-18 -6,-6
+               C -34,-16 -42,-32 -46,-44 C -34,-42 -18,-34 -6,-6
+               Z" fill="url(#rubyGrad)" opacity="0" />
+      <!-- Sharp Cross Pattee Path -->
+      <path d="M 0,-6
+               C 8,-28 18,-38 32,-42 C 28,-30 20,-16 6,-6
+               C 28,-8 38,-18 42,-32 C 30,-28 16,-20 6,0
+               C 28,8 38,18 42,32 C 30,28 16,20 6,6
+               C 8,28 18,38 32,42 C 28,30 20,16 0,6
+               C -8,28 -18,38 -32,42 C -28,30 -20,16 -6,6
+               C -28,8 -38,18 -42,32 C -30,28 -16,20 -6,0
+               C -28,-8 -38,-18 -42,-32 C -30,-28 -16,-20 -6,-6
+               C -8,-28 -18,-38 -32,-42 C -28,-30 -20,-16 0,-6 Z"
+            fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
+      <path d="M 0,-4
+               C 6,-22 14,-30 25,-33 C 22,-24 16,-12 4,-4
+               C 22,-6 30,-14 33,-25 C 24,-22 12,-16 4,0
+               C 22,6 30,14 33,25 C 24,22 12,16 4,4
+               C 6,22 14,30 25,33 C 22,24 16,12 0,4
+               C -6,22 -14,30 -25,33 C -22,24 -16,12 -4,4
+               C -22,6 -30,14 -33,25 C -24,22 -12,16 -4,0
+               C -22,-6 -30,-14 -33,-25 C -24,-22 -12,-16 -4,-4
+               C -6,-22 -14,-30 -25,-33 C -22,-24 -16,-12 0,-4 Z"
+            fill="url(#rubyGrad)" />
+      <circle cx="0" cy="0" r="3.5" fill="#fef08a" />
+    </g>
+
+    <!-- Q2 (Top-Right): Red Heraldic Castle Tower on Gold -->
+    <g transform="translate(316, 162) scale(0.68)" filter="url(#dropShadow)">
+      <!-- Tower Base & Walls -->
+      <path d="M -24,36 L 24,36 L 20,-15 L 26,-15 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-15 L -20,-15 Z" 
+            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="1.5" />
+      <path d="M -22,34 L 22,34 L 18,-13 L 24,-13 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-13 L -18,-13 Z" 
+            fill="url(#rubyGrad)" />
+      <!-- Tower Merli Highlight -->
+      <polygon points="-24,-34 -18,-34 -18,-30 -24,-30" fill="#fca5a5" />
+      <polygon points="-6,-34 6,-34 6,-30 -6,-30" fill="#fca5a5" />
+      <polygon points="18,-34 24,-34 24,-30 18,-30" fill="#fca5a5" />
+      <!-- Arched Portcullis Gate & Arrow Slit -->
+      <path d="M -7,34 L -7,14 C -7,9 7,9 7,14 L 7,34 Z" fill="#450a0a" />
+      <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
+    </g>
+
+    <!-- Q3 (Bottom-Left): Red Heraldic Castle Tower on Gold -->
+    <g transform="translate(202, 310) scale(0.62)" filter="url(#dropShadow)">
+      <path d="M -24,36 L 24,36 L 20,-15 L 26,-15 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-15 L -20,-15 Z" 
+            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="1.5" />
+      <path d="M -22,34 L 22,34 L 18,-13 L 24,-13 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-13 L -18,-13 Z" 
+            fill="url(#rubyGrad)" />
+      <polygon points="-24,-34 -18,-34 -18,-30 -24,-30" fill="#fca5a5" />
+      <polygon points="-6,-34 6,-34 6,-30 -6,-30" fill="#fca5a5" />
+      <polygon points="18,-34 24,-34 24,-30 18,-30" fill="#fca5a5" />
+      <path d="M -7,34 L -7,14 C -7,9 7,9 7,14 L 7,34 Z" fill="#450a0a" />
+      <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
+    </g>
+
+    <!-- Q4 (Bottom-Right): Red Templar Cross Pattee on Silver -->
+    <g transform="translate(310, 310) scale(0.62)" filter="url(#innerGlow)">
+      <path d="M 0,-6
+               C 8,-28 18,-38 32,-42 C 28,-30 20,-16 6,-6
+               C 28,-8 38,-18 42,-32 C 30,-28 16,-20 6,0
+               C 28,8 38,18 42,32 C 30,28 16,20 6,6
+               C 8,28 18,38 32,42 C 28,30 20,16 0,6
+               C -8,28 -18,38 -32,42 C -28,30 -20,16 -6,6
+               C -28,8 -38,18 -42,32 C -30,28 -16,20 -6,0
+               C -28,-8 -38,-18 -42,-32 C -30,-28 -16,-20 -6,-6
+               C -8,-28 -18,-38 -32,-42 C -28,-30 -20,-16 0,-6 Z"
+            fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
+      <path d="M 0,-4
+               C 6,-22 14,-30 25,-33 C 22,-24 16,-12 4,-4
+               C 22,-6 30,-14 33,-25 C 24,-22 12,-16 4,0
+               C 22,6 30,14 33,25 C 24,22 12,16 4,4
+               C 6,22 14,30 25,33 C 22,24 16,12 0,4
+               C -6,22 -14,30 -25,33 C -22,24 -16,12 -4,4
+               C -22,6 -30,14 -33,25 C -24,22 -12,16 -4,0
+               C -22,-6 -30,-14 -33,-25 C -24,-22 -12,-16 -4,-4
+               C -6,-22 -14,-30 -25,-33 C -22,-24 -16,-12 0,-4 Z"
+            fill="url(#rubyGrad)" />
+      <circle cx="0" cy="0" r="3.5" fill="#fef08a" />
+    </g>
+
+    <!-- Center Dividing Filigree Cross (Vertical & Horizontal Divider) -->
+    <!-- Vertical Divider Line -->
+    <rect x="253" y="80" width="6" height="320" fill="#1e293b" />
+    <rect x="254.5" y="80" width="3" height="320" fill="url(#goldGrad)" />
+    
+    <!-- Horizontal Divider Line -->
+    <rect x="130" y="237" width="252" height="6" fill="#1e293b" />
+    <rect x="130" y="238.5" width="252" height="3" fill="url(#goldGrad)" />
+
+    <!-- Center Boss / Rosette Emblem -->
+    <circle cx="256" cy="240" r="11" fill="#1e293b" stroke="#0f172a" stroke-width="1.5" />
+    <circle cx="256" cy="240" r="8" fill="url(#goldGrad)" />
+    <circle cx="256" cy="240" r="4" fill="#ef4444" />
+
+    <!-- Diagonal Glass Specular Highlight Overlay -->
+    <path d="M 137,110 L 375,110 L 256,270 L 137,270 Z" fill="url(#silverQuarter)" opacity="0.12" />
+  </g>
+
+  <!-- 5. Inner Edge Shading Line around shield -->
+  <path d="M 256,92 
+           C 295,92 345,98 375,110 
+           C 382,195 370,285 256,396 
+           C 142,285 130,195 137,110 
+           C 167,98 217,92 256,92 Z" 
+        fill="none" stroke="#0f172a" stroke-width="3" opacity="0.8" />
+
+</svg>
