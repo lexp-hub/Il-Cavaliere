@@ -1,319 +1,277 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Shadow & Glow Filters -->
+    <!-- Drop Shadow & Glow Filters -->
     <filter id="crestShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000000" flood-opacity="0.85" />
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.85" />
     </filter>
     <filter id="symbolShadow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#450a0a" flood-opacity="0.45" />
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#450a0a" flood-opacity="0.4" />
     </filter>
 
     <!-- Gradients -->
-    <!-- Rich Cyber Ruby / Blood Red -->
     <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ef4444" />
-      <stop offset="40%" stop-color="#b91c1c" />
+      <stop offset="45%" stop-color="#b91c1c" />
       <stop offset="100%" stop-color="#7f1d1d" />
     </linearGradient>
 
-    <!-- Dark Ruby / Shadow Facets -->
     <linearGradient id="darkRuby" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#991b1b" />
-      <stop offset="60%" stop-color="#7f1d1d" />
+      <stop offset="60%" stop-color="#701a1e" />
       <stop offset="100%" stop-color="#450a0a" />
     </linearGradient>
 
-    <!-- Antique Gold / Burnished Gold for Blades & Frame -->
     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#fde047" />
-      <stop offset="30%" stop-color="#fbbf24" />
+      <stop offset="30%" stop-color="#f59e0b" />
       <stop offset="70%" stop-color="#d97706" />
       <stop offset="100%" stop-color="#78350f" />
     </linearGradient>
 
-    <!-- Shield Imperial Gold Quarter -->
     <linearGradient id="goldQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="45%" stop-color="#d97706" />
+      <stop offset="50%" stop-color="#d97706" />
       <stop offset="100%" stop-color="#92400e" />
     </linearGradient>
 
-    <!-- Shield Silver / Ivory Quarter -->
     <linearGradient id="silverQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
       <stop offset="50%" stop-color="#f8fafc" />
       <stop offset="100%" stop-color="#e2e8f0" />
     </linearGradient>
 
-    <!-- Dark Titanium Outer Bevel -->
     <linearGradient id="darkTitanium" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#334155" />
       <stop offset="50%" stop-color="#1e293b" />
-      <stop offset="100%" stop-color="#0a0f1d" />
+      <stop offset="100%" stop-color="#080d1a" />
     </linearGradient>
 
-    <linearGradient id="goldRim" x1="0%" y1="0%" x2="0%" y2="100%">
+    <linearGradient id="frameGold" x1="0%" y1="0%" x2="0%" y2="100%">
       <stop offset="0%" stop-color="#fef08a" />
-      <stop offset="30%" stop-color="#d97706" />
+      <stop offset="25%" stop-color="#d97706" />
       <stop offset="75%" stop-color="#78350f" />
       <stop offset="100%" stop-color="#451a03" />
     </linearGradient>
 
-    <!-- Shield Interior Clipping Path -->
+    <!-- Shield Interior Clipping Path (Compact Classic Heater Shield) -->
     <clipPath id="shieldClipExact">
-      <path d="M 256,114 
-               L 366,138 
-               C 376,232 360,330 256,420 
-               C 152,330 136,232 146,138 Z" />
+      <path d="M 256,120 
+               L 364,142 
+               C 375,220 362,310 256,396 
+               C 150,310 137,220 148,142 Z" />
     </clipPath>
+
+    <!-- Sentry Templar Cross (Exact Geometry) -->
+    <g id="sentryTemplarCross">
+      <path d="M -12 -12 
+               C -16 -40 -35 -85 -70 -120 
+               C -30 -100 30 -100 70 -120 
+               C 35 -85 16 -40 12 -12 
+               C 40 -16 85 -35 120 -70 
+               C 100 -30 100 30 120 70 
+               C 85 35 40 16 12 12 
+               C 16 40 35 85 70 120 
+               C 30 100 -30 100 -70 120 
+               C -35 85 -16 40 -12 12 
+               C -40 16 -85 35 -120 70 
+               C -100 30 -100 -30 -120 -70 
+               C -85 -35 -40 -16 -12 -12 Z" 
+            fill="url(#darkRuby)" stroke="#701a1e" stroke-width="2" />
+      <path d="M -10 -10 
+               C -14 -35 -30 -75 -62 -106 
+               C -25 -88 25 -88 62 -106 
+               C 30 -75 14 -35 10 -10 
+               C 35 -14 75 -30 106 -62 
+               C 88 -25 88 25 106 62 
+               C 75 30 35 14 10 10 
+               C 14 35 30 75 62 106 
+               C 25 88 -25 88 -62 106 
+               C -30 75 -14 35 -10 10 
+               C -35 14 -75 30 -106 62 
+               C -88 25 -88 -25 -106 -62 
+               C -75 -30 -35 -14 -10 -10 Z" 
+            fill="url(#rubyGrad)" />
+    </g>
+
+    <!-- Castle Tower (Exact Geometry) -->
+    <g id="castleTowerEmblem">
+      <path d="M -25,36 L 25,36 L 20,-14 L 26,-14 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-14 L -20,-14 Z" 
+            fill="url(#darkRuby)" stroke="#701a1e" stroke-width="2" />
+      <path d="M -23,34 L 23,34 L 18,-12 L 24,-12 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-12 L -18,-12 Z" 
+            fill="url(#rubyGrad)" />
+      <!-- Merli Highlights -->
+      <polygon points="-24,-34 -18,-34 -18,-30 -24,-30" fill="#fca5a5" />
+      <polygon points="-6,-34 6,-34 6,-30 -6,-30" fill="#fca5a5" />
+      <polygon points="18,-34 24,-34 24,-30 18,-30" fill="#fca5a5" />
+      <!-- Gate & Arrow Slit -->
+      <path d="M -7,34 L -7,14 C -7,9 7,9 7,14 L 7,34 Z" fill="#450a0a" />
+      <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
+    </g>
   </defs>
 
-  <!-- 1. Dark Background Circle (Perfect for Discord icon canvas) -->
-  <circle cx="256" cy="256" r="254" fill="#070b12" />
+  <!-- 1. Background Circle -->
+  <circle cx="256" cy="256" r="254" fill="#080c14" />
 
-  <!-- 2. Outer Crest: Upward-Sweeping Wing Blades & Flame Laurels (Ruby & Gold) -->
+  <!-- 2. Dense, Overlapping Radiant Wreath / Wing Blades (Matching Screenshot Perfectly) -->
   <g filter="url(#crestShadow)">
-    <!-- ================= LEFT FLANK BLADES ================= -->
-    <!-- Blade L1 (Top Sweeping Spike) -->
-    <polygon points="256,90 220,110 200,68 238,78" fill="url(#darkRuby)" />
-    <polygon points="256,90 226,106 200,68 232,82" fill="url(#rubyGrad)" />
-    <polygon points="226,106 200,68 214,102" fill="url(#goldGrad)" />
+    <!-- === OUTER RUBY WING BLADES (Connected continuous wreath) === -->
+    <!-- Left Wing Outer Body -->
+    <path d="M 256,76 
+             L 218,65 L 185,85 L 205,108 
+             L 155,105 L 128,135 L 158,155 
+             L 108,165 L 85,205 L 122,222 
+             L 75,242 L 62,288 L 105,298 
+             L 72,325 L 78,368 L 120,365 
+             L 105,395 L 135,425 L 175,410 
+             L 175,432 L 215,448 L 256,478 Z" 
+          fill="url(#darkRuby)" stroke="#450a0a" stroke-width="1.5" />
 
-    <!-- Blade L2 (Upper Left Flank Spike) -->
-    <polygon points="215,130 168,145 152,105 192,112" fill="url(#darkRuby)" />
-    <polygon points="215,130 174,142 152,105 186,116" fill="url(#rubyGrad)" />
-    <polygon points="174,142 152,105 168,138" fill="url(#goldGrad)" />
+    <!-- Left Wing Vibrant Ruby Highlights -->
+    <path d="M 256,76 
+             L 224,72 L 194,90 L 208,110 
+             L 165,110 L 138,138 L 160,158 
+             L 118,170 L 96,208 L 125,224 
+             L 86,244 L 74,286 L 108,298 
+             L 82,325 L 88,365 L 122,365 
+             L 115,394 L 140,420 L 176,408 
+             L 182,430 L 218,444 L 256,478 Z" 
+          fill="url(#rubyGrad)" />
 
-    <!-- Blade L3 (Mid-Upper Flank Spike) -->
-    <polygon points="175,185 130,195 110,152 154,162" fill="url(#darkRuby)" />
-    <polygon points="175,185 138,192 110,152 148,166" fill="url(#rubyGrad)" />
-    <polygon points="138,192 110,152 128,186" fill="url(#goldGrad)" />
+    <!-- Right Wing Outer Body (Symmetric) -->
+    <path d="M 256,76 
+             L 294,65 L 327,85 L 307,108 
+             L 357,105 L 384,135 L 354,155 
+             L 404,165 L 427,205 L 390,222 
+             L 437,242 L 450,288 L 407,298 
+             L 440,325 L 434,368 L 392,365 
+             L 407,395 L 377,425 L 337,410 
+             L 337,432 L 297,448 L 256,478 Z" 
+          fill="url(#darkRuby)" stroke="#450a0a" stroke-width="1.5" />
 
-    <!-- Blade L4 (Mid Flank Main Wing) -->
-    <polygon points="152,250 102,252 75,210 125,220" fill="url(#darkRuby)" />
-    <polygon points="152,250 110,248 75,210 118,224" fill="url(#rubyGrad)" />
-    <polygon points="110,248 75,210 95,242" fill="url(#goldGrad)" />
+    <!-- Right Wing Vibrant Ruby Highlights -->
+    <path d="M 256,76 
+             L 288,72 L 318,90 L 304,110 
+             L 347,110 L 374,138 L 352,158 
+             L 394,170 L 416,208 L 387,224 
+             L 426,244 L 438,286 L 404,298 
+             L 430,325 L 424,365 L 390,365 
+             L 397,394 L 372,420 L 336,408 
+             L 330,430 L 294,444 L 256,478 Z" 
+          fill="url(#rubyGrad)" />
 
-    <!-- Blade L5 (Lower Mid Flank Wing) -->
-    <polygon points="148,315 106,310 78,278 122,282" fill="url(#darkRuby)" />
-    <polygon points="148,315 112,307 78,278 116,285" fill="url(#rubyGrad)" />
-    <polygon points="112,307 78,278 98,302" fill="url(#goldGrad)" />
+    <!-- === INNER GOLD OVERLAPPING LAUREL BLADES (The golden accents from screenshot) === -->
+    <!-- Left Inner Gold Facets -->
+    <polygon points="215,95 185,85 205,108" fill="url(#goldGrad)" />
+    <polygon points="180,128 128,135 158,155" fill="url(#goldGrad)" />
+    <polygon points="145,190 85,205 122,222" fill="url(#goldGrad)" />
+    <polygon points="130,265 62,288 105,298" fill="url(#goldGrad)" />
+    <polygon points="145,335 78,368 120,365" fill="url(#goldGrad)" />
+    <polygon points="180,390 135,425 175,410" fill="url(#goldGrad)" />
+    <polygon points="225,430 175,432 215,448" fill="url(#goldGrad)" />
 
-    <!-- Blade L6 (Lower Left Flank Sweeping Up) -->
-    <polygon points="165,372 128,362 108,338 142,342" fill="url(#darkRuby)" />
-    <polygon points="165,372 134,358 108,338 138,345" fill="url(#rubyGrad)" />
-    <polygon points="134,358 108,338 122,356" fill="url(#goldGrad)" />
+    <!-- Right Inner Gold Facets -->
+    <polygon points="297,95 327,85 307,108" fill="url(#goldGrad)" />
+    <polygon points="332,128 384,135 354,155" fill="url(#goldGrad)" />
+    <polygon points="367,190 427,205 390,222" fill="url(#goldGrad)" />
+    <polygon points="382,265 450,288 407,298" fill="url(#goldGrad)" />
+    <polygon points="367,335 434,368 392,365" fill="url(#goldGrad)" />
+    <polygon points="332,390 377,425 337,410" fill="url(#goldGrad)" />
+    <polygon points="287,430 337,432 297,448" fill="url(#goldGrad)" />
 
-    <!-- Blade L7 (Bottom Left Golden Inward Talon) -->
-    <polygon points="205,420 162,410 148,390 182,395" fill="url(#darkRuby)" />
-    <polygon points="205,420 168,406 148,390 178,398" fill="url(#rubyGrad)" />
-    <polygon points="205,420 168,406 190,432" fill="url(#goldGrad)" />
-    <polygon points="235,445 190,432 178,418 215,425" fill="url(#goldGrad)" />
+    <!-- === TOP CROWN APEX (Guglia Superiore) === -->
+    <polygon points="256,50 282,96 256,88 230,96" fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
+    <polygon points="256,50 274,92 256,86 238,92" fill="url(#rubyGrad)" />
+    <polygon points="256,56 268,88 256,84 244,88" fill="#fde047" />
 
-    <!-- ================= RIGHT FLANK BLADES (Symmetric) ================= -->
-    <!-- Blade R1 (Top Sweeping Spike) -->
-    <polygon points="256,90 292,110 312,68 274,78" fill="url(#darkRuby)" />
-    <polygon points="256,90 286,106 312,68 280,82" fill="url(#rubyGrad)" />
-    <polygon points="286,106 312,68 298,102" fill="url(#goldGrad)" />
-
-    <!-- Blade R2 (Upper Right Flank Spike) -->
-    <polygon points="297,130 344,145 360,105 320,112" fill="url(#darkRuby)" />
-    <polygon points="297,130 338,142 360,105 326,116" fill="url(#rubyGrad)" />
-    <polygon points="338,142 360,105 344,138" fill="url(#goldGrad)" />
-
-    <!-- Blade R3 (Mid-Upper Flank Spike) -->
-    <polygon points="337,185 382,195 402,152 358,162" fill="url(#darkRuby)" />
-    <polygon points="337,185 374,192 402,152 364,166" fill="url(#rubyGrad)" />
-    <polygon points="374,192 402,152 384,186" fill="url(#goldGrad)" />
-
-    <!-- Blade R4 (Mid Flank Main Wing) -->
-    <polygon points="360,250 410,252 437,210 387,220" fill="url(#darkRuby)" />
-    <polygon points="360,250 402,248 437,210 394,224" fill="url(#rubyGrad)" />
-    <polygon points="402,248 437,210 417,242" fill="url(#goldGrad)" />
-
-    <!-- Blade R5 (Lower Mid Flank Wing) -->
-    <polygon points="364,315 406,310 434,278 390,282" fill="url(#darkRuby)" />
-    <polygon points="364,315 400,307 434,278 396,285" fill="url(#rubyGrad)" />
-    <polygon points="400,307 434,278 414,302" fill="url(#goldGrad)" />
-
-    <!-- Blade R6 (Lower Right Flank Sweeping Up) -->
-    <polygon points="347,372 384,362 404,338 370,342" fill="url(#darkRuby)" />
-    <polygon points="347,372 378,358 404,338 374,345" fill="url(#rubyGrad)" />
-    <polygon points="378,358 404,338 390,356" fill="url(#goldGrad)" />
-
-    <!-- Blade R7 (Bottom Right Golden Inward Talon) -->
-    <polygon points="307,420 350,410 364,390 330,395" fill="url(#darkRuby)" />
-    <polygon points="307,420 344,406 364,390 334,398" fill="url(#rubyGrad)" />
-    <polygon points="307,420 344,406 322,432" fill="url(#goldGrad)" />
-    <polygon points="277,445 322,432 334,418 297,425" fill="url(#goldGrad)" />
-
-    <!-- ================= TOP CROWN APEX ================= -->
-    <polygon points="256,52 278,98 256,90 234,98" fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1" />
-    <polygon points="256,52 272,94 256,88 240,94" fill="url(#rubyGrad)" />
-    <polygon points="256,58 266,90 256,86 246,90" fill="#fde047" />
-
-    <!-- ================= BOTTOM APEX SPIRE ================= -->
-    <polygon points="256,478 276,432 256,442 236,432" fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1" />
-    <polygon points="256,478 270,436 256,442 242,436" fill="url(#rubyGrad)" />
-    <polygon points="256,470 264,440 256,444 248,440" fill="#fde047" />
+    <!-- === BOTTOM APEX SPIRE (Puntale Inferiore) === -->
+    <polygon points="256,488 278,440 256,450 234,440" fill="url(#darkRuby)" stroke="#991b1b" stroke-width="1.5" />
+    <polygon points="256,488 272,444 256,450 240,444" fill="url(#rubyGrad)" />
+    <polygon points="256,478 266,446 256,450 246,446" fill="#fde047" />
   </g>
 
   <!-- 3. Heavy Shield Outer Frame & Golden Bevel -->
   <g filter="url(#crestShadow)">
     <!-- Outer Titanium Black Base Shield -->
-    <path d="M 256,98 
-             L 378,124 
-             C 390,230 374,342 256,438 
-             C 138,342 122,230 134,124 Z" 
+    <path d="M 256,108 
+             L 374,132 
+             C 386,220 372,320 256,412 
+             C 140,320 126,220 138,132 Z" 
           fill="url(#darkTitanium)" stroke="#060a12" stroke-width="3" />
 
     <!-- Gold Inlaid Ridge Rim -->
-    <path d="M 256,104 
-             L 372,129 
-             C 383,231 368,338 256,430 
-             C 144,338 129,231 140,129 Z" 
-          fill="url(#goldRim)" />
+    <path d="M 256,114 
+             L 368,137 
+             C 379,221 366,315 256,404 
+             C 146,315 133,221 144,137 Z" 
+          fill="url(#frameGold)" />
 
     <!-- Inner Charcoal Bevel Rim -->
-    <path d="M 256,110 
-             L 368,134 
-             C 378,232 363,334 256,424 
-             C 149,334 134,232 144,134 Z" 
+    <path d="M 256,118 
+             L 364,141 
+             C 374,221 362,311 256,398 
+             C 150,311 138,221 148,141 Z" 
           fill="#0c121e" />
   </g>
 
-  <!-- 4. Quatered Shield Field (Inquartato Araldico Perfetto) -->
+  <!-- 4. Quatered Shield Field (4 Quarti Perfettamente Bilanciati) -->
   <g clip-path="url(#shieldClipExact)">
     <!-- Q1 (Top-Left): Silver / Pearl White Field -->
-    <rect x="130" y="90" width="126" height="165" fill="url(#silverQuarter)" />
+    <rect x="130" y="100" width="126" height="155" fill="url(#silverQuarter)" />
 
     <!-- Q2 (Top-Right): Imperial Gold Field -->
-    <rect x="256" y="90" width="130" height="165" fill="url(#goldQuarter)" />
+    <rect x="256" y="100" width="130" height="155" fill="url(#goldQuarter)" />
 
     <!-- Q3 (Bottom-Left): Imperial Gold Field -->
-    <rect x="130" y="255" width="126" height="185" fill="url(#goldQuarter)" />
+    <rect x="130" y="255" width="126" height="160" fill="url(#goldQuarter)" />
 
     <!-- Q4 (Bottom-Right): Silver / Pearl White Field -->
-    <rect x="256" y="255" width="130" height="185" fill="url(#silverQuarter)" />
+    <rect x="256" y="255" width="130" height="160" fill="url(#silverQuarter)" />
 
-    <!-- ================= SYMBOLS IN THE 4 QUARTERS ================= -->
+    <!-- ================= SYMBOLS IN THE 4 QUARTERS (Identical Scale & Perfectly Centered) ================= -->
 
-    <!-- Q1 (Top-Left): Sentry Official Templar Cross (Rosso su Bianco) -->
-    <g transform="translate(196, 185) scale(0.24)" filter="url(#symbolShadow)">
-      <path d="M -15 -15 
-               C -20 -55 -45 -115 -92 -165 
-               C -40 -140 40 -140 92 -165 
-               C 45 -115 20 -55 15 -15 
-               C 55 -20 115 -45 165 -92 
-               C 140 -40 140 40 165 92 
-               C 115 45 55 20 15 15 
-               C 20 55 45 115 92 165 
-               C 40 140 -40 140 -92 165 
-               C -45 115 -20 55 -15 15 
-               C -55 20 -115 45 -165 92 
-               C -140 40 -140 -40 -165 -92 
-               C -115 -45 -55 -20 -15 -15 Z" 
-            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="4" />
-      <path d="M -12 -12 
-               C -17 -48 -40 -102 -82 -148 
-               C -35 -125 35 -125 82 -148 
-               C 40 -102 17 -48 12 -12 
-               C 48 -17 102 -40 148 -82 
-               C 125 -35 125 35 148 82 
-               C 102 40 48 17 12 12 
-               C 17 48 40 102 82 148 
-               C 35 125 -35 125 -82 148 
-               C -40 102 -17 48 -12 12 
-               C -48 17 -102 40 -148 82 
-               C -125 35 -125 -35 -148 -82 
-               C -102 -40 -48 -17 -12 -12 Z" 
-            fill="url(#rubyGrad)" />
+    <!-- Q1 (Top-Left): Sentry Templar Cross -->
+    <g transform="translate(202, 192) scale(0.36)" filter="url(#symbolShadow)">
+      <use href="#sentryTemplarCross" />
     </g>
 
-    <!-- Q2 (Top-Right): Medieval Castle Tower (Rosso su Oro) -->
-    <g transform="translate(315, 185) scale(0.66)" filter="url(#symbolShadow)">
-      <!-- Tower Body -->
-      <path d="M -24,36 L 24,36 L 20,-15 L 26,-15 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-15 L -20,-15 Z" 
-            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="1.5" />
-      <path d="M -22,34 L 22,34 L 18,-13 L 24,-13 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-13 L -18,-13 Z" 
-            fill="url(#rubyGrad)" />
-      <!-- Tower Merli Top Highlight -->
-      <polygon points="-24,-34 -18,-34 -18,-30 -24,-30" fill="#fca5a5" />
-      <polygon points="-6,-34 6,-34 6,-30 -6,-30" fill="#fca5a5" />
-      <polygon points="18,-34 24,-34 24,-30 18,-30" fill="#fca5a5" />
-      <!-- Arched Portcullis & Window -->
-      <path d="M -7,34 L -7,14 C -7,9 7,9 7,14 L 7,34 Z" fill="#450a0a" />
-      <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
+    <!-- Q2 (Top-Right): Medieval Castle Tower -->
+    <g transform="translate(310, 192) scale(0.88)" filter="url(#symbolShadow)">
+      <use href="#castleTowerEmblem" />
     </g>
 
-    <!-- Q3 (Bottom-Left): Medieval Castle Tower (Rosso su Oro, Perfettamente Visibile e Non Tagliata) -->
-    <g transform="translate(202, 335) scale(0.58)" filter="url(#symbolShadow)">
-      <path d="M -24,36 L 24,36 L 20,-15 L 26,-15 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-15 L -20,-15 Z" 
-            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="1.5" />
-      <path d="M -22,34 L 22,34 L 18,-13 L 24,-13 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-13 L -18,-13 Z" 
-            fill="url(#rubyGrad)" />
-      <polygon points="-24,-34 -18,-34 -18,-30 -24,-30" fill="#fca5a5" />
-      <polygon points="-6,-34 6,-34 6,-30 -6,-30" fill="#fca5a5" />
-      <polygon points="18,-34 24,-34 24,-30 18,-30" fill="#fca5a5" />
-      <path d="M -7,34 L -7,14 C -7,9 7,9 7,14 L 7,34 Z" fill="#450a0a" />
-      <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
+    <!-- Q3 (Bottom-Left): Medieval Castle Tower (Stessa identica dimensione e ben spaziata!) -->
+    <g transform="translate(202, 318) scale(0.88)" filter="url(#symbolShadow)">
+      <use href="#castleTowerEmblem" />
     </g>
 
-    <!-- Q4 (Bottom-Right): Sentry Official Templar Cross (Rosso su Bianco, Perfettamente Visibile e Non Tagliata) -->
-    <g transform="translate(310, 335) scale(0.23)" filter="url(#symbolShadow)">
-      <path d="M -15 -15 
-               C -20 -55 -45 -115 -92 -165 
-               C -40 -140 40 -140 92 -165 
-               C 45 -115 20 -55 15 -15 
-               C 55 -20 115 -45 165 -92 
-               C 140 -40 140 40 165 92 
-               C 115 45 55 20 15 15 
-               C 20 55 45 115 92 165 
-               C 40 140 -40 140 -92 165 
-               C -45 115 -20 55 -15 15 
-               C -55 20 -115 45 -165 92 
-               C -140 40 -140 -40 -165 -92 
-               C -115 -45 -55 -20 -15 -15 Z" 
-            fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="4" />
-      <path d="M -12 -12 
-               C -17 -48 -40 -102 -82 -148 
-               C -35 -125 35 -125 82 -148 
-               C 40 -102 17 -48 12 -12 
-               C 48 -17 102 -40 148 -82 
-               C 125 -35 125 35 148 82 
-               C 102 40 48 17 12 12 
-               C 17 48 40 102 82 148 
-               C 35 125 -35 125 -82 148 
-               C -40 102 -17 48 -12 12 
-               C -48 17 -102 40 -148 82 
-               C -125 35 -125 -35 -148 -82 
-               C -102 -40 -48 -17 -12 -12 Z" 
-            fill="url(#rubyGrad)" />
+    <!-- Q4 (Bottom-Right): Sentry Templar Cross (Stessa identica dimensione e ben spaziata!) -->
+    <g transform="translate(310, 318) scale(0.36)" filter="url(#symbolShadow)">
+      <use href="#sentryTemplarCross" />
     </g>
 
     <!-- Center Dividing Cross Filigree Lines -->
     <!-- Vertical Divider -->
-    <rect x="253" y="90" width="6" height="350" fill="#0f172a" />
-    <rect x="254.5" y="90" width="3" height="350" fill="url(#goldGrad)" />
+    <rect x="253" y="100" width="6" height="320" fill="#0f172a" />
+    <rect x="254.5" y="100" width="3" height="320" fill="url(#goldGrad)" />
 
     <!-- Horizontal Divider -->
-    <rect x="130" y="253" width="250" height="6" fill="#0f172a" />
-    <rect x="130" y="254.5" width="250" height="3" fill="url(#goldGrad)" />
+    <rect x="130" y="252" width="250" height="6" fill="#0f172a" />
+    <rect x="130" y="253.5" width="250" height="3" fill="url(#goldGrad)" />
 
     <!-- Center Boss / Rosette -->
-    <circle cx="256" cy="256" r="9" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
-    <circle cx="256" cy="256" r="6.5" fill="url(#goldGrad)" />
-    <circle cx="256" cy="256" r="3" fill="#b91c1c" />
+    <circle cx="256" cy="255" r="9" fill="#0f172a" stroke="#1e293b" stroke-width="1.5" />
+    <circle cx="256" cy="255" r="6.5" fill="url(#goldGrad)" />
+    <circle cx="256" cy="255" r="3" fill="#b91c1c" />
 
-    <!-- Soft Right-Side Ambient Shadowing -->
-    <path d="M 256,114 L 366,138 C 376,232 360,330 256,420 Z" fill="#000000" opacity="0.10" />
+    <!-- 3D Shading on Right Hemisphere -->
+    <path d="M 256,120 L 364,142 C 375,220 362,310 256,396 Z" fill="#000000" opacity="0.10" />
   </g>
 
   <!-- 5. Inner Edge Shading Line around shield -->
-  <path d="M 256,114 
-           L 366,138 
-           C 376,232 360,330 256,420 
-           C 152,330 136,232 146,138 Z" 
+  <path d="M 256,120 
+           L 364,142 
+           C 375,220 362,310 256,396 
+           C 150,310 137,220 148,142 Z" 
         fill="none" stroke="#090d16" stroke-width="2.5" opacity="0.7" />
 
 </svg>
