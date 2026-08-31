@@ -73,6 +73,12 @@
           <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-950/40 text-amber-300 font-semibold uppercase border border-amber-800/60 shrink-0">Studio</span>
         </button>
 
+        <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-white hover:bg-white/80 transition-all text-left" data-tab="tab-music">
+          <i data-lucide="music" class="w-4 h-4 shrink-0 text-pink-400"></i>
+          <span class="flex-grow truncate">Sentry Music</span>
+          <span class="text-[10px] px-1.5 py-0.5 rounded bg-pink-950/40 text-pink-300 font-semibold uppercase border border-pink-800/60 shrink-0">Voice</span>
+        </button>
+
         <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-white hover:bg-white/80 transition-all text-left" data-tab="tab-partnerships">
           <i data-lucide="handshake" class="w-4 h-4 shrink-0"></i>
           <span class="truncate">Partnership</span>
@@ -553,6 +559,155 @@
               </div>
               <div id="architect-terminal" class="bg-black/90 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-emerald-400 max-h-48 overflow-y-auto space-y-1">
                 <!-- Live logs -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: SENTRY MUSIC (Music Player & Voice Controller) -->
+    <section id="tab-music" class="tab-content hidden space-y-6">
+      <!-- Header Music Card -->
+      <div class="glass-card p-6 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-gradient-to-br from-pink-500/10 via-red-500/10 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+          <div>
+            <div class="flex items-center gap-2.5 mb-1.5">
+              <div class="w-9 h-9 rounded-xl bg-pink-950/40 text-pink-300 border border-pink-800/60 flex items-center justify-center font-bold shadow-lg">
+                <i data-lucide="music" class="w-5 h-5 text-pink-400"></i>
+              </div>
+              <h3 class="text-xl font-bold text-white font-medieval flex items-center gap-2">
+                🎵 Sentry Music • Riproduttore Vocale HD
+              </h3>
+            </div>
+            <p class="text-xs text-slate-300 max-w-2xl">
+              Streaming ad alta definizione direttamente nei canali vocali di Discord. Supporta ricerche dirette su <strong class="text-red-400">YouTube</strong>, link <strong class="text-emerald-400">Spotify</strong> e <strong class="text-amber-400">SoundCloud</strong> con controlli live e coda sincronizzata.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <span id="music-connection-badge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300">
+              <span class="w-2 h-2 rounded-full bg-slate-500"></span>
+              Non connesso a canali vocali
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Player & Quick Play Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 1. Left 2 Columns: Live Player Card -->
+        <div class="lg:col-span-2 space-y-4">
+          <div class="glass-card p-5 space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-white/5">
+              <h4 class="text-sm font-bold text-white flex items-center gap-2 font-medieval">
+                <i data-lucide="disc" class="w-4 h-4 text-pink-400"></i> Riproduzione in Corso
+              </h4>
+              <span id="music-status-pill" class="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-bold">Inattivo</span>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-5">
+              <!-- Thumbnail -->
+              <div class="w-32 h-32 sm:w-36 sm:h-36 rounded-xl bg-[#0a101b] border border-slate-800 shrink-0 overflow-hidden flex items-center justify-center relative shadow-lg group">
+                <img id="music-now-thumb" src="/banner.svg" alt="Music Thumbnail" class="w-full h-full object-cover hidden">
+                <div id="music-thumb-placeholder" class="flex flex-col items-center justify-center text-slate-600">
+                  <i data-lucide="music-2" class="w-10 h-10 mb-1"></i>
+                  <span class="text-[10px] font-bold">Nessun brano</span>
+                </div>
+              </div>
+
+              <!-- Track Metadata & Details -->
+              <div class="flex-grow space-y-2 text-center sm:text-left min-w-0 w-full">
+                <h5 id="music-now-title" class="text-base font-bold text-white truncate max-w-md">Nessun brano in riproduzione</h5>
+                <p id="music-now-author" class="text-xs text-slate-400">Usa la barra di ricerca sottostante o il comando <code class="text-pink-400 bg-slate-900 px-1 py-0.5 rounded">/play</code></p>
+                
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                  <span id="music-meta-duration" class="text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">⏱️ --:--</span>
+                  <span id="music-meta-requester" class="text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300">👤 Dashboard</span>
+                  <span id="music-meta-channel" class="text-[11px] px-2 py-0.5 rounded bg-pink-950/60 border border-pink-800/60 text-pink-300">🔊 Canale: --</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Interactive Controller Buttons -->
+            <div class="pt-2 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2">
+                <button type="button" id="btn-web-music-playpause" class="btn-cyber text-xs py-2 px-3.5 font-bold flex items-center gap-1.5" style="background: linear-gradient(135deg, #ec4899, #ef4444);">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i> <span>Play</span>
+                </button>
+                <button type="button" id="btn-web-music-skip" class="btn-secondary text-xs py-2 px-3 font-bold flex items-center gap-1.5">
+                  <i data-lucide="skip-forward" class="w-3.5 h-3.5"></i> <span>Salta</span>
+                </button>
+                <button type="button" id="btn-web-music-stop" class="btn-secondary text-xs py-2 px-3 font-bold flex items-center gap-1.5 text-rose-400 hover:text-rose-300">
+                  <i data-lucide="square" class="w-3.5 h-3.5"></i> <span>Ferma</span>
+                </button>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button type="button" id="btn-web-music-loop" class="btn-secondary text-xs py-2 px-2.5 font-bold" title="Modalità Loop">
+                  <i data-lucide="repeat" class="w-3.5 h-3.5"></i>
+                </button>
+                <button type="button" id="btn-web-music-shuffle" class="btn-secondary text-xs py-2 px-2.5 font-bold" title="Mischia Coda">
+                  <i data-lucide="shuffle" class="w-3.5 h-3.5"></i>
+                </button>
+                <div class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
+                  <i data-lucide="volume-2" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <input type="range" id="music-vol-slider" min="1" max="150" value="100" class="w-20 accent-pink-500 cursor-pointer">
+                  <span id="music-vol-label" class="text-[11px] font-mono text-slate-400 w-8">100%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Queue List Card -->
+          <div class="glass-card p-5 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-white/5">
+              <h4 class="text-sm font-bold text-white flex items-center gap-2 font-medieval">
+                <i data-lucide="list-music" class="w-4 h-4 text-pink-400"></i> Coda di Riproduzione
+              </h4>
+              <span id="music-queue-count" class="text-xs text-slate-400">0 brani in attesa</span>
+            </div>
+            <div id="music-queue-container" class="space-y-2 max-h-60 overflow-y-auto">
+              <p class="text-xs text-slate-500 italic py-3 text-center">Nessun brano in coda al momento.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Right Column: Quick Search & Play Box -->
+        <div class="space-y-4">
+          <div class="glass-card p-5 space-y-4">
+            <div class="pb-2 border-b border-white/5">
+              <h4 class="text-sm font-bold text-white flex items-center gap-2 font-medieval">
+                <i data-lucide="search" class="w-4 h-4 text-pink-400"></i> Riproduci Brano in Vocale
+              </h4>
+              <p class="text-[11px] text-slate-400 mt-0.5">Avvia o aggiungi canzoni direttamente dalla dashboard</p>
+            </div>
+
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Seleziona Canale Vocale:</label>
+                <select id="music-target-voice" class="form-select text-xs">
+                  <option value="">-- Seleziona Canale Vocale --</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Canzone o Link (YouTube/Spotify):</label>
+                <input type="text" id="music-search-query" class="form-input text-xs" placeholder="es. Bohemian Rhapsody o link YouTube...">
+              </div>
+
+              <button type="button" id="btn-web-music-search-play" class="btn-cyber w-full py-2.5 text-xs font-bold flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #ec4899, #ef4444);">
+                <i data-lucide="play" class="w-3.5 h-3.5"></i> Avvia Riproduzione
+              </button>
+            </div>
+
+            <!-- Quick Suggestions -->
+            <div class="pt-3 border-t border-slate-800 space-y-2">
+              <span class="text-[11px] text-slate-400 block">💡 Suggerimenti Rapidi:</span>
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" class="btn-var-tag px-2 py-0.5 rounded text-[11px]" onclick="document.getElementById('music-search-query').value='Lofi Hip Hop Radio'">☕ Lofi Chill</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 rounded text-[11px]" onclick="document.getElementById('music-search-query').value='Medieval Fantasy Tavern Music'">🏰 Taverna Medievale</button>
+                <button type="button" class="btn-var-tag px-2 py-0.5 rounded text-[11px]" onclick="document.getElementById('music-search-query').value='Synthwave Gaming Mix'">🕹️ Synthwave Gaming</button>
               </div>
             </div>
           </div>
@@ -2429,6 +2584,6 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=35"></script>
-  <script src="/js/embedBuilder.js?v=35"></script>
-  <script src="/js/modules.js?v=35"></script>
+  <script src="/js/app.js?v=112"></script>
+  <script src="/js/embedBuilder.js?v=112"></script>
+  <script src="/js/modules.js?v=112"></script>

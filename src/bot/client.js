@@ -23,7 +23,8 @@ export function createBotClient() {
       GatewayIntentBits.GuildMessageReactions,
       GatewayIntentBits.GuildEmojisAndStickers,
       GatewayIntentBits.MessageContent,
-      GatewayIntentBits.DirectMessages
+      GatewayIntentBits.DirectMessages,
+      GatewayIntentBits.GuildVoiceStates
     ],
     partials: [
       Partials.Message,

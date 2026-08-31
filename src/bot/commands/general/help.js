@@ -37,7 +37,8 @@ export default {
         { name: '📜 Presentazioni', value: '`/presentati` - Presentati alla community', inline: true },
         { name: '🛡️ Moderazione', value: '`/ban`, `/kick`, `/timeout`, `/warn`, `/clear`', inline: true },
         { name: '🎫 Ticket System', value: '`/ticket` - Gestione supporto e transcript', inline: true },
-        { name: '🎉 Giveaway & XP', value: '`/giveaway`, `/rank`, `/leaderboard`', inline: true }
+        { name: '🎉 Giveaway & XP', value: '`/giveaway`, `/rank`, `/leaderboard`', inline: true },
+        { name: '🎵 Sentry Music', value: '`/play`, `/skip`, `/pause`, `/queue`, `/nowplaying`', inline: true }
       )
       .setFooter({ text: 'Seleziona una categoria dal menu qui sotto ⬇️', iconURL: interaction.client.user.displayAvatarURL() })
       .setTimestamp();
@@ -47,6 +48,7 @@ export default {
       .setPlaceholder('📂 Seleziona una categoria...')
       .addOptions([
         { label: 'Panoramica Generale', value: 'overview', emoji: '🛡️', description: 'Torna alla pagina iniziale' },
+        { label: 'Sentry Music & Vocali', value: 'music', emoji: '🎵', description: 'Riproduzione audio, coda e controlli' },
         { label: 'Partnership System', value: 'partnerships', emoji: '🤝', description: 'Comandi e statistiche partnership' },
         { label: 'Embed & Reaction Roles', value: 'embeds_rr', emoji: '🎨', description: 'Embed builder e bottoni ruoli' },
         { label: 'Welcomer & Auto-Responder', value: 'welcomer_auto', emoji: '👋', description: 'Benvenuto, DM, trigger e reazioni' },
@@ -88,6 +90,22 @@ export default {
       }
 
       switch (val) {
+        case 'music':
+          newEmbed
+            .setTitle('🎵 Modulo Sentry Music & Vocali')
+            .setDescription('Riproduci musica in alta definizione nei canali vocali con controlli completi.')
+            .addFields(
+              { name: '`/play <brano/link>`', value: 'Riproduce brani e playlist da YouTube, Spotify o SoundCloud.' },
+              { name: '`/pause` • `/resume`', value: 'Mette in pausa o riprende la riproduzione in corso.' },
+              { name: '`/skip` • `/stop`', value: 'Salta il brano corrente o ferma la musica svuotando la coda.' },
+              { name: '`/nowplaying`', value: 'Mostra il controller con bottoni interattivi (Play, Skip, Loop, Volume).' },
+              { name: '`/queue` • `/shuffle`', value: 'Visualizza la lista d\'attesa o mescola i brani in coda.' },
+              { name: '`/volume <1-150>`', value: 'Regola il livello del volume del bot.' },
+              { name: '`/loop [off/brano/coda]`', value: 'Imposta la modalità di ripetizione automatica.' },
+              { name: '`/join` • `/leave`', value: 'Fa entrare o uscire Sentry dal canale vocale.' }
+            );
+          break;
+
         case 'partnerships':
           newEmbed
             .setTitle('🤝 Modulo Partnership')

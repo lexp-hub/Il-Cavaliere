@@ -27,7 +27,8 @@
       loadSetupShowcaseData(guildId),
       loadMinigamesData(guildId),
       loadEmojiStats(guildId),
-      loadServerArchitectData(guildId)
+      loadServerArchitectData(guildId),
+      loadMusicData(guildId)
     ]);
   };
 
@@ -2450,6 +2451,318 @@
       } finally {
         btnArchitectBuild.disabled = false;
         btnArchitectBuild.innerHTML = origHtml;
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
+  // === SENTRY MUSIC (Music Player & Voice Controller Frontend) ===
+  let currentMusicState = {
+    active: false,
+    isPlaying: false,
+    isPaused: false,
+    volume: 100,
+    loopMode: 'off'
+  };
+
+  async function loadMusicData(guildId) {
+    if (!guildId) return;
+
+    // 1. Populate Voice Channel Selector
+    const voiceSelect = document.getElementById('music-target-voice');
+    if (voiceSelect && window.AppState.channels) {
+      const currentVal = voiceSelect.value;
+      voiceSelect.innerHTML = '<option value="">-- Seleziona Canale Vocale --</option>';
+
+      // Type 2 = GUILD_VOICE, Type 13 = GUILD_STAGE_VOICE
+      const voiceChannels = window.AppState.channels.filter(c => c.type === 2 || c.type === 13 || c.isVoice);
+      voiceChannels.forEach(ch => {
+        const opt = document.createElement('option');
+        opt.value = ch.id;
+        opt.textContent = `🔊 ${ch.name}`;
+        if (ch.id === currentVal) opt.selected = true;
+        voiceSelect.appendChild(opt);
+      });
+    }
+
+    // 2. Fetch Music Status
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/music/status`);
+      if (!res.ok) return;
+      const data = await res.json();
+      currentMusicState = data;
+
+      const badge = document.getElementById('music-connection-badge');
+      const statusPill = document.getElementById('music-status-pill');
+      const thumbImg = document.getElementById('music-now-thumb');
+      const thumbPlaceholder = document.getElementById('music-thumb-placeholder');
+      const titleEl = document.getElementById('music-now-title');
+      const authorEl = document.getElementById('music-now-author');
+      const durationEl = document.getElementById('music-meta-duration');
+      const requesterEl = document.getElementById('music-meta-requester');
+      const channelEl = document.getElementById('music-meta-channel');
+      const playPauseBtn = document.getElementById('btn-web-music-playpause');
+      const loopBtn = document.getElementById('btn-web-music-loop');
+      const volSlider = document.getElementById('music-vol-slider');
+      const volLabel = document.getElementById('music-vol-label');
+      const queueCount = document.getElementById('music-queue-count');
+      const queueContainer = document.getElementById('music-queue-container');
+
+      if (badge) {
+        if (data.voiceChannel) {
+          badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Connesso a: <strong>${escapeHtml(data.voiceChannel.name)}</strong>`;
+          badge.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-950/60 border border-emerald-800/60 text-xs text-emerald-300';
+        } else {
+          badge.innerHTML = '<span class="w-2 h-2 rounded-full bg-slate-500"></span> Non connesso a canali vocali';
+          badge.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300';
+        }
+      }
+
+      if (statusPill) {
+        if (data.isPlaying) {
+          statusPill.textContent = '▶️ In Riproduzione';
+          statusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 font-bold';
+        } else if (data.isPaused) {
+          statusPill.textContent = '⏸️ In Pausa';
+          statusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800/80 font-bold';
+        } else {
+          statusPill.textContent = 'Inattivo';
+          statusPill.className = 'text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700 font-bold';
+        }
+      }
+
+      if (data.currentTrack) {
+        if (thumbImg && thumbPlaceholder) {
+          if (data.currentTrack.thumbnail) {
+            thumbImg.src = data.currentTrack.thumbnail;
+            thumbImg.classList.remove('hidden');
+            thumbPlaceholder.classList.add('hidden');
+          } else {
+            thumbImg.classList.add('hidden');
+            thumbPlaceholder.classList.remove('hidden');
+          }
+        }
+
+        if (titleEl) titleEl.innerHTML = `<a href="${escapeHtml(data.currentTrack.url)}" target="_blank" class="hover:text-pink-400 transition-colors">${escapeHtml(data.currentTrack.title)}</a>`;
+        if (authorEl) authorEl.textContent = `Canale: ${data.currentTrack.author || 'YouTube'}`;
+        if (durationEl) durationEl.textContent = `⏱️ ${data.currentTrack.duration || 'Live'}`;
+        if (requesterEl) requesterEl.textContent = `👤 ${data.currentTrack.requestedBy || 'Dashboard'}`;
+        if (channelEl) channelEl.textContent = `🔊 Canale: ${data.voiceChannel?.name || 'Vocale'}`;
+      } else {
+        if (thumbImg && thumbPlaceholder) {
+          thumbImg.classList.add('hidden');
+          thumbPlaceholder.classList.remove('hidden');
+        }
+        if (titleEl) titleEl.textContent = 'Nessun brano in riproduzione';
+        if (authorEl) authorEl.innerHTML = 'Usa la barra di ricerca sottostante o il comando <code class="text-pink-400 bg-slate-900 px-1 py-0.5 rounded">/play</code>';
+        if (durationEl) durationEl.textContent = '⏱️ --:--';
+        if (requesterEl) requesterEl.textContent = '👤 --';
+        if (channelEl) channelEl.textContent = '🔊 Canale: --';
+      }
+
+      if (playPauseBtn) {
+        if (data.isPaused) {
+          playPauseBtn.innerHTML = '<i data-lucide="play" class="w-3.5 h-3.5"></i> <span>Riprendi</span>';
+        } else {
+          playPauseBtn.innerHTML = '<i data-lucide="pause" class="w-3.5 h-3.5"></i> <span>Pausa</span>';
+        }
+      }
+
+      if (loopBtn) {
+        if (data.loopMode === 'track') {
+          loopBtn.className = 'btn-cyber text-xs py-2 px-2.5 font-bold text-emerald-300';
+          loopBtn.title = 'Loop Singolo Brano Attivo';
+        } else if (data.loopMode === 'queue') {
+          loopBtn.className = 'btn-cyber text-xs py-2 px-2.5 font-bold text-amber-300';
+          loopBtn.title = 'Loop Intera Coda Attivo';
+        } else {
+          loopBtn.className = 'btn-secondary text-xs py-2 px-2.5 font-bold text-slate-400';
+          loopBtn.title = 'Loop Disattivato';
+        }
+      }
+
+      if (volSlider && volLabel) {
+        volSlider.value = data.volume || 100;
+        volLabel.textContent = `${data.volume || 100}%`;
+      }
+
+      // 3. Render Queue List
+      if (queueCount) {
+        queueCount.textContent = `${data.queue?.length || 0} brani in attesa`;
+      }
+
+      if (queueContainer) {
+        if (data.queue && data.queue.length > 0) {
+          queueContainer.innerHTML = '';
+          data.queue.forEach((track, idx) => {
+            const row = document.createElement('div');
+            row.className = 'flex items-center justify-between p-2.5 rounded-lg bg-[#0e1624] border border-slate-800/80 hover:border-pink-500/40 transition-all gap-3 text-xs';
+            row.innerHTML = `
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="text-slate-500 font-mono font-bold w-5 shrink-0 text-center">${idx + 1}</span>
+                <div class="min-w-0">
+                  <p class="font-bold text-white truncate max-w-md">${escapeHtml(track.title)}</p>
+                  <p class="text-[11px] text-slate-500 truncate">${escapeHtml(track.author || 'YouTube')} • Richiesto da ${escapeHtml(track.requestedBy || 'Utente')}</p>
+                </div>
+              </div>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-300 shrink-0 font-mono">${track.duration || 'Live'}</span>
+            `;
+            queueContainer.appendChild(row);
+          });
+        } else {
+          queueContainer.innerHTML = '<p class="text-xs text-slate-500 italic py-3 text-center">Nessun brano in coda al momento.</p>';
+        }
+      }
+
+      if (window.lucide) lucide.createIcons();
+    } catch (e) {
+      console.error('[Music] Errore caricamento stato:', e);
+    }
+  }
+
+  // Dashboard Music Controls Event Listeners
+  const btnMusicPlayPause = document.getElementById('btn-web-music-playpause');
+  if (btnMusicPlayPause) {
+    btnMusicPlayPause.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+      const action = currentMusicState.isPaused ? 'resume' : 'pause';
+      await fetch(`/api/guilds/${guildId}/music/control`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action })
+      });
+      await loadMusicData(guildId);
+    });
+  }
+
+  const btnMusicSkip = document.getElementById('btn-web-music-skip');
+  if (btnMusicSkip) {
+    btnMusicSkip.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+      await fetch(`/api/guilds/${guildId}/music/control`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'skip' })
+      });
+      window.showToast('⏭️ Brano saltato!');
+      await loadMusicData(guildId);
+    });
+  }
+
+  const btnMusicStop = document.getElementById('btn-web-music-stop');
+  if (btnMusicStop) {
+    btnMusicStop.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+      await fetch(`/api/guilds/${guildId}/music/control`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'stop' })
+      });
+      window.showToast('⏹️ Riproduzione fermata e disconnessione.');
+      await loadMusicData(guildId);
+    });
+  }
+
+  const btnMusicLoop = document.getElementById('btn-web-music-loop');
+  if (btnMusicLoop) {
+    btnMusicLoop.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+      const res = await fetch(`/api/guilds/${guildId}/music/control`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'loop' })
+      });
+      const data = await res.json();
+      if (data.success) {
+        const msg = data.loopMode === 'track' ? 'Loop singolo brano' : (data.loopMode === 'queue' ? 'Loop intera coda' : 'Loop disattivato');
+        window.showToast(`🔁 ${msg}`);
+      }
+      await loadMusicData(guildId);
+    });
+  }
+
+  const btnMusicShuffle = document.getElementById('btn-web-music-shuffle');
+  if (btnMusicShuffle) {
+    btnMusicShuffle.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+      await fetch(`/api/guilds/${guildId}/music/control`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'shuffle' })
+      });
+      window.showToast('🔀 Coda mescolata!');
+      await loadMusicData(guildId);
+    });
+  }
+
+  const musicVolSlider = document.getElementById('music-vol-slider');
+  if (musicVolSlider) {
+    musicVolSlider.addEventListener('input', (e) => {
+      const valLabel = document.getElementById('music-vol-label');
+      if (valLabel) valLabel.textContent = `${e.target.value}%`;
+    });
+
+    musicVolSlider.addEventListener('change', async (e) => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+      await fetch(`/api/guilds/${guildId}/music/control`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'volume', value: e.target.value })
+      });
+    });
+  }
+
+  const btnWebMusicSearchPlay = document.getElementById('btn-web-music-search-play');
+  if (btnWebMusicSearchPlay) {
+    btnWebMusicSearchPlay.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server Discord.', 'error');
+
+      const voiceSelect = document.getElementById('music-target-voice');
+      const voiceChannelId = voiceSelect ? voiceSelect.value : '';
+
+      const queryInput = document.getElementById('music-search-query');
+      const query = queryInput ? queryInput.value.trim() : '';
+
+      if (!query) {
+        return window.showToast('Inserisci un titolo o link da riprodurre.', 'error');
+      }
+
+      const origHtml = btnWebMusicSearchPlay.innerHTML;
+      btnWebMusicSearchPlay.disabled = true;
+      btnWebMusicSearchPlay.innerHTML = '<i data-lucide="loader-2" class="w-3.5 h-3.5 animate-spin"></i> Ricerca & Connessione...';
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/music/play`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, voiceChannelId })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          if (data.isPlaylist) {
+            window.showToast(`📑 Playlist "${data.title}" aggiunta (${data.count} brani)!`);
+          } else {
+            window.showToast(`▶️ In riproduzione: "${data.track?.title}"!`);
+          }
+          if (queryInput) queryInput.value = '';
+          await loadMusicData(guildId);
+        } else {
+          window.showToast(data.error || 'Impossibile riprodurre il brano.', 'error');
+        }
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        btnWebMusicSearchPlay.disabled = false;
+        btnWebMusicSearchPlay.innerHTML = origHtml;
         if (window.lucide) lucide.createIcons();
       }
     });

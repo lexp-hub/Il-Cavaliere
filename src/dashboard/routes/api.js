@@ -10,6 +10,7 @@ import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
 import { TempChannelManager } from '../../bot/modules/tempChannelManager.js';
 import { ServerArchitect } from '../../bot/modules/serverArchitect.js';
+import { MusicManager } from '../../bot/modules/musicManager.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
@@ -1041,6 +1042,144 @@ export function createApiRouter(botClient) {
       const guild = botClient.guilds.cache.get(guildId);
       const result = await ServerArchitect.buildServer(guild, structure, { cleanMode: Boolean(cleanMode) });
       res.json(result);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // === Sentry Music API Routes ===
+  router.get('/guilds/:guildId/music/status', requireModAuth, async (req, res) => {
+    try {
+      const guildId = req.params.guildId;
+      const queue = MusicManager.getQueue(guildId);
+
+      if (!queue || (!queue.currentTrack && queue.queue.length === 0)) {
+        return res.json({
+          active: false,
+          isPlaying: false,
+          isPaused: false,
+          currentTrack: null,
+          queue: [],
+          volume: 100,
+          loopMode: 'off',
+          voiceChannel: null
+        });
+      }
+
+      res.json({
+        active: true,
+        isPlaying: !queue.isPaused && Boolean(queue.currentTrack),
+        isPaused: queue.isPaused,
+        currentTrack: queue.currentTrack,
+        queue: queue.queue,
+        volume: queue.volume,
+        loopMode: queue.loopMode,
+        voiceChannel: queue.voiceChannel ? { id: queue.voiceChannel.id, name: queue.voiceChannel.name } : null
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  router.post('/guilds/:guildId/music/play', requireModAuth, async (req, res) => {
+    try {
+      const guildId = req.params.guildId;
+      const { query, voiceChannelId, textChannelId } = req.body;
+
+      if (!query) return res.status(400).json({ error: 'Inserisci un brano o link da riprodurre.' });
+      if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+        return res.status(400).json({ error: 'Bot Sentry non disponibile.' });
+      }
+
+      const guild = botClient.guilds.cache.get(guildId);
+      let voiceChannel;
+      if (voiceChannelId) {
+        voiceChannel = await guild.channels.fetch(voiceChannelId).catch(() => null);
+      }
+      if (!voiceChannel) {
+        // Find first voice channel with members or available
+        voiceChannel = guild.channels.cache.find(c => c.isVoiceBased() && c.members.size > 0) || guild.channels.cache.find(c => c.isVoiceBased());
+      }
+
+      if (!voiceChannel) {
+        return res.status(400).json({ error: 'Nessun canale vocale trovato in cui riprodurre la musica.' });
+      }
+
+      let textChannel = null;
+      if (textChannelId) {
+        textChannel = await guild.channels.fetch(textChannelId).catch(() => null);
+      }
+
+      const searchResult = await MusicManager.searchTrack(query, req.user?.username || 'Dashboard');
+      const queue = MusicManager.getOrCreateQueue(guildId, botClient);
+
+      await queue.connect(voiceChannel, textChannel);
+
+      if (searchResult.isPlaylist) {
+        queue.queue.push(...searchResult.tracks);
+        if (!queue.currentTrack) {
+          const first = queue.queue.shift();
+          await queue.playTrack(first);
+        }
+        res.json({ success: true, isPlaylist: true, count: searchResult.tracks.length, title: searchResult.title });
+      } else {
+        const track = searchResult.track;
+        if (!queue.currentTrack) {
+          await queue.playTrack(track);
+        } else {
+          queue.queue.push(track);
+        }
+        res.json({ success: true, isPlaylist: false, track });
+      }
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  router.post('/guilds/:guildId/music/control', requireModAuth, async (req, res) => {
+    try {
+      const guildId = req.params.guildId;
+      const { action, value } = req.body;
+      const queue = MusicManager.getQueue(guildId);
+
+      if (!queue) {
+        return res.status(400).json({ error: 'Nessuna riproduzione musicale attiva in questo server.' });
+      }
+
+      switch (action) {
+        case 'pause':
+          queue.pause();
+          break;
+        case 'resume':
+          queue.resume();
+          break;
+        case 'skip':
+          queue.skip();
+          break;
+        case 'stop':
+          queue.stop();
+          break;
+        case 'volume':
+          if (value !== undefined) queue.setVolume(Number(value));
+          break;
+        case 'loop':
+          queue.toggleLoop();
+          break;
+        case 'shuffle':
+          queue.shuffle();
+          break;
+        default:
+          return res.status(400).json({ error: 'Azione non valida.' });
+      }
+
+      res.json({
+        success: true,
+        action,
+        isPlaying: !queue.isPaused && Boolean(queue.currentTrack),
+        isPaused: queue.isPaused,
+        volume: queue.volume,
+        loopMode: queue.loopMode
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
