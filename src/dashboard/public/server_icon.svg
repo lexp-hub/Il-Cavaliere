@@ -5,14 +5,14 @@
       <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#000000" flood-opacity="0.75" />
     </filter>
     <filter id="crossGlow" x="-30%" y="-30%" width="160%" height="160%">
-      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#991b1b" flood-opacity="0.4" />
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#7f1d1d" flood-opacity="0.4" />
     </filter>
 
     <!-- Gradients -->
     <linearGradient id="rubyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ff4d79" />
       <stop offset="40%" stop-color="#ef4444" />
-      <stop offset="100%" stop-color="#b91c1c" />
+      <stop offset="100%" stop-color="#991b1b" />
     </linearGradient>
 
     <linearGradient id="darkRuby" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -22,21 +22,21 @@
     </linearGradient>
 
     <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fde047" />
-      <stop offset="35%" stop-color="#fbbf24" />
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="30%" stop-color="#fbbf24" />
       <stop offset="70%" stop-color="#d97706" />
       <stop offset="100%" stop-color="#92400e" />
     </linearGradient>
 
     <linearGradient id="goldQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#eab308" />
-      <stop offset="50%" stop-color="#ca8a04" />
-      <stop offset="100%" stop-color="#a16207" />
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="45%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#b45309" />
     </linearGradient>
 
     <linearGradient id="silverQuarter" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff" />
-      <stop offset="50%" stop-color="#f1f5f9" />
+      <stop offset="50%" stop-color="#f8fafc" />
       <stop offset="100%" stop-color="#e2e8f0" />
     </linearGradient>
 
@@ -53,18 +53,19 @@
       <stop offset="100%" stop-color="#451a03" />
     </linearGradient>
 
-    <!-- Clip Path for Shield Interior -->
+    <!-- Clip Path for Shield Interior (Spacious Lower Section) -->
     <clipPath id="shieldClip">
-      <path d="M 256,92 
-               C 295,92 345,98 375,110 
-               C 382,195 370,285 256,396 
-               C 142,285 130,195 137,110 
-               C 167,98 217,92 256,92 Z" />
+      <path d="M 256,86 
+               C 305,86 355,94 382,106 
+               C 392,190 385,280 348,348 
+               C 318,390 280,412 256,420 
+               C 232,412 194,390 164,348 
+               C 127,280 120,190 130,106 
+               C 157,94 207,86 256,86 Z" />
     </clipPath>
 
     <!-- Sentry Official Templar Cross Emblem -->
     <g id="sentryTemplarEmblem">
-      <!-- Outer Drop Layer / Stroke -->
       <path d="M -15 -15 
                C -20 -55 -45 -115 -92 -165 
                C -40 -140 40 -140 92 -165 
@@ -79,7 +80,6 @@
                C -140 40 -140 -40 -165 -92 
                C -115 -45 -55 -20 -15 -15 Z" 
             fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="4" />
-      <!-- Inner Radiant Body -->
       <path d="M -12 -12 
                C -17 -48 -40 -102 -82 -148 
                C -35 -125 35 -125 82 -148 
@@ -98,78 +98,127 @@
   </defs>
 
   <!-- 1. Background (Dark Canvas) -->
-  <circle cx="256" cy="256" r="254" fill="#080c14" opacity="0.95" />
+  <circle cx="256" cy="256" r="254" fill="#080c14" opacity="0.96" />
 
-  <!-- 2. Outer Heraldic Crest: Sharp Stylized Wing Blades & Flame Laurel (Crimson & Antique Gold) -->
+  <!-- 2. Outer Heraldic Crest: FULL 360° Circular Wreath of Ruby & Gold Feather-Flames -->
   <g filter="url(#dropShadow)">
-    <!-- Crimson Wing Blades Layer -->
-    <!-- Left Wing -->
-    <path d="M 256,48 Q 230,65 215,90 Q 180,85 145,115 Q 165,135 155,160 Q 120,150 95,185 Q 120,205 110,235 Q 75,235 68,275 Q 95,290 92,320 Q 70,335 85,365 Q 115,360 130,385 Q 120,405 148,425 Q 185,415 210,435 Q 235,445 256,470 Z" fill="url(#rubyGrad)" />
-    <!-- Right Wing -->
-    <path d="M 256,48 Q 282,65 297,90 Q 332,85 367,115 Q 347,135 357,160 Q 392,150 417,185 Q 392,205 402,235 Q 437,235 444,275 Q 417,290 420,320 Q 442,335 427,365 Q 397,360 382,385 Q 392,405 364,425 Q 327,415 302,435 Q 277,445 256,470 Z" fill="url(#rubyGrad)" />
+    <!-- Outer Crimson Ruby Radial Feathers -->
+    <path d="M 245.9,111.4 Q 268.0631578503825,94.44975944717149 293.5,43.3 Q 299.91777601279466,100.06658808937067 315.0,123.5 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 283.7,113.7 Q 309.4643947102517,103.07662540256834 347.3,60.2 Q 338.77985085422404,116.74664710480963 347.3,143.3 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 319.6,125.7 Q 347.22212142470715,122.12496661895472 394.8,90.5 Q 372.0006156601097,142.91659199300938 373.3,170.8 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 351.1,146.6 Q 378.7632113157522,150.29667012130616 432.9,132.1 Q 397.31613020884015,176.79298425771782 391.4,204.0 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 376.2,174.9 Q 401.9381912314277,185.67188087187864 459.0,182.1 Q 413.00118401978534,216.06720374948037 400.2,240.8 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 393.1,208.8 Q 415.1677245889456,225.83983671832056 471.2,237.2 Q 417.98686659650616,258.0627773136498 399.2,278.7 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 400.6,245.9 Q 417.55024055282854,268.0631578503825 468.7,293.5 Q 411.93341191062933,299.91777601279466 388.5,315.0 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 398.3,283.7 Q 408.9233745974317,309.4643947102517 451.8,347.3 Q 395.25335289519035,338.77985085422404 368.7,347.3 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 386.3,319.6 Q 389.8750333810453,347.22212142470715 421.5,394.8 Q 369.0834080069907,372.0006156601097 341.2,373.3 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 365.4,351.1 Q 361.7033298786938,378.7632113157522 379.9,432.9 Q 335.2070157422821,397.31613020884015 308.0,391.4 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 337.1,376.2 Q 326.3281191281214,401.9381912314277 329.9,459.0 Q 295.93279625051963,413.00118401978534 271.2,400.2 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 303.2,393.1 Q 286.16016328167944,415.1677245889456 274.8,471.2 Q 253.9372226863502,417.98686659650616 233.3,399.2 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 278.7,399.2 Q 258.0627773136498,417.98686659650616 237.2,471.2 Q 225.83983671832053,415.1677245889456 208.8,393.1 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 240.8,400.2 Q 216.06720374948037,413.00118401978534 182.1,459.0 Q 185.67188087187864,401.9381912314277 174.9,376.2 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 204.0,391.4 Q 176.7929842577179,397.3161302088402 132.1,432.9 Q 150.2966701213062,378.76321131575224 146.6,351.1 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 170.8,373.3 Q 142.9165919930094,372.0006156601097 90.5,394.8 Q 122.12496661895474,347.22212142470715 125.7,319.6 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 143.3,347.3 Q 116.74664710480965,338.77985085422404 60.2,347.3 Q 103.07662540256834,309.4643947102517 113.7,283.7 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 123.5,315.0 Q 100.06658808937067,299.91777601279466 43.3,293.5 Q 94.44975944717149,268.0631578503824 111.4,245.9 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 112.8,278.7 Q 94.01313340349381,258.0627773136498 40.8,237.2 Q 96.83227541105441,225.83983671832056 118.9,208.8 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 111.8,240.8 Q 98.99881598021469,216.0672037494804 53.0,182.1 Q 110.06180876857226,185.67188087187864 135.8,174.9 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 120.6,204.0 Q 114.6838697911598,176.7929842577179 79.1,132.1 Q 133.23678868424776,150.2966701213062 160.9,146.6 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 138.7,170.8 Q 139.99938433989027,142.9165919930094 117.2,90.5 Q 164.7778785752928,122.12496661895477 192.4,125.7 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 164.7,143.3 Q 173.22014914577596,116.74664710480965 164.7,60.2 Q 202.5356052897481,103.0766254025684 228.3,113.7 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
+    <path d="M 197.0,123.5 Q 212.0822239872054,100.06658808937064 218.5,43.3 Q 243.93684214961746,94.44975944717149 266.1,111.4 Z" fill="url(#rubyGrad)" stroke="#7f1d1d" stroke-width="1" />
 
-    <!-- Radiant Gold Accents Layer -->
-    <path d="M 256,60 Q 235,78 225,100 Q 195,98 165,128 Q 180,148 172,170 Q 140,165 120,198 Q 140,215 132,242 Q 102,248 100,282 Q 125,295 120,322 Q 102,338 118,362 Q 142,358 152,380 Q 150,398 172,415 Q 202,405 224,422 Q 242,430 256,450 Z" fill="url(#goldGrad)" />
-    <path d="M 256,60 Q 277,78 287,100 Q 317,98 347,128 Q 332,148 340,170 Q 372,165 392,198 Q 372,215 380,242 Q 410,248 412,282 Q 387,295 392,322 Q 410,338 394,362 Q 370,358 360,380 Q 362,398 340,415 Q 310,405 288,422 Q 270,430 256,450 Z" fill="url(#goldGrad)" />
+    <!-- Inner Antique Gold Radial Feathers -->
+    <path d="M 246.4,118.6 Q 270.01724015475315,108.16303920046255 290.4,61.0 Q 293.39132138428363,112.28452037050005 312.0,130.2 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 282.3,120.8 Q 307.8026353037673,116.8283901954681 339.7,76.6 Q 329.31354620831223,126.85909268414724 342.7,148.9 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 316.4,132.2 Q 342.05776646473225,134.97805640669293 383.3,104.3 Q 360.2395740146079,150.23440441592982 367.4,175.0 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 346.4,152.0 Q 370.4482030583091,161.3751680755836 418.2,142.4 Q 384.06184711584905,180.81746670085596 384.6,206.6 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 370.2,179.0 Q 391.0391837480603,194.2208056651948 442.1,188.3 Q 399.15691696835376,216.52409438510796 393.0,241.6 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 386.2,211.2 Q 402.42746722818373,231.27659325377718 453.2,238.7 Q 404.4960795074562,254.9209397999963 392.1,277.5 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 393.4,246.4 Q 403.83696079953745,270.01724015475315 451.0,290.4 Q 399.71547962949995,293.39132138428363 381.8,312.0 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 391.2,282.3 Q 395.1716098045319,307.8026353037673 435.4,339.7 Q 385.14090731585276,329.31354620831223 363.1,342.7 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 379.8,316.4 Q 377.02194359330707,342.05776646473225 407.7,383.3 Q 361.7655955840702,360.2395740146079 337.0,367.4 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 360.0,346.4 Q 350.6248319244164,370.4482030583091 369.6,418.2 Q 331.18253329914404,384.06184711584905 305.4,384.6 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 333.0,370.2 Q 317.7791943348052,391.0391837480602 323.7,442.1 Q 295.47590561489204,399.15691696835376 270.4,393.0 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 300.8,386.2 Q 280.72340674622285,402.42746722818373 273.3,453.2 Q 257.0790602000037,404.4960795074562 234.5,392.1 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 277.5,392.1 Q 254.9209397999963,404.4960795074562 238.7,453.2 Q 231.27659325377715,402.42746722818373 211.2,386.2 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 241.6,393.0 Q 216.52409438510796,399.15691696835376 188.3,442.1 Q 194.2208056651948,391.0391837480602 179.0,370.2 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 206.6,384.6 Q 180.81746670085602,384.0618471158491 142.4,418.2 Q 161.37516807558362,370.4482030583091 152.0,346.4 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 175.0,367.4 Q 150.23440441592987,360.2395740146079 104.3,383.3 Q 134.97805640669293,342.0577664647323 132.2,316.4 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 148.9,342.7 Q 126.85909268414724,329.31354620831223 76.6,339.7 Q 116.8283901954681,307.8026353037673 120.8,282.3 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 130.2,312.0 Q 112.28452037050005,293.39132138428363 61.0,290.4 Q 108.16303920046255,270.01724015475315 118.6,246.4 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 119.9,277.5 Q 107.50392049254376,254.92093979999635 58.8,238.7 Q 109.57253277181624,231.2765932537772 125.8,211.2 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 119.0,241.6 Q 112.84308303164624,216.52409438510796 69.9,188.3 Q 120.96081625193975,194.2208056651948 141.8,179.0 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 127.4,206.6 Q 127.9381528841509,180.81746670085602 93.8,142.4 Q 141.5517969416909,161.37516807558364 165.6,152.0 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 144.6,175.0 Q 151.7604259853921,150.23440441592987 128.7,104.3 Q 169.9422335352677,134.97805640669293 195.6,132.2 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 169.3,148.9 Q 182.6864537916877,126.8590926841473 172.3,76.6 Q 204.1973646962326,116.82839019546813 229.7,120.8 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
+    <path d="M 200.0,130.2 Q 218.60867861571637,112.28452037050005 221.6,61.0 Q 241.98275984524685,108.16303920046255 265.6,118.6 Z" fill="url(#goldGrad)" stroke="#92400e" stroke-width="0.8" />
 
-    <!-- Top Crown Spire Point -->
-    <polygon points="256,38 274,80 256,72 238,80" fill="url(#rubyGrad)" stroke="#fbbf24" stroke-width="1.5" />
-    <polygon points="256,45 268,76 256,70 244,76" fill="#fef08a" />
+    <!-- Top Crown Spire (In alto al centro) -->
+    <polygon points="256,26 278,74 256,66 234,74" fill="url(#rubyGrad)" stroke="#fbbf24" stroke-width="1.5" />
+    <polygon points="256,36 270,70 256,64 242,70" fill="#fef08a" />
 
-    <!-- Bottom Spire Tail Point -->
-    <polygon points="256,478 272,435 256,445 240,435" fill="url(#rubyGrad)" stroke="#fbbf24" stroke-width="1.5" />
+    <!-- Bottom Spire (In basso al centro) -->
+    <polygon points="256,486 276,438 256,448 236,438" fill="url(#rubyGrad)" stroke="#fbbf24" stroke-width="1.5" />
+    <polygon points="256,476 268,442 256,448 244,442" fill="#fef08a" />
   </g>
 
   <!-- 3. Heavy Shield Outer Frame / Bevel (Titanium & Gold Border) -->
   <g filter="url(#dropShadow)">
     <!-- Outer Dark Titanium Shield Body -->
-    <path d="M 256,76 
-             C 305,76 360,83 392,97 
-             C 402,195 388,300 256,420 
-             C 124,300 110,195 120,97 
-             C 152,83 207,76 256,76 Z" 
+    <path d="M 256,72 
+             C 310,72 365,80 396,94 
+             C 408,190 400,285 362,358 
+             C 328,404 285,428 256,438 
+             C 227,428 184,404 150,358 
+             C 112,285 104,190 116,94 
+             C 147,80 202,72 256,72 Z" 
           fill="url(#darkTitanium)" stroke="#0f172a" stroke-width="4" />
 
     <!-- Gold Inlaid Border -->
-    <path d="M 256,84 
-             C 300,84 352,90 382,103 
-             C 391,192 378,290 256,408 
-             C 134,290 121,192 130,103 
-             C 160,90 212,84 256,84 Z" 
+    <path d="M 256,79 
+             C 306,79 358,87 388,100 
+             C 399,188 391,280 355,350 
+             C 322,395 281,418 256,427 
+             C 231,418 190,395 157,350 
+             C 121,280 113,188 124,100 
+             C 154,87 206,79 256,79 Z" 
           fill="url(#frameGold)" />
 
     <!-- Inner Charcoal Bevel Rim -->
-    <path d="M 256,90 
-             C 296,90 346,96 376,108 
-             C 384,194 372,286 256,398 
-             C 140,286 128,194 136,108 
-             C 166,96 216,90 256,90 Z" 
+    <path d="M 256,84 
+             C 304,84 354,92 382,104 
+             C 392,188 384,278 348,346 
+             C 317,388 279,410 256,418 
+             C 233,410 195,388 164,346 
+             C 128,278 120,188 130,104 
+             C 158,92 208,84 256,84 Z" 
           fill="#0c121e" />
   </g>
 
-  <!-- 4. Quatered Shield Field (Inquartato Araldico) -->
+  <!-- 4. Quatered Shield Field (Inquartato Araldico Spazioso) -->
   <g clip-path="url(#shieldClip)">
     <!-- Top-Left (Q1): Pearl Silver Field -->
-    <rect x="130" y="80" width="126" height="160" fill="url(#silverQuarter)" />
+    <rect x="120" y="70" width="136" height="155" fill="url(#silverQuarter)" />
 
     <!-- Top-Right (Q2): Imperial Gold Field -->
-    <rect x="256" y="80" width="135" height="160" fill="url(#goldQuarter)" />
+    <rect x="256" y="70" width="145" height="155" fill="url(#goldQuarter)" />
 
     <!-- Bottom-Left (Q3): Imperial Gold Field -->
-    <rect x="130" y="240" width="126" height="170" fill="url(#goldQuarter)" />
+    <rect x="120" y="225" width="136" height="205" fill="url(#goldQuarter)" />
 
     <!-- Bottom-Right (Q4): Pearl Silver Field -->
-    <rect x="256" y="240" width="135" height="170" fill="url(#silverQuarter)" />
+    <rect x="256" y="225" width="145" height="205" fill="url(#silverQuarter)" />
 
     <!-- ================= EMBLEMS IN 4 QUARTERS ================= -->
 
     <!-- Q1 (Top-Left): SENTRY OFFICIAL LOGO EMBLEM (Templar Cross) -->
-    <g transform="translate(196, 165) scale(0.32)" filter="url(#crossGlow)">
+    <g transform="translate(196, 155) scale(0.28)" filter="url(#crossGlow)">
       <use href="#sentryTemplarEmblem" />
     </g>
 
     <!-- Q2 (Top-Right): Red Heraldic Castle Tower on Gold -->
-    <g transform="translate(316, 162) scale(0.68)" filter="url(#dropShadow)">
+    <g transform="translate(318, 155) scale(0.66)" filter="url(#dropShadow)">
       <!-- Tower Base & Walls -->
       <path d="M -24,36 L 24,36 L 20,-15 L 26,-15 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-15 L -20,-15 Z" 
             fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="1.5" />
@@ -184,8 +233,8 @@
       <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
     </g>
 
-    <!-- Q3 (Bottom-Left): Red Heraldic Castle Tower on Gold -->
-    <g transform="translate(202, 310) scale(0.62)" filter="url(#dropShadow)">
+    <!-- Q3 (Bottom-Left): Red Heraldic Castle Tower (Posizionata comodamente nel quadrante) -->
+    <g transform="translate(198, 298) scale(0.60)" filter="url(#dropShadow)">
       <path d="M -24,36 L 24,36 L 20,-15 L 26,-15 L 26,-36 L 16,-36 L 16,-24 L 8,-24 L 8,-36 L -8,-36 L -8,-24 L -16,-24 L -16,-36 L -26,-36 L -26,-15 L -20,-15 Z" 
             fill="url(#darkRuby)" stroke="#7f1d1d" stroke-width="1.5" />
       <path d="M -22,34 L 22,34 L 18,-13 L 24,-13 L 24,-34 L 18,-34 L 18,-22 L 6,-22 L 6,-34 L -6,-34 L -6,-22 L -18,-22 L -18,-34 L -24,-34 L -24,-13 L -18,-13 Z" 
@@ -197,35 +246,37 @@
       <rect x="-2" y="-5" width="4" height="10" rx="1.5" fill="#450a0a" />
     </g>
 
-    <!-- Q4 (Bottom-Right): SENTRY OFFICIAL LOGO EMBLEM (Templar Cross) -->
-    <g transform="translate(308, 308) scale(0.28)" filter="url(#crossGlow)">
+    <!-- Q4 (Bottom-Right): SENTRY OFFICIAL LOGO EMBLEM (Posizionato comodamente nel quadrante) -->
+    <g transform="translate(314, 298) scale(0.28)" filter="url(#crossGlow)">
       <use href="#sentryTemplarEmblem" />
     </g>
 
     <!-- Center Dividing Filigree Cross (Vertical & Horizontal Divider) -->
     <!-- Vertical Divider Line -->
-    <rect x="253" y="80" width="6" height="320" fill="#1e293b" />
-    <rect x="254.5" y="80" width="3" height="320" fill="url(#goldGrad)" />
+    <rect x="253" y="70" width="6" height="350" fill="#1e293b" />
+    <rect x="254.5" y="70" width="3" height="350" fill="url(#goldGrad)" />
     
     <!-- Horizontal Divider Line -->
-    <rect x="130" y="237" width="252" height="6" fill="#1e293b" />
-    <rect x="130" y="238.5" width="252" height="3" fill="url(#goldGrad)" />
+    <rect x="120" y="222" width="270" height="6" fill="#1e293b" />
+    <rect x="120" y="223.5" width="270" height="3" fill="url(#goldGrad)" />
 
     <!-- Center Boss / Rosette Emblem -->
-    <circle cx="256" cy="240" r="11" fill="#1e293b" stroke="#0f172a" stroke-width="1.5" />
-    <circle cx="256" cy="240" r="8" fill="url(#goldGrad)" />
-    <circle cx="256" cy="240" r="4" fill="#ef4444" />
+    <circle cx="256" cy="225" r="11" fill="#1e293b" stroke="#0f172a" stroke-width="1.5" />
+    <circle cx="256" cy="225" r="8" fill="url(#goldGrad)" />
+    <circle cx="256" cy="225" r="4" fill="#ef4444" />
 
     <!-- Diagonal Glass Specular Highlight Overlay -->
-    <path d="M 137,110 L 375,110 L 256,270 L 137,270 Z" fill="url(#silverQuarter)" opacity="0.12" />
+    <path d="M 130,106 L 382,106 L 256,260 L 130,260 Z" fill="url(#silverQuarter)" opacity="0.10" />
   </g>
 
   <!-- 5. Inner Edge Shading Line around shield -->
-  <path d="M 256,92 
-           C 295,92 345,98 375,110 
-           C 382,195 370,285 256,396 
-           C 142,285 130,195 137,110 
-           C 167,98 217,92 256,92 Z" 
+  <path d="M 256,86 
+           C 305,86 355,94 382,106 
+           C 392,190 385,280 348,348 
+           C 318,390 280,412 256,420 
+           C 232,412 194,390 164,348 
+           C 127,280 120,190 130,106 
+           C 157,94 207,86 256,86 Z" 
         fill="none" stroke="#0f172a" stroke-width="3" opacity="0.8" />
 
 </svg>
