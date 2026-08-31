@@ -8,6 +8,7 @@ import {
   StreamType
 } from "@discordjs/voice";
 import ytSearch from "yt-search";
+import ffmpegStatic from "ffmpeg-static";
 import { spawn } from "child_process";
 import path from "path";
 import fs from "fs";
@@ -24,11 +25,22 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "../../..");
 const localYtDlp = path.join(projectRoot, "bin/yt-dlp");
 
+if (ffmpegStatic) {
+  process.env.FFMPEG_PATH = ffmpegStatic;
+}
+
 function getYtDlpPath() {
   if (fs.existsSync(localYtDlp)) {
     return localYtDlp;
   }
   return "yt-dlp";
+}
+
+function getFfmpegPath() {
+  if (ffmpegStatic && fs.existsSync(ffmpegStatic)) {
+    return ffmpegStatic;
+  }
+  return "ffmpeg";
 }
 
 // Map of Guild ID -> GuildMusicQueue
@@ -50,6 +62,7 @@ class GuildMusicQueue {
     this.idleTimer = null;
     this.currentResource = null;
     this.streamProcess = null;
+    this.ffmpegProcess = null;
     this.controllerMessage = null;
 
     this.setupPlayerListeners();
@@ -57,13 +70,13 @@ class GuildMusicQueue {
 
   setupPlayerListeners() {
     this.player.on(AudioPlayerStatus.Idle, () => {
-      this.killStreamProcess();
+      this.killProcesses();
       this.handleTrackEnd();
     });
 
     this.player.on("error", (error) => {
       console.error("[Music] Errore riproduzione nel server " + this.guildId + ":", error.message);
-      this.killStreamProcess();
+      this.killProcesses();
       if (this.textChannel) {
         this.textChannel.send({
           embeds: [
@@ -77,7 +90,15 @@ class GuildMusicQueue {
     });
   }
 
-  killStreamProcess() {
+  killProcesses() {
+    if (this.ffmpegProcess) {
+      try {
+        this.ffmpegProcess.stdout.destroy();
+        this.ffmpegProcess.stdin.destroy();
+        this.ffmpegProcess.kill("SIGKILL");
+      } catch {}
+      this.ffmpegProcess = null;
+    }
     if (this.streamProcess) {
       try {
         this.streamProcess.stdout.destroy();
@@ -144,7 +165,7 @@ class GuildMusicQueue {
         channelId: voiceChannel.id,
         guildId: this.guildId,
         adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-        selfDeaf: true
+        selfDeaf: false
       });
 
       this.connection.subscribe(this.player);
@@ -166,12 +187,15 @@ class GuildMusicQueue {
 
   async playTrack(track) {
     this.clearIdleTimer();
-    this.killStreamProcess();
+    this.killProcesses();
     this.currentTrack = track;
     this.isPaused = false;
 
     try {
       const ytdlpBin = getYtDlpPath();
+      const ffmpegBin = getFfmpegPath();
+
+      // Spawn yt-dlp to download raw audio stream
       this.streamProcess = spawn(ytdlpBin, [
         "-f", "bestaudio/best",
         "-o", "-",
@@ -180,8 +204,30 @@ class GuildMusicQueue {
         track.url
       ]);
 
-      this.currentResource = createAudioResource(this.streamProcess.stdout, {
-        inputType: StreamType.Arbitrary,
+      // Spawn FFmpeg to convert stream directly to crystal-clear 48kHz 16-bit stereo PCM
+      this.ffmpegProcess = spawn(ffmpegBin, [
+        "-i", "pipe:0",
+        "-analyzeduration", "0",
+        "-loglevel", "0",
+        "-f", "s16le",
+        "-ar", "48000",
+        "-ac", "2",
+        "pipe:1"
+      ]);
+
+      this.streamProcess.stdout.pipe(this.ffmpegProcess.stdin);
+
+      this.streamProcess.on("error", (err) => {
+        console.error("[Music yt-dlp error]:", err.message);
+      });
+
+      this.ffmpegProcess.on("error", (err) => {
+        console.error("[Music FFmpeg error]:", err.message);
+      });
+
+      // Create native Raw PCM Audio Resource with inline volume transformer
+      this.currentResource = createAudioResource(this.ffmpegProcess.stdout, {
+        inputType: StreamType.Raw,
         inlineVolume: true
       });
 
@@ -388,7 +434,7 @@ class GuildMusicQueue {
 
   destroy() {
     this.clearIdleTimer();
-    this.killStreamProcess();
+    this.killProcesses();
     try {
       this.player.stop(true);
       if (this.connection) {
@@ -417,10 +463,9 @@ export const MusicManager = {
   async searchTrack(query, requestedBy = "Utente") {
     const isUrl = /^https?:\/\//i.test(query);
 
-    // 1. If direct YouTube or SoundCloud or Media URL
+    // 1. If direct YouTube or Spotify or Media URL
     if (isUrl) {
       if (query.includes("spotify.com")) {
-        // Spotify URL handling: extract title and artist from URL path
         let songName = "Spotify Track";
         try {
           const res = await fetch(query, { headers: { "User-Agent": "Mozilla/5.0" } });

@@ -337,28 +337,18 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     const vSelect = document.getElementById(id);
     if (!vSelect) return;
 
-    const currentVal = vSelect.value;
-    vSelect.innerHTML = '<option value="">-- Seleziona Canale Vocale --</option>';
-
-    voiceChannels.forEach(c => {
       const opt = document.createElement('option');
-      opt.value = c.id;
-      opt.textContent = `🔊 ${c.name}`;
-      vSelect.appendChild(opt);
     });
 
     if (currentVal && voiceChannels.some(c => c.id === currentVal)) {
       vSelect.value = currentVal;
     }
-  });
 
   const categorySelectIds = ['tk-category', 'tc-category'];
   categorySelectIds.forEach(id => {
     const catSelect = document.getElementById(id);
-    if (!catSelect) return;
 
     const currentCat = catSelect.value;
-    catSelect.innerHTML = '<option value="">-- Nessuna Categoria --</option>';
     categories.forEach(c => {
       const opt = document.createElement('option');
       opt.value = c.id;
