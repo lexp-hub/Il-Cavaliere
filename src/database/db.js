@@ -1269,7 +1269,7 @@ export const DatabaseHelper = {
   createTempChannelRecord(guildId, ownerId, voiceChannelId = null, textChannelId = null, userLimit = 0) {
     const info = db.prepare(`
       INSERT INTO temp_channels (guild_id, owner_id, voice_channel_id, text_channel_id, is_locked, is_hidden, user_limit, created_at)
-      VALUES (?, ?, ?, ?, 0, 0, ?, ?)
+      VALUES (?, ?, ?, ?, 1, 1, ?, ?)
     `).run(guildId, ownerId, voiceChannelId, textChannelId, userLimit, Math.floor(Date.now() / 1000));
     return {
       id: info.lastInsertRowid,
@@ -1277,8 +1277,8 @@ export const DatabaseHelper = {
       owner_id: ownerId,
       voice_channel_id: voiceChannelId,
       text_channel_id: textChannelId,
-      is_locked: 0,
-      is_hidden: 0,
+      is_locked: 1,
+      is_hidden: 1,
       user_limit: userLimit
     };
   },

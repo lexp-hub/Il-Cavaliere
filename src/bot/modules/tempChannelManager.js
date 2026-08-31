@@ -27,16 +27,14 @@ export const TempChannelManager = {
     const userLimit = options.userLimit !== undefined ? options.userLimit : (config.default_user_limit || 0);
     const categoryId = options.categoryId || config.category_id || undefined;
 
-    const isLockedDefault = options.isLocked !== undefined ? options.isLocked : true;
-
     const overwrites = [
       {
         id: guild.id,
-        allow: [PermissionsBitField.Flags.ViewChannel],
-        deny: isLockedDefault ? [
+        deny: [
+          PermissionsBitField.Flags.ViewChannel,
           PermissionsBitField.Flags.Connect,
           PermissionsBitField.Flags.SendMessages
-        ] : []
+        ]
       },
       {
         id: member.id,
@@ -89,7 +87,10 @@ export const TempChannelManager = {
           permissionOverwrites: [
             {
               id: guild.id,
-              deny: [PermissionsBitField.Flags.ViewChannel]
+              deny: [
+                PermissionsBitField.Flags.ViewChannel,
+                PermissionsBitField.Flags.SendMessages
+              ]
             },
             {
               id: member.id,
@@ -160,7 +161,10 @@ export const TempChannelManager = {
         permissionOverwrites: [
           {
             id: guild.id,
-            deny: [PermissionsBitField.Flags.ViewChannel]
+            deny: [
+              PermissionsBitField.Flags.ViewChannel,
+              PermissionsBitField.Flags.SendMessages
+            ]
           },
           {
             id: member.id,
