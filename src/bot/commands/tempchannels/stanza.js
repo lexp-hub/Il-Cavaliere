@@ -321,10 +321,10 @@ export default {
     // === 6. BLOCCA ===
     if (subcommand === 'blocca') {
       if (voiceChan) {
-        await voiceChan.permissionOverwrites.edit(guild.id, { Connect: false }).catch(() => {});
+        await voiceChan.permissionOverwrites.edit(guild.id, { Connect: false, SendMessages: false }).catch(() => {});
       }
       if (textChan) {
-        await textChan.permissionOverwrites.edit(guild.id, { SendMessages: false }).catch(() => {});
+        await textChan.permissionOverwrites.edit(guild.id, { ViewChannel: false, SendMessages: false }).catch(() => {});
       }
       DatabaseHelper.updateTempChannelState(tempRecord.id, { is_locked: 1 });
       return interaction.reply({ content: '🔒 Stanza bloccata a tutti i nuovi membri!', ephemeral: true });
@@ -333,10 +333,10 @@ export default {
     // === 7. SBLOCCA ===
     if (subcommand === 'sblocca') {
       if (voiceChan) {
-        await voiceChan.permissionOverwrites.edit(guild.id, { Connect: null }).catch(() => {});
+        await voiceChan.permissionOverwrites.edit(guild.id, { Connect: true, SendMessages: true }).catch(() => {});
       }
       if (textChan) {
-        await textChan.permissionOverwrites.edit(guild.id, { SendMessages: null }).catch(() => {});
+        await textChan.permissionOverwrites.edit(guild.id, { ViewChannel: false, SendMessages: false }).catch(() => {});
       }
       DatabaseHelper.updateTempChannelState(tempRecord.id, { is_locked: 0 });
       return interaction.reply({ content: '🔓 Stanza sbloccata!', ephemeral: true });
@@ -348,7 +348,7 @@ export default {
         await voiceChan.permissionOverwrites.edit(guild.id, { ViewChannel: false }).catch(() => {});
       }
       if (textChan) {
-        await textChan.permissionOverwrites.edit(guild.id, { ViewChannel: false }).catch(() => {});
+        await textChan.permissionOverwrites.edit(guild.id, { ViewChannel: false, SendMessages: false }).catch(() => {});
       }
       DatabaseHelper.updateTempChannelState(tempRecord.id, { is_hidden: 1 });
       return interaction.reply({ content: '👁️ Stanza resa invisibile agli altri membri!', ephemeral: true });
@@ -360,7 +360,7 @@ export default {
         await voiceChan.permissionOverwrites.edit(guild.id, { ViewChannel: true }).catch(() => {});
       }
       if (textChan) {
-        await textChan.permissionOverwrites.edit(guild.id, { ViewChannel: null }).catch(() => {});
+        await textChan.permissionOverwrites.edit(guild.id, { ViewChannel: false, SendMessages: false }).catch(() => {});
       }
       DatabaseHelper.updateTempChannelState(tempRecord.id, { is_hidden: 0 });
       return interaction.reply({ content: '👁️ Stanza di nuovo visibile nell\'elenco canali!', ephemeral: true });

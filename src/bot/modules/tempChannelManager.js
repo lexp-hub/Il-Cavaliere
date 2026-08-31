@@ -27,11 +27,16 @@ export const TempChannelManager = {
     const userLimit = options.userLimit !== undefined ? options.userLimit : (config.default_user_limit || 0);
     const categoryId = options.categoryId || config.category_id || undefined;
 
+    const isLockedDefault = options.isLocked !== undefined ? options.isLocked : true;
+
     const overwrites = [
       {
         id: guild.id,
         allow: [PermissionsBitField.Flags.ViewChannel],
-        deny: options.isLocked ? [PermissionsBitField.Flags.Connect] : []
+        deny: isLockedDefault ? [
+          PermissionsBitField.Flags.Connect,
+          PermissionsBitField.Flags.SendMessages
+        ] : []
       },
       {
         id: member.id,
@@ -39,6 +44,8 @@ export const TempChannelManager = {
           PermissionsBitField.Flags.ViewChannel,
           PermissionsBitField.Flags.Connect,
           PermissionsBitField.Flags.Speak,
+          PermissionsBitField.Flags.SendMessages,
+          PermissionsBitField.Flags.ReadMessageHistory,
           PermissionsBitField.Flags.MuteMembers,
           PermissionsBitField.Flags.DeafenMembers,
           PermissionsBitField.Flags.MoveMembers,
@@ -52,6 +59,8 @@ export const TempChannelManager = {
         allow: [
           PermissionsBitField.Flags.ViewChannel,
           PermissionsBitField.Flags.Connect,
+          PermissionsBitField.Flags.Speak,
+          PermissionsBitField.Flags.SendMessages,
           PermissionsBitField.Flags.ManageChannels,
           PermissionsBitField.Flags.MoveMembers
         ]
@@ -342,17 +351,19 @@ export const TempChannelManager = {
       const isLocked = !tempRecord.is_locked;
       if (voiceChan) {
         await voiceChan.permissionOverwrites.edit(guild.id, {
-          Connect: isLocked ? false : null
+          Connect: isLocked ? false : true,
+          SendMessages: isLocked ? false : true
         }).catch(() => {});
       }
       if (textChan) {
         await textChan.permissionOverwrites.edit(guild.id, {
-          SendMessages: isLocked ? false : null
+          ViewChannel: false,
+          SendMessages: false
         }).catch(() => {});
       }
       DatabaseHelper.updateTempChannelState(tempRecord.id, { is_locked: isLocked ? 1 : 0 });
       return interaction.reply({
-        content: isLocked ? '🔒 **Stanza Bloccata**: I nuovi utenti non possono più entrare o inviare messaggi.' : '🔓 **Stanza Sbloccata**: Accesso riaperto.',
+        content: isLocked ? '🔒 **Stanza Bloccata**: I nuovi utenti non possono più entrare o inviare messaggi.' : '🔓 **Stanza Sbloccata**: Accesso consentito.',
         ephemeral: true
       });
     }
@@ -367,12 +378,13 @@ export const TempChannelManager = {
       }
       if (textChan) {
         await textChan.permissionOverwrites.edit(guild.id, {
-          ViewChannel: isHidden ? false : null
+          ViewChannel: false,
+          SendMessages: false
         }).catch(() => {});
       }
       DatabaseHelper.updateTempChannelState(tempRecord.id, { is_hidden: isHidden ? 1 : 0 });
       return interaction.reply({
-        content: isHidden ? '👁️ **Stanza Nascosta**: Il canale è ora invisibile a tutti gli altri membri del server.' : '👁️ **Stanza Visibile**: Il canale è di nuovo visibile nell\'elenco.',
+        content: isHidden ? '👁️ **Stanza Nascosta**: Il canale è ora invisibile a tutti gli altri membri del server.' : '👁️ **Stanza Visibile**: Il canale vocale è di nuovo visibile nell\'elenco.',
         ephemeral: true
       });
     }
