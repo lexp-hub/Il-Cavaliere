@@ -2,10 +2,10 @@ import {
   joinVoiceChannel,
   createAudioPlayer,
   createAudioResource,
+  demuxProbe,
   AudioPlayerStatus,
   VoiceConnectionStatus,
   entersState,
-  StreamType,
   NoSubscriberBehavior
 } from "@discordjs/voice";
 import ytSearch from "yt-search";
@@ -25,7 +25,7 @@ import {
 // Ensure WebAssembly Sodium encryption is 100% initialized
 try {
   await sodium.ready;
-  console.log("[Music] Sodium encryption engine initialized successfully.");
+  console.log("[Music] Sodium encryption engine ready.");
 } catch (e) {
   console.warn("[Music] Sodium init notice:", e.message);
 }
@@ -197,16 +197,6 @@ class GuildMusicQueue {
       });
     }
 
-    // Ensure connection enters ready state
-    if (this.connection.state.status !== VoiceConnectionStatus.Ready) {
-      try {
-        await entersState(this.connection, VoiceConnectionStatus.Ready, 15000);
-      } catch (err) {
-        console.warn("[Music] Voice connection handshake notice:", err.message);
-      }
-    }
-
-    this.connection.subscribe(this.player);
     return this.connection;
   }
 
@@ -218,16 +208,14 @@ class GuildMusicQueue {
 
     try {
       if (this.connection) {
-        if (this.connection.state.status !== VoiceConnectionStatus.Ready) {
-          await entersState(this.connection, VoiceConnectionStatus.Ready, 15000).catch(() => {});
-        }
         this.connection.subscribe(this.player);
       }
 
       const ytdlpBin = getYtDlpPath();
       const ffmpegBin = getFfmpegPath();
+      const volMultiplier = (Math.max(1, Math.min(150, this.volume)) / 100).toFixed(2);
 
-      // 1. Spawn yt-dlp to stream audio
+      // 1. Spawn yt-dlp to stream raw audio
       this.streamProcess = spawn(ytdlpBin, [
         "-f", "bestaudio/best",
         "-o", "-",
@@ -236,14 +224,15 @@ class GuildMusicQueue {
         track.url
       ]);
 
-      // 2. Spawn FFmpeg to encode to native 48kHz Stereo Opus stream (OggOpus)
+      // 2. Spawn FFmpeg to apply volume filter and encode to native 48kHz Stereo Opus in Ogg container
       this.ffmpegProcess = spawn(ffmpegBin, [
         "-i", "pipe:0",
+        "-filter:a", "volume=" + volMultiplier,
         "-c:a", "libopus",
         "-b:a", "128k",
         "-ar", "48000",
         "-ac", "2",
-        "-f", "opus",
+        "-f", "ogg",
         "pipe:1"
       ]);
 
@@ -257,15 +246,12 @@ class GuildMusicQueue {
         console.error("[Music FFmpeg error]:", err.message);
       });
 
-      // 3. Create AudioResource with native OggOpus stream and volume support
-      this.currentResource = createAudioResource(this.ffmpegProcess.stdout, {
-        inputType: StreamType.OggOpus,
-        inlineVolume: true
-      });
+      // 3. Probing demuxer to create valid OggOpus AudioResource
+      const probe = await demuxProbe(this.ffmpegProcess.stdout);
 
-      if (this.currentResource.volume) {
-        this.currentResource.volume.setVolume(this.volume / 100);
-      }
+      this.currentResource = createAudioResource(probe.stream, {
+        inputType: probe.type
+      });
 
       this.player.play(this.currentResource);
       await this.sendOrUpdateController();
@@ -287,9 +273,6 @@ class GuildMusicQueue {
   setVolume(vol) {
     const clamped = Math.max(1, Math.min(150, vol));
     this.volume = clamped;
-    if (this.currentResource && this.currentResource.volume) {
-      this.currentResource.volume.setVolume(this.volume / 100);
-    }
     this.updateController();
     return this.volume;
   }
@@ -662,12 +645,12 @@ export const MusicManager = {
       }
       case "btn_music_voldown": {
         const newVol = queue.setVolume(queue.volume - 15);
-        await interaction.reply({ content: "🔉 **Volume abbassato a:** `" + newVol + "%`", ephemeral: true });
+        await interaction.reply({ content: "🔉 **Volume impostato a:** `" + newVol + "%`", ephemeral: true });
         break;
       }
       case "btn_music_volup": {
         const newVol = queue.setVolume(queue.volume + 15);
-        await interaction.reply({ content: "🔊 **Volume alzato a:** `" + newVol + "%`", ephemeral: true });
+        await interaction.reply({ content: "🔊 **Volume impostato a:** `" + newVol + "%`", ephemeral: true });
         break;
       }
       case "btn_music_shuffle": {
