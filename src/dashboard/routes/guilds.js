@@ -102,31 +102,24 @@ export function createGuildsRouter(botClient) {
 
     const channels = guild.channels.cache
       .map(c => {
-        let normalizedType = 'other';
-        if (c.type === ChannelType.GuildCategory || c.type === 4) {
-          normalizedType = 'category';
-        } else if (
-          (c.type === ChannelType.GuildText || c.type === ChannelType.GuildAnnouncement || c.type === 0 || c.type === 5) &&
-          c.type !== ChannelType.GuildVoice &&
-          c.type !== ChannelType.GuildStageVoice &&
-          c.type !== 2 &&
-          c.type !== 13
-        ) {
-          normalizedType = 'text';
-        } else if (c.type === ChannelType.GuildVoice || c.type === ChannelType.GuildStageVoice || c.type === 2 || c.type === 13) {
-          normalizedType = 'voice';
-        }
+        let normalizedType = 'text';
+        const isVoice = (c.isVoiceBased && c.isVoiceBased()) || c.type === ChannelType.GuildVoice || c.type === ChannelType.GuildStageVoice || c.type === 2 || c.type === 13;
+        const isCat = (c.type === ChannelType.GuildCategory || c.type === 4);
+        
+        if (isCat) normalizedType = 'category';
+        else if (isVoice) normalizedType = 'voice';
+        else normalizedType = 'text';
 
         return {
           id: c.id,
           name: c.name,
           type: normalizedType,
           rawType: c.type,
-          parentId: c.parentId
+          parentId: c.parentId,
+          position: c.rawPosition ?? c.position ?? 0
         };
       })
-      .filter(c => c.type === 'text' || c.type === 'category' || c.type === 'voice')
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => a.position - b.position || a.name.localeCompare(b.name));
 
     const roles = guild.roles.cache
       .filter(r => r.name !== '@everyone')
@@ -140,34 +133,34 @@ export function createGuildsRouter(botClient) {
 
     let members = [];
     try {
-      const fetched = await guild.members.fetch({ limit: 1000 }).catch(() => guild.members.cache);
-      members = fetched
+      const fetched = await guild.members.fetch({ time: 10000 }).catch(() => guild.members.cache);
+      members = Array.from(fetched.values())
         .filter(m => !m.user?.bot)
         .map(m => {
           const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
           return {
             id: m.id,
-            name: m.user.username,
-            displayName: m.displayName || m.user.username,
-            avatar: m.user.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
+            name: m.user?.username || m.id,
+            displayName: m.displayName || m.user?.username || m.id,
+            avatar: m.user?.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
             coins: coins
           };
         })
-        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+        .sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name));
     } catch (e) {
-      members = guild.members.cache
+      members = Array.from(guild.members.cache.values())
         .filter(m => !m.user?.bot)
         .map(m => {
           const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
           return {
             id: m.id,
-            name: m.user.username,
-            displayName: m.displayName || m.user.username,
-            avatar: m.user.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
+            name: m.user?.username || m.id,
+            displayName: m.displayName || m.user?.username || m.id,
+            avatar: m.user?.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
             coins: coins
           };
         })
-        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+        .sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name));
     }
 
     res.json({
