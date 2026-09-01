@@ -196,6 +196,72 @@ export const WebhookReplacerManager = {
 
     const result = await this.replaceMessage(message);
     return result.success;
+  },
+
+  /**
+   * Replaces messages in bulk from a channel in chronological order
+   * @param {import('discord.js').TextChannel} channel
+   * @param {object} options
+   * @returns {Promise<{total: number, replaced: number, failed: number}>}
+   */
+  async replaceBulk(channel, { limit = 50, authorId = null, onlyWebhooks = true, progressCallback = null } = {}) {
+    if (!channel || !channel.messages) {
+      return { total: 0, replaced: 0, failed: 0 };
+    }
+
+    const maxLimit = Math.min(100, Math.max(1, limit));
+    const fetched = await channel.messages.fetch({ limit: maxLimit });
+    const botId = channel.client.user?.id;
+
+    const toReplace = [];
+    for (const [_, msg] of fetched) {
+      // Never replace Sentry's own messages
+      if (msg.author.id === botId) continue;
+
+      // Filter by specific author/webhook if requested
+      if (authorId && msg.author.id !== authorId && msg.webhookId !== authorId) continue;
+
+      // Filter to only webhooks / external bots
+      if (onlyWebhooks && !msg.webhookId && !msg.author.bot) continue;
+
+      // Must have at least embeds, attachments, or text
+      if (msg.embeds.length === 0 && msg.attachments.size === 0 && !msg.content) continue;
+
+      toReplace.push(msg);
+    }
+
+    if (toReplace.length === 0) {
+      return { total: 0, replaced: 0, failed: 0 };
+    }
+
+    // Sort chronologically from oldest to newest so they are re-posted in proper chronological order
+    toReplace.sort((a, b) => a.createdTimestamp - b.createdTimestamp);
+
+    let replacedCount = 0;
+    let failedCount = 0;
+
+    for (let i = 0; i < toReplace.length; i++) {
+      const msg = toReplace[i];
+      try {
+        const res = await this.replaceMessage(msg);
+        if (res.success) {
+          replacedCount++;
+        } else {
+          failedCount++;
+        }
+      } catch (e) {
+        failedCount++;
+      }
+
+      if (progressCallback && (i % 2 === 0 || i === toReplace.length - 1)) {
+        await progressCallback(i + 1, toReplace.length, replacedCount);
+      }
+
+      // Small delay between replacements to respect Discord rate limits
+      await new Promise(r => setTimeout(r, 800));
+    }
+
+    return { total: toReplace.length, replaced: replacedCount, failed: failedCount };
   }
 };
 

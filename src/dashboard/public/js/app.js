@@ -75,6 +75,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       window.reloadCurrentGuildData(false);
     });
   }
+
+  const btnReloadModules = document.getElementById('btn-reload-modules');
+  if (btnReloadModules) {
+    btnReloadModules.addEventListener('click', () => {
+      window.forceReloadModulesAndCache(false);
+    });
+  }
+
+  const btnReloadModulesMobile = document.getElementById('btn-reload-modules-mobile');
+  if (btnReloadModulesMobile) {
+    btnReloadModulesMobile.addEventListener('click', () => {
+      window.forceReloadModulesAndCache(false);
+    });
+  }
 });
 
 function initMobileDrawer() {
@@ -328,6 +342,98 @@ window.reloadCurrentGuildData = async function(silent = false) {
     if (!silent) window.showToast('Errore durante la sincronizzazione.', 'error');
   } finally {
     if (syncIcon) syncIcon.classList.remove('animate-spin');
+  }
+};
+
+window.forceReloadModulesAndCache = async function(hardReload = false) {
+  const iconDesktop = document.getElementById('icon-reload-modules');
+  const iconMobile = document.querySelector('#btn-reload-modules-mobile i');
+  if (iconDesktop) iconDesktop.classList.add('animate-spin');
+  if (iconMobile) iconMobile.classList.add('animate-spin');
+
+  try {
+    // 1. Clear caches API if supported by browser
+    if ('caches' in window) {
+      try {
+        const cacheKeys = await caches.keys();
+        await Promise.all(cacheKeys.map(key => caches.delete(key)));
+      } catch (e) {}
+    }
+
+    // 2. Clear transient session storage (preserve auth token and selected guild)
+    try {
+      const savedAuth = localStorage.getItem('cavaliere_auth_token');
+      const savedGuild = localStorage.getItem('cavaliere_last_guild');
+      sessionStorage.clear();
+      if (savedAuth) localStorage.setItem('cavaliere_auth_token', savedAuth);
+      if (savedGuild) localStorage.setItem('cavaliere_last_guild', savedGuild);
+    } catch (e) {}
+
+    const guildId = window.AppState.currentGuildId;
+    if (!guildId) {
+      await loadGuilds();
+      window.showToast('🔄 Lista server e cache ricaricate!');
+      return;
+    }
+
+    // 3. Force re-fetch guild with cache-busting query parameter and no-cache header
+    const cacheBuster = `_t=${Date.now()}&_rnd=${Math.random().toString(36).substring(7)}`;
+    const res = await fetch(`/api/guilds/${guildId}?${cacheBuster}`, {
+      cache: 'no-store',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache'
+      }
+    });
+
+    if (res.ok) {
+      const guildData = await res.json();
+      window.AppState.currentGuildData = guildData;
+      window.AppState.channels = guildData.channels || [];
+      window.AppState.roles = guildData.roles || [];
+      window.AppState.members = guildData.members || [];
+      window.AppState.settings = guildData.settings || {};
+
+      const logEl = document.getElementById('gen-log-channel');
+      if (logEl && guildData.settings?.log_channel_id) {
+        logEl.dataset.savedValue = guildData.settings.log_channel_id;
+        logEl.value = guildData.settings.log_channel_id;
+      }
+      const prefixEl = document.getElementById('gen-prefix');
+      if (prefixEl && guildData.settings?.prefix) {
+        prefixEl.value = guildData.settings.prefix;
+      }
+
+      const membersEl = document.getElementById('ov-members');
+      if (membersEl) membersEl.textContent = (guildData.memberCount || 0).toLocaleString();
+
+      populateDropdowns(guildData.channels, guildData.roles, guildData.members);
+
+      // Force reload all sub-module data with cache-busting
+      if (window.loadModuleData) {
+        await window.loadModuleData(guildId, true);
+      }
+      if (window.loadEmbedBuilderData) {
+        await window.loadEmbedBuilderData(guildId);
+      }
+      if (window.loadWelcomerData) {
+        await window.loadWelcomerData(guildId);
+      }
+      if (window.loadCloudStatus) {
+        await window.loadCloudStatus();
+      }
+
+      window.showToast('🔄 Moduli e cache ricaricati con successo!');
+    } else {
+      window.showToast('Errore durante la risposta dal server.', 'error');
+    }
+  } catch (err) {
+    console.error('[ReloadModules] Errore:', err);
+    window.showToast('Errore durante la ricarica dei moduli: ' + err.message, 'error');
+  } finally {
+    if (iconDesktop) iconDesktop.classList.remove('animate-spin');
+    if (iconMobile) iconMobile.classList.remove('animate-spin');
+    if (window.lucide) lucide.createIcons();
   }
 };
 

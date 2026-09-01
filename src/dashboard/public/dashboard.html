@@ -27,9 +27,14 @@
         <span class="text-[9px] text-red-500 font-semibold uppercase">Dashboard</span>
       </div>
     </div>
-    <button id="btn-save-all-mobile" class="btn-knight text-xs py-1.5 px-3 flex items-center gap-1.5">
-      <i data-lucide="check" class="w-3.5 h-3.5"></i> Salva
-    </button>
+    <div class="flex items-center gap-2">
+      <button id="btn-reload-modules-mobile" class="p-1.5 rounded-lg bg-slate-800 border border-slate-700 text-amber-400 hover:text-amber-300 transition-colors" title="Ricarica Moduli e Cache">
+        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+      </button>
+      <button id="btn-save-all-mobile" class="btn-knight text-xs py-1.5 px-3 flex items-center gap-1.5">
+        <i data-lucide="check" class="w-3.5 h-3.5"></i> Salva
+      </button>
+    </div>
   </header>
 
   <!-- Sidebar / Mobile Drawer Navigation (Dark Charcoal & Ruby Theme) -->
@@ -197,6 +202,10 @@
         <button id="btn-sync-live" class="btn-secondary text-xs py-2 px-3 flex items-center gap-1.5 hover:border-cyan-500/50 hover:text-cyan-300 transition-all" title="Sincronizza in tempo reale senza ricaricare la pagina">
           <i data-lucide="refresh-cw" id="icon-sync-live" class="w-3.5 h-3.5 text-cyan-400"></i>
           <span>Sincronizza</span>
+        </button>
+        <button id="btn-reload-modules" class="btn-secondary text-xs py-2 px-3 flex items-center gap-1.5 hover:border-amber-500/50 hover:text-amber-300 transition-all shadow-sm" title="Ricarica forzatamente tutti i moduli e azzera la cache del browser">
+          <i data-lucide="rotate-ccw" id="icon-reload-modules" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Ricarica Moduli &amp; Cache</span>
         </button>
         <button id="btn-save-all" class="btn-knight text-xs py-2 px-4">
           <i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifiche
@@ -2632,6 +2641,6 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=112"></script>
-  <script src="/js/embedBuilder.js?v=112"></script>
-  <script src="/js/modules.js?v=112"></script>
+  <script src="/js/app.js?v=115"></script>
+  <script src="/js/embedBuilder.js?v=115"></script>
+  <script src="/js/modules.js?v=115"></script>

@@ -43,6 +43,32 @@ export default {
     )
     .addSubcommand(sub =>
       sub
+        .setName('massa')
+        .setDescription('Sostituisce in massa i messaggi di webhook o bot riassegnando le immagini a Sentry')
+        .addIntegerOption(opt =>
+          opt
+            .setName('limite')
+            .setDescription('Numero di messaggi recenti da scansionare (1-100, default: 50)')
+            .setMinValue(1)
+            .setMaxValue(100)
+            .setRequired(false)
+        )
+        .addChannelOption(opt =>
+          opt
+            .setName('canale')
+            .setDescription('Canale da scansionare (default: questo canale)')
+            .addChannelTypes(ChannelType.GuildText, ChannelType.GuildAnnouncement)
+            .setRequired(false)
+        )
+        .addUserOption(opt =>
+          opt
+            .setName('autore')
+            .setDescription('Filtra solo i messaggi di un bot/webhook specifico (opzionale)')
+            .setRequired(false)
+        )
+    )
+    .addSubcommand(sub =>
+      sub
         .setName('lista')
         .setDescription('Mostra i canali con sostituzione automatica webhook attiva')
     ),
@@ -106,6 +132,56 @@ export default {
         return interaction.reply({
           content: `🛑 **Sostituzione automatica disattivata per <#${targetChannel.id}>.**`,
           ephemeral: true
+        });
+      }
+    }
+
+    if (subcommand === 'massa') {
+      const targetChannel = options.getChannel('canale') || channel;
+      const limit = options.getInteger('limite') || 50;
+      const targetUser = options.getUser('autore');
+
+      await interaction.deferReply({ ephemeral: true });
+
+      await interaction.editReply({
+        content: `⏳ **Avvio scansione e sostituzione in massa in <#${targetChannel.id}>...**\n*Scansione degli ultimi ${limit} messaggi...*`
+      });
+
+      try {
+        const result = await WebhookReplacerManager.replaceBulk(targetChannel, {
+          limit,
+          authorId: targetUser ? targetUser.id : null,
+          onlyWebhooks: !targetUser,
+          progressCallback: async (current, total, replaced) => {
+            await interaction.editReply({
+              content: `⏳ **Sostituzione in massa in corso in <#${targetChannel.id}>...**\n• Avanzamento: \`${current}/${total}\` messaggi analizzati\n• Sostituiti con successo: \`${replaced}\``
+            }).catch(() => {});
+          }
+        });
+
+        if (result.total === 0) {
+          return interaction.editReply({
+            content: `ℹ️ Nessun messaggio di webhook o bot trovato da sostituire negli ultimi \`${limit}\` messaggi di <#${targetChannel.id}>.`
+          });
+        }
+
+        const summaryEmbed = new EmbedBuilder()
+          .setColor('#10b981')
+          .setTitle('✅ Sostituzione in Massa Completata')
+          .setDescription(
+            `Operazione completata con successo nel canale <#${targetChannel.id}>!\n\n` +
+            `> 📊 **Messaggi analizzati:** \`${result.total}\`\n` +
+            `> 🔄 **Messaggi sostituiti:** \`${result.replaced}\`\n` +
+            `> ⚠️ **Errori / Non sostituiti:** \`${result.failed}\`\n\n` +
+            `*Tutti gli embed sono stati riprodotti in ordine cronologico e le immagini sono state scaricate e riassegnate permanentemente a Sentry.*`
+          )
+          .setFooter({ text: 'Sentry Webhook Replacer • /sostituisci massa' })
+          .setTimestamp();
+
+        return interaction.editReply({ content: null, embeds: [summaryEmbed] });
+      } catch (err) {
+        return interaction.editReply({
+          content: `❌ Errore durante la sostituzione in massa: \`${err.message}\``
         });
       }
     }
