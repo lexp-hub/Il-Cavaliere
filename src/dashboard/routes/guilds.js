@@ -185,6 +185,8 @@ export function createGuildsRouter(botClient) {
       }
     } catch (e) {}
 
+    const settings = DatabaseHelper.getGuildSettings(guild.id);
+
     res.json({
       id: guild.id,
       name: guild.name,
@@ -192,7 +194,8 @@ export function createGuildsRouter(botClient) {
       memberCount: guild.memberCount,
       channels,
       roles,
-      members
+      members,
+      settings
     });
   });
 

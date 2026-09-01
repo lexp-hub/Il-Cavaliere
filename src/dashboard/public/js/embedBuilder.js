@@ -1607,6 +1607,7 @@
       leave_message: document.getElementById('wel-leave-message')?.value
     };
   }
+  window.getWelcomerPayload = getWelcomerPayload;
 
   // Load Welcomer from Database
   window.loadWelcomerData = async function (guildId) {
@@ -1617,9 +1618,18 @@
       const config = await res.json();
 
       if (welEnabledToggle) welEnabledToggle.checked = Boolean(config.welcome_enabled);
-      if (welChannelSelect && config.welcome_channel_id) welChannelSelect.value = config.welcome_channel_id;
-      if (welAutoRoleUser && config.auto_role_user) welAutoRoleUser.value = config.auto_role_user;
-      if (welAutoRoleBot && config.auto_role_bot) welAutoRoleBot.value = config.auto_role_bot;
+      if (welChannelSelect) {
+        welChannelSelect.dataset.savedValue = config.welcome_channel_id || '';
+        if (config.welcome_channel_id) welChannelSelect.value = config.welcome_channel_id;
+      }
+      if (welAutoRoleUser) {
+        welAutoRoleUser.dataset.savedValue = config.auto_role_user || '';
+        if (config.auto_role_user) welAutoRoleUser.value = config.auto_role_user;
+      }
+      if (welAutoRoleBot) {
+        welAutoRoleBot.dataset.savedValue = config.auto_role_bot || '';
+        if (config.auto_role_bot) welAutoRoleBot.value = config.auto_role_bot;
+      }
 
       const emb = config.welcome_embed || {};
 
@@ -1650,7 +1660,10 @@
       if (dmEn) dmEn.checked = Boolean(config.welcome_dm_enabled);
       if (dmMsg && config.welcome_dm_message) dmMsg.value = config.welcome_dm_message;
       if (lvEn) lvEn.checked = Boolean(config.leave_enabled);
-      if (lvCh && config.leave_channel_id) lvCh.value = config.leave_channel_id;
+      if (lvCh) {
+        lvCh.dataset.savedValue = config.leave_channel_id || '';
+        if (config.leave_channel_id) lvCh.value = config.leave_channel_id;
+      }
       if (lvMsg && config.leave_message) lvMsg.value = config.leave_message;
 
       updateWelcomerPreview();

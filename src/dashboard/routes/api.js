@@ -20,11 +20,13 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
   const notifySync = (guildId, module, req, extraData = {}) => {
     try {
       const user = req?.user || req?.session?.user;
+      const senderClientId = req?.headers ? req.headers['x-client-id'] : null;
       broadcastToGuild(guildId, {
         type: 'GUILD_UPDATED',
         guildId,
         module,
         updatedBy: user?.username || 'Moderatore',
+        senderClientId,
         timestamp: Date.now(),
         ...extraData
       });

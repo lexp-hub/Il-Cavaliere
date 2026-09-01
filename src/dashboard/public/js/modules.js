@@ -100,15 +100,21 @@
 
       const prefixEl = document.getElementById('gen-prefix');
       const logEl = document.getElementById('gen-log-channel');
+      if (settings) {
+        window.AppState.settings = settings;
+      }
       if (prefixEl && settings.prefix) prefixEl.value = settings.prefix;
-      if (logEl && settings.log_channel_id) logEl.value = settings.log_channel_id;
+      if (logEl && settings.log_channel_id) {
+        logEl.dataset.savedValue = settings.log_channel_id;
+        logEl.value = settings.log_channel_id;
+      }
 
       if (prefixEl && !prefixEl.hasAttribute('data-bound')) {
         prefixEl.setAttribute('data-bound', 'true');
         prefixEl.addEventListener('change', async () => {
           await fetch(`/api/guilds/${guildId}/settings`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'x-client-id': window.AppState?.clientId },
             body: JSON.stringify({ prefix: prefixEl.value })
           });
           window.showToast('Prefisso comandi salvato!');
@@ -118,12 +124,14 @@
       if (logEl && !logEl.hasAttribute('data-bound')) {
         logEl.setAttribute('data-bound', 'true');
         logEl.addEventListener('change', async () => {
+          logEl.dataset.savedValue = logEl.value;
+          if (window.AppState?.settings) window.AppState.settings.log_channel_id = logEl.value;
           await fetch(`/api/guilds/${guildId}/settings`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ log_channel_id: logEl.value })
+            headers: { 'Content-Type': 'application/json', 'x-client-id': window.AppState?.clientId },
+            body: JSON.stringify({ log_channel_id: logEl.value || null })
           });
-          window.showToast('Canale Audit Log salvato!');
+          window.showToast('Canale Audit Log salvato nel database!');
         });
       }
     } catch (e) {
@@ -1791,27 +1799,43 @@
   async function saveAllServerSettings(guildId) {
     if (!guildId) return;
 
+    const btn = document.getElementById('btn-save-all');
+    const btnMob = document.getElementById('btn-save-all-mobile');
+
     try {
-      const btn = document.getElementById('btn-save-all');
-      const btnMob = document.getElementById('btn-save-all-mobile');
       if (btn) btn.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Salvataggio...';
       if (btnMob) btnMob.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Salvataggio...';
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
-      // 1. General Settings
+      const clientId = window.AppState?.clientId;
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(clientId ? { 'x-client-id': clientId } : {})
+      };
+
+      // 1. Master Modules & General Settings (Log Channel, Prefix)
+      const logChannelVal = document.getElementById('gen-log-channel')?.value;
+      const prefixVal = document.getElementById('gen-prefix')?.value || '!';
+      const enabledMap = {};
+      document.querySelectorAll('.master-module-toggle').forEach(t => {
+        const mod = t.getAttribute('data-module');
+        if (mod) enabledMap[mod] = t.checked;
+      });
+
       const p1 = fetch(`/api/guilds/${guildId}/settings`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
-          prefix: document.getElementById('gen-prefix')?.value || '!',
-          log_channel_id: document.getElementById('gen-log-channel')?.value || null
+          prefix: prefixVal,
+          log_channel_id: logChannelVal || null,
+          modules_enabled: Object.keys(enabledMap).length > 0 ? enabledMap : undefined
         })
       });
 
       // 2. AI Config
       const p2 = fetch(`/api/guilds/${guildId}/ai`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           enabled: document.getElementById('ai-enabled')?.checked,
           model: document.getElementById('ai-model')?.value,
@@ -1821,16 +1845,17 @@
       });
 
       // 3. Welcomer Config
-      const p3 = fetch(`/api/guilds/${guildId}/welcomer`, {
+      const welPayload = window.getWelcomerPayload ? window.getWelcomerPayload() : null;
+      const p3 = welPayload ? fetch(`/api/guilds/${guildId}/welcomer`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(getWelcomerPayload())
-      });
+        headers,
+        body: JSON.stringify(welPayload)
+      }) : Promise.resolve({ ok: true });
 
       // 4. Partnership Config
       const p4 = fetch(`/api/guilds/${guildId}/partnerships/config`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           enabled: document.getElementById('part-enabled')?.checked,
           channel_id: document.getElementById('part-channel')?.value || null,
@@ -1841,24 +1866,24 @@
       });
 
       // 5. AutoMod Config
+      const badWordsRaw = document.getElementById('am-badwords')?.value || '';
+      const badWords = badWordsRaw.split(/[, ]+/).map(w => w.trim()).filter(Boolean);
       const p5 = fetch(`/api/guilds/${guildId}/automod`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
-          anti_invites: document.getElementById('am-anti-invites')?.checked,
-          anti_links: document.getElementById('am-anti-links')?.checked,
-          anti_spam: document.getElementById('am-anti-spam')?.checked,
-          anti_caps: document.getElementById('am-anti-caps')?.checked,
-          banned_words: document.getElementById('am-banned-words')?.value?.split(',').map(w => w.trim()).filter(Boolean) || [],
-          action: document.getElementById('am-action')?.value || 'WARN',
-          log_channel_id: document.getElementById('am-log-channel')?.value || null
+          anti_invite: document.getElementById('am-invite')?.checked,
+          anti_link: document.getElementById('am-link')?.checked,
+          anti_spam: document.getElementById('am-spam')?.checked,
+          anti_caps: document.getElementById('am-caps')?.checked,
+          bad_words: badWords
         })
       });
 
       // 6. Leveling Config
       const p6 = fetch(`/api/guilds/${guildId}/leveling`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           enabled: document.getElementById('lvl-enabled')?.checked,
           channel_id: document.getElementById('lvl-channel')?.value || null,
@@ -1870,7 +1895,7 @@
       // 7. Counting Minigame Config
       const p7 = fetch(`/api/guilds/${guildId}/counting`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           enabled: document.getElementById('cnt-enabled')?.checked,
           channel_id: document.getElementById('cnt-channel')?.value || null
@@ -1880,7 +1905,7 @@
       // 8. Presentations Module Config
       const p8 = fetch(`/api/guilds/${guildId}/presentations/config`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           enabled: document.getElementById('pres-enabled')?.checked,
           channel_id: document.getElementById('pres-channel')?.value || null,
@@ -1894,7 +1919,7 @@
       const auto_reactions = rawReactions.split(',').map(r => r.trim()).filter(Boolean);
       const p9 = fetch(`/api/guilds/${guildId}/setup-showcase/config`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({
           enabled: document.getElementById('setup-enabled')?.checked,
           channel_id: document.getElementById('setup-channel')?.value || null,
@@ -1908,16 +1933,42 @@
         })
       });
 
-      await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8, p9]);
-      window.showToast('🛡️ Tutte le impostazioni del server sono state salvate permanentemente nel database!');
+      // 10. Temp Channels Config
+      const p10 = fetch(`/api/guilds/${guildId}/temp-channels/config`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          enabled: document.getElementById('tc-enabled')?.checked,
+          voice_generator_id: document.getElementById('tc-gen-voice-channel')?.value || null,
+          category_id: document.getElementById('tc-category')?.value || null,
+          panel_channel_id: document.getElementById('tc-panel-channel')?.value || null,
+          default_user_limit: parseInt(document.getElementById('tc-user-limit')?.value || '0', 10),
+          default_bitrate: parseInt(document.getElementById('tc-bitrate')?.value || '64000', 10)
+        })
+      });
+
+      const results = await Promise.allSettled([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10]);
+      const failures = results.filter(r => r.status === 'rejected' || (r.value && !r.value.ok));
+
+      // Update in-memory state
+      if (window.AppState?.settings) {
+        window.AppState.settings.prefix = prefixVal;
+        window.AppState.settings.log_channel_id = logChannelVal || null;
+      }
+
+      if (failures.length === 0) {
+        window.showToast('🛡️ Tutte le impostazioni del server sono state salvate permanentemente nel database!');
+      } else {
+        console.warn('[SaveAll] Alcune sezioni hanno riscontrato errori:', failures);
+        window.showToast(`Salvataggio completato con ${failures.length} avvisi.`, 'warning');
+      }
     } catch (err) {
-      window.showToast('Errore durante il salvataggio.', 'error');
+      console.error('[SaveAll Error]:', err);
+      window.showToast('Errore imprevisto durante il salvataggio.', 'error');
     } finally {
-      const btn = document.getElementById('btn-save-all');
-      const btnMob = document.getElementById('btn-save-all-mobile');
       if (btn) btn.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Salva Modifiche';
       if (btnMob) btnMob.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5"></i> Salva';
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
   }
 

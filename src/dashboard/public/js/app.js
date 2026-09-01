@@ -61,18 +61,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.history.replaceState({}, document.title, cleanUrl);
   }
 
+  window.AppState.clientId = window.AppState.clientId || 'client_' + Math.random().toString(36).substring(2, 11);
+
   initTabNavigation();
   initMobileDrawer();
   initWebSocket();
   await loadUserData();
   await loadGuilds();
-  
-  let targetGuild = urlParams.get('guild') || localStorage.getItem('cavaliere_last_guild');
-  if (targetGuild && window.AppState.guilds.some(g => g.id === targetGuild)) {
-    const select = document.getElementById('server-selector');
-    if (select) select.value = targetGuild;
-    await switchGuild(targetGuild);
-  }
 
   const btnSyncLive = document.getElementById('btn-sync-live');
   if (btnSyncLive) {
@@ -192,6 +187,10 @@ function initWebSocket() {
             statusEl.textContent = data.botOnline ? 'Bot Online • Live Sync Attivo' : 'Modalità Demo Attiva';
           }
         } else if (data.type === 'GUILD_UPDATED') {
+          if (data.senderClientId && data.senderClientId === window.AppState.clientId) {
+            // Ignora l'evento di sync generato da noi stessi per evitare il reset degli input
+            return;
+          }
           if (data.guildId === window.AppState.currentGuildId) {
             console.log(`[WebSocket] Ricevuto aggiornamento in tempo reale per modulo "${data.module}" da ${data.updatedBy}`);
             window.reloadCurrentGuildData(true);
@@ -294,6 +293,17 @@ window.reloadCurrentGuildData = async function(silent = false) {
     window.AppState.channels = guildData.channels || [];
     window.AppState.roles = guildData.roles || [];
     window.AppState.members = guildData.members || [];
+    window.AppState.settings = guildData.settings || {};
+
+    const logEl = document.getElementById('gen-log-channel');
+    if (logEl && guildData.settings?.log_channel_id) {
+      logEl.dataset.savedValue = guildData.settings.log_channel_id;
+      logEl.value = guildData.settings.log_channel_id;
+    }
+    const prefixEl = document.getElementById('gen-prefix');
+    if (prefixEl && guildData.settings?.prefix) {
+      prefixEl.value = guildData.settings.prefix;
+    }
 
     const membersEl = document.getElementById('ov-members');
     if (membersEl) membersEl.textContent = (guildData.memberCount || 0).toLocaleString();
@@ -339,6 +349,17 @@ window.switchGuild = async function(guildId) {
     window.AppState.channels = guildData.channels || [];
     window.AppState.roles = guildData.roles || [];
     window.AppState.members = guildData.members || [];
+    window.AppState.settings = guildData.settings || {};
+
+    const logEl = document.getElementById('gen-log-channel');
+    if (logEl && guildData.settings?.log_channel_id) {
+      logEl.dataset.savedValue = guildData.settings.log_channel_id;
+      logEl.value = guildData.settings.log_channel_id;
+    }
+    const prefixEl = document.getElementById('gen-prefix');
+    if (prefixEl && guildData.settings?.prefix) {
+      prefixEl.value = guildData.settings.prefix;
+    }
 
     const nameEl = document.getElementById('current-guild-name');
     if (nameEl) {
@@ -424,7 +445,7 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
     const select = document.getElementById(id);
     if (!select) return;
 
-    const currentVal = select.value;
+    const currentVal = select.value || select.dataset.savedValue || (id === 'gen-log-channel' ? window.AppState?.settings?.log_channel_id : null);
     select.innerHTML = '<option value="">-- Seleziona un Canale --</option>';
 
     textChannels.forEach(c => {
@@ -436,6 +457,17 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
 
     if (currentVal && textChannels.some(c => c.id === currentVal)) {
       select.value = currentVal;
+      select.dataset.savedValue = currentVal;
+    }
+
+    if (!select.dataset.changeBound) {
+      select.dataset.changeBound = 'true';
+      select.addEventListener('change', () => {
+        select.dataset.savedValue = select.value;
+        if (id === 'gen-log-channel' && window.AppState?.settings) {
+          window.AppState.settings.log_channel_id = select.value;
+        }
+      });
     }
   });
 
@@ -444,7 +476,7 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
     const vSelect = document.getElementById(id);
     if (!vSelect) return;
 
-    const currentVal = vSelect.value;
+    const currentVal = vSelect.value || vSelect.dataset.savedValue;
     vSelect.innerHTML = '<option value="">-- Seleziona un Canale Vocale --</option>';
 
     voiceChannels.forEach(c => {
@@ -456,6 +488,14 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
 
     if (currentVal && voiceChannels.some(c => c.id === currentVal)) {
       vSelect.value = currentVal;
+      vSelect.dataset.savedValue = currentVal;
+    }
+
+    if (!vSelect.dataset.changeBound) {
+      vSelect.dataset.changeBound = 'true';
+      vSelect.addEventListener('change', () => {
+        vSelect.dataset.savedValue = vSelect.value;
+      });
     }
   });
 
@@ -465,7 +505,7 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
     const catSelect = document.getElementById(id);
     if (!catSelect) return;
 
-    const currentCat = catSelect.value;
+    const currentCat = catSelect.value || catSelect.dataset.savedValue;
     catSelect.innerHTML = '<option value="">-- Seleziona Categoria --</option>';
 
     categories.forEach(c => {
@@ -477,6 +517,14 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
 
     if (currentCat && categories.some(c => c.id === currentCat)) {
       catSelect.value = currentCat;
+      catSelect.dataset.savedValue = currentCat;
+    }
+
+    if (!catSelect.dataset.changeBound) {
+      catSelect.dataset.changeBound = 'true';
+      catSelect.addEventListener('change', () => {
+        catSelect.dataset.savedValue = catSelect.value;
+      });
     }
   });
 
@@ -490,7 +538,7 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
     const select = document.getElementById(id);
     if (!select) return;
 
-    const currentVal = select.value;
+    const currentVal = select.value || select.dataset.savedValue;
     select.innerHTML = '<option value="">-- Nessun Ruolo --</option>';
 
     allRoles.forEach(r => {
@@ -502,6 +550,14 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
 
     if (currentVal && allRoles.some(r => r.id === currentVal)) {
       select.value = currentVal;
+      select.dataset.savedValue = currentVal;
+    }
+
+    if (!select.dataset.changeBound) {
+      select.dataset.changeBound = 'true';
+      select.addEventListener('change', () => {
+        select.dataset.savedValue = select.value;
+      });
     }
   });
 
@@ -511,7 +567,7 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
     const memberSelect = document.getElementById(id);
     if (!memberSelect) return;
 
-    const currentMember = memberSelect.value;
+    const currentMember = memberSelect.value || memberSelect.dataset.savedValue;
     memberSelect.innerHTML = '<option value="">-- Seleziona un Membro --</option>';
     allMembers.forEach(m => {
       const opt = document.createElement('option');
@@ -523,6 +579,14 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
 
     if (currentMember && allMembers.some(m => m.id === currentMember)) {
       memberSelect.value = currentMember;
+      memberSelect.dataset.savedValue = currentMember;
+    }
+
+    if (!memberSelect.dataset.changeBound) {
+      memberSelect.dataset.changeBound = 'true';
+      memberSelect.addEventListener('change', () => {
+        memberSelect.dataset.savedValue = memberSelect.value;
+      });
     }
   });
 };
