@@ -1,4 +1,6 @@
 import express from 'express';
+import fs from 'fs';
+import path from 'path';
 import { DatabaseHelper } from '../../database/db.js';
 import { PartnershipManager } from '../../bot/modules/partnershipManager.js';
 import { PresentationManager } from '../../bot/modules/presentationManager.js';
@@ -90,6 +92,42 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
     const updated = DatabaseHelper.updateGuildSettings(req.params.guildId, req.body);
     notifySync(req.params.guildId, 'settings', req);
     res.json({ success: true, settings: updated });
+  });
+
+  // Wispbyte Persistence & Backup Endpoints
+  router.post('/guilds/:guildId/backup/flush', requireModAuth, (req, res) => {
+    const success = DatabaseHelper.flushToDisk();
+    const backupFile = DatabaseHelper.createBackup('manual');
+    res.json({ success, backupFile: backupFile ? path.basename(backupFile) : null });
+  });
+
+  router.get('/guilds/:guildId/backup/export', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.exportGuildConfig(req.params.guildId);
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Content-Disposition', `attachment; filename="sentry-config-${req.params.guildId}.json"`);
+    res.send(JSON.stringify(config, null, 2));
+  });
+
+  router.post('/guilds/:guildId/backup/import', requireModAuth, (req, res) => {
+    try {
+      DatabaseHelper.importGuildConfig(req.params.guildId, req.body);
+      notifySync(req.params.guildId, 'all', req);
+      res.json({ success: true, message: 'Configurazione importata e salvata con successo su disco!' });
+    } catch (err) {
+      res.status(400).json({ error: err.message });
+    }
+  });
+
+  router.get('/system/backup/latest', (req, res) => {
+    const user = req.user || req.session?.user;
+    if (user?.id !== CONFIG.CREATOR_ID && !user?.isAdmin) {
+      return res.status(403).json({ error: 'Accesso riservato al proprietario.' });
+    }
+    const latest = DatabaseHelper.getLatestBackup();
+    if (!latest || !fs.existsSync(latest)) {
+      return res.status(404).json({ error: 'Nessun backup trovato.' });
+    }
+    res.download(latest);
   });
 
   router.get('/guilds/:guildId/ai', requireModAuth, (req, res) => {

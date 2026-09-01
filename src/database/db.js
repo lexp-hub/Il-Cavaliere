@@ -16,9 +16,9 @@ try {
   rawDb = new DatabaseSync(CONFIG.DB_PATH);
   rawDb.exec('PRAGMA foreign_keys = ON;');
   rawDb.exec('PRAGMA journal_mode = WAL;');
-  rawDb.exec('PRAGMA synchronous = NORMAL;');
-  rawDb.exec('PRAGMA busy_timeout = 5000;');
-  rawDb.exec('PRAGMA temp_store = MEMORY;');
+  rawDb.exec('PRAGMA synchronous = FULL;');
+  rawDb.exec('PRAGMA busy_timeout = 10000;');
+  rawDb.exec('PRAGMA wal_autocheckpoint = 100;');
   isNodeSqlite = true;
   console.log(`[Database] Connected using built-in node:sqlite (Node 22+) to ${CONFIG.DB_PATH}`);
 } catch (e1) {
@@ -27,9 +27,9 @@ try {
     rawDb = new BetterSqlite3(CONFIG.DB_PATH);
     rawDb.pragma('journal_mode = WAL');
     rawDb.pragma('foreign_keys = ON');
-    rawDb.pragma('synchronous = NORMAL');
-    rawDb.pragma('busy_timeout = 5000');
-    rawDb.pragma('temp_store = MEMORY');
+    rawDb.pragma('synchronous = FULL');
+    rawDb.pragma('busy_timeout = 10000');
+    rawDb.pragma('wal_autocheckpoint = 100');
     console.log(`[Database] Connected using better-sqlite3 to ${CONFIG.DB_PATH}`);
   } catch (e2) {
     console.error('[Database Error] Failed to initialize SQLite database:', e2.message);
@@ -1387,7 +1387,112 @@ export const DatabaseHelper = {
 
   deleteStopwatch(id) {
     return db.prepare('DELETE FROM stopwatches WHERE id = ?').run(id);
+  },
+
+  // ============================================================
+  // WISPBYTE PERSISTENCE & AUTO-BACKUP SYSTEM
+  // ============================================================
+  flushToDisk() {
+    try {
+      db.exec('PRAGMA wal_checkpoint(TRUNCATE);');
+      return true;
+    } catch (e) {
+      console.warn('[Database] WAL Checkpoint flush warning:', e.message);
+      return false;
+    }
+  },
+
+  createBackup(tag = 'auto') {
+    try {
+      const backupsDir = path.join(dbDir, 'backups');
+      if (!fs.existsSync(backupsDir)) {
+        fs.mkdirSync(backupsDir, { recursive: true });
+      }
+
+      this.flushToDisk();
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const backupFile = path.join(backupsDir, `cavaliere_backup_${tag}_${timestamp}.db`);
+
+      db.exec(`VACUUM INTO '${backupFile}';`);
+      console.log(`[Database Backup] Snapshot creato con successo in: ${backupFile}`);
+
+      // Keep only the 5 most recent backups
+      try {
+        const files = fs.readdirSync(backupsDir)
+          .filter(f => f.startsWith('cavaliere_backup_') && f.endsWith('.db'))
+          .map(f => ({ name: f, path: path.join(backupsDir, f), mtime: fs.statSync(path.join(backupsDir, f)).mtimeMs }))
+          .sort((a, b) => b.mtime - a.mtime);
+
+        if (files.length > 5) {
+          files.slice(5).forEach(f => {
+            try { fs.unlinkSync(f.path); } catch (e) {}
+          });
+        }
+      } catch (e) {}
+
+      return backupFile;
+    } catch (err) {
+      console.error('[Database Backup Error]:', err.message);
+      return null;
+    }
+  },
+
+  getLatestBackup() {
+    const backupsDir = path.join(dbDir, 'backups');
+    if (!fs.existsSync(backupsDir)) return null;
+    const files = fs.readdirSync(backupsDir)
+      .filter(f => f.startsWith('cavaliere_backup_') && f.endsWith('.db'))
+      .map(f => ({ name: f, path: path.join(backupsDir, f), mtime: fs.statSync(path.join(backupsDir, f)).mtimeMs }))
+      .sort((a, b) => b.mtime - a.mtime);
+    return files[0] ? files[0].path : null;
+  },
+
+  exportGuildConfig(guildId) {
+    return {
+      guild_id: guildId,
+      exported_at: Date.now(),
+      version: '2.0',
+      settings: this.getGuildSettings(guildId),
+      ai: this.getAIConfig(guildId),
+      welcomer: this.getWelcomerConfig(guildId),
+      partnerships: this.getPartnershipConfig(guildId),
+      automod: this.getAutomodConfig(guildId),
+      leveling: this.getLevelConfig(guildId),
+      counting: this.getCountingConfig(guildId),
+      presentations: this.getPresentationConfig(guildId),
+      setups: this.getSetupShowcaseConfig(guildId),
+      temp_channels: this.getTempChannelConfig(guildId),
+      autoresponders: this.getAutoresponders(guildId),
+      reaction_roles: this.getReactionRoles(guildId)
+    };
+  },
+
+  importGuildConfig(guildId, config) {
+    if (!config || typeof config !== 'object') throw new Error('Configurazione non valida');
+
+    if (config.settings) this.updateGuildSettings(guildId, config.settings);
+    if (config.ai) this.updateAIConfig(guildId, config.ai);
+    if (config.welcomer) this.updateWelcomerConfig(guildId, config.welcomer);
+    if (config.partnerships) this.updatePartnershipConfig(guildId, config.partnerships);
+    if (config.automod) this.updateAutomodConfig(guildId, config.automod);
+    if (config.leveling) this.updateLevelConfig(guildId, config.leveling);
+    if (config.counting) this.saveCountingConfig(guildId, config.counting);
+    if (config.presentations) this.updatePresentationConfig(guildId, config.presentations);
+    if (config.setups) this.updateSetupShowcaseConfig(guildId, config.setups);
+    if (config.temp_channels) this.updateTempChannelConfig(guildId, config.temp_channels);
+
+    this.flushToDisk();
+    return true;
   }
 };
+
+// Periodic Background Flush & Snapshot (every 60 seconds flush, every 6 hours snapshot)
+setInterval(() => {
+  DatabaseHelper.flushToDisk();
+}, 60000);
+
+setInterval(() => {
+  DatabaseHelper.createBackup('periodic');
+}, 6 * 3600 * 1000);
 
 export default DatabaseHelper;

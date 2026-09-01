@@ -2843,4 +2843,87 @@
       if (guildId) saveAllServerSettings(guildId);
     });
   }
+
+  // Wispbyte Persistence & Backup Cloud Listeners
+  const btnBackupFlush = document.getElementById('btn-backup-flush');
+  if (btnBackupFlush) {
+    btnBackupFlush.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server.', 'error');
+      const origHtml = btnBackupFlush.innerHTML;
+      btnBackupFlush.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Salvataggio...';
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        const res = await fetch(`/api/guilds/${guildId}/backup/flush`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-client-id': window.AppState?.clientId }
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast(`💾 Database sincronizzato e salvato su disco Wispbyte!`);
+        } else {
+          window.showToast('Errore durante il salvataggio su disco.', 'error');
+        }
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        btnBackupFlush.innerHTML = origHtml;
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
+  const btnBackupExport = document.getElementById('btn-backup-export');
+  if (btnBackupExport) {
+    btnBackupExport.addEventListener('click', () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server.', 'error');
+      window.open(`/api/guilds/${guildId}/backup/export`, '_blank');
+      window.showToast('📥 Download del backup di configurazione avviato!');
+    });
+  }
+
+  const btnBackupImportTrigger = document.getElementById('btn-backup-import-trigger');
+  const inputBackupImportFile = document.getElementById('input-backup-import-file');
+  if (btnBackupImportTrigger && inputBackupImportFile) {
+    btnBackupImportTrigger.addEventListener('click', () => inputBackupImportFile.click());
+    inputBackupImportFile.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server.', 'error');
+
+      const reader = new FileReader();
+      reader.onload = async (evt) => {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          if (!confirm('Sei sicuro di voler ripristinare questa configurazione? I moduli del server verranno aggiornati con i dati del file.')) {
+            inputBackupImportFile.value = '';
+            return;
+          }
+
+          const res = await fetch(`/api/guilds/${guildId}/backup/import`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-client-id': window.AppState?.clientId },
+            body: JSON.stringify(parsed)
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            window.showToast('✅ Configurazione ripristinata e salvata su disco con successo!');
+            if (window.reloadCurrentGuildData) {
+              await window.reloadCurrentGuildData(false);
+            }
+          } else {
+            window.showToast(data.error || 'Errore durante il ripristino del backup.', 'error');
+          }
+        } catch (err) {
+          window.showToast('Il file selezionato non è un JSON di backup valido.', 'error');
+        } finally {
+          inputBackupImportFile.value = '';
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
 })();

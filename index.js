@@ -48,4 +48,26 @@ process.on('uncaughtException', (err) => {
   console.error('[Uncaught Exception]', err);
 });
 
+// Wispbyte & Pterodactyl Container Shutdown / Restart handlers
+import('./src/database/db.js').then(({ DatabaseHelper }) => {
+  let isShuttingDown = false;
+  const gracefulShutdown = (signal) => {
+    if (isShuttingDown) return;
+    isShuttingDown = true;
+    console.log(`\n[Wispbyte System] Ricevuto segnale di arresto (${signal}). Salvataggio forzato su disco in corso...`);
+    try {
+      DatabaseHelper.flushToDisk();
+      DatabaseHelper.createBackup('shutdown');
+      console.log('✅ [Wispbyte System] Database sincronizzato e protetto su disco con successo.');
+    } catch (err) {
+      console.error('❌ [Wispbyte System] Errore durante il flush del database:', err.message);
+    }
+    process.exit(0);
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('beforeExit', () => gracefulShutdown('beforeExit'));
+});
+
 main();
