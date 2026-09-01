@@ -443,4 +443,16 @@ CREATE TABLE IF NOT EXISTS stopwatches (
   created_by TEXT,
   created_at INTEGER
 );
+
+-- ============================================================
+-- WEBHOOK & BOT MESSAGE REPLACER (IMAGE PRESERVATION & EMBED REPOST)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS webhook_replacer_channels (
+  guild_id TEXT NOT NULL,
+  channel_id TEXT NOT NULL,
+  enabled INTEGER DEFAULT 1,
+  preserve_author INTEGER DEFAULT 1,
+  created_at INTEGER DEFAULT (strftime('%s', 'now')),
+  PRIMARY KEY (guild_id, channel_id)
+);
 `;

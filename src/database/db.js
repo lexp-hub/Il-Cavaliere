@@ -1394,6 +1394,34 @@ export const DatabaseHelper = {
   },
 
   // ============================================================
+  // WEBHOOK & BOT MESSAGE REPLACER CHANNELS
+  // ============================================================
+  getWebhookReplacerChannels(guildId) {
+    return db.prepare('SELECT * FROM webhook_replacer_channels WHERE guild_id = ?').all(guildId);
+  },
+
+  isWebhookReplacerChannel(guildId, channelId) {
+    const row = db.prepare('SELECT * FROM webhook_replacer_channels WHERE guild_id = ? AND channel_id = ? AND enabled = 1').get(guildId, channelId);
+    return Boolean(row);
+  },
+
+  setWebhookReplacerChannel(guildId, channelId, enabled = 1, preserveAuthor = 1) {
+    const existing = db.prepare('SELECT * FROM webhook_replacer_channels WHERE guild_id = ? AND channel_id = ?').get(guildId, channelId);
+    if (existing) {
+      db.prepare('UPDATE webhook_replacer_channels SET enabled = ?, preserve_author = ? WHERE guild_id = ? AND channel_id = ?')
+        .run(enabled ? 1 : 0, preserveAuthor ? 1 : 0, guildId, channelId);
+    } else {
+      db.prepare('INSERT INTO webhook_replacer_channels (guild_id, channel_id, enabled, preserve_author) VALUES (?, ?, ?, ?)')
+        .run(guildId, channelId, enabled ? 1 : 0, preserveAuthor ? 1 : 0);
+    }
+    return db.prepare('SELECT * FROM webhook_replacer_channels WHERE guild_id = ? AND channel_id = ?').get(guildId, channelId);
+  },
+
+  removeWebhookReplacerChannel(guildId, channelId) {
+    return db.prepare('DELETE FROM webhook_replacer_channels WHERE guild_id = ? AND channel_id = ?').run(guildId, channelId);
+  },
+
+  // ============================================================
   // WISPBYTE PERSISTENCE & AUTO-BACKUP SYSTEM
   // ============================================================
   flushToDisk() {

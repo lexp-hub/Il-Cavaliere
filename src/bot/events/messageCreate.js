@@ -4,13 +4,23 @@ import { AIManager } from '../modules/aiManager.js';
 import { CountingManager } from '../modules/countingManager.js';
 import { SetupShowcaseManager } from '../modules/setupShowcaseManager.js';
 import { StopwatchManager } from '../modules/stopwatchManager.js';
+import { WebhookReplacerManager } from '../modules/webhookReplacerManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 
 export default {
   name: 'messageCreate',
   async execute(message) {
-    if (!message.guild || message.author.bot) return;
+    if (!message.guild) return;
+
+    // Never process messages sent by Sentry itself
+    if (message.author.id === message.client.user?.id) return;
+
+    // 0. Webhook & Bot Message Replacer (Image re-hosting & Embed Repost)
+    if (message.webhookId || message.author.bot) {
+      await WebhookReplacerManager.handleIncomingMessage(message);
+      return;
+    }
 
     // 1. Setup Showcase & BattleStation module handler
     const handledByShowcase = await SetupShowcaseManager.handleMessage(message);

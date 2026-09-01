@@ -14,8 +14,8 @@ export default {
   name: 'interactionCreate',
   async execute(interaction) {
     
-    // 1. Slash Commands
-    if (interaction.isChatInputCommand()) {
+    // 1. Slash Commands & Context Menu Commands
+    if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) {
       const command = interaction.client.commands.get(interaction.commandName);
       if (!command) {
         console.error(`[Commands] Nessun comando trovato per ${interaction.commandName}`);
@@ -25,7 +25,7 @@ export default {
       try {
         await command.execute(interaction);
       } catch (error) {
-        console.error(`[Commands] Errore nell'esecuzione di /${interaction.commandName}:`, error);
+        console.error(`[Commands] Errore nell'esecuzione di ${interaction.commandName}:`, error);
         const replyPayload = {
           content: `❌ Si è verificato un errore durante l'esecuzione del comando: \`${error.message}\``,
           ephemeral: true
