@@ -237,8 +237,9 @@ class GuildMusicQueue {
 
       console.log(`[Music] Avvio riproduzione traccia: "${track.title}" (URL: ${track.url})`);
 
-      // 1. Spawn yt-dlp to stream raw audio
+      // 1. Spawn yt-dlp to stream raw audio with mobile client bypass
       this.streamProcess = spawn(ytdlpBin, [
+        "--extractor-args", "youtube:player_client=ios,android,web",
         "-f", "bestaudio/best",
         "-o", "-",
         "--no-warnings",
