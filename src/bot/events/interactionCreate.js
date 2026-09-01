@@ -6,6 +6,7 @@ import { BlackjackManager } from '../modules/blackjackManager.js';
 import { TempChannelManager } from '../modules/tempChannelManager.js';
 import { MusicManager } from '../modules/musicManager.js';
 import { StopwatchManager } from '../modules/stopwatchManager.js';
+import { VerificationManager } from '../modules/verificationManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
@@ -499,11 +500,24 @@ export default {
       if (customId.startsWith('btn_sw_')) {
         return StopwatchManager.handleButton(interaction);
       }
+
+      // Captcha Verification Buttons
+      if (customId === 'btn_verify_start' || customId === 'btn_verify_refresh') {
+        return VerificationManager.startVerification(interaction);
+      }
+
+      if (customId === 'btn_verify_enter_code') {
+        return VerificationManager.showCodeModal(interaction);
+      }
     }
 
     // 3. Modal Submissions
     if (interaction.isModalSubmit()) {
       const customId = interaction.customId;
+
+      if (customId === 'modal_verify_submit') {
+        return VerificationManager.handleModalSubmit(interaction);
+      }
 
       if (customId.startsWith('modal_tc_')) {
         return TempChannelManager.handleModalSubmit(interaction);

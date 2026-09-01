@@ -455,4 +455,19 @@ CREATE TABLE IF NOT EXISTS webhook_replacer_channels (
   created_at INTEGER DEFAULT (strftime('%s', 'now')),
   PRIMARY KEY (guild_id, channel_id)
 );
+
+-- ============================================================
+-- CAPTCHA VERIFICATION SYSTEM
+-- ============================================================
+CREATE TABLE IF NOT EXISTS verification_configs (
+  guild_id TEXT PRIMARY KEY,
+  enabled INTEGER DEFAULT 1,
+  verified_role_id TEXT,
+  unverified_role_id TEXT,
+  panel_channel_id TEXT,
+  log_channel_id TEXT,
+  panel_title TEXT DEFAULT '🛡️ Portale di Verifica • Sentry',
+  panel_description TEXT,
+  created_at INTEGER DEFAULT (strftime('%s', 'now'))
+);
 `;

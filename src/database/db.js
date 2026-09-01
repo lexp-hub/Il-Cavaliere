@@ -1422,6 +1422,35 @@ export const DatabaseHelper = {
   },
 
   // ============================================================
+  // CAPTCHA VERIFICATION SYSTEM
+  // ============================================================
+  getVerificationConfig(guildId) {
+    let row = db.prepare('SELECT * FROM verification_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare(`
+        INSERT INTO verification_configs (guild_id, enabled, panel_title, panel_description)
+        VALUES (?, 1, '🛡️ Portale di Verifica • Sentry', 'Benvenuto nel server! Clicca sul pulsante sottostante per avviare la verifica con Captcha visivo e sbloccare tutti i canali.')
+      `).run(guildId);
+      row = db.prepare('SELECT * FROM verification_configs WHERE guild_id = ?').get(guildId);
+    }
+    return row;
+  },
+
+  setVerificationConfig(guildId, data) {
+    this.getVerificationConfig(guildId);
+    const fields = [];
+    const values = [];
+    for (const [k, v] of Object.entries(data)) {
+      fields.push(`${k} = ?`);
+      values.push(v);
+    }
+    if (fields.length === 0) return this.getVerificationConfig(guildId);
+    values.push(guildId);
+    db.prepare(`UPDATE verification_configs SET ${fields.join(', ')} WHERE guild_id = ?`).run(...values);
+    return this.getVerificationConfig(guildId);
+  },
+
+  // ============================================================
   // WISPBYTE PERSISTENCE & AUTO-BACKUP SYSTEM
   // ============================================================
   flushToDisk() {
