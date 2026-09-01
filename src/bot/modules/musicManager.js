@@ -84,6 +84,10 @@ class GuildMusicQueue {
   }
 
   setupPlayerListeners() {
+    this.player.on('stateChange', (oldState, newState) => {
+      console.log(`[Music Player] Server ${this.guildId} transizione: ${oldState.status} -> ${newState.status}`);
+    });
+
     this.player.on(AudioPlayerStatus.Idle, () => {
       this.killProcesses();
       this.handleTrackEnd();
@@ -180,10 +184,19 @@ class GuildMusicQueue {
         channelId: voiceChannel.id,
         guildId: this.guildId,
         adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-        selfDeaf: false
+        selfDeaf: false,
+        selfMute: false
       });
 
       this.connection.subscribe(this.player);
+
+      try {
+        console.log(`[Music] Connessione al canale vocale "${voiceChannel.name}" (attesa stato Ready)...`);
+        await entersState(this.connection, VoiceConnectionStatus.Ready, 15_000);
+        console.log(`[Music] ✅ Connessione vocale stabilita con successo in "${voiceChannel.name}"!`);
+      } catch (voiceErr) {
+        console.warn(`[Music Warning] Connessione vocale non ancora Ready entro 15s:`, voiceErr.message);
+      }
 
       this.connection.on(VoiceConnectionStatus.Disconnected, async () => {
         try {
@@ -208,12 +221,21 @@ class GuildMusicQueue {
 
     try {
       if (this.connection) {
+        if (this.connection.state.status !== VoiceConnectionStatus.Ready) {
+          try {
+            await entersState(this.connection, VoiceConnectionStatus.Ready, 10_000);
+          } catch (e) {
+            console.warn('[Music] In attesa dello stato Ready della connessione vocale:', e.message);
+          }
+        }
         this.connection.subscribe(this.player);
       }
 
       const ytdlpBin = getYtDlpPath();
       const ffmpegBin = getFfmpegPath();
       const volMultiplier = (Math.max(1, Math.min(150, this.volume)) / 100).toFixed(2);
+
+      console.log(`[Music] Avvio riproduzione traccia: "${track.title}" (URL: ${track.url})`);
 
       // 1. Spawn yt-dlp to stream raw audio
       this.streamProcess = spawn(ytdlpBin, [
@@ -223,6 +245,21 @@ class GuildMusicQueue {
         "--quiet",
         track.url
       ]);
+
+      let ytdlpError = '';
+      this.streamProcess.stderr.on('data', (d) => {
+        ytdlpError += d.toString();
+      });
+
+      this.streamProcess.on("error", (err) => {
+        console.error("[Music yt-dlp error]:", err.message);
+      });
+
+      this.streamProcess.on("close", (code) => {
+        if (code !== 0 && code !== null) {
+          console.warn(`[Music yt-dlp] Processo terminato con codice ${code}. Dettagli: ${ytdlpError.trim() || 'Nessun errore specifico su stderr'}`);
+        }
+      });
 
       // 2. Spawn FFmpeg to apply volume filter and encode to native 48kHz Stereo Opus in Ogg container
       this.ffmpegProcess = spawn(ffmpegBin, [
@@ -236,24 +273,37 @@ class GuildMusicQueue {
         "pipe:1"
       ]);
 
-      this.streamProcess.stdout.pipe(this.ffmpegProcess.stdin);
-
-      this.streamProcess.on("error", (err) => {
-        console.error("[Music yt-dlp error]:", err.message);
+      let ffmpegError = '';
+      this.ffmpegProcess.stderr.on('data', (d) => {
+        ffmpegError += d.toString();
       });
 
       this.ffmpegProcess.on("error", (err) => {
         console.error("[Music FFmpeg error]:", err.message);
       });
 
+      this.ffmpegProcess.on("close", (code) => {
+        if (code !== 0 && code !== null) {
+          console.warn(`[Music FFmpeg] Processo terminato con codice ${code}. Dettagli: ${ffmpegError.trim() || 'Nessun errore specifico su stderr'}`);
+        }
+      });
+
+      this.streamProcess.stdout.pipe(this.ffmpegProcess.stdin);
+
       // 3. Probing demuxer to create valid OggOpus AudioResource
       const probe = await demuxProbe(this.ffmpegProcess.stdout);
 
       this.currentResource = createAudioResource(probe.stream, {
-        inputType: probe.type
+        inputType: probe.type,
+        inlineVolume: true
       });
 
+      if (this.currentResource.volume) {
+        this.currentResource.volume.setVolume(this.volume / 100);
+      }
+
       this.player.play(this.currentResource);
+      console.log(`[Music] AudioResource generato e passato a player.play() per "${track.title}"!`);
       await this.sendOrUpdateController();
     } catch (err) {
       console.error("[Music] Impossibile avviare lo streaming di " + track.title + ":", err.message);
@@ -273,6 +323,9 @@ class GuildMusicQueue {
   setVolume(vol) {
     const clamped = Math.max(1, Math.min(150, vol));
     this.volume = clamped;
+    if (this.currentResource?.volume) {
+      this.currentResource.volume.setVolume(clamped / 100);
+    }
     this.updateController();
     return this.volume;
   }
