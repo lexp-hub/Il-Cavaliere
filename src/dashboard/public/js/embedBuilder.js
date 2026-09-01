@@ -352,25 +352,38 @@
     input.dataset.searchBound = select.id;
 
     input.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase().trim().replace(/^[#@]/, '');
+      const query = e.target.value.toLowerCase().trim().replace(/^[#@🔊📁👤]/, '');
       let items = [];
+      let prefix = '# ';
+
       if (filterType === 'role') {
         items = window.AppState?.roles || [];
+        prefix = '@ ';
       } else if (filterType === 'category') {
         items = (window.AppState?.channels || []).filter(c => c.type === 'category' || c.type === 4);
+        prefix = '📁 ';
+      } else if (filterType === 'voice') {
+        items = (window.AppState?.channels || []).filter(c => c.type === 'voice' || c.rawType === 2 || c.rawType === 13 || c.isVoice);
+        prefix = '🔊 ';
+      } else if (filterType === 'member' || filterType === 'user') {
+        items = window.AppState?.members || [];
+        prefix = '👤 ';
       } else {
         items = (window.AppState?.channels || []).filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
+        prefix = '# ';
       }
 
       const currentVal = select.value;
-      select.innerHTML = '<option value="">-- Seleziona --</option>';
+      select.innerHTML = `<option value="">-- Seleziona --</option>`;
 
       let matched = 0;
       items.forEach(item => {
-        if (!query || item.name.toLowerCase().includes(query) || String(item.id).includes(query)) {
+        const name = item.displayName || item.name || '';
+        const id = String(item.id || '');
+        if (!query || name.toLowerCase().includes(query) || id.includes(query) || (item.name && item.name.toLowerCase().includes(query))) {
           const opt = document.createElement('option');
           opt.value = item.id;
-          opt.textContent = `${filterType === 'role' ? '@' : (filterType === 'category' ? '📁' : '#')} ${item.name}`;
+          opt.textContent = `${prefix}${item.displayName ? `${item.displayName} (@${item.name})` : item.name}`;
           select.appendChild(opt);
           matched++;
         }

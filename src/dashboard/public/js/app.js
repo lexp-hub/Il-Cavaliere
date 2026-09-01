@@ -144,6 +144,10 @@ function initTabNavigation() {
         window.updateEmbedPreview();
       }
 
+      if (window.populateDropdowns) {
+        window.populateDropdowns();
+      }
+
       if (window.lucide) lucide.createIcons();
     });
   });
@@ -398,11 +402,16 @@ window.updateUserCoinsDisplay = async function(guildId) {
   }
 };
 
-function populateDropdowns(channels = [], roles = [], members = []) {
-  const textChannels = channels.filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
-  const voiceChannels = channels.filter(c => c.type === 'voice' || c.rawType === 2 || c.rawType === 13);
-  const categories = channels.filter(c => c.type === 'category' || c.type === 4);
+window.populateDropdowns = function populateDropdowns(channels, roles, members) {
+  const allChannels = (channels && channels.length) ? channels : (window.AppState?.channels || []);
+  const allRoles = (roles && roles.length) ? roles : (window.AppState?.roles || []);
+  const allMembers = (members && members.length) ? members : (window.AppState?.members || []);
 
+  const textChannels = allChannels.filter(c => (c.type === 'text' || c.type === 0 || c.type === 5) && c.type !== 'voice' && c.rawType !== 2 && c.rawType !== 13);
+  const voiceChannels = allChannels.filter(c => c.type === 'voice' || c.rawType === 2 || c.rawType === 13 || c.isVoice);
+  const categories = allChannels.filter(c => c.type === 'category' || c.type === 4);
+
+  // 1. Text Channels Selectors
   const channelSelectIds = [
     'gen-log-channel', 'part-channel', 'embed-channel', 'rr-channel',
     'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel', 'tk-log-channel',
@@ -430,7 +439,7 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     }
   });
 
-  // Voice Channels Selectors
+  // 2. Voice Channels Selectors
   ['tc-gen-voice-channel', 'music-target-voice'].forEach(id => {
     const vSelect = document.getElementById(id);
     if (!vSelect) return;
@@ -450,6 +459,7 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     }
   });
 
+  // 3. Category Selectors
   const categorySelectIds = ['tk-category', 'tc-category'];
   categorySelectIds.forEach(id => {
     const catSelect = document.getElementById(id);
@@ -470,6 +480,7 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     }
   });
 
+  // 4. Role Selectors
   const roleSelectIds = [
     'part-ping-role', 'part-manager-role', 'rr-role',
     'wel-autorole-user', 'wel-autorole-bot', 'tk-support-role',
@@ -482,32 +493,40 @@ function populateDropdowns(channels = [], roles = [], members = []) {
     const currentVal = select.value;
     select.innerHTML = '<option value="">-- Nessun Ruolo --</option>';
 
-    roles.forEach(r => {
+    allRoles.forEach(r => {
       const opt = document.createElement('option');
       opt.value = r.id;
       opt.textContent = `@ ${r.name}`;
       select.appendChild(opt);
     });
 
-    if (currentVal && roles.some(r => r.id === currentVal)) {
+    if (currentVal && allRoles.some(r => r.id === currentVal)) {
       select.value = currentVal;
     }
   });
 
-  // Populate Member Dropdown for Treasury
-  const memberSelect = document.getElementById('coin-target-user');
-  if (memberSelect) {
+  // 5. Member Dropdowns (Treasury, etc.)
+  const memberSelectIds = ['coin-target-user'];
+  memberSelectIds.forEach(id => {
+    const memberSelect = document.getElementById(id);
+    if (!memberSelect) return;
+
     const currentMember = memberSelect.value;
     memberSelect.innerHTML = '<option value="">-- Seleziona un Membro --</option>';
-    (members || []).forEach(m => {
+    allMembers.forEach(m => {
       const opt = document.createElement('option');
       opt.value = m.id;
       const coinText = m.coins !== undefined ? ` — ${Number(m.coins).toLocaleString()} 🪙` : '';
       opt.textContent = `${m.displayName || m.name} (@${m.name})${coinText}`;
       memberSelect.appendChild(opt);
     });
-    if (currentMember && (members || []).some(m => m.id === currentMember)) {
+
+    if (currentMember && allMembers.some(m => m.id === currentMember)) {
       memberSelect.value = currentMember;
     }
-  }
+  });
+};
+
+function populateDropdowns(channels, roles, members) {
+  return window.populateDropdowns(channels, roles, members);
 }

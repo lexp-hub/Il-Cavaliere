@@ -133,8 +133,9 @@ export function createGuildsRouter(botClient) {
 
     let members = [];
     try {
-      const fetched = await guild.members.fetch({ time: 10000 }).catch(() => guild.members.cache);
-      members = Array.from(fetched.values())
+      const fetched = await guild.members.fetch().catch(() => guild.members.cache);
+      const memberCollection = (fetched && typeof fetched.values === 'function') ? fetched : guild.members.cache;
+      members = Array.from(memberCollection.values())
         .filter(m => !m.user?.bot)
         .map(m => {
           const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
@@ -148,6 +149,7 @@ export function createGuildsRouter(botClient) {
         })
         .sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name));
     } catch (e) {
+      console.warn('[Guilds] Member fetch fallback notice:', e.message);
       members = Array.from(guild.members.cache.values())
         .filter(m => !m.user?.bot)
         .map(m => {
@@ -162,6 +164,26 @@ export function createGuildsRouter(botClient) {
         })
         .sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name));
     }
+
+    // Merge any registered members from database so user lists are always populated
+    try {
+      const dbUsers = DatabaseHelper.db.prepare(
+        'SELECT DISTINCT user_id FROM (SELECT user_id FROM levels WHERE guild_id = ? UNION SELECT user_id FROM fishing_profiles WHERE guild_id = ?)'
+      ).all(guild.id, guild.id);
+
+      for (const u of dbUsers) {
+        if (!members.some(m => m.id === u.user_id)) {
+          const coins = DatabaseHelper.getUserCoins(guild.id, u.user_id);
+          members.push({
+            id: u.user_id,
+            name: `Utente ${u.user_id.slice(-4)}`,
+            displayName: `Utente ${u.user_id.slice(-4)}`,
+            avatar: null,
+            coins: coins
+          });
+        }
+      }
+    } catch (e) {}
 
     res.json({
       id: guild.id,

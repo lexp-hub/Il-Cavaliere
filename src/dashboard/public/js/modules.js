@@ -18,7 +18,7 @@
       loadAIData(guildId),
       loadPartnershipData(guildId),
       loadReactionRoles(guildId),
-      loadWelcomerData(guildId),
+      window.loadWelcomerData ? window.loadWelcomerData(guildId) : Promise.resolve(),
       loadAutoresponders(guildId),
       loadAutomodData(guildId),
       loadTicketsData(guildId),
