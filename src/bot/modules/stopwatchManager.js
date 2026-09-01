@@ -8,6 +8,10 @@ import { DatabaseHelper } from "../../database/db.js";
 
 // Map of active intervals: stopwatchId -> NodeJS.Timeout
 const activeIntervals = new Map();
+// Map of debounce timers: channelId -> NodeJS.Timeout
+const stickyTimers = new Map();
+// Set of channels currently performing repositioning
+const isReposting = new Set();
 
 function formatTime(totalSeconds) {
   const safeSeconds = Math.max(0, Math.floor(totalSeconds));
@@ -45,7 +49,7 @@ function buildEmbed(sw, elapsedSeconds) {
       `> 📅 **Data inizio:** <t:${Math.floor(sw.start_time / 1000)}:F>\n` +
       (sw.custom_text ? `\n> 📝 **Descrizione:** ${sw.custom_text}\n` : "")
     )
-    .setFooter({ text: "Sentry Sentinel • Cronometro Digitale Live • /cronometro" });
+    .setFooter({ text: "Sentry Sentinel • Cronometro Digitale Persistente • /cronometro" });
 
   return embed;
 }
@@ -89,7 +93,8 @@ async function updateMessage(client, sw) {
 
     const message = await channel.messages.fetch(sw.message_id).catch(() => null);
     if (!message) {
-      StopwatchManager.stop(sw.id, client);
+      // Se il messaggio è stato eliminato o non trovato, ricrealo in fondo al canale!
+      await StopwatchManager.repostToBottom(sw.id, channel);
       return;
     }
 
@@ -283,6 +288,72 @@ export const StopwatchManager = {
     }
 
     return true;
+  },
+
+  async repostToBottom(swId, channel) {
+    const channelId = channel.id;
+    if (isReposting.has(channelId)) return;
+    isReposting.add(channelId);
+
+    try {
+      const sw = DatabaseHelper.getStopwatch(swId);
+      if (!sw || sw.status === "stopped") return;
+
+      // 1. Elimina il vecchio messaggio se ancora presente
+      if (sw.message_id) {
+        try {
+          const oldMsg = await channel.messages.fetch(sw.message_id).catch(() => null);
+          if (oldMsg && oldMsg.deletable) {
+            await oldMsg.delete().catch(() => {});
+          }
+        } catch (e) {}
+      }
+
+      // 2. Calcola l'orario corrente e crea il nuovo embed con i pulsanti
+      const elapsed = calculateElapsed(sw);
+      const embed = buildEmbed(sw, elapsed);
+      const components = buildButtons(sw);
+
+      // 3. Invia il nuovo messaggio in fondo alla chat
+      const newMsg = await channel.send({ embeds: [embed], components });
+
+      // 4. Aggiorna l'ID del messaggio nel database
+      DatabaseHelper.updateStopwatch(sw.id, { message_id: newMsg.id });
+
+      // 5. Aggiorna l'intervallo attivo se in esecuzione
+      if (sw.status === "running") {
+        startInterval(channel.client, { ...sw, message_id: newMsg.id });
+      }
+    } catch (err) {
+      console.error("[Stopwatch Sticky Error]:", err.message);
+    } finally {
+      isReposting.delete(channelId);
+    }
+  },
+
+  async handleChannelMessage(message) {
+    if (!message.guild || message.author?.bot) return;
+
+    const channelId = message.channel.id;
+    const guildId = message.guild.id;
+
+    const activeSw = DatabaseHelper.getActiveStopwatchByChannel(guildId, channelId);
+    if (!activeSw || activeSw.status === "stopped") return;
+
+    // Ignora se il messaggio proviene dallo stesso cronometro
+    if (message.id === activeSw.message_id) return;
+
+    // Debounce a 1.2 secondi per evitare di superare i rate-limits di Discord se scrivono veloce
+    if (stickyTimers.has(channelId)) {
+      clearTimeout(stickyTimers.get(channelId));
+    }
+
+    const timer = setTimeout(async () => {
+      stickyTimers.delete(channelId);
+      await StopwatchManager.repostToBottom(activeSw.id, message.channel);
+    }, 1200);
+
+    stickyTimers.set(channelId, timer);
   }
 };
 

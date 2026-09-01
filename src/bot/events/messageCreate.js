@@ -3,6 +3,7 @@ import { XPManager } from '../modules/xpManager.js';
 import { AIManager } from '../modules/aiManager.js';
 import { CountingManager } from '../modules/countingManager.js';
 import { SetupShowcaseManager } from '../modules/setupShowcaseManager.js';
+import { StopwatchManager } from '../modules/stopwatchManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 
@@ -97,5 +98,8 @@ export default {
     }
 
     await XPManager.handleMessage(message);
+
+    // 4. Sticky Stopwatch floating repositioning
+    await StopwatchManager.handleChannelMessage(message);
   }
 };

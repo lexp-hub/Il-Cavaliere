@@ -1372,6 +1372,10 @@ export const DatabaseHelper = {
     return db.prepare("SELECT * FROM stopwatches WHERE status != 'stopped' ORDER BY id DESC").all();
   },
 
+  getActiveStopwatchByChannel(guildId, channelId) {
+    return db.prepare("SELECT * FROM stopwatches WHERE guild_id = ? AND channel_id = ? AND status != 'stopped' ORDER BY id DESC LIMIT 1").get(guildId, channelId);
+  },
+
   updateStopwatch(id, updates) {
     const fields = [];
     const values = [];
