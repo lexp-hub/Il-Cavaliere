@@ -2,6 +2,7 @@ import express from 'express';
 import fs from 'fs';
 import path from 'path';
 import { DatabaseHelper } from '../../database/db.js';
+import { MysqlSync } from '../../database/mysqlSync.js';
 import { PartnershipManager } from '../../bot/modules/partnershipManager.js';
 import { PresentationManager } from '../../bot/modules/presentationManager.js';
 import { SetupShowcaseManager } from '../../bot/modules/setupShowcaseManager.js';
@@ -128,6 +129,21 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
       return res.status(404).json({ error: 'Nessun backup trovato.' });
     }
     res.download(latest);
+  });
+
+  router.get('/system/cloud-status', async (req, res) => {
+    const status = await MysqlSync.getCloudStatus();
+    res.json(status);
+  });
+
+  router.post('/system/cloud-sync', async (req, res) => {
+    DatabaseHelper.flushToDisk();
+    const result = await MysqlSync.pushCloudSnapshot('manual_dashboard');
+    if (result) {
+      res.json({ success: true, message: 'Database sincronizzato con successo nel cloud MySQL di Wispbyte!', result });
+    } else {
+      res.status(500).json({ success: false, error: 'Impossibile caricare lo snapshot su MySQL.' });
+    }
   });
 
   router.get('/guilds/:guildId/ai', requireModAuth, (req, res) => {

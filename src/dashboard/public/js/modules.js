@@ -2845,6 +2845,33 @@
   }
 
   // Wispbyte Persistence & Backup Cloud Listeners
+  const btnCloudSync = document.getElementById('btn-cloud-sync');
+  if (btnCloudSync) {
+    btnCloudSync.addEventListener('click', async () => {
+      const origHtml = btnCloudSync.innerHTML;
+      btnCloudSync.innerHTML = '<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Caricamento in Cloud...';
+      if (window.lucide) lucide.createIcons();
+
+      try {
+        const res = await fetch('/api/system/cloud-sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-client-id': window.AppState?.clientId }
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('☁️ Database caricato e protetto sul Cloud MySQL di Wispbyte!');
+        } else {
+          window.showToast(data.error || 'Errore sincronizzazione Cloud MySQL.', 'error');
+        }
+      } catch (err) {
+        window.showToast(err.message, 'error');
+      } finally {
+        btnCloudSync.innerHTML = origHtml;
+        if (window.lucide) lucide.createIcons();
+      }
+    });
+  }
+
   const btnBackupFlush = document.getElementById('btn-backup-flush');
   if (btnBackupFlush) {
     btnBackupFlush.addEventListener('click', async () => {

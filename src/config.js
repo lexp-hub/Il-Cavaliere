@@ -34,6 +34,12 @@ export const CONFIG = {
   EMBED_WARN_COLOR: '#F59E0B',
   
   DB_PATH: process.env.DB_PATH || path.join(__dirname, '../data/cavaliere.db'),
+  MYSQL_HOST: process.env.MYSQL_HOST || process.env.DB_HOST || '157.90.211.250',
+  MYSQL_PORT: parseInt(process.env.MYSQL_PORT || process.env.DB_PORT || '3306', 10),
+  MYSQL_USER: process.env.MYSQL_USER || process.env.DB_USER || 'u4724_0I9du5II5e',
+  MYSQL_PASSWORD: process.env.MYSQL_PASSWORD || process.env.DB_PASSWORD || 'yG0yYwvxNCZRocuuWv.H.uG=',
+  MYSQL_DATABASE: process.env.MYSQL_DATABASE || process.env.DB_NAME || 's4724_sentry',
+  MYSQL_ENABLED: process.env.MYSQL_ENABLED !== 'false',
   PROMPT_PATH: path.join(__dirname, 'config/prompt.json'),
   SERVER_ARCHITECT_PROMPT_PATH: path.join(__dirname, 'config/server_architect_prompt.json'),
   

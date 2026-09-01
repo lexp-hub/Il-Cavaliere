@@ -1,11 +1,20 @@
 import { createBotClient, loadCommandsAndEvents, registerSlashCommands } from './src/bot/client.js';
 import { createDashboardServer } from './src/dashboard/server.js';
 import { CONFIG } from './src/config.js';
+import { MysqlSync } from './src/database/mysqlSync.js';
+import { DatabaseHelper } from './src/database/db.js';
 
 async function main() {
   console.log('====================================================');
   console.log('🛡️       SENTRY - DISCORD BOT & DASHBOARD          🛡️');
   console.log('====================================================');
+
+  try {
+    console.log('[System] Inizializzazione sincronizzazione Cloud MySQL Wispbyte...');
+    await MysqlSync.init();
+  } catch (mysqlErr) {
+    console.warn('[System Warning] Inizializzazione MySQL non riuscita:', mysqlErr.message);
+  }
 
   const botClient = createBotClient();
 
@@ -49,25 +58,24 @@ process.on('uncaughtException', (err) => {
 });
 
 // Wispbyte & Pterodactyl Container Shutdown / Restart handlers
-import('./src/database/db.js').then(({ DatabaseHelper }) => {
-  let isShuttingDown = false;
-  const gracefulShutdown = (signal) => {
-    if (isShuttingDown) return;
-    isShuttingDown = true;
-    console.log(`\n[Wispbyte System] Ricevuto segnale di arresto (${signal}). Salvataggio forzato su disco in corso...`);
-    try {
-      DatabaseHelper.flushToDisk();
-      DatabaseHelper.createBackup('shutdown');
-      console.log('✅ [Wispbyte System] Database sincronizzato e protetto su disco con successo.');
-    } catch (err) {
-      console.error('❌ [Wispbyte System] Errore durante il flush del database:', err.message);
-    }
-    process.exit(0);
-  };
+let isShuttingDown = false;
+const gracefulShutdown = async (signal) => {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  console.log(`\n[Wispbyte System] Ricevuto segnale di arresto (${signal}). Salvataggio forzato in corso...`);
+  try {
+    DatabaseHelper.flushToDisk();
+    DatabaseHelper.createBackup('shutdown');
+    await MysqlSync.close();
+    console.log('✅ [Wispbyte System] Database sincronizzato e protetto su disco e Cloud MySQL con successo.');
+  } catch (err) {
+    console.error('❌ [Wispbyte System] Errore durante il flush del database:', err.message);
+  }
+  process.exit(0);
+};
 
-  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
-  process.on('beforeExit', () => gracefulShutdown('beforeExit'));
-});
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('beforeExit', () => gracefulShutdown('beforeExit'));
 
 main();
