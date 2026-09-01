@@ -1326,6 +1326,67 @@ export const DatabaseHelper = {
 
   deleteTempChannelByChannelId(channelId) {
     return db.prepare('DELETE FROM temp_channels WHERE voice_channel_id = ? OR text_channel_id = ?').run(channelId, channelId);
+  },
+
+  // ============================================================
+  // STOPWATCHES (CRONOMETRO DIGITALE)
+  // ============================================================
+  createStopwatch(data) {
+    const stmt = db.prepare(`
+      INSERT INTO stopwatches (
+        guild_id, channel_id, message_id, title, custom_text,
+        start_offset_seconds, start_time, paused_at, total_paused_seconds,
+        status, created_by, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `);
+    const now = Date.now();
+    const res = stmt.run(
+      data.guild_id,
+      data.channel_id,
+      data.message_id,
+      data.title || '⏱️ Cronometro Live',
+      data.custom_text || null,
+      Number(data.start_offset_seconds || 0),
+      data.start_time || now,
+      data.paused_at || null,
+      Number(data.total_paused_seconds || 0),
+      data.status || 'running',
+      data.created_by || null,
+      now
+    );
+    return res.lastInsertRowid;
+  },
+
+  getStopwatch(id) {
+    return db.prepare('SELECT * FROM stopwatches WHERE id = ?').get(id);
+  },
+
+  getStopwatchByMessage(messageId) {
+    return db.prepare('SELECT * FROM stopwatches WHERE message_id = ?').get(messageId);
+  },
+
+  getActiveStopwatches(guildId = null) {
+    if (guildId) {
+      return db.prepare("SELECT * FROM stopwatches WHERE guild_id = ? AND status != 'stopped' ORDER BY id DESC").all(guildId);
+    }
+    return db.prepare("SELECT * FROM stopwatches WHERE status != 'stopped' ORDER BY id DESC").all();
+  },
+
+  updateStopwatch(id, updates) {
+    const fields = [];
+    const values = [];
+    for (const [k, v] of Object.entries(updates)) {
+      fields.push(`${k} = ?`);
+      values.push(v);
+    }
+    if (fields.length === 0) return;
+    values.push(id);
+    db.prepare(`UPDATE stopwatches SET ${fields.join(', ')} WHERE id = ?`).run(...values);
+    return this.getStopwatch(id);
+  },
+
+  deleteStopwatch(id) {
+    return db.prepare('DELETE FROM stopwatches WHERE id = ?').run(id);
   }
 };
 

@@ -181,7 +181,8 @@ export default {
               { name: '`/leaderboard`', value: 'Mostra la top 10 degli utenti più attivi del server.' },
               { name: '`/steal emoji <emoji/url>`', value: 'Ruba e aggiungi un\'emoji al tuo server istantaneamente.' },
               { name: '`/emoji-stats`', value: 'Analisi statistica delle emoji più e meno usate.' },
-              { name: '`/starboard config <channel>`', value: 'Configura il canale bacheca per i messaggi stellati ⭐.' }
+              { name: '`/starboard config <channel>`', value: 'Configura il canale bacheca per i messaggi stellati ⭐.' },
+              { name: '`/cronometro avvia <ore>`', value: 'Avvia un cronometro digitale live progressivo (HH:MM:SS) nella descrizione.' }
             );
           break;
       }

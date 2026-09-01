@@ -1,5 +1,6 @@
 import { ActivityType } from 'discord.js';
 import { GiveawayManager } from '../modules/giveawayManager.js';
+import { StopwatchManager } from '../modules/stopwatchManager.js';
 import { CONFIG } from '../../config.js';
 
 export default {
@@ -38,5 +39,6 @@ export default {
     setInterval(updatePresence, 60 * 1000);
 
     GiveawayManager.init(client);
+    StopwatchManager.initAllActiveStopwatches(client);
   }
 };

@@ -5,6 +5,7 @@ import { FishingManager } from '../modules/fishingManager.js';
 import { BlackjackManager } from '../modules/blackjackManager.js';
 import { TempChannelManager } from '../modules/tempChannelManager.js';
 import { MusicManager } from '../modules/musicManager.js';
+import { StopwatchManager } from '../modules/stopwatchManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
@@ -493,6 +494,10 @@ export default {
 
       if (customId.startsWith('btn_music_')) {
         return MusicManager.handleMusicButton(interaction);
+      }
+
+      if (customId.startsWith('btn_sw_')) {
+        return StopwatchManager.handleButton(interaction);
       }
     }
 

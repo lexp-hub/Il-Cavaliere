@@ -424,4 +424,23 @@ CREATE TABLE IF NOT EXISTS temp_channels (
   user_limit INTEGER DEFAULT 0,
   created_at INTEGER
 );
+
+-- ============================================================
+-- LIVE DIGITAL STOPWATCHES (CRONOMETRI LIVE HH:MM:SS)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS stopwatches (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  guild_id TEXT NOT NULL,
+  channel_id TEXT NOT NULL,
+  message_id TEXT NOT NULL,
+  title TEXT DEFAULT '⏱️ Cronometro Live',
+  custom_text TEXT,
+  start_offset_seconds INTEGER DEFAULT 0,
+  start_time INTEGER NOT NULL,
+  paused_at INTEGER,
+  total_paused_seconds INTEGER DEFAULT 0,
+  status TEXT DEFAULT 'running',
+  created_by TEXT,
+  created_at INTEGER
+);
 `;
