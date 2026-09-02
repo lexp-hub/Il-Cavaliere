@@ -13,6 +13,7 @@ import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
 import { TempChannelManager } from '../../bot/modules/tempChannelManager.js';
 import { MusicManager } from '../../bot/modules/musicManager.js';
+import { exportChannelsToCSV } from '../../bot/modules/channelExporter.js';
 import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, PermissionsBitField } from 'discord.js';
 import { CONFIG } from '../../config.js';
 
@@ -106,6 +107,26 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', `attachment; filename="sentry-config-${req.params.guildId}.json"`);
     res.send(JSON.stringify(config, null, 2));
+  });
+
+  router.get('/guilds/:guildId/export/channels.csv', requireModAuth, async (req, res) => {
+    try {
+      const guildId = req.params.guildId;
+      const guild = botClient?.guilds?.cache?.get(guildId);
+      if (!guild) {
+        return res.status(404).json({ error: 'Server Discord non trovato o bot non presente.' });
+      }
+
+      await guild.channels.fetch();
+      const csvContent = exportChannelsToCSV(guild);
+      const cleanName = guild.name.replace(/[^a-zA-Z0-9_-]/g, '_');
+
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="${cleanName}_canali_${Date.now()}.csv"`);
+      res.send(Buffer.from(csvContent, 'utf-8'));
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   });
 
   router.post('/guilds/:guildId/backup/import', requireModAuth, (req, res) => {

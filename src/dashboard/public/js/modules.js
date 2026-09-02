@@ -2620,6 +2620,16 @@
     });
   }
 
+  const btnExportChannelsCsv = document.getElementById('btn-export-channels-csv');
+  if (btnExportChannelsCsv) {
+    btnExportChannelsCsv.addEventListener('click', () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return window.showToast('Seleziona prima un server.', 'error');
+      window.open(`/api/guilds/${guildId}/export/channels.csv`, '_blank');
+      window.showToast('📥 Download del file CSV canali e categorie avviato!');
+    });
+  }
+
   const btnBackupImportTrigger = document.getElementById('btn-backup-import-trigger');
   const inputBackupImportFile = document.getElementById('input-backup-import-file');
   if (btnBackupImportTrigger && inputBackupImportFile) {
