@@ -34,20 +34,31 @@ export const CountingManager = {
     const currentNumber = countingConfig.current_number || 0;
     const expectedNumber = currentNumber + 1;
     const lastUserId = countingConfig.last_user_id;
+    const allowConsecutive = countingConfig.allow_consecutive !== undefined ? Boolean(countingConfig.allow_consecutive) : true;
+    const isZenMode = countingConfig.zen_mode !== undefined ? Boolean(countingConfig.zen_mode) : true;
 
-    // Rule 1: Anti-double count by the same user
-    if (lastUserId === message.author.id && currentNumber > 0) {
+    // Rule 1: Anti-double count (only enforced if allowConsecutive is disabled)
+    if (!allowConsecutive && lastUserId === message.author.id && currentNumber > 0) {
       await message.react('❌').catch(() => {});
-      DatabaseHelper.recordCountRuin(message.guild.id, message.author.id);
 
-      const ruinEmbed = new EmbedBuilder()
-        .setColor('#ef4444')
-        .setTitle('💀 Sequenza di Conteggio Interrotta!')
-        .setDescription(`**${message.author}** ha contato due volte di fila al numero **${currentNumber}**!\n\n👑 *Record Massimo Raggiunto:* **${countingConfig.highest_streak}**\n🔄 Il conteggio riparte da **1**!`)
-        .setFooter({ text: 'Regola: non puoi contare due volte consecutive', iconURL: message.guild.iconURL() })
-        .setTimestamp();
-
-      await message.channel.send({ embeds: [ruinEmbed] });
+      if (isZenMode) {
+        const zenWarning = new EmbedBuilder()
+          .setColor('#06b6d4')
+          .setTitle('🧘 Modalità Zen: Conteggio a Turni')
+          .setDescription(`**${message.author}**, attendi che un altro cavaliere conti prima di te!\n*In modalità Zen la serie è salva:* il prossimo numero rimane **${expectedNumber}**! ✨`)
+          .setFooter({ text: 'Sentry • Counting Zen', iconURL: message.guild.iconURL() })
+          .setTimestamp();
+        await message.channel.send({ embeds: [zenWarning] });
+      } else {
+        DatabaseHelper.recordCountRuin(message.guild.id, message.author.id);
+        const ruinEmbed = new EmbedBuilder()
+          .setColor('#ef4444')
+          .setTitle('💀 Sequenza di Conteggio Interrotta!')
+          .setDescription(`**${message.author}** ha contato due volte di fila al numero **${currentNumber}**!\n\n👑 *Record Massimo Raggiunto:* **${countingConfig.highest_streak}**\n🔄 Il conteggio riparte da **1**!`)
+          .setFooter({ text: 'Regola: non puoi contare due volte consecutive', iconURL: message.guild.iconURL() })
+          .setTimestamp();
+        await message.channel.send({ embeds: [ruinEmbed] });
+      }
       return;
     }
 
@@ -79,18 +90,32 @@ export const CountingManager = {
         await message.channel.send({ embeds: [milestoneEmbed] });
       }
     } else {
-      // Wrong number! Ruin streak
+      // Wrong number!
       await message.react('❌').catch(() => {});
-      DatabaseHelper.recordCountRuin(message.guild.id, message.author.id);
 
-      const ruinEmbed = new EmbedBuilder()
-        .setColor('#ef4444')
-        .setTitle('💀 Errore nel Conteggio!')
-        .setDescription(`**${message.author}** ha scritto **${parsedNumber}**, ma il numero corretto era **${expectedNumber}**!\n\n👑 *Record Massimo Raggiunto:* **${countingConfig.highest_streak}**\n🔄 Il conteggio riparte da **1**!`)
-        .setFooter({ text: 'Sentry • Counting Game', iconURL: message.guild.iconURL() })
-        .setTimestamp();
+      if (isZenMode) {
+        // Zen Mode: do NOT ruin streak, keep counting peaceful
+        const zenEmbed = new EmbedBuilder()
+          .setColor('#06b6d4')
+          .setTitle('🧘 Conteggio Zen')
+          .setDescription(`**${message.author}** ha digitato **${parsedNumber}**, ma il numero atteso era **${expectedNumber}**!\n\n*In modalità Zen il conteggio non viene azzerato:* si continua serenamente dal numero **${expectedNumber}**! ✨`)
+          .setFooter({ text: 'Sentry • Counting Zen Mode', iconURL: message.guild.iconURL() })
+          .setTimestamp();
 
-      await message.channel.send({ embeds: [ruinEmbed] });
+        await message.channel.send({ embeds: [zenEmbed] });
+      } else {
+        // Hardcore mode: Ruin streak
+        DatabaseHelper.recordCountRuin(message.guild.id, message.author.id);
+
+        const ruinEmbed = new EmbedBuilder()
+          .setColor('#ef4444')
+          .setTitle('💀 Errore nel Conteggio!')
+          .setDescription(`**${message.author}** ha scritto **${parsedNumber}**, ma il numero corretto era **${expectedNumber}**!\n\n👑 *Record Massimo Raggiunto:* **${countingConfig.highest_streak}**\n🔄 Il conteggio riparte da **1**!`)
+          .setFooter({ text: 'Sentry • Counting Game', iconURL: message.guild.iconURL() })
+          .setTimestamp();
+
+        await message.channel.send({ embeds: [ruinEmbed] });
+      }
     }
   }
 };

@@ -255,7 +255,9 @@ CREATE TABLE IF NOT EXISTS counting_configs (
   current_number INTEGER DEFAULT 0,
   last_user_id TEXT,
   highest_streak INTEGER DEFAULT 0,
-  allow_ruin_reset INTEGER DEFAULT 1,
+  allow_ruin_reset INTEGER DEFAULT 0,
+  allow_consecutive INTEGER DEFAULT 1,
+  zen_mode INTEGER DEFAULT 1,
   enabled INTEGER DEFAULT 0
 );
 

@@ -81,6 +81,8 @@ try { db.exec("ALTER TABLE ticket_panels ADD COLUMN footer TEXT;"); } catch (e) 
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN button_style TEXT DEFAULT 'Primary';"); } catch (e) {}
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN log_channel_id TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE level_configs ADD COLUMN coins_per_level INTEGER DEFAULT 100;"); } catch (e) {}
+try { db.exec("ALTER TABLE counting_configs ADD COLUMN allow_consecutive INTEGER DEFAULT 1;"); } catch (e) {}
+try { db.exec("ALTER TABLE counting_configs ADD COLUMN zen_mode INTEGER DEFAULT 1;"); } catch (e) {}
 
 export const DatabaseHelper = {
   db,
@@ -754,22 +756,29 @@ export const DatabaseHelper = {
   getCountingConfig(guildId) {
     const row = db.prepare('SELECT * FROM counting_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
-      db.prepare('INSERT INTO counting_configs (guild_id, current_number, highest_streak, enabled) VALUES (?, 0, 0, 0)').run(guildId);
-      return { guild_id: guildId, channel_id: null, current_number: 0, last_user_id: null, highest_streak: 0, allow_ruin_reset: 1, enabled: 0 };
+      db.prepare('INSERT INTO counting_configs (guild_id, current_number, highest_streak, allow_ruin_reset, allow_consecutive, zen_mode, enabled) VALUES (?, 0, 0, 0, 1, 1, 0)').run(guildId);
+      return { guild_id: guildId, channel_id: null, current_number: 0, last_user_id: null, highest_streak: 0, allow_ruin_reset: 0, allow_consecutive: 1, zen_mode: 1, enabled: 0 };
     }
-    return row;
+    return {
+      ...row,
+      allow_ruin_reset: row.allow_ruin_reset !== undefined ? row.allow_ruin_reset : 0,
+      allow_consecutive: row.allow_consecutive !== undefined ? row.allow_consecutive : 1,
+      zen_mode: row.zen_mode !== undefined ? row.zen_mode : 1
+    };
   },
 
   saveCountingConfig(guildId, config) {
     return db.prepare(`
-      INSERT INTO counting_configs (guild_id, channel_id, current_number, last_user_id, highest_streak, allow_ruin_reset, enabled)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO counting_configs (guild_id, channel_id, current_number, last_user_id, highest_streak, allow_ruin_reset, allow_consecutive, zen_mode, enabled)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(guild_id) DO UPDATE SET
         channel_id = excluded.channel_id,
         current_number = excluded.current_number,
         last_user_id = excluded.last_user_id,
         highest_streak = excluded.highest_streak,
         allow_ruin_reset = excluded.allow_ruin_reset,
+        allow_consecutive = excluded.allow_consecutive,
+        zen_mode = excluded.zen_mode,
         enabled = excluded.enabled
     `).run(
       guildId,
@@ -777,7 +786,9 @@ export const DatabaseHelper = {
       config.current_number ?? 0,
       config.last_user_id ?? null,
       config.highest_streak ?? 0,
-      config.allow_ruin_reset !== undefined ? (config.allow_ruin_reset ? 1 : 0) : 1,
+      config.allow_ruin_reset !== undefined ? (config.allow_ruin_reset ? 1 : 0) : 0,
+      config.allow_consecutive !== undefined ? (config.allow_consecutive ? 1 : 0) : 1,
+      config.zen_mode !== undefined ? (config.zen_mode ? 1 : 0) : 1,
       config.enabled !== undefined ? (config.enabled ? 1 : 0) : 0
     );
   },

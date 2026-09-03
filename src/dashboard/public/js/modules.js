@@ -1329,6 +1329,10 @@
         if (channelEl && cfg.channel_id) channelEl.value = cfg.channel_id;
         if (curEl) curEl.textContent = cfg.current_number || 0;
         if (highEl) highEl.textContent = cfg.highest_streak || 0;
+        const zenEl = document.getElementById('cnt-zen-mode');
+        if (zenEl) zenEl.checked = cfg.zen_mode !== undefined ? Boolean(cfg.zen_mode) : true;
+        const consEl = document.getElementById('cnt-consecutive');
+        if (consEl) consEl.checked = cfg.allow_consecutive !== undefined ? Boolean(cfg.allow_consecutive) : true;
 
         const lbList = document.getElementById('cnt-leaderboard-list');
         if (lbList) {
@@ -1727,11 +1731,13 @@
       const guildId = window.AppState.currentGuildId;
       const channelId = document.getElementById('cnt-channel')?.value;
       const enabled = document.getElementById('cnt-enabled')?.checked;
+      const zen_mode = document.getElementById('cnt-zen-mode')?.checked;
+      const allow_consecutive = document.getElementById('cnt-consecutive')?.checked;
 
       const res = await fetch(`/api/guilds/${guildId}/counting`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ channel_id: channelId, enabled })
+        body: JSON.stringify({ channel_id: channelId, enabled, zen_mode, allow_consecutive })
       });
 
       if (res.ok) {
@@ -1897,7 +1903,9 @@
         headers,
         body: JSON.stringify({
           enabled: document.getElementById('cnt-enabled')?.checked,
-          channel_id: document.getElementById('cnt-channel')?.value || null
+          channel_id: document.getElementById('cnt-channel')?.value || null,
+          zen_mode: document.getElementById('cnt-zen-mode')?.checked,
+          allow_consecutive: document.getElementById('cnt-consecutive')?.checked
         })
       });
 
