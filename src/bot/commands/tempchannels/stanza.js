@@ -32,6 +32,11 @@ export default {
     )
     .addSubcommand(sub =>
       sub
+        .setName('hub')
+        .setDescription('Invia o rimanda l\'Hub di Controllo Rapido nella chat della stanza vocale')
+    )
+    .addSubcommand(sub =>
+      sub
         .setName('invita')
         .setDescription('Concedi l\'accesso alla tua stanza privata a un amico')
         .addUserOption(opt =>
@@ -213,6 +218,43 @@ export default {
       if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
       return interaction.reply({
         content: `✅ Stanza vocale privata creata: <#${result.voiceChannel.id}>!\n💡 *Apri la chat della vocale per trovare l'**Hub di Controllo Rapido** con tutti i pulsanti di gestione.*`,
+        ephemeral: true
+      });
+    }
+
+    // === 3b. HUB ===
+    if (subcommand === 'hub') {
+      const activeVoiceId = member.voice?.channelId;
+      let targetChannel = null;
+      let tempRecord = null;
+
+      if (activeVoiceId) {
+        tempRecord = DatabaseHelper.getTempChannelByVoiceId(activeVoiceId);
+        if (tempRecord) targetChannel = guild.channels.cache.get(tempRecord.voice_channel_id);
+      }
+      if (!targetChannel) {
+        tempRecord = DatabaseHelper.getTempChannelByChannelId(interaction.channelId);
+        if (tempRecord) targetChannel = guild.channels.cache.get(tempRecord.voice_channel_id || tempRecord.text_channel_id);
+      }
+
+      if (!targetChannel || !tempRecord) {
+        return interaction.reply({
+          content: '❌ Devi essere collegato alla tua stanza vocale temporanea (o nella sua chat) per richiederne l\'Hub.',
+          ephemeral: true
+        });
+      }
+
+      if (tempRecord.owner_id !== interaction.user.id &&
+          !interaction.member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+        return interaction.reply({
+          content: '❌ Solo il proprietario della stanza o un amministratore possono richiamare l\'Hub di Controllo.',
+          ephemeral: true
+        });
+      }
+
+      await TempChannelManager.sendControlPanel(targetChannel, member, targetChannel.id, null);
+      return interaction.reply({
+        content: `✅ **Hub di Controllo Rapido inviato nella chat della vocale:** <#${targetChannel.id}>!\n💡 Clicca sull'icona del fumetto della chat per gestirla.`,
         ephemeral: true
       });
     }

@@ -59,6 +59,9 @@ export const TempChannelManager = {
           PermissionsBitField.Flags.Connect,
           PermissionsBitField.Flags.Speak,
           PermissionsBitField.Flags.SendMessages,
+          PermissionsBitField.Flags.ReadMessageHistory,
+          PermissionsBitField.Flags.EmbedLinks,
+          PermissionsBitField.Flags.AttachFiles,
           PermissionsBitField.Flags.ManageChannels,
           PermissionsBitField.Flags.MoveMembers
         ]
@@ -77,7 +80,9 @@ export const TempChannelManager = {
       });
 
       // Send the Quick Control Hub in the Voice Channel's built-in text chat
-      await this.sendControlPanel(voiceChannel, member, voiceChannel.id, null).catch(() => {});
+      await this.sendControlPanel(voiceChannel, member, voiceChannel.id, null).catch(err => {
+        console.error('[TempChannels] Errore invio control panel in chat vocale:', err);
+      });
 
       const record = DatabaseHelper.createTempChannelRecord(
         guild.id,
@@ -202,7 +207,13 @@ export const TempChannelManager = {
       new ButtonBuilder().setCustomId('btn_tc_delete').setLabel('Elimina Stanza').setEmoji('🗑️').setStyle(ButtonStyle.Danger)
     );
 
-    return await channel.send({ embeds: [embed], components: [row1, row2] });
+    const sentMsg = await channel.send({
+      content: `👑 ${member}, benvenuto nella tua **Stanza Vocale Privata**! Usa l'**Hub di Controllo Rapido** sottostante per gestirla in tempo reale:`,
+      embeds: [embed],
+      components: [row1, row2]
+    });
+    await sentMsg.pin().catch(() => {});
+    return sentMsg;
   },
 
   // === 4. Send Interactive Hub Panel (Admin / Dashboard) ===
