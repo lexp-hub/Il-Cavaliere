@@ -14,22 +14,11 @@ export default {
     .addSubcommand(sub =>
       sub
         .setName('crea')
-        .setDescription('Crea all\'istante una nuova stanza privata')
-        .addStringOption(opt =>
-          opt
-            .setName('tipo')
-            .setDescription('Tipo di canale da creare')
-            .setRequired(true)
-            .addChoices(
-              { name: '🔊 Solo Canale Vocale', value: 'voice' },
-              { name: '💬 Solo Canale Testuale', value: 'text' },
-              { name: '🔒 Entrambi (Vocale + Chat Privata)', value: 'both' }
-            )
-        )
+        .setDescription('Crea all\'istante una nuova stanza vocale privata')
         .addStringOption(opt =>
           opt
             .setName('nome')
-            .setDescription('Nome personalizzato per la stanza')
+            .setDescription('Nome personalizzato per la stanza vocale')
             .setRequired(false)
         )
         .addIntegerOption(opt =>
@@ -217,32 +206,15 @@ export default {
 
     // === 3. CREA ===
     if (subcommand === 'crea') {
-      const tipo = interaction.options.getString('tipo');
       const customName = interaction.options.getString('nome');
       const userLimit = interaction.options.getInteger('limite') || 0;
 
-      if (tipo === 'voice') {
-        const result = await TempChannelManager.createVoiceRoom(guild, member, { name: customName, userLimit, withText: false });
-        if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
-        return interaction.reply({
-          content: `✅ Stanza vocale privata creata: <#${result.voiceChannel.id}>!\n💡 *Apri la chat del canale per trovare l'**Hub di Controllo Rapido** con tutti i pulsanti.*`,
-          ephemeral: true
-        });
-      } else if (tipo === 'text') {
-        const result = await TempChannelManager.createTextRoom(guild, member, { name: customName });
-        if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
-        return interaction.reply({
-          content: `✅ Canale testuale privato creato: <#${result.textChannel.id}>!\n💡 *L'**Hub di Controllo Rapido** con tutti i pulsanti è disponibile nella chat.*`,
-          ephemeral: true
-        });
-      } else {
-        const result = await TempChannelManager.createVoiceRoom(guild, member, { name: customName, userLimit, withText: true });
-        if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
-        return interaction.reply({
-          content: `✅ Stanza completa creata: Vocale <#${result.voiceChannel.id}> e Chat Privata <#${result.textChannel.id}>!\n💡 *Usa l'**Hub di Controllo Rapido** nella chat per gestire blocchi, amici e permessi.*`,
-          ephemeral: true
-        });
-      }
+      const result = await TempChannelManager.createVoiceRoom(guild, member, { name: customName, userLimit });
+      if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
+      return interaction.reply({
+        content: `✅ Stanza vocale privata creata: <#${result.voiceChannel.id}>!\n💡 *Apri la chat della vocale per trovare l'**Hub di Controllo Rapido** con tutti i pulsanti di gestione.*`,
+        ephemeral: true
+      });
     }
 
     // === Commands that require being in/controlling a temp channel ===

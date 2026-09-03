@@ -76,56 +76,14 @@ export const TempChannelManager = {
         reason: `Canale vocale temporaneo creato per ${member.user.tag}`
       });
 
-      let textChannel = null;
-      if (options.withText) {
-        const textNaming = config.naming_scheme_text || '💬 chat-{user}';
-        const textName = textNaming.replace(/{user}/g, cleanUsername.toLowerCase().replace(/[^a-z0-9]/g, ''));
-        textChannel = await guild.channels.create({
-          name: textName,
-          type: ChannelType.GuildText,
-          parent: categoryId,
-          permissionOverwrites: [
-            {
-              id: guild.id,
-              deny: [
-                PermissionsBitField.Flags.ViewChannel,
-                PermissionsBitField.Flags.SendMessages
-              ]
-            },
-            {
-              id: member.id,
-              allow: [
-                PermissionsBitField.Flags.ViewChannel,
-                PermissionsBitField.Flags.SendMessages,
-                PermissionsBitField.Flags.AttachFiles,
-                PermissionsBitField.Flags.EmbedLinks,
-                PermissionsBitField.Flags.ReadMessageHistory,
-                PermissionsBitField.Flags.ManageMessages
-              ]
-            },
-            {
-              id: guild.client.user.id,
-              allow: [
-                PermissionsBitField.Flags.ViewChannel,
-                PermissionsBitField.Flags.SendMessages,
-                PermissionsBitField.Flags.ManageChannels
-              ]
-            }
-          ],
-          topic: `Chat privata per la stanza vocale di ${member.user.tag} | ID: ${member.id}`
-        });
-
-        await this.sendControlPanel(textChannel, member, voiceChannel.id, textChannel.id);
-      }
-
-      // Always send the Quick Control Hub in the Voice Channel's text chat as well
-      await this.sendControlPanel(voiceChannel, member, voiceChannel.id, textChannel ? textChannel.id : null).catch(() => {});
+      // Send the Quick Control Hub in the Voice Channel's built-in text chat
+      await this.sendControlPanel(voiceChannel, member, voiceChannel.id, null).catch(() => {});
 
       const record = DatabaseHelper.createTempChannelRecord(
         guild.id,
         member.id,
         voiceChannel.id,
-        textChannel ? textChannel.id : null,
+        null,
         userLimit
       );
 
@@ -134,7 +92,7 @@ export const TempChannelManager = {
         await member.voice.setChannel(voiceChannel).catch(() => {});
       }
 
-      return { success: true, voiceChannel, textChannel, record };
+      return { success: true, voiceChannel, textChannel: null, record };
     } catch (error) {
       console.error('[TempChannels] Errore creazione canale vocale:', error);
       return { success: false, message: error.message };
@@ -254,15 +212,15 @@ export const TempChannelManager = {
 
     const title = options.title || '🔊 Hub Creazione Canali Privati & Vocali';
     const description = options.description ||
-      `Crea all'istante la tua **Stanza Privata** (vocale, testuale o entrambe) personalizzata!\n\n` +
-      `⚡ **Hub di Controllo Rapido in Chat**:\n` +
-      `Ogni stanza creata riceverà automaticamente all'interno della sua chat un **Pannello di Gestione con Pulsanti Rapidi** per:\n` +
+      `Clicca sul pulsante sottostante o entra nel canale vocale generatore per creare all'istante la tua **Stanza Vocale Privata** temporanea!\n\n` +
+      `⚡ **Hub di Controllo Rapido nella Chat Vocale**:\n` +
+      `Ogni stanza riceve automaticamente nella chat integrata della vocale un **Pannello di Gestione Rapido** per:\n` +
       `• 🔒 Bloccare o sbloccare l'ingresso\n` +
       `• 👁️ Nascondere o mostrare il canale\n` +
       `• 👥 Impostare il limite partecipanti\n` +
       `• ➕ Aggiungere amici ed espellere utenti indesiderati\n` +
       `• ✏️ Rinominare la stanza con un click!\n\n` +
-      `👇 **Scegli il tipo di stanza che desideri creare:**`;
+      `👇 **Clicca qui sotto per creare la tua stanza vocale:**`;
 
     const embed = new EmbedBuilder()
       .setColor('#6366f1')
@@ -276,19 +234,9 @@ export const TempChannelManager = {
     const row = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
         .setCustomId('btn_tc_create_voice')
-        .setLabel('Crea Vocale Privato')
+        .setLabel('Crea Canale Vocale Privato')
         .setEmoji('🔊')
-        .setStyle(ButtonStyle.Primary),
-      new ButtonBuilder()
-        .setCustomId('btn_tc_create_text')
-        .setLabel('Crea Canale Testuale')
-        .setEmoji('💬')
-        .setStyle(ButtonStyle.Secondary),
-      new ButtonBuilder()
-        .setCustomId('btn_tc_create_linked')
-        .setLabel('Vocale + Chat Privata')
-        .setEmoji('🔒')
-        .setStyle(ButtonStyle.Success)
+        .setStyle(ButtonStyle.Primary)
     );
 
     return await channel.send({ embeds: [embed], components: [row] });
@@ -298,30 +246,12 @@ export const TempChannelManager = {
   async handleButtonInteraction(interaction) {
     const { customId, guild, user, member, channel } = interaction;
 
-    // A. Creation Buttons
-    if (customId === 'btn_tc_create_voice') {
-      const result = await this.createVoiceRoom(guild, member, { withText: false });
+    // A. Creation Buttons (Voice only!)
+    if (customId === 'btn_tc_create_voice' || customId === 'btn_tc_create_text' || customId === 'btn_tc_create_linked') {
+      const result = await this.createVoiceRoom(guild, member);
       if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
       return interaction.reply({
-        content: `✅ Stanza vocale creata: <#${result.voiceChannel.id}>!\n💡 *Apri la chat del canale per trovare l'**Hub di Controllo Rapido** con i pulsanti di gestione.*`,
-        ephemeral: true
-      });
-    }
-
-    if (customId === 'btn_tc_create_text') {
-      const result = await this.createTextRoom(guild, member);
-      if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
-      return interaction.reply({
-        content: `✅ Canale testuale privato creato: <#${result.textChannel.id}>!\n💡 *Troverai l'**Hub di Controllo Rapido** con tutti i pulsanti fissato nella chat.*`,
-        ephemeral: true
-      });
-    }
-
-    if (customId === 'btn_tc_create_linked') {
-      const result = await this.createVoiceRoom(guild, member, { withText: true });
-      if (!result.success) return interaction.reply({ content: `❌ ${result.message}`, ephemeral: true });
-      return interaction.reply({
-        content: `✅ Stanza completa creata: Vocale <#${result.voiceChannel.id}> e Chat Privata <#${result.textChannel.id}>!\n💡 *Usa l'**Hub di Controllo Rapido** nella chat per gestire accessi, blocchi e permessi.*`,
+        content: `✅ Stanza vocale privata creata: <#${result.voiceChannel.id}>!\n💡 *Clicca sull'icona della chat della vocale per accedere all'**Hub di Controllo Rapido**.*`,
         ephemeral: true
       });
     }
@@ -655,7 +585,7 @@ export const TempChannelManager = {
       const member = newState.member;
       if (!member || member.user.bot) return;
 
-      await this.createVoiceRoom(guild, member, { withText: true });
+      await this.createVoiceRoom(guild, member);
       return;
     }
 
