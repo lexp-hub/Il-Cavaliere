@@ -6,6 +6,7 @@ import { SetupShowcaseManager } from '../modules/setupShowcaseManager.js';
 import { StopwatchManager } from '../modules/stopwatchManager.js';
 import { WebhookReplacerManager } from '../modules/webhookReplacerManager.js';
 import { BoostManager } from '../modules/boostManager.js';
+import { AFKManager } from '../modules/afkManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 
@@ -35,6 +36,10 @@ export default {
 
     const violated = await AutoModManager.handleMessage(message);
     if (violated) return;
+
+    // 3. AFK System: restore author status and alert on mentions/replies
+    await AFKManager.handleMessageAuthor(message);
+    await AFKManager.handleMentionsAndReplies(message);
 
     const emojiMatches = message.content.matchAll(/<(a?):([a-zA-Z0-9_]+):([0-9]+)>/g);
     for (const match of emojiMatches) {

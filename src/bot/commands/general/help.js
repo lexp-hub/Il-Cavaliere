@@ -182,7 +182,8 @@ export default {
               { name: '`/steal emoji <emoji/url>`', value: 'Ruba e aggiungi un\'emoji al tuo server istantaneamente.' },
               { name: '`/emoji-stats`', value: 'Analisi statistica delle emoji più e meno usate.' },
               { name: '`/starboard config <channel>`', value: 'Configura il canale bacheca per i messaggi stellati ⭐.' },
-              { name: '`/cronometro avvia <ore>`', value: 'Avvia un cronometro digitale live progressivo (HH:MM:SS) nella descrizione.' }
+              { name: '`/cronometro avvia <ore>`', value: 'Avvia un cronometro digitale live progressivo (HH:MM:SS) nella descrizione.' },
+              { name: '`/afk [motivo]` (o `/inattivo`)', value: 'Imposta il tuo stato su AFK; avvisa chi ti menziona e ti dà il bentornato al ritorno.' }
             );
           break;
       }

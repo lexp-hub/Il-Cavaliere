@@ -186,6 +186,18 @@ try {
   `);
 } catch (e) {}
 
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS afk_users (
+      guild_id TEXT NOT NULL,
+      user_id TEXT NOT NULL,
+      reason TEXT DEFAULT 'Attualmente assente',
+      timestamp INTEGER NOT NULL,
+      PRIMARY KEY (guild_id, user_id)
+    );
+  `);
+} catch (e) {}
+
 export const DatabaseHelper = {
   db,
 
@@ -659,6 +671,38 @@ export const DatabaseHelper = {
       embStr
     );
     return this.getBoostConfig(guildId);
+  },
+
+  // ============================================================
+  // AFK STATUS SYSTEM METHODS
+  // ============================================================
+  setAfk(guildId, userId, reason = 'Attualmente assente', timestamp = Date.now()) {
+    db.prepare(`
+      INSERT INTO afk_users (guild_id, user_id, reason, timestamp)
+      VALUES (?, ?, ?, ?)
+      ON CONFLICT(guild_id, user_id) DO UPDATE SET
+        reason = excluded.reason,
+        timestamp = excluded.timestamp
+    `).run(guildId, userId, reason, timestamp);
+
+    return this.getAfk(guildId, userId);
+  },
+
+  getAfk(guildId, userId) {
+    const row = db.prepare('SELECT * FROM afk_users WHERE guild_id = ? AND user_id = ?').get(guildId, userId);
+    return row || null;
+  },
+
+  removeAfk(guildId, userId) {
+    const existing = this.getAfk(guildId, userId);
+    if (existing) {
+      db.prepare('DELETE FROM afk_users WHERE guild_id = ? AND user_id = ?').run(guildId, userId);
+    }
+    return existing;
+  },
+
+  getAllAfk(guildId) {
+    return db.prepare('SELECT * FROM afk_users WHERE guild_id = ?').all(guildId);
   },
 
   getAutoresponders(guildId) {

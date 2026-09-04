@@ -486,4 +486,15 @@ CREATE TABLE IF NOT EXISTS verification_configs (
   panel_description TEXT,
   created_at INTEGER DEFAULT (strftime('%s', 'now'))
 );
+
+-- ============================================================
+-- AFK STATUS SYSTEM (ASSENZA / INATTIVITÀ UTENTI)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS afk_users (
+  guild_id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  reason TEXT DEFAULT 'Attualmente assente',
+  timestamp INTEGER NOT NULL,
+  PRIMARY KEY (guild_id, user_id)
+);
 `;
