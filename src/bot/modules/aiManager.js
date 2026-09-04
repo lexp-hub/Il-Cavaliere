@@ -210,6 +210,13 @@ export const AIManager = {
       return message.reply("Il modulo Sentry AI è momentaneamente disattivato in questo server.");
     }
 
+    if (guild) {
+      const quota = DatabaseHelper.getAIQuotaStatus(guild.id);
+      if (quota.is_blocked) {
+        return message.reply(`⏳ **Quota AI Giornaliera Raggiunta**: Il server ha utilizzato tutte le **${quota.daily_limit}** richieste AI disponibili per oggi. Il limite si ripristinerà a mezzanotte!`);
+      }
+    }
+
     const basePrompt = guildAIConfig.system_prompt || DEFAULT_IDENTITY;
     const creatorId = CONFIG.CREATOR_ID;
 
@@ -320,7 +327,26 @@ Utilizza questi dati per rispondere all'utente. Esprimi la tua opinione cinica, 
     DatabaseHelper.addChannelLog(channel.id, 'user', `${author.username}: ${question}`);
     DatabaseHelper.addChannelLog(channel.id, 'assistant', reply);
 
-    await message.reply(reply).catch(() => {});
+    // Update Quota and check warning threshold
+    let quotaNotice = "";
+    if (guild) {
+      const updatedQuota = DatabaseHelper.incrementAIUsage(guild.id);
+      if (updatedQuota.is_warning) {
+        quotaNotice = `\n\n> ⚠️ *Nota Quota AI: rimangono solo **${updatedQuota.remaining}** richieste disponibili per oggi (usate ${updatedQuota.used}/${updatedQuota.daily_limit}).*`;
+
+        const warningTarget = Math.floor(updatedQuota.daily_limit * (updatedQuota.threshold_pct / 100));
+        if (updatedQuota.warning_channel_id && updatedQuota.used === warningTarget) {
+          const staffCh = guild.channels.cache.get(updatedQuota.warning_channel_id);
+          if (staffCh) {
+            staffCh.send({
+              content: `⚠️ **Allerta Quota AI Server**: È stato raggiunto il **${updatedQuota.threshold_pct}%** del limite giornaliero AI (${updatedQuota.used}/${updatedQuota.daily_limit} richieste). Rimangono solo **${updatedQuota.remaining}** richieste prima del blocco.`
+            }).catch(() => {});
+          }
+        }
+      }
+    }
+
+    await message.reply(reply + quotaNotice).catch(() => {});
   }
 };
 

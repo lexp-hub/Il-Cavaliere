@@ -169,7 +169,8 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
   router.get('/guilds/:guildId/ai', requireModAuth, (req, res) => {
     const config = DatabaseHelper.getAIConfig(req.params.guildId);
     const defaultPrompt = AIManager.loadPrompt();
-    res.json({ config, defaultPrompt });
+    const quota = DatabaseHelper.getAIQuotaStatus(req.params.guildId);
+    res.json({ config, defaultPrompt, quota });
   });
 
   router.post('/guilds/:guildId/ai', requireModAuth, (req, res) => {

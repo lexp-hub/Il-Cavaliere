@@ -145,6 +145,7 @@
       const data = await res.json();
 
       const config = data.config || {};
+      const quota = data.quota || {};
       const promptEl = document.getElementById('ai-system-prompt');
       const modelEl = document.getElementById('ai-model');
       const enabledEl = document.getElementById('ai-enabled');
@@ -154,6 +155,61 @@
       if (modelEl && config.model) modelEl.value = config.model;
       if (enabledEl) enabledEl.checked = Boolean(config.enabled);
       if (searchEl) searchEl.checked = Boolean(config.web_search_enabled);
+
+      // Quota & Limiti inputs
+      const dailyLimitEl = document.getElementById('ai-daily-limit');
+      const warningThresholdEl = document.getElementById('ai-warning-threshold');
+      const warningChanEl = document.getElementById('ai-warning-channel');
+
+      if (dailyLimitEl) dailyLimitEl.value = config.daily_limit !== undefined ? config.daily_limit : 100;
+      if (warningThresholdEl) warningThresholdEl.value = config.warning_threshold !== undefined ? config.warning_threshold : 80;
+      if (warningChanEl) {
+        warningChanEl.dataset.savedValue = config.warning_channel_id || '';
+        warningChanEl.value = config.warning_channel_id || '';
+      }
+
+      // Quota status display
+      const quotaUsedEl = document.getElementById('ai-quota-used-text');
+      const quotaMaxEl = document.getElementById('ai-quota-max-text');
+      const quotaPctEl = document.getElementById('ai-quota-percent-text');
+      const quotaRemEl = document.getElementById('ai-quota-remaining-text');
+      const quotaProgEl = document.getElementById('ai-quota-progress-bar');
+      const quotaBadgeEl = document.getElementById('ai-quota-badge');
+
+      const used = quota.used !== undefined ? quota.used : (quota.daily_requests || 0);
+      const limit = quota.daily_limit !== undefined ? quota.daily_limit : (config.daily_limit !== undefined ? config.daily_limit : 100);
+      const isUnlimited = limit <= 0;
+      const remaining = isUnlimited ? 'Illimitate' : (quota.remaining !== undefined ? quota.remaining : Math.max(0, limit - used));
+      const pct = isUnlimited ? 0 : Math.min(100, Math.round((used / limit) * 100));
+
+      if (quotaUsedEl) quotaUsedEl.textContent = used;
+      if (quotaMaxEl) quotaMaxEl.textContent = isUnlimited ? '∞' : limit;
+      if (quotaPctEl) quotaPctEl.textContent = isUnlimited ? 'N/A' : `${pct}%`;
+      if (quotaRemEl) quotaRemEl.textContent = isUnlimited ? 'Richieste illimitate' : `${remaining} rimanenti`;
+
+      if (quotaProgEl) {
+        quotaProgEl.style.width = isUnlimited ? '0%' : `${pct}%`;
+        if (pct >= 100) {
+          quotaProgEl.className = 'h-full bg-red-600 transition-all duration-300';
+        } else if (quota.is_warning || pct >= (config.warning_threshold || 80)) {
+          quotaProgEl.className = 'h-full bg-amber-500 transition-all duration-300';
+        } else {
+          quotaProgEl.className = 'h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-500 transition-all duration-300';
+        }
+      }
+
+      if (quotaBadgeEl) {
+        if (quota.is_blocked || (!isUnlimited && typeof remaining === 'number' && remaining <= 0)) {
+          quotaBadgeEl.className = 'badge text-[11px] px-2.5 py-0.5 rounded-full bg-red-950/80 text-red-400 border border-red-800/50 font-medium';
+          quotaBadgeEl.textContent = '⛔ Quota Esaurita';
+        } else if (quota.is_warning) {
+          quotaBadgeEl.className = 'badge text-[11px] px-2.5 py-0.5 rounded-full bg-amber-950/80 text-amber-400 border border-amber-800/50 font-medium';
+          quotaBadgeEl.textContent = '⚠️ In Pre-Esaurimento';
+        } else {
+          quotaBadgeEl.className = 'badge text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-800/50 font-medium';
+          quotaBadgeEl.textContent = '🟢 Quota Normale';
+        }
+      }
 
       const ovModel = document.getElementById('ov-ai-model');
       if (ovModel) {
@@ -187,11 +243,21 @@
       const guildId = window.AppState.currentGuildId;
       if (!guildId) return;
 
+      const dailyLimitRaw = document.getElementById('ai-daily-limit')?.value;
+      const warningThreshRaw = document.getElementById('ai-warning-threshold')?.value;
+      const warningChanVal = document.getElementById('ai-warning-channel')?.value || null;
+
+      const dailyLimitVal = dailyLimitRaw !== undefined && dailyLimitRaw !== '' ? parseInt(dailyLimitRaw, 10) : 100;
+      const warningThreshVal = warningThreshRaw !== undefined && warningThreshRaw !== '' ? parseInt(warningThreshRaw, 10) : 80;
+
       const payload = {
         enabled: document.getElementById('ai-enabled')?.checked,
         model: document.getElementById('ai-model')?.value,
         web_search_enabled: document.getElementById('ai-web-search')?.checked,
-        system_prompt: document.getElementById('ai-system-prompt')?.value
+        system_prompt: document.getElementById('ai-system-prompt')?.value,
+        daily_limit: isNaN(dailyLimitVal) ? 100 : dailyLimitVal,
+        warning_threshold: isNaN(warningThreshVal) ? 80 : Math.max(1, Math.min(99, warningThreshVal)),
+        warning_channel_id: warningChanVal
       };
 
       const res = await fetch(`/api/guilds/${guildId}/ai`, {
@@ -201,7 +267,8 @@
       });
 
       if (res.ok) {
-        window.showToast('Configurazione di Sentry AI salvata!');
+        window.showToast('Configurazione e limiti di Sentry AI salvati!');
+        await loadAIData(guildId);
       } else {
         window.showToast('Errore nel salvataggio AI.', 'error');
       }

@@ -83,6 +83,11 @@ try { db.exec("ALTER TABLE ticket_panels ADD COLUMN log_channel_id TEXT;"); } ca
 try { db.exec("ALTER TABLE level_configs ADD COLUMN coins_per_level INTEGER DEFAULT 100;"); } catch (e) {}
 try { db.exec("ALTER TABLE counting_configs ADD COLUMN allow_consecutive INTEGER DEFAULT 1;"); } catch (e) {}
 try { db.exec("ALTER TABLE counting_configs ADD COLUMN zen_mode INTEGER DEFAULT 1;"); } catch (e) {}
+try { db.exec("ALTER TABLE ai_configs ADD COLUMN daily_limit INTEGER DEFAULT 100;"); } catch (e) {}
+try { db.exec("ALTER TABLE ai_configs ADD COLUMN warning_threshold INTEGER DEFAULT 80;"); } catch (e) {}
+try { db.exec("ALTER TABLE ai_configs ADD COLUMN daily_requests INTEGER DEFAULT 0;"); } catch (e) {}
+try { db.exec("ALTER TABLE ai_configs ADD COLUMN last_reset_date TEXT;"); } catch (e) {}
+try { db.exec("ALTER TABLE ai_configs ADD COLUMN warning_channel_id TEXT;"); } catch (e) {}
 
 export const DatabaseHelper = {
   db,
@@ -150,8 +155,8 @@ export const DatabaseHelper = {
     let row = db.prepare('SELECT * FROM ai_configs WHERE guild_id = ?').get(guildId);
     if (!row) {
       db.prepare(`
-        INSERT INTO ai_configs (guild_id, enabled, model, web_search_enabled, max_chars)
-        VALUES (?, 1, '@cf/meta/llama-3.3-70b-instruct-fp8-fast', 1, 300)
+        INSERT INTO ai_configs (guild_id, enabled, model, web_search_enabled, max_chars, daily_limit, warning_threshold, daily_requests)
+        VALUES (?, 1, '@cf/meta/llama-3.3-70b-instruct-fp8-fast', 1, 300, 100, 80, 0)
       `).run(guildId);
       row = db.prepare('SELECT * FROM ai_configs WHERE guild_id = ?').get(guildId);
     }
@@ -160,7 +165,12 @@ export const DatabaseHelper = {
       enabled: Boolean(row.enabled),
       web_search_enabled: Boolean(row.web_search_enabled),
       channels_whitelist: JSON.parse(row.channels_whitelist || '[]'),
-      roles_whitelist: JSON.parse(row.roles_whitelist || '[]')
+      roles_whitelist: JSON.parse(row.roles_whitelist || '[]'),
+      daily_limit: row.daily_limit !== undefined && row.daily_limit !== null ? Number(row.daily_limit) : 100,
+      warning_threshold: row.warning_threshold !== undefined && row.warning_threshold !== null ? Number(row.warning_threshold) : 80,
+      daily_requests: row.daily_requests !== undefined && row.daily_requests !== null ? Number(row.daily_requests) : 0,
+      last_reset_date: row.last_reset_date || null,
+      warning_channel_id: row.warning_channel_id || null
     };
   },
 
@@ -169,8 +179,21 @@ export const DatabaseHelper = {
     const updated = { ...current, ...data };
 
     db.prepare(`
-      INSERT OR REPLACE INTO ai_configs (guild_id, enabled, model, system_prompt, web_search_enabled, max_chars, channels_whitelist, roles_whitelist)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO ai_configs (guild_id, enabled, model, system_prompt, web_search_enabled, max_chars, channels_whitelist, roles_whitelist, daily_limit, warning_threshold, daily_requests, last_reset_date, warning_channel_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id) DO UPDATE SET
+        enabled = excluded.enabled,
+        model = excluded.model,
+        system_prompt = excluded.system_prompt,
+        web_search_enabled = excluded.web_search_enabled,
+        max_chars = excluded.max_chars,
+        channels_whitelist = excluded.channels_whitelist,
+        roles_whitelist = excluded.roles_whitelist,
+        daily_limit = excluded.daily_limit,
+        warning_threshold = excluded.warning_threshold,
+        daily_requests = excluded.daily_requests,
+        last_reset_date = excluded.last_reset_date,
+        warning_channel_id = excluded.warning_channel_id
     `).run(
       guildId,
       updated.enabled ? 1 : 0,
@@ -179,9 +202,74 @@ export const DatabaseHelper = {
       updated.web_search_enabled ? 1 : 0,
       updated.max_chars || 300,
       JSON.stringify(updated.channels_whitelist || []),
-      JSON.stringify(updated.roles_whitelist || [])
+      JSON.stringify(updated.roles_whitelist || []),
+      updated.daily_limit !== undefined ? Number(updated.daily_limit) : 100,
+      updated.warning_threshold !== undefined ? Number(updated.warning_threshold) : 80,
+      updated.daily_requests !== undefined ? Number(updated.daily_requests) : 0,
+      updated.last_reset_date || null,
+      updated.warning_channel_id || null
     );
     return this.getAIConfig(guildId);
+  },
+
+  getTodayDateString() {
+    return new Date().toISOString().split('T')[0];
+  },
+
+  getAIQuotaStatus(guildId) {
+    const config = this.getAIConfig(guildId);
+    const today = this.getTodayDateString();
+
+    // Auto-reset if date changed (at midnight)
+    if (config.last_reset_date !== today) {
+      db.prepare(`
+        UPDATE ai_configs SET
+          daily_requests = 0,
+          last_reset_date = ?
+        WHERE guild_id = ?
+      `).run(today, guildId);
+      config.daily_requests = 0;
+      config.last_reset_date = today;
+    }
+
+    const dailyLimit = config.daily_limit !== undefined ? Number(config.daily_limit) : 100;
+    const used = Number(config.daily_requests || 0);
+    const thresholdPct = config.warning_threshold !== undefined ? Number(config.warning_threshold) : 80;
+
+    const isUnlimited = dailyLimit <= 0;
+    const remaining = isUnlimited ? Infinity : Math.max(0, dailyLimit - used);
+    const isBlocked = !isUnlimited && used >= dailyLimit;
+
+    // Warning threshold (e.g. at 80% or when remaining <= 5)
+    const warningCount = Math.floor(dailyLimit * (thresholdPct / 100));
+    const isWarning = !isUnlimited && !isBlocked && (used >= warningCount || remaining <= 5);
+
+    return {
+      used,
+      daily_limit: dailyLimit,
+      remaining,
+      threshold_pct: thresholdPct,
+      is_unlimited: isUnlimited,
+      is_warning: isWarning,
+      is_blocked: isBlocked,
+      last_reset_date: today,
+      warning_channel_id: config.warning_channel_id || null
+    };
+  },
+
+  incrementAIUsage(guildId) {
+    const today = this.getTodayDateString();
+    const current = this.getAIQuotaStatus(guildId);
+    const newUsed = current.used + 1;
+
+    db.prepare(`
+      UPDATE ai_configs SET
+        daily_requests = ?,
+        last_reset_date = ?
+      WHERE guild_id = ?
+    `).run(newUsed, today, guildId);
+
+    return this.getAIQuotaStatus(guildId);
   },
 
   getChannelMemory(channelId) {

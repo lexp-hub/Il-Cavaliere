@@ -20,7 +20,12 @@ CREATE TABLE IF NOT EXISTS ai_configs (
   web_search_enabled INTEGER DEFAULT 1,
   max_chars INTEGER DEFAULT 300,
   channels_whitelist TEXT DEFAULT '[]',
-  roles_whitelist TEXT DEFAULT '[]'
+  roles_whitelist TEXT DEFAULT '[]',
+  daily_limit INTEGER DEFAULT 100,
+  warning_threshold INTEGER DEFAULT 80,
+  daily_requests INTEGER DEFAULT 0,
+  last_reset_date TEXT,
+  warning_channel_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS ai_channel_memories (
