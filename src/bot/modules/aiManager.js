@@ -44,7 +44,10 @@ export const AIManager = {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              messages: [{ role: 'system', content: systemPrompt }, ...messages]
+              messages: [{ role: 'system', content: systemPrompt }, ...messages],
+              max_tokens: 512,
+              temperature: 0.7,
+              repetition_penalty: 1.15
             })
           }
         );
@@ -96,7 +99,111 @@ export const AIManager = {
     return "Sono Sentry. I miei canali neurali sono temporaneamente sovraccarichi. Riprova tra poco.";
   },
 
+  async getVisionResponse(imageBuffer, mimeType, question, systemPrompt = DEFAULT_IDENTITY) {
+    const accountId = CONFIG.CLOUDFLARE_ACCOUNT_ID;
+    const apiToken = CONFIG.CLOUDFLARE_API_TOKEN;
+
+    const visionPrompt = `${systemPrompt}\n\nIstruzioni aggiuntive: L'utente ti ha mostrato un'immagine e ha chiesto: "${question || 'Descrivi cosa vedi in questa immagine e commentala con il tuo consueto cinismo.'}". Esamina i dettagli visivi con accuratezza e rispondi direttamente alla sua domanda in italiano, mantenendo il tuo carattere sarcastico, analitico e tagliente. Rispondi in massimo 300 caratteri.`;
+
+    if (accountId && apiToken && imageBuffer) {
+      try {
+        const imageBytes = [...new Uint8Array(imageBuffer)];
+        const callCFVision = async () => {
+          return await fetch(
+            `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/meta/llama-3.2-11b-vision-instruct`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${apiToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                prompt: visionPrompt,
+                image: imageBytes,
+                max_tokens: 350
+              })
+            }
+          );
+        };
+
+        let response = await callCFVision();
+        let result = await response.json();
+
+        // Check if agreement is required
+        if (result?.errors?.[0]?.code === 5016 || result?.errors?.[0]?.message?.includes("prompt 'agree'")) {
+          console.log('[Sentry Vision] Invio agree policy a Cloudflare Vision...');
+          await fetch(
+            `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/meta/llama-3.2-11b-vision-instruct`,
+            {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${apiToken}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ prompt: 'agree' })
+            }
+          );
+          response = await callCFVision();
+          result = await response.json();
+        }
+
+        const reply = result?.result?.response;
+        if (reply && reply.trim().length > 0) {
+          return this.formatReply([{ role: 'user', content: question }], reply);
+        }
+      } catch (err) {
+        console.error('[Sentry Vision] Errore chiamata Cloudflare Vision:', err.message);
+      }
+    }
+
+    if (CONFIG.GEMINI_API_KEY && imageBuffer) {
+      try {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${CONFIG.GEMINI_API_KEY}`;
+        const base64Data = Buffer.from(imageBuffer).toString('base64');
+        const contents = [{
+          role: 'user',
+          parts: [
+            { text: visionPrompt },
+            { inline_data: { mime_type: mimeType || 'image/png', data: base64Data } }
+          ]
+        }];
+
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            system_instruction: { parts: [{ text: systemPrompt }] },
+            contents
+          })
+        });
+
+        if (geminiRes.ok) {
+          const gData = await geminiRes.json();
+          const reply = gData?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (reply && reply.trim().length > 0) {
+            return this.formatReply([{ role: 'user', content: question }], reply);
+          }
+        }
+      } catch (geminiErr) {
+        console.error('[Sentry Vision] Fallback Gemini Vision error:', geminiErr.message);
+      }
+    }
+
+    return "Ho rilevato l'immagine allegata, ma i miei sensori ottici hanno riscontrato un errore nel parsing visivo dei pixel. Riprova con un'immagine JPG o PNG pulita.";
+  },
+
   formatReply(messages, reply) {
+    if (!reply || typeof reply !== 'string') return "";
+
+    let finalReply = reply.trim();
+
+    // Guard against degenerative repeating token loops / quote soup
+    const quoteCount = (finalReply.match(/"/g) || []).length;
+    if (quoteCount >= 10 && (quoteCount / finalReply.length) > 0.08) {
+      console.warn('[Sentry AI] Degenerative token loop detected and replaced.');
+      return "Ho processato la richiesta, ma l'elaborazione dei dati ha generato un'anomalia di sequenza nei pesi neurali. Riformula la tua domanda in modo più chiaro.";
+    }
+
     const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || "";
     const wantsDetail = lastUserMessage.includes("approfondi") ||
       lastUserMessage.includes("dettaglio") ||
@@ -104,7 +211,6 @@ export const AIManager = {
       lastUserMessage.includes("continua") ||
       lastUserMessage.includes("tutto");
 
-    let finalReply = reply;
     if (!wantsDetail && finalReply.length > 300) {
       finalReply = finalReply.substring(0, 297);
       const lastPunc = Math.max(finalReply.lastIndexOf('.'), finalReply.lastIndexOf('!'), finalReply.lastIndexOf('?'));
@@ -191,10 +297,54 @@ export const AIManager = {
     }
 
     const botMentionRegExp = new RegExp(`<@!?${client.user.id}>`, 'g');
-    const question = message.content.replace(botMentionRegExp, '').trim();
+    let question = message.content.replace(botMentionRegExp, '').trim();
 
-    if (!question) {
+    // Check for image attachments directly on the message
+    let targetImageUrl = null;
+    let targetImageMime = 'image/png';
+
+    const imgAtt = message.attachments.find(att => 
+      att.contentType?.startsWith('image/') || 
+      /\.(png|jpe?g|webp|gif)$/i.test(att.name || '')
+    );
+    if (imgAtt) {
+      targetImageUrl = imgAtt.url;
+      targetImageMime = imgAtt.contentType || 'image/png';
+    }
+
+    // If not on message, check if user is replying to a message with an image
+    if (!targetImageUrl && message.reference?.messageId) {
+      try {
+        const refMsg = channel.messages.cache.get(message.reference.messageId) || 
+                       await channel.messages.fetch(message.reference.messageId).catch(() => null);
+        if (refMsg) {
+          const refImg = refMsg.attachments.find(att => 
+            att.contentType?.startsWith('image/') || 
+            /\.(png|jpe?g|webp|gif)$/i.test(att.name || '')
+          );
+          if (refImg) {
+            targetImageUrl = refImg.url;
+            targetImageMime = refImg.contentType || 'image/png';
+          }
+        }
+      } catch (e) {}
+    }
+
+    // If not in attachments, check if text contains an image link
+    if (!targetImageUrl) {
+      const urlMatch = message.content.match(/https?:\/\/\S+\.(?:png|jpe?g|webp)/i);
+      if (urlMatch) {
+        targetImageUrl = urlMatch[0];
+        targetImageMime = 'image/png';
+      }
+    }
+
+    if (!question && !targetImageUrl) {
       return message.reply("Dimmi pure, sono qui a proteggere il server. (Anche se gradirei meno disturbo).");
+    }
+
+    if (!question && targetImageUrl) {
+      question = "Descrivi cosa vedi in questa immagine e commentala con il tuo consueto cinismo.";
     }
 
     const cleanQuestion = question.toLowerCase();
@@ -291,22 +441,46 @@ ISTRUZIONI NOMI E RUOLI DEGLI UTENTI:
       }
     }
 
-    let reply = await this.getAIResponse(messages, systemPrompt, guildAIConfig.model);
+    let reply = "";
+    let imageBuffer = null;
 
-    // Check if AI requested Web Search
-    const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
-    if (searchMatch) {
-      const searchQuery = searchMatch[1].trim();
-      console.log(`[Sentry AI] Ricerca web attivata per: "${searchQuery}"`);
+    if (targetImageUrl) {
+      try {
+        const imgRes = await fetch(targetImageUrl, {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+          }
+        });
+        if (imgRes.ok) {
+          const ab = await imgRes.arrayBuffer();
+          if (ab.byteLength > 0 && ab.byteLength <= 10 * 1024 * 1024) {
+            imageBuffer = Buffer.from(ab);
+          }
+        }
+      } catch (e) {
+        console.warn('[Sentry Vision] Errore scaricamento immagine:', e.message);
+      }
+    }
 
-      const searchResults = await this.performWebSearch(searchQuery);
+    if (imageBuffer) {
+      reply = await this.getVisionResponse(imageBuffer, targetImageMime, question, systemPrompt);
+    } else {
+      reply = await this.getAIResponse(messages, systemPrompt, guildAIConfig.model);
 
-      messages.push({
-        role: 'assistant',
-        content: `Ricerco informazioni sul web per: "${searchQuery}".`
-      });
+      // Check if AI requested Web Search
+      const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
+      if (searchMatch) {
+        const searchQuery = searchMatch[1].trim();
+        console.log(`[Sentry AI] Ricerca web attivata per: "${searchQuery}"`);
 
-      const finalSystemPrompt = `${basePrompt}
+        const searchResults = await this.performWebSearch(searchQuery);
+
+        messages.push({
+          role: 'assistant',
+          content: `Ricerco informazioni sul web per: "${searchQuery}".`
+        });
+
+        const finalSystemPrompt = `${basePrompt}
 
 ISTRUZIONI PER LA RISPOSTA FINALE:
 Hai appena eseguito la ricerca web. Ecco i dati aggiornati trovati per "${searchQuery}":
@@ -315,8 +489,9 @@ ${searchResults}
 
 Utilizza questi dati per rispondere all'utente. Esprimi la tua opinione cinica, spietata e sarcastica basandoti sui fatti riportati qui sopra. Rispondi in italiano in modo sintetico (massimo 300 caratteri). NON usare comandi o tag di ricerca nella risposta.`;
 
-      reply = await this.getAIResponse(messages, finalSystemPrompt, guildAIConfig.model);
-      reply = reply.replace(/\[CERCA:\s*.*?\]/gi, '').trim();
+        reply = await this.getAIResponse(messages, finalSystemPrompt, guildAIConfig.model);
+        reply = reply.replace(/\[CERCA:\s*.*?\]/gi, '').trim();
+      }
     }
 
     if (!reply || reply.trim().length === 0) {
