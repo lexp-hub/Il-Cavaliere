@@ -40,7 +40,7 @@ export default {
       .setDescription(
         `💤 **Stato AFK / Inattivo Attivato**\n\n` +
         `📝 **Motivo:** ${reason}\n` +
-        `⏰ **Ora di inizio:** <t:${Math.floor(now / 1000)}:t> (<t:${Math.floor(now / 1000)}:R>)\n\n` +
+        `⏰ **Ora di inizio:** <t:${Math.floor(now / 1000)}:t>\n\n` +
         `> 💡 *Avviserò chiunque ti menzioni o risponda a un tuo messaggio. Per rimuovere l'AFK, ti basterà scrivere un messaggio qualsiasi in una chat del server!*`
       )
       .setFooter({ text: 'Sentry AFK System' })

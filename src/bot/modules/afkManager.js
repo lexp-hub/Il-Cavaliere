@@ -1,6 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
 import { DatabaseHelper } from '../../database/db.js';
-import { CONFIG } from '../../config.js';
 
 // Cooldown in memoria per evitare spam di avvisi nello stesso canale per lo stesso utente (3.5 secondi)
 const mentionCooldowns = new Map();
@@ -23,6 +22,33 @@ setInterval(() => {
   }
 }, 10 * 60 * 1000);
 
+/**
+ * Calcola una durata testuale fissa in italiano (senza cronometri dinamici Discord).
+ * Es: "45 secondi", "12 minuti e 30 secondi", "2 ore e 15 minuti".
+ */
+export function formatDuration(ms) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  if (totalSeconds < 60) {
+    return `${totalSeconds} secondo${totalSeconds === 1 ? '' : 'i'}`;
+  }
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  if (totalMinutes < 60) {
+    if (seconds === 0) return `${totalMinutes} minut${totalMinutes === 1 ? 'o' : 'i'}`;
+    return `${totalMinutes} minut${totalMinutes === 1 ? 'o' : 'i'} e ${seconds} second${seconds === 1 ? 'o' : 'i'}`;
+  }
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours < 24) {
+    if (minutes === 0) return `${hours} or${hours === 1 ? 'a' : 'e'}`;
+    return `${hours} or${hours === 1 ? 'a' : 'e'} e ${minutes} minut${minutes === 1 ? 'o' : 'i'}`;
+  }
+  const days = Math.floor(hours / 24);
+  const remHours = hours % 24;
+  if (remHours === 0) return `${days} giorn${days === 1 ? 'o' : 'i'}`;
+  return `${days} giorn${days === 1 ? 'o' : 'i'} e ${remHours} or${remHours === 1 ? 'a' : 'e'}`;
+}
+
 export const AFKManager = {
   /**
    * Registra che un utente ha appena attivato lo stato AFK
@@ -34,7 +60,7 @@ export const AFKManager = {
 
   /**
    * Controlla se l'autore del messaggio inviato era AFK.
-   * Se era AFK (e non è nel grace period), rimuove l'AFK e invia l'embed di bentornato.
+   * Se era AFK (e non è nel grace period), rimuove l'AFK e invia l'embed di bentornato con durata fissa.
    */
   async handleMessageAuthor(message) {
     if (!message.guild || message.author.bot) return false;
@@ -57,7 +83,10 @@ export const AFKManager = {
     DatabaseHelper.removeAfk(guildId, userId);
     recentlySetAfk.delete(`${guildId}:${userId}`);
 
-    const durationSec = Math.floor(afkData.timestamp / 1000);
+    const elapsedMs = Math.max(0, now - afkData.timestamp);
+    const durationFormatted = formatDuration(elapsedMs);
+    const startSec = Math.floor(afkData.timestamp / 1000);
+
     const reasonText = afkData.reason && afkData.reason !== 'Attualmente assente' && afkData.reason !== 'Nessun motivo specificato'
       ? `\n📝 *Motivo precedente:* **${afkData.reason}**`
       : '';
@@ -69,8 +98,9 @@ export const AFKManager = {
         iconURL: message.author.displayAvatarURL({ dynamic: true })
       })
       .setDescription(
-        `Ho rimosso il tuo stato **AFK**.\n` +
-        `⏰ Sei stato assente per circa **<t:${durationSec}:R>** (<t:${durationSec}:t>).${reasonText}`
+        `Ho rimosso il tuo stato **AFK**.\n\n` +
+        `⏱️ **Tempo totale di assenza:** **${durationFormatted}**\n` +
+        `📅 **Inizio assenza:** alle ore <t:${startSec}:t>${reasonText}`
       )
       .setFooter({ text: 'Sentry AFK • Sei di nuovo attivo nel server' })
       .setTimestamp();
@@ -83,7 +113,7 @@ export const AFKManager = {
 
   /**
    * Controlla se il messaggio menziona o risponde a uno o più utenti attualmente AFK.
-   * Invia un avviso in embed con il motivo e il tempo di assenza.
+   * Invia un avviso in embed con il motivo e il tempo di assenza fisso.
    */
   async handleMentionsAndReplies(message) {
     if (!message.guild || message.author.bot) return;
@@ -173,7 +203,9 @@ export const AFKManager = {
 
     if (afkTargets.length === 1) {
       const target = afkTargets[0];
-      const durationSec = Math.floor(target.timestamp / 1000);
+      const startSec = Math.floor(target.timestamp / 1000);
+      const elapsedMs = Math.max(0, now - target.timestamp);
+      const elapsedFormatted = formatDuration(elapsedMs);
 
       const embed = new EmbedBuilder()
         .setColor('#f59e0b')
@@ -181,14 +213,15 @@ export const AFKManager = {
         .setDescription(
           `**<@${target.userId}>** è attualmente **AFK / inattivo** e probabilmente sta facendo altro.\n\n` +
           `📝 **Motivo:** ${target.reason}\n` +
-          `⏰ **Assente da:** <t:${durationSec}:R> (<t:${durationSec}:t>)`
+          `⏰ **AFK dalle ore:** <t:${startSec}:t>\n` +
+          `⏱️ **Assente da:** ${elapsedFormatted}`
         )
         .setFooter({ text: 'Sentry AFK • Verrà rimosso automaticamente appena scriverà un messaggio' });
 
       await message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } }).catch(async () => {
         await message.channel.send({ embeds: [embed] }).catch(async () => {
           await message.channel.send({
-            content: `💤 **<@${target.userId}>** è attualmente **AFK / inattivo**: *${target.reason}* (assente da <t:${durationSec}:R>)`
+            content: `💤 **<@${target.userId}>** è attualmente **AFK / inattivo**: *${target.reason}* (dalle ore <t:${startSec}:t> - ${elapsedFormatted})`
           }).catch(() => {});
         });
       });
@@ -201,10 +234,13 @@ export const AFKManager = {
         .setFooter({ text: 'Sentry AFK • Verranno rimossi automaticamente appena scriveranno un messaggio' });
 
       for (const target of afkTargets) {
-        const durationSec = Math.floor(target.timestamp / 1000);
+        const startSec = Math.floor(target.timestamp / 1000);
+        const elapsedMs = Math.max(0, now - target.timestamp);
+        const elapsedFormatted = formatDuration(elapsedMs);
+
         embed.addFields({
           name: `👤 <@${target.userId}>`,
-          value: `📝 **Motivo:** ${target.reason}\n⏰ **Assente da:** <t:${durationSec}:R> (<t:${durationSec}:t>)`,
+          value: `📝 **Motivo:** ${target.reason}\n⏰ **Dalle:** <t:${startSec}:t> (${elapsedFormatted})`,
           inline: false
         });
       }
