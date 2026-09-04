@@ -2,10 +2,10 @@ import { EmbedBuilder } from 'discord.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { CONFIG } from '../../config.js';
 
-// Cooldown in memoria per evitare spam di avvisi nello stesso canale per lo stesso utente (12 secondi)
+// Cooldown in memoria per evitare spam di avvisi nello stesso canale per lo stesso utente (3.5 secondi)
 const mentionCooldowns = new Map();
 
-// Grace period di 3.5 secondi quando un utente si mette AFK per evitare cancellazioni involontarie immediate
+// Grace period di 1 secondo quando un utente si mette AFK per evitare cancellazioni involontarie immediate
 const recentlySetAfk = new Map();
 
 // Pulizia periodica della cache in memoria ogni 10 minuti
@@ -48,8 +48,8 @@ export const AFKManager = {
     const now = Date.now();
     const recentTime = recentlySetAfk.get(`${guildId}:${userId}`);
 
-    // Grace period di 3.5 secondi
-    if ((recentTime && (now - recentTime < 3500)) || (now - afkData.timestamp < 3500)) {
+    // Grace period di 1 secondo
+    if ((recentTime && (now - recentTime < 1000)) || (now - afkData.timestamp < 1000)) {
       return false;
     }
 
@@ -75,7 +75,9 @@ export const AFKManager = {
       .setFooter({ text: 'Sentry AFK • Sei di nuovo attivo nel server' })
       .setTimestamp();
 
-    await message.channel.send({ embeds: [embed] }).catch(() => {});
+    await message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } }).catch(async () => {
+      await message.channel.send({ embeds: [embed] }).catch(() => {});
+    });
     return true;
   },
 
@@ -91,8 +93,8 @@ export const AFKManager = {
     const authorId = message.author.id;
     const targetUserIds = new Set();
 
-    // 1. Menzioni dirette nel messaggio
-    if (message.mentions.users.size > 0) {
+    // 1. Menzioni dirette nel messaggio (@User)
+    if (message.mentions?.users?.size > 0) {
       for (const [id, user] of message.mentions.users) {
         if (!user.bot && id !== authorId) {
           targetUserIds.add(id);
@@ -101,15 +103,42 @@ export const AFKManager = {
     }
 
     // 2. Risposta diretta a un messaggio (message reply)
-    if (message.reference?.messageId) {
-      let refMsg = message.channel.messages.cache.get(message.reference.messageId);
+    // A. Discord fornisce nativamente l'autore del messaggio a cui si risponde in message.mentions.repliedUser
+    if (message.mentions?.repliedUser && !message.mentions.repliedUser.bot && message.mentions.repliedUser.id !== authorId) {
+      targetUserIds.add(message.mentions.repliedUser.id);
+    }
+
+    // B. Controllo referencedMessage se già memorizzato nell'oggetto Message
+    if (message.referencedMessage?.author && !message.referencedMessage.author.bot && message.referencedMessage.author.id !== authorId) {
+      targetUserIds.add(message.referencedMessage.author.id);
+    }
+
+    // C. Controllo approfondito tramite message.reference (id messaggio e canale)
+    const refMsgId = message.reference?.messageId || message.reference?.message_id;
+    const refChanId = message.reference?.channelId || message.reference?.channel_id || channelId;
+
+    if (refMsgId) {
+      let refMsg = message.channel.messages?.cache?.get(refMsgId);
+
+      if (!refMsg && refChanId && message.client.channels.cache.has(refChanId)) {
+        refMsg = message.client.channels.cache.get(refChanId)?.messages?.cache?.get(refMsgId);
+      }
+
       if (!refMsg) {
         try {
-          refMsg = await message.channel.messages.fetch(message.reference.messageId).catch(() => null);
+          if (typeof message.fetchReference === 'function') {
+            refMsg = await message.fetchReference().catch(() => null);
+          }
+          if (!refMsg) {
+            const targetChan = message.client.channels.cache.get(refChanId) || message.channel;
+            if (targetChan?.messages?.fetch) {
+              refMsg = await targetChan.messages.fetch(refMsgId).catch(() => null);
+            }
+          }
         } catch (e) {}
       }
 
-      if (refMsg && refMsg.author && !refMsg.author.bot && refMsg.author.id !== authorId) {
+      if (refMsg?.author && !refMsg.author.bot && refMsg.author.id !== authorId) {
         targetUserIds.add(refMsg.author.id);
       }
     }
@@ -127,8 +156,8 @@ export const AFKManager = {
       const cooldownKey = `${guildId}:${targetId}:${channelId}`;
       const lastAlert = mentionCooldowns.get(cooldownKey);
 
-      // Cooldown anti-spam di 12 secondi per utente AFK nello stesso canale
-      if (lastAlert && (now - lastAlert < 12000)) {
+      // Cooldown anti-spam di 3.5 secondi per utente AFK nello stesso canale
+      if (lastAlert && (now - lastAlert < 3500)) {
         continue;
       }
 
@@ -156,13 +185,19 @@ export const AFKManager = {
         )
         .setFooter({ text: 'Sentry AFK • Verrà rimosso automaticamente appena scriverà un messaggio' });
 
-      await message.channel.send({ embeds: [embed] }).catch(() => {});
+      await message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } }).catch(async () => {
+        await message.channel.send({ embeds: [embed] }).catch(async () => {
+          await message.channel.send({
+            content: `💤 **<@${target.userId}>** è attualmente **AFK / inattivo**: *${target.reason}* (assente da <t:${durationSec}:R>)`
+          }).catch(() => {});
+        });
+      });
     } else {
       // Notifica multipla consolidata
       const embed = new EmbedBuilder()
         .setColor('#f59e0b')
         .setTitle('💤 Utenti Attualmente Assenti')
-        .setDescription('I seguenti utenti menzionati sono attualmente **AFK / inattivi**:')
+        .setDescription('I seguenti utenti menzionati/citati sono attualmente **AFK / inattivi**:')
         .setFooter({ text: 'Sentry AFK • Verranno rimossi automaticamente appena scriveranno un messaggio' });
 
       for (const target of afkTargets) {
@@ -174,10 +209,11 @@ export const AFKManager = {
         });
       }
 
-      await message.channel.send({ embeds: [embed] }).catch(() => {});
+      await message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } }).catch(async () => {
+        await message.channel.send({ embeds: [embed] }).catch(() => {});
+      });
     }
   }
 };
 
 export default AFKManager;
-

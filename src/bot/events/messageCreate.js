@@ -38,8 +38,12 @@ export default {
     if (violated) return;
 
     // 3. AFK System: restore author status and alert on mentions/replies
-    await AFKManager.handleMessageAuthor(message);
-    await AFKManager.handleMentionsAndReplies(message);
+    try {
+      await AFKManager.handleMessageAuthor(message);
+      await AFKManager.handleMentionsAndReplies(message);
+    } catch (afkErr) {
+      console.error('[MessageCreate] Errore gestione AFK:', afkErr);
+    }
 
     const emojiMatches = message.content.matchAll(/<(a?):([a-zA-Z0-9_]+):([0-9]+)>/g);
     for (const match of emojiMatches) {
