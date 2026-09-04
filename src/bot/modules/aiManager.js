@@ -169,6 +169,27 @@ export const AIManager = {
 
   async handleMention(message) {
     const { client, guild, channel, author } = message;
+
+    // Safety guard: Never respond if replying to a welcomer message
+    if (message.reference?.messageId) {
+      try {
+        const refMsg = channel.messages.cache.get(message.reference.messageId) || 
+                       await channel.messages.fetch(message.reference.messageId).catch(() => null);
+        if (refMsg) {
+          const isFromBot = refMsg.author.id === client.user.id || refMsg.author.bot;
+          const hasWelcomeEmbed = refMsg.embeds?.some(e =>
+            (e.title && /benvenut|welcome/i.test(e.title)) ||
+            (e.description && /benvenut|welcome/i.test(e.description)) ||
+            (e.footer?.text && /benvenut|welcome/i.test(e.footer.text))
+          );
+          const hasWelcomeText = refMsg.content && /benvenut|welcome/i.test(refMsg.content);
+          if (isFromBot && (hasWelcomeEmbed || hasWelcomeText)) {
+            return;
+          }
+        }
+      } catch (e) {}
+    }
+
     const botMentionRegExp = new RegExp(`<@!?${client.user.id}>`, 'g');
     const question = message.content.replace(botMentionRegExp, '').trim();
 

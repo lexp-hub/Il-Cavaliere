@@ -40,11 +40,47 @@ export default {
       DatabaseHelper.trackEmojiUse(message.guild.id, emojiId, emojiName, isAnimated);
     }
 
+    // Detect if user is replying to a welcomer message or chatting in the welcomer channel
+    let isReplyingToWelcomer = false;
+    const welcomerConfig = DatabaseHelper.getWelcomerConfig(message.guild.id);
+    const isWelcomeChannel = Boolean(welcomerConfig?.welcome_enabled && welcomerConfig?.welcome_channel_id === message.channel.id);
+
+    if (message.reference?.messageId) {
+      let refMsg = message.channel.messages.cache.get(message.reference.messageId);
+      if (!refMsg) {
+        try {
+          refMsg = await message.channel.messages.fetch(message.reference.messageId).catch(() => null);
+        } catch (e) {}
+      }
+
+      if (refMsg) {
+        const isFromBot = refMsg.author.id === message.client.user.id || refMsg.author.bot;
+        const hasWelcomeEmbed = refMsg.embeds?.some(e =>
+          (e.title && /benvenut|welcome/i.test(e.title)) ||
+          (e.description && /benvenut|welcome/i.test(e.description)) ||
+          (e.footer?.text && /benvenut|welcome/i.test(e.footer.text))
+        );
+        const hasWelcomeText = refMsg.content && /benvenut|welcome/i.test(refMsg.content);
+        const isWelcomerFormat = refMsg.author.id === message.client.user.id && (refMsg.content?.startsWith('<@') && refMsg.embeds?.length > 0);
+
+        if (isFromBot && (hasWelcomeEmbed || hasWelcomeText || isWelcomeChannel || isWelcomerFormat)) {
+          isReplyingToWelcomer = true;
+        }
+      } else if (isWelcomeChannel) {
+        isReplyingToWelcomer = true;
+      }
+    } else if (isWelcomeChannel) {
+      // In dedicated welcomer channel, do not trigger AI unless explicit @Sentry text is written
+      const hasExplicitTextMention = new RegExp(`<@!?${message.client.user.id}>`).test(message.content);
+      if (!hasExplicitTextMention) {
+        isReplyingToWelcomer = true;
+      }
+    }
+
     const isBotMentioned = message.mentions.has(message.client.user) && !message.mentions.everyone;
-    if (isBotMentioned) {
+    if (isBotMentioned && !isReplyingToWelcomer) {
       try {
         await AIManager.handleMention(message);
-        
         return;
       } catch (err) {
         console.error('[MessageCreate] Errore gestione menzione AI:', err);
@@ -61,18 +97,19 @@ export default {
       }
     }
 
-    const autoresponders = DatabaseHelper.getAutoresponders(message.guild.id);
-    const content = message.content.trim();
-    const lowerContent = content.toLowerCase();
+    if (!isReplyingToWelcomer) {
+      const autoresponders = DatabaseHelper.getAutoresponders(message.guild.id);
+      const content = message.content.trim();
+      const lowerContent = content.toLowerCase();
 
-    for (const ar of autoresponders) {
-      if (!ar.enabled) continue;
+      for (const ar of autoresponders) {
+        if (!ar.enabled) continue;
 
-      if (ar.channels_whitelist.length > 0 && !ar.channels_whitelist.includes(message.channel.id)) continue;
-      if (ar.roles_whitelist.length > 0 && message.member && !message.member.roles.cache.some(r => ar.roles_whitelist.includes(r.id))) continue;
+        if (ar.channels_whitelist.length > 0 && !ar.channels_whitelist.includes(message.channel.id)) continue;
+        if (ar.roles_whitelist.length > 0 && message.member && !message.member.roles.cache.some(r => ar.roles_whitelist.includes(r.id))) continue;
 
-      let matches = false;
-      const trigger = ar.trigger;
+        let matches = false;
+        const trigger = ar.trigger;
       const lowerTrigger = trigger.toLowerCase();
 
       if (ar.match_type === 'EXACT') {
@@ -106,6 +143,7 @@ export default {
         break;
       }
     }
+  }
 
     await XPManager.handleMessage(message);
 
