@@ -14,9 +14,9 @@ import { CONFIG } from '../../config.js';
 export default {
   name: 'interactionCreate',
   async execute(interaction) {
-    
-    // 1. Slash Commands & Context Menu Commands
-    if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) {
+    try {
+      // 1. Slash Commands & Context Menu Commands
+      if (interaction.isChatInputCommand() || interaction.isContextMenuCommand()) {
       const command = interaction.client.commands.get(interaction.commandName);
       if (!command) {
         console.error(`[Commands] Nessun comando trovato per ${interaction.commandName}`);
@@ -507,7 +507,7 @@ export default {
       }
 
       if (customId === 'btn_verify_enter_code') {
-        return VerificationManager.showCodeModal(interaction);
+        return await VerificationManager.showCodeModal(interaction);
       }
     }
 
@@ -516,19 +516,19 @@ export default {
       const customId = interaction.customId;
 
       if (customId === 'modal_verify_submit') {
-        return VerificationManager.handleModalSubmit(interaction);
+        return await VerificationManager.handleModalSubmit(interaction);
       }
 
       if (customId.startsWith('modal_tc_')) {
-        return TempChannelManager.handleModalSubmit(interaction);
+        return await TempChannelManager.handleModalSubmit(interaction);
       }
 
       if (customId.startsWith('modal_partnership_submit')) {
-        return PartnershipManager.handlePartnershipModalSubmit(interaction);
+        return await PartnershipManager.handlePartnershipModalSubmit(interaction);
       }
 
       if (customId.startsWith('modal_presentation_submit')) {
-        return PresentationManager.handlePresentationModalSubmit(interaction);
+        return await PresentationManager.handlePresentationModalSubmit(interaction);
       }
     }
 
@@ -537,7 +537,7 @@ export default {
       const customId = interaction.customId;
 
       if (customId.startsWith('select_tc_')) {
-        return TempChannelManager.handleSelectMenu(interaction);
+        return await TempChannelManager.handleSelectMenu(interaction);
       }
 
       if (customId.startsWith('rr_select_')) {
@@ -545,7 +545,7 @@ export default {
         const role = interaction.guild.roles.cache.get(selectedRoleId);
 
         if (!role) {
-          return interaction.reply({ content: '❌ Ruolo selezionato non valido.', ephemeral: true });
+          return await interaction.reply({ content: '❌ Ruolo selezionato non valido.', ephemeral: true }).catch(() => {});
         }
 
         const member = interaction.member;
@@ -554,15 +554,22 @@ export default {
         try {
           if (hasRole) {
             await member.roles.remove(role);
-            return interaction.reply({ content: `➖ Ruolo ${role} rimosso.`, ephemeral: true });
+            return await interaction.reply({ content: `➖ Ruolo ${role} rimosso.`, ephemeral: true }).catch(() => {});
           } else {
             await member.roles.add(role);
-            return interaction.reply({ content: `➕ Ruolo ${role} assegnato!`, ephemeral: true });
+            return await interaction.reply({ content: `➕ Ruolo ${role} assegnato!`, ephemeral: true }).catch(() => {});
           }
         } catch (err) {
-          return interaction.reply({ content: `❌ Errore assegnazione ruolo: ${err.message}`, ephemeral: true });
+          return await interaction.reply({ content: `❌ Errore assegnazione ruolo: ${err.message}`, ephemeral: true }).catch(() => {});
         }
       }
+    }
+    } catch (err) {
+      if (err.code === 10062 || err.code === 40060) {
+        console.warn(`[Interaction] Interazione scaduta o già gestita (${err.code} - ${err.message}) per ${interaction.customId || interaction.commandName}`);
+        return;
+      }
+      console.error('[Interaction Error]', err);
     }
   }
 };

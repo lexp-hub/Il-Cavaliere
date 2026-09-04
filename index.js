@@ -50,10 +50,18 @@ async function main() {
 }
 
 process.on('unhandledRejection', (reason) => {
+  if (reason && (reason.code === 10062 || reason.code === 40060)) {
+    console.warn(`[Discord Warning] Interazione scaduta ignorata (codice ${reason.code})`);
+    return;
+  }
   console.error('[Unhandled Rejection]', reason);
 });
 
 process.on('uncaughtException', (err) => {
+  if (err && (err.code === 10062 || err.code === 40060)) {
+    console.warn(`[Discord Warning] Interazione scaduta ignorata (codice ${err.code})`);
+    return;
+  }
   console.error('[Uncaught Exception]', err);
 });
 

@@ -229,86 +229,105 @@ export const VerificationManager = {
   },
 
   async handleModalSubmit(interaction) {
-    const sessionKey = `${interaction.guildId}_${interaction.user.id}`;
-    const session = activeSessions.get(sessionKey);
+    try {
+      const sessionKey = `${interaction.guildId}_${interaction.user.id}`;
+      const session = activeSessions.get(sessionKey);
 
-    if (!session || Date.now() > session.expiresAt) {
-      return interaction.reply({
-        content: '⏱️ La sessione di verifica è scaduta. Clicca su "Nuova Immagine" per rigenerare il Captcha.',
-        ephemeral: true
-      });
-    }
-
-    const userInput = interaction.fields.getTextInputValue('captcha_code_input').trim().toUpperCase();
-    const config = DatabaseHelper.getVerificationConfig(interaction.guildId);
-
-    // 1. Success match!
-    if (userInput === session.code) {
-      activeSessions.delete(sessionKey);
-      await interaction.deferReply({ ephemeral: true });
-
-      try {
-        const member = interaction.member;
-
-        // Assign verified role
-        if (config.verified_role_id) {
-          await member.roles.add(config.verified_role_id);
-        }
-
-        // Remove unverified role if present
-        if (config.unverified_role_id && member.roles.cache.has(config.unverified_role_id)) {
-          await member.roles.remove(config.unverified_role_id).catch(() => {});
-        }
-
-        // Send log to log channel
-        if (config.log_channel_id) {
-          const logChan = interaction.guild.channels.cache.get(config.log_channel_id);
-          if (logChan && logChan.isTextBased()) {
-            logChan.send({
-              embeds: [
-                new EmbedBuilder()
-                  .setColor('#10b981')
-                  .setAuthor({ name: `${member.user.tag} Verificato`, iconURL: member.user.displayAvatarURL() })
-                  .setDescription(`✅ L'utente <@${member.id}> ha completato con successo la verifica Captcha!`)
-                  .setTimestamp()
-              ]
-            }).catch(() => {});
-          }
-        }
-
-        const successEmbed = new EmbedBuilder()
-          .setColor('#10b981')
-          .setTitle('🎉 Verifica Completata con Successo!')
-          .setDescription(
-            `Congratulazioni <@${member.id}>! Il tuo codice Captcha è corretto.\n\n` +
-            (config.verified_role_id ? `> 🏷️ Ti è stato assegnato il ruolo <@&${config.verified_role_id}>.\n` : '') +
-            '> 🚀 Ora puoi visualizzare e chattare in tutti i canali del server!'
-          )
-          .setFooter({ text: 'Sentry Sentinel Shield' });
-
-        return interaction.editReply({ embeds: [successEmbed], components: [] });
-      } catch (err) {
-        console.error('[Verification] Errore assegnazione ruolo:', err);
-        return interaction.editReply({
-          content: `⚠️ Codice corretto, ma si è verificato un errore nell'assegnazione del ruolo: \`${err.message}\`. Verifica che il ruolo del bot sia posizionato più in alto nella gerarchia ruoli di Discord!`
-        });
+      if (!session || Date.now() > session.expiresAt) {
+        return await interaction.reply({
+          content: '⏱️ La sessione di verifica è scaduta. Clicca su "Nuova Immagine" per rigenerare il Captcha.',
+          ephemeral: true
+        }).catch(() => {});
       }
-    }
 
-    // 2. Incorrect code
-    session.attempts--;
-    if (session.attempts <= 0) {
-      activeSessions.delete(sessionKey);
-      return interaction.reply({
-        content: '❌ **Hai esaurito i 3 tentativi disponibili.** Clicca sul pulsante "Nuova Immagine" per riprovare con un nuovo codice.',
+      const userInput = interaction.fields.getTextInputValue('captcha_code_input').trim().toUpperCase();
+      const config = DatabaseHelper.getVerificationConfig(interaction.guildId);
+
+      // 1. Success match!
+      if (userInput === session.code) {
+        activeSessions.delete(sessionKey);
+
+        try {
+          if (!interaction.deferred && !interaction.replied) {
+            await interaction.deferReply({ ephemeral: true });
+          }
+        } catch (deferErr) {
+          if (deferErr.code === 10062 || deferErr.code === 40060) {
+            console.warn(`[Verification] Interazione modal scaduta o già gestita (${deferErr.code}):`, deferErr.message);
+            return;
+          }
+          throw deferErr;
+        }
+
+        try {
+          const member = interaction.member;
+
+          // Assign verified role
+          if (config.verified_role_id) {
+            await member.roles.add(config.verified_role_id);
+          }
+
+          // Remove unverified role if present
+          if (config.unverified_role_id && member.roles.cache.has(config.unverified_role_id)) {
+            await member.roles.remove(config.unverified_role_id).catch(() => {});
+          }
+
+          // Send log to log channel
+          if (config.log_channel_id) {
+            const logChan = interaction.guild.channels.cache.get(config.log_channel_id);
+            if (logChan && logChan.isTextBased()) {
+              logChan.send({
+                embeds: [
+                  new EmbedBuilder()
+                    .setColor('#10b981')
+                    .setAuthor({ name: `${member.user.tag} Verificato`, iconURL: member.user.displayAvatarURL() })
+                    .setDescription(`✅ L'utente <@${member.id}> ha completato con successo la verifica Captcha!`)
+                    .setTimestamp()
+                ]
+              }).catch(() => {});
+            }
+          }
+
+          const successEmbed = new EmbedBuilder()
+            .setColor('#10b981')
+            .setTitle('🎉 Verifica Completata con Successo!')
+            .setDescription(
+              `Congratulazioni <@${member.id}>! Il tuo codice Captcha è corretto.\n\n` +
+              (config.verified_role_id ? `> 🏷️ Ti è stato assegnato il ruolo <@&${config.verified_role_id}>.\n` : '') +
+              '> 🚀 Ora puoi visualizzare e chattare in tutti i canali del server!'
+            )
+            .setFooter({ text: 'Sentry Sentinel Shield' });
+
+          return await interaction.editReply({ embeds: [successEmbed], components: [] }).catch(() => {});
+        } catch (err) {
+          console.error('[Verification] Errore assegnazione ruolo:', err);
+          return await interaction.editReply({
+            content: `⚠️ Codice corretto, ma si è verificato un errore nell'assegnazione del ruolo: \`${err.message}\`. Verifica che il ruolo del bot sia posizionato più in alto nella gerarchia ruoli di Discord!`
+          }).catch(() => {});
+        }
+      }
+
+      // 2. Incorrect code
+      session.attempts--;
+      if (session.attempts <= 0) {
+        activeSessions.delete(sessionKey);
+        return await interaction.reply({
+          content: '❌ **Hai esaurito i 3 tentativi disponibili.** Clicca sul pulsante "Nuova Immagine" per riprovare con un nuovo codice.',
+          ephemeral: true
+        }).catch(() => {});
+      }
+
+      return await interaction.reply({
+        content: `❌ **Codice errato!** Ti rimangono **${session.attempts}** tentativi. Riguarda con attenzione l'immagine e clicca su "Inserisci Codice".`,
         ephemeral: true
-      });
+      }).catch(() => {});
+    } catch (err) {
+      if (err.code === 10062 || err.code === 40060) {
+        console.warn(`[Verification] Interazione modal scaduta o non valida (${err.code}):`, err.message);
+        return;
+      }
+      console.error('[Verification] Errore imprevisto nel modal di verifica:', err);
     }
-
-    return interaction.reply({
-      content: `❌ **Codice errato!** Ti rimangono **${session.attempts}** tentativi. Riguarda con attenzione l'immagine e clicca su "Inserisci Codice".`,
-      ephemeral: true
-    });
   }
 };
 

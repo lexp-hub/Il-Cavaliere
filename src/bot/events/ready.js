@@ -1,10 +1,10 @@
-import { ActivityType } from 'discord.js';
+import { ActivityType, Events } from 'discord.js';
 import { GiveawayManager } from '../modules/giveawayManager.js';
 import { StopwatchManager } from '../modules/stopwatchManager.js';
 import { CONFIG } from '../../config.js';
 
 export default {
-  name: 'ready',
+  name: Events.ClientReady,
   once: true,
   async execute(client) {
     console.log(`\n🛡️ [Sentry] Bot avviato con successo come ${client.user.tag}!`);
