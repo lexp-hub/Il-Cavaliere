@@ -21,11 +21,11 @@
         Asset Grafici Ufficiali
       </h1>
       <p class="text-slate-400 text-xs sm:text-sm max-w-lg mx-auto leading-relaxed">
-        Scarica gli asset grafici ufficiali in altissima risoluzione PNG per il profilo Discord del bot o per l'icona del tuo server.
+        Scarica gli asset grafici ufficiali in altissima risoluzione PNG per il profilo Discord del bot (avatar e banner).
       </p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-2xl mx-auto">
       <!-- 1. Bot Avatar Card -->
       <div class="glass-card p-5 flex flex-col items-center justify-between gap-4 text-center">
         <div class="flex items-center gap-2">
@@ -44,25 +44,7 @@
         </button>
       </div>
 
-      <!-- 2. Server Heraldic Icon Card -->
-      <div class="glass-card p-5 flex flex-col items-center justify-between gap-4 text-center ring-1 ring-amber-500/40">
-        <div class="flex items-center gap-2">
-          <i data-lucide="crown" class="w-4 h-4 text-amber-400"></i>
-          <h2 class="text-xs font-bold text-white font-medieval">Icona Server Discord (1024x1024)</h2>
-        </div>
-        <div class="w-36 h-36 rounded-full overflow-hidden border border-amber-600/60 shadow-lg bg-slate-900 flex items-center justify-center">
-          <img src="/server_icon.png?v=110" alt="Server Icon Preview" class="w-full h-full rounded-full object-cover">
-        </div>
-        <div class="w-full space-y-2">
-          <a href="/server_icon.png" download="sentry-server-icon.png" 
-             class="btn-cyber w-full py-2.5 px-3 text-xs font-bold shadow-sm flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #d97706, #ef4444);">
-            <i data-lucide="download" class="w-4 h-4"></i>
-            <span>Scarica Icona HD (PNG)</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- 3. Banner Card -->
+      <!-- 2. Banner Card -->
       <div class="glass-card p-5 flex flex-col items-center justify-between gap-4 text-center">
         <div class="flex items-center gap-2">
           <i data-lucide="layout" class="w-4 h-4 text-red-500"></i>
@@ -99,13 +81,6 @@
           const logoText = await logoRes.text();
           const logoWrap = document.getElementById('logo-svg-wrapper');
           if (logoWrap) logoWrap.innerHTML = logoText;
-        }
-
-        const serverIconRes = await fetch('/server_icon.svg?t=' + Date.now());
-        if (serverIconRes.ok) {
-          const serverIconText = await serverIconRes.text();
-          const serverIconWrap = document.getElementById('server-icon-svg-wrapper');
-          if (serverIconWrap) serverIconWrap.innerHTML = serverIconText;
         }
 
         const bannerRes = await fetch('/banner.svg?t=' + Date.now());
