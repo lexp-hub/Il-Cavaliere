@@ -333,6 +333,9 @@ window.reloadCurrentGuildData = async function(silent = false) {
     if (window.loadWelcomerData) {
       await window.loadWelcomerData(guildId);
     }
+    if (window.loadBoostData) {
+      await window.loadBoostData(guildId);
+    }
 
     if (!silent) {
       window.showToast('✅ Dati sincronizzati con successo dal database!');
@@ -418,6 +421,9 @@ window.forceReloadModulesAndCache = async function(hardReload = false) {
       }
       if (window.loadWelcomerData) {
         await window.loadWelcomerData(guildId);
+      }
+      if (window.loadBoostData) {
+        await window.loadBoostData(guildId);
       }
       if (window.loadCloudStatus) {
         await window.loadCloudStatus();
@@ -544,7 +550,7 @@ window.populateDropdowns = function populateDropdowns(channels, roles, members) 
     'wel-channel', 'wel-leave-channel', 'ar-chan-select', 'tk-channel', 'tk-log-channel',
     'ga-channel', 'lvl-channel', 'cnt-channel', 'pres-channel', 'setup-channel',
     'fish-channel', 'mg-general-channel', 'mg-bj-channel', 'mg-slot-channel',
-    'tc-panel-channel', 'ai-warning-channel'
+    'tc-panel-channel', 'ai-warning-channel', 'boost-channel'
   ];
 
   channelSelectIds.forEach(id => {

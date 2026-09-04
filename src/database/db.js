@@ -88,6 +88,17 @@ try { db.exec("ALTER TABLE ai_configs ADD COLUMN warning_threshold INTEGER DEFAU
 try { db.exec("ALTER TABLE ai_configs ADD COLUMN daily_requests INTEGER DEFAULT 0;"); } catch (e) {}
 try { db.exec("ALTER TABLE ai_configs ADD COLUMN last_reset_date TEXT;"); } catch (e) {}
 try { db.exec("ALTER TABLE ai_configs ADD COLUMN warning_channel_id TEXT;"); } catch (e) {}
+try {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS boost_configs (
+      guild_id TEXT PRIMARY KEY,
+      enabled INTEGER DEFAULT 1,
+      channel_id TEXT,
+      message TEXT DEFAULT 'Grazie per il boost {user.mention}! 🚀',
+      embed TEXT
+    );
+  `);
+} catch (e) {}
 
 export const DatabaseHelper = {
   db,
@@ -510,6 +521,58 @@ export const DatabaseHelper = {
       updated.auto_role_bot || null
     );
     return this.getWelcomerConfig(guildId);
+  },
+
+  getBoostConfig(guildId) {
+    let row = db.prepare('SELECT * FROM boost_configs WHERE guild_id = ?').get(guildId);
+    if (!row) {
+      db.prepare(`
+        INSERT INTO boost_configs (guild_id, enabled, message)
+        VALUES (?, 1, 'Grazie per il boost {user.mention}! 🚀')
+      `).run(guildId);
+      row = db.prepare('SELECT * FROM boost_configs WHERE guild_id = ?').get(guildId);
+    }
+    let parsedEmbed = null;
+    try {
+      if (row.embed) {
+        parsedEmbed = typeof row.embed === 'string' ? JSON.parse(row.embed) : row.embed;
+      }
+    } catch (e) {
+      parsedEmbed = null;
+    }
+
+    return {
+      ...row,
+      enabled: Boolean(row.enabled),
+      embed: parsedEmbed
+    };
+  },
+
+  updateBoostConfig(guildId, data) {
+    const current = this.getBoostConfig(guildId);
+    const updated = { ...current, ...data };
+
+    let embStr = null;
+    if (updated.embed) {
+      embStr = typeof updated.embed === 'string' ? updated.embed : JSON.stringify(updated.embed);
+    }
+
+    db.prepare(`
+      INSERT INTO boost_configs (guild_id, enabled, channel_id, message, embed)
+      VALUES (?, ?, ?, ?, ?)
+      ON CONFLICT(guild_id) DO UPDATE SET
+        enabled = excluded.enabled,
+        channel_id = excluded.channel_id,
+        message = excluded.message,
+        embed = excluded.embed
+    `).run(
+      guildId,
+      updated.enabled ? 1 : 0,
+      updated.channel_id || null,
+      updated.message || 'Grazie per il boost {user.mention}! 🚀',
+      embStr
+    );
+    return this.getBoostConfig(guildId);
   },
 
   getAutoresponders(guildId) {

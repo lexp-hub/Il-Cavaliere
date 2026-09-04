@@ -19,6 +19,7 @@
       loadPartnershipData(guildId),
       loadReactionRoles(guildId),
       window.loadWelcomerData ? window.loadWelcomerData(guildId) : Promise.resolve(),
+      loadBoostData(guildId),
       loadAutoresponders(guildId),
       loadAutomodData(guildId),
       loadTicketsData(guildId),
@@ -2745,6 +2746,140 @@
         }
       };
       reader.readAsText(file);
+    });
+  }
+
+  // ==========================================
+  // NITRO BOOST MODULE DATA & HANDLERS
+  // ==========================================
+  async function loadBoostData(guildId) {
+    try {
+      const res = await fetch(`/api/guilds/${guildId}/boost`);
+      if (!res.ok) return;
+      const data = await res.json();
+      const config = data.config || {};
+      const embed = config.embed || {};
+
+      const enabledEl = document.getElementById('boost-enabled');
+      const chanEl = document.getElementById('boost-channel');
+      const msgEl = document.getElementById('boost-message');
+      const titleEl = document.getElementById('boost-embed-title');
+      const colorEl = document.getElementById('boost-embed-color');
+      const pickerEl = document.getElementById('boost-color-picker');
+      const descEl = document.getElementById('boost-embed-desc');
+      const imageEl = document.getElementById('boost-embed-image');
+      const thumbEl = document.getElementById('boost-embed-thumb');
+      const badgeEl = document.getElementById('boost-status-badge');
+
+      if (enabledEl) enabledEl.checked = Boolean(config.enabled !== false && config.enabled !== 0);
+      if (chanEl) {
+        chanEl.value = config.channel_id || '';
+        chanEl.dataset.savedValue = config.channel_id || '';
+      }
+      if (msgEl) msgEl.value = config.message || 'Grazie per il boost {user.mention}! 🚀';
+      if (titleEl) titleEl.value = embed.title || '🚀 {server.name} è stato Potenziato!';
+      const color = embed.color || '#f47fff';
+      if (colorEl) colorEl.value = color;
+      if (pickerEl) pickerEl.value = (color.startsWith('#') && color.length === 7) ? color : '#f47fff';
+      if (descEl) descEl.value = embed.description || 'Un immenso ringraziamento a {user.mention} per aver potenziato il server!\n\nGrazie al tuo supporto, **{server.name}** ha raggiunto **{server.boost_count}** boost (Livello {server.boost_tier})! ✨💖';
+      if (imageEl) imageEl.value = embed.image || '';
+      if (thumbEl) thumbEl.value = embed.thumbnail || '';
+
+      if (badgeEl) {
+        const count = data.boostCount || 0;
+        const tier = data.boostTier || 0;
+        badgeEl.textContent = `🚀 ${count} Boost (Livello ${tier})`;
+      }
+    } catch (e) {
+      console.error('Error loading Boost data:', e);
+    }
+  }
+  window.loadBoostData = loadBoostData;
+
+  // Boost color picker sync
+  const boostColorPicker = document.getElementById('boost-color-picker');
+  const boostEmbedColor = document.getElementById('boost-embed-color');
+  if (boostColorPicker && boostEmbedColor) {
+    boostColorPicker.addEventListener('input', () => {
+      boostEmbedColor.value = boostColorPicker.value;
+    });
+    boostEmbedColor.addEventListener('input', () => {
+      if (boostEmbedColor.value.startsWith('#') && boostEmbedColor.value.length === 7) {
+        boostColorPicker.value = boostEmbedColor.value;
+      }
+    });
+  }
+
+  // Save Boost Config
+  const btnSaveBoost = document.getElementById('btn-save-boost');
+  if (btnSaveBoost) {
+    btnSaveBoost.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+
+      const payload = {
+        enabled: document.getElementById('boost-enabled')?.checked,
+        channel_id: document.getElementById('boost-channel')?.value || null,
+        message: document.getElementById('boost-message')?.value || '',
+        embed: {
+          title: document.getElementById('boost-embed-title')?.value || null,
+          color: document.getElementById('boost-embed-color')?.value || '#f47fff',
+          description: document.getElementById('boost-embed-desc')?.value || null,
+          image: document.getElementById('boost-embed-image')?.value || null,
+          thumbnail: document.getElementById('boost-embed-thumb')?.value || null
+        }
+      };
+
+      try {
+        btnSaveBoost.disabled = true;
+        const res = await fetch(`/api/guilds/${guildId}/boost`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          window.showToast('Impostazioni Boost Nitro salvate con successo!');
+          await loadBoostData(guildId);
+        } else {
+          window.showToast('Errore nel salvataggio del modulo Boost.', 'error');
+        }
+      } catch (err) {
+        window.showToast('Errore di connessione durante il salvataggio.', 'error');
+      } finally {
+        btnSaveBoost.disabled = false;
+      }
+    });
+  }
+
+  // Test Boost Message
+  const btnTestBoost = document.getElementById('btn-test-boost');
+  if (btnTestBoost) {
+    btnTestBoost.addEventListener('click', async () => {
+      const guildId = window.AppState.currentGuildId;
+      if (!guildId) return;
+
+      const targetChannel = document.getElementById('boost-channel')?.value || null;
+
+      try {
+        btnTestBoost.disabled = true;
+        const res = await fetch(`/api/guilds/${guildId}/boost/test`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ channel_id: targetChannel })
+        });
+
+        const data = await res.json();
+        if (res.ok && data.success) {
+          window.showToast('Embed di prova Boost inviato con successo nel canale!');
+        } else {
+          window.showToast(data.error || 'Impossibile inviare il messaggio di prova.', 'error');
+        }
+      } catch (err) {
+        window.showToast('Errore durante l\'invio del test.', 'error');
+      } finally {
+        btnTestBoost.disabled = false;
+      }
     });
   }
 })();

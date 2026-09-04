@@ -5,6 +5,7 @@ import { CountingManager } from '../modules/countingManager.js';
 import { SetupShowcaseManager } from '../modules/setupShowcaseManager.js';
 import { StopwatchManager } from '../modules/stopwatchManager.js';
 import { WebhookReplacerManager } from '../modules/webhookReplacerManager.js';
+import { BoostManager } from '../modules/boostManager.js';
 import { DatabaseHelper } from '../../database/db.js';
 import { EmbedBuilder } from 'discord.js';
 
@@ -15,6 +16,9 @@ export default {
 
     // Never process messages sent by Sentry itself
     if (message.author.id === message.client.user?.id) return;
+
+    // Handle Discord System Nitro Boost messages
+    await BoostManager.handleMessageBoost(message);
 
     // 0. Webhook & Bot Message Replacer (Image re-hosting & Embed Repost)
     if (message.webhookId || message.author.bot) {

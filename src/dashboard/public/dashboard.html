@@ -107,8 +107,8 @@
         </button>
 
         <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-white hover:bg-white/80 transition-all text-left" data-tab="tab-welcomer">
-          <i data-lucide="user-plus" class="w-4 h-4 shrink-0"></i>
-          <span class="truncate">Welcomer &amp; DM</span>
+          <i data-lucide="sparkles" class="w-4 h-4 shrink-0 text-fuchsia-400"></i>
+          <span class="truncate">Welcomer &amp; Boost</span>
         </button>
 
         <button class="nav-tab w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold text-slate-700 hover:text-white hover:bg-white/80 transition-all text-left" data-tab="tab-autoresponder">
@@ -1590,6 +1590,89 @@
           </div>
         </div>
       </div>
+
+      <!-- Nitro Boost Announcement Embed Section -->
+      <div class="glass-card p-6 space-y-4 border border-fuchsia-900/40 bg-gradient-to-br from-fuchsia-950/20 via-slate-900/40 to-slate-900/60">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center gap-2 font-medieval">
+              <i data-lucide="sparkles" class="w-5 h-5 text-fuchsia-400"></i> Messaggio &amp; Embed Boost Nitro
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Invia automaticamente un embed speciale di ringraziamento quando qualcuno potenzia il server</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="boost-status-badge" class="badge text-[11px] px-2.5 py-0.5 rounded-full bg-fuchsia-950/80 text-fuchsia-300 border border-fuchsia-800/50 font-medium">
+              🚀 0 Boost (Livello 0)
+            </span>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold text-slate-300">Attivo:</span>
+              <label class="switch">
+                <input type="checkbox" id="boost-enabled" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Canale Annunci Boost</label>
+            <select id="boost-channel" class="form-select text-xs py-1.5"></select>
+            <span class="text-[10px] text-slate-500">Se non selezionato, usa il Canale di Sistema predefinito di Discord</span>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Testo Menzione / Ping (Opzionale)</label>
+            <input type="text" id="boost-message" class="form-input text-xs py-1.5" placeholder="Grazie per il boost {user.mention}! 🚀">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="sm:col-span-2">
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Titolo Embed</label>
+            <input type="text" id="boost-embed-title" class="form-input text-xs py-1.5" placeholder="🚀 {server.name} è stato Potenziato!">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">Colore Embed (HEX)</label>
+            <div class="flex items-center gap-2">
+              <input type="color" id="boost-color-picker" class="w-8 h-8 rounded border border-slate-700 bg-transparent cursor-pointer" value="#f47fff">
+              <input type="text" id="boost-embed-color" class="form-input text-xs py-1.5 font-mono" value="#f47fff">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-slate-300 block mb-1">Descrizione Embed</label>
+          <textarea id="boost-embed-desc" class="form-textarea text-xs h-20" placeholder="Un immenso ringraziamento a {user.mention} per aver potenziato il server!&#10;&#10;Grazie al tuo supporto, **{server.name}** ha raggiunto **{server.boost_count}** boost (Livello {server.boost_tier})! ✨💖"></textarea>
+          <div class="flex flex-wrap items-center gap-1.5 mt-1.5">
+            <span class="text-[11px] font-semibold text-slate-500">Tag:</span>
+            <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-800 hover:bg-slate-700 font-mono text-slate-200 border border-slate-700" data-target="boost-embed-desc" data-var="{user.mention}">{user.mention}</button>
+            <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-800 hover:bg-slate-700 font-mono text-slate-200 border border-slate-700" data-target="boost-embed-desc" data-var="{user}">{user}</button>
+            <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-800 hover:bg-slate-700 font-mono text-slate-200 border border-slate-700" data-target="boost-embed-desc" data-var="{server.name}">{server.name}</button>
+            <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-800 hover:bg-slate-700 font-mono text-slate-200 border border-slate-700" data-target="boost-embed-desc" data-var="{server.boost_count}">{server.boost_count}</button>
+            <button type="button" class="btn-var-tag px-2 py-0.5 text-[10px] rounded bg-slate-800 hover:bg-slate-700 font-mono text-slate-200 border border-slate-700" data-target="boost-embed-desc" data-var="{server.boost_tier}">{server.boost_tier}</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">URL Immagine Grande (Opzionale)</label>
+            <input type="text" id="boost-embed-image" class="form-input text-xs py-1.5" placeholder="https://... (banner o gif festosa)">
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-slate-300 block mb-1">URL Thumbnail Miniatura (Default: Avatar Utente)</label>
+            <input type="text" id="boost-embed-thumb" class="form-input text-xs py-1.5" placeholder="{user.avatar} o https://...">
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-800 flex flex-wrap items-center justify-end gap-2.5">
+          <button type="button" id="btn-test-boost" class="btn-secondary text-xs py-2 px-4 flex items-center gap-1.5 hover:text-fuchsia-300 hover:border-fuchsia-500/50">
+            <i data-lucide="send" class="w-3.5 h-3.5 text-fuchsia-400"></i> Invia Embed di Prova
+          </button>
+          <button type="button" id="btn-save-boost" class="btn-cyber text-xs py-2 px-5 flex items-center gap-1.5" style="background: linear-gradient(135deg, #c026d3, #db2777);">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i> Salva Impostazioni Boost
+          </button>
+        </div>
+      </div>
     </section>
 
     
@@ -2524,6 +2607,6 @@
     </section>
   </main>
 
-  <script src="/js/app.js?v=118"></script>
-  <script src="/js/embedBuilder.js?v=118"></script>
-  <script src="/js/modules.js?v=118"></script>
+  <script src="/js/app.js?v=119"></script>
+  <script src="/js/embedBuilder.js?v=119"></script>
+  <script src="/js/modules.js?v=119"></script>

@@ -9,6 +9,7 @@ import { SetupShowcaseManager } from '../../bot/modules/setupShowcaseManager.js'
 import { FishingManager } from '../../bot/modules/fishingManager.js';
 import { BlackjackManager } from '../../bot/modules/blackjackManager.js';
 import { WelcomerManager } from '../../bot/modules/welcomerManager.js';
+import { BoostManager } from '../../bot/modules/boostManager.js';
 import { GiveawayManager } from '../../bot/modules/giveawayManager.js';
 import { AIManager } from '../../bot/modules/aiManager.js';
 import { TempChannelManager } from '../../bot/modules/tempChannelManager.js';
@@ -562,6 +563,40 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
       const embed = WelcomerManager.buildDiscordEmbed(config.welcome_embed, config.welcome_message, fakeMember);
 
       await channel.send({ content: `<@${fakeMember.id}>`, embeds: [embed] });
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  });
+
+  router.get('/guilds/:guildId/boost', requireModAuth, (req, res) => {
+    const config = DatabaseHelper.getBoostConfig(req.params.guildId);
+    let boostCount = 0;
+    let boostTier = 0;
+    if (botClient?.isReady() && botClient.guilds.cache.has(req.params.guildId)) {
+      const g = botClient.guilds.cache.get(req.params.guildId);
+      boostCount = g.premiumSubscriptionCount || 0;
+      boostTier = g.premiumTier || 0;
+    }
+    res.json({ config, boostCount, boostTier });
+  });
+
+  router.post('/guilds/:guildId/boost', requireModAuth, (req, res) => {
+    const updated = DatabaseHelper.updateBoostConfig(req.params.guildId, req.body);
+    notifySync(req.params.guildId, 'boost', req);
+    res.json({ success: true, config: updated });
+  });
+
+  router.post('/guilds/:guildId/boost/test', requireModAuth, async (req, res) => {
+    const guildId = req.params.guildId;
+    if (!botClient?.isReady() || !botClient.guilds.cache.has(guildId)) {
+      return res.status(400).json({ error: 'Bot non collegato.' });
+    }
+
+    try {
+      const guild = botClient.guilds.cache.get(guildId);
+      const targetChanId = req.body?.channel_id;
+      await BoostManager.sendTestBoost(guild, targetChanId);
       res.json({ success: true });
     } catch (e) {
       res.status(500).json({ error: e.message });

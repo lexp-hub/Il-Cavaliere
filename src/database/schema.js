@@ -103,6 +103,15 @@ CREATE TABLE IF NOT EXISTS welcomer_configs (
 );
 
 
+CREATE TABLE IF NOT EXISTS boost_configs (
+  guild_id TEXT PRIMARY KEY,
+  enabled INTEGER DEFAULT 1,
+  channel_id TEXT,
+  message TEXT DEFAULT 'Grazie per il boost {user.mention}! 🚀',
+  embed TEXT
+);
+
+
 CREATE TABLE IF NOT EXISTS autoresponders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   guild_id TEXT NOT NULL,
