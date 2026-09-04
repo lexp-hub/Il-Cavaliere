@@ -38,6 +38,37 @@ export function createBotClient() {
   client.commands = new Collection();
   client.commandList = [];
 
+  // Robust Gateway Lifecycle & Error Listeners to prevent silent disconnects
+  client.on('error', (err) => {
+    console.error('[Discord Client Error]', err?.message || err);
+  });
+
+  client.on('warn', (warning) => {
+    console.warn('[Discord Client Warning]', warning);
+  });
+
+  client.on('shardDisconnect', (event, shardId) => {
+    console.warn(`[Discord Gateway] Shard ${shardId} disconnesso (Codice: ${event?.code || 'N/D'}). In attesa di riconnessione automatica...`);
+  });
+
+  client.on('shardError', (error, shardId) => {
+    console.error(`[Discord Gateway Error] Errore su shard ${shardId}:`, error?.message || error);
+  });
+
+  client.on('shardReconnecting', (shardId) => {
+    console.log(`🔄 [Discord Gateway] Riconnessione in corso per shard ${shardId}...`);
+  });
+
+  client.on('shardResume', (shardId, replayedEvents) => {
+    console.log(`✅ [Discord Gateway] Connessione ripristinata con successo per shard ${shardId} (${replayedEvents} eventi sincronizzati).`);
+  });
+
+  if (client.rest) {
+    client.rest.on('rateLimited', (info) => {
+      console.warn(`⏳ [Discord REST RateLimit] Superato rate limit per ${info.timeToReset}ms sulla rotta: ${info.route}`);
+    });
+  }
+
   return client;
 }
 

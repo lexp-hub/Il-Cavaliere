@@ -28,6 +28,8 @@ export const MysqlSync = {
         waitForConnections: true,
         connectionLimit: 4,
         connectTimeout: 10000,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 10000,
         maxIdle: 2,
         idleTimeout: 60000
       });

@@ -48,7 +48,8 @@ export const AIManager = {
               max_tokens: 512,
               temperature: 0.7,
               repetition_penalty: 1.15
-            })
+            }),
+            signal: AbortSignal.timeout(20000)
           }
         );
 
@@ -81,7 +82,8 @@ export const AIManager = {
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemPrompt }] },
             contents
-          })
+          }),
+          signal: AbortSignal.timeout(15000)
         });
 
         if (geminiRes.ok) {
@@ -121,7 +123,8 @@ export const AIManager = {
                 prompt: visionPrompt,
                 image: imageBytes,
                 max_tokens: 350
-              })
+              }),
+              signal: AbortSignal.timeout(25000)
             }
           );
         };
@@ -140,7 +143,8 @@ export const AIManager = {
                 'Authorization': `Bearer ${apiToken}`,
                 'Content-Type': 'application/json'
               },
-              body: JSON.stringify({ prompt: 'agree' })
+              body: JSON.stringify({ prompt: 'agree' }),
+              signal: AbortSignal.timeout(15000)
             }
           );
           response = await callCFVision();
@@ -174,7 +178,8 @@ export const AIManager = {
           body: JSON.stringify({
             system_instruction: { parts: [{ text: systemPrompt }] },
             contents
-          })
+          }),
+          signal: AbortSignal.timeout(15000)
         });
 
         if (geminiRes.ok) {
@@ -229,7 +234,8 @@ export const AIManager = {
       const res = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        }
+        },
+        signal: AbortSignal.timeout(7000)
       });
       if (res.ok) {
         const text = await res.text();
@@ -250,11 +256,14 @@ export const AIManager = {
         if (results.length > 0) return results.join("\n\n");
       }
     } catch (err) {
-      console.warn("[Sentry AI] Ricerca DuckDuckGo fallita, tento fallback Wikipedia...", err.message);
+      console.warn("[Sentry AI] Ricerca DuckDuckGo fallita o scaduta, tento fallback Wikipedia...", err.message);
     }
 
     try {
-      const wikiRes = await fetch(`https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json`);
+      const wikiRes = await fetch(
+        `https://it.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query)}&utf8=&format=json`,
+        { signal: AbortSignal.timeout(5000) }
+      );
       if (wikiRes.ok) {
         const data = await wikiRes.json();
         const searchResults = data?.query?.search || [];
@@ -274,103 +283,104 @@ export const AIManager = {
   },
 
   async handleMention(message) {
-    const { client, guild, channel, author } = message;
+    try {
+      const { client, guild, channel, author } = message;
 
-    // Safety guard: Never respond if replying to a welcomer message
-    if (message.reference?.messageId) {
-      try {
-        const refMsg = channel.messages.cache.get(message.reference.messageId) || 
-                       await channel.messages.fetch(message.reference.messageId).catch(() => null);
-        if (refMsg) {
-          const isFromBot = refMsg.author.id === client.user.id || refMsg.author.bot;
-          const hasWelcomeEmbed = refMsg.embeds?.some(e =>
-            (e.title && /benvenut|welcome/i.test(e.title)) ||
-            (e.description && /benvenut|welcome/i.test(e.description)) ||
-            (e.footer?.text && /benvenut|welcome/i.test(e.footer.text))
-          );
-          const hasWelcomeText = refMsg.content && /benvenut|welcome/i.test(refMsg.content);
-          if (isFromBot && (hasWelcomeEmbed || hasWelcomeText)) {
-            return;
+      // Safety guard: Never respond if replying to a welcomer message
+      if (message.reference?.messageId) {
+        try {
+          const refMsg = channel.messages.cache.get(message.reference.messageId) || 
+                         await channel.messages.fetch(message.reference.messageId).catch(() => null);
+          if (refMsg) {
+            const isFromBot = refMsg.author.id === client.user.id || refMsg.author.bot;
+            const hasWelcomeEmbed = refMsg.embeds?.some(e =>
+              (e.title && /benvenut|welcome/i.test(e.title)) ||
+              (e.description && /benvenut|welcome/i.test(e.description)) ||
+              (e.footer?.text && /benvenut|welcome/i.test(e.footer.text))
+            );
+            const hasWelcomeText = refMsg.content && /benvenut|welcome/i.test(refMsg.content);
+            if (isFromBot && (hasWelcomeEmbed || hasWelcomeText)) {
+              return;
+            }
           }
-        }
-      } catch (e) {}
-    }
+        } catch (e) {}
+      }
 
-    const botMentionRegExp = new RegExp(`<@!?${client.user.id}>`, 'g');
-    let question = message.content.replace(botMentionRegExp, '').trim();
+      const botMentionRegExp = new RegExp(`<@!?${client.user.id}>`, 'g');
+      let question = message.content.replace(botMentionRegExp, '').trim();
 
-    // Check for image attachments directly on the message
-    let targetImageUrl = null;
-    let targetImageMime = 'image/png';
+      // Check for image attachments directly on the message
+      let targetImageUrl = null;
+      let targetImageMime = 'image/png';
 
-    const imgAtt = message.attachments.find(att => 
-      att.contentType?.startsWith('image/') || 
-      /\.(png|jpe?g|webp|gif)$/i.test(att.name || '')
-    );
-    if (imgAtt) {
-      targetImageUrl = imgAtt.url;
-      targetImageMime = imgAtt.contentType || 'image/png';
-    }
+      const imgAtt = message.attachments.find(att => 
+        att.contentType?.startsWith('image/') || 
+        /\.(png|jpe?g|webp|gif)$/i.test(att.name || '')
+      );
+      if (imgAtt) {
+        targetImageUrl = imgAtt.url;
+        targetImageMime = imgAtt.contentType || 'image/png';
+      }
 
-    // If not on message, check if user is replying to a message with an image
-    if (!targetImageUrl && message.reference?.messageId) {
-      try {
-        const refMsg = channel.messages.cache.get(message.reference.messageId) || 
-                       await channel.messages.fetch(message.reference.messageId).catch(() => null);
-        if (refMsg) {
-          const refImg = refMsg.attachments.find(att => 
-            att.contentType?.startsWith('image/') || 
-            /\.(png|jpe?g|webp|gif)$/i.test(att.name || '')
-          );
-          if (refImg) {
-            targetImageUrl = refImg.url;
-            targetImageMime = refImg.contentType || 'image/png';
+      // If not on message, check if user is replying to a message with an image
+      if (!targetImageUrl && message.reference?.messageId) {
+        try {
+          const refMsg = channel.messages.cache.get(message.reference.messageId) || 
+                         await channel.messages.fetch(message.reference.messageId).catch(() => null);
+          if (refMsg) {
+            const refImg = refMsg.attachments.find(att => 
+              att.contentType?.startsWith('image/') || 
+              /\.(png|jpe?g|webp|gif)$/i.test(att.name || '')
+            );
+            if (refImg) {
+              targetImageUrl = refImg.url;
+              targetImageMime = refImg.contentType || 'image/png';
+            }
           }
+        } catch (e) {}
+      }
+
+      // If not in attachments, check if text contains an image link
+      if (!targetImageUrl) {
+        const urlMatch = message.content.match(/https?:\/\/\S+\.(?:png|jpe?g|webp)/i);
+        if (urlMatch) {
+          targetImageUrl = urlMatch[0];
+          targetImageMime = 'image/png';
         }
-      } catch (e) {}
-    }
-
-    // If not in attachments, check if text contains an image link
-    if (!targetImageUrl) {
-      const urlMatch = message.content.match(/https?:\/\/\S+\.(?:png|jpe?g|webp)/i);
-      if (urlMatch) {
-        targetImageUrl = urlMatch[0];
-        targetImageMime = 'image/png';
       }
-    }
 
-    if (!question && !targetImageUrl) {
-      return message.reply("Dimmi pure, sono qui a proteggere il server. (Anche se gradirei meno disturbo).");
-    }
-
-    if (!question && targetImageUrl) {
-      question = "Descrivi cosa vedi in questa immagine e commentala con il tuo consueto cinismo.";
-    }
-
-    const cleanQuestion = question.toLowerCase();
-    if (cleanQuestion === 'clear' || cleanQuestion === 'reset' || cleanQuestion === 'cancella memoria' || cleanQuestion === 'dimentica tutto') {
-      DatabaseHelper.resetChannelMemory(channel.id);
-      return message.reply("Memoria azzerata per questo canale. Di cosa stavamo parlando? Anzi, fa lo stesso, preferisco non ricordarlo.");
-    }
-
-    await channel.sendTyping();
-
-    const guildAIConfig = guild ? DatabaseHelper.getAIConfig(guild.id) : { enabled: true };
-    if (!guildAIConfig.enabled) {
-      return message.reply("Il modulo Sentry AI è momentaneamente disattivato in questo server.");
-    }
-
-    if (guild) {
-      const quota = DatabaseHelper.getAIQuotaStatus(guild.id);
-      if (quota.is_blocked) {
-        return message.reply(`⏳ **Quota AI Giornaliera Raggiunta**: Il server ha utilizzato tutte le **${quota.daily_limit}** richieste AI disponibili per oggi. Il limite si ripristinerà a mezzanotte!`);
+      if (!question && !targetImageUrl) {
+        return message.reply("Dimmi pure, sono qui a proteggere il server. (Anche se gradirei meno disturbo).");
       }
-    }
 
-    const basePrompt = guildAIConfig.system_prompt || DEFAULT_IDENTITY;
-    const creatorId = CONFIG.CREATOR_ID;
+      if (!question && targetImageUrl) {
+        question = "Descrivi cosa vedi in questa immagine e commentala con il tuo consueto cinismo.";
+      }
 
-    const systemPrompt = `${basePrompt}
+      const cleanQuestion = question.toLowerCase();
+      if (cleanQuestion === 'clear' || cleanQuestion === 'reset' || cleanQuestion === 'cancella memoria' || cleanQuestion === 'dimentica tutto') {
+        DatabaseHelper.resetChannelMemory(channel.id);
+        return message.reply("Memoria azzerata per questo canale. Di cosa stavamo parlando? Anzi, fa lo stesso, preferisco non ricordarlo.");
+      }
+
+      await channel.sendTyping();
+
+      const guildAIConfig = guild ? DatabaseHelper.getAIConfig(guild.id) : { enabled: true };
+      if (!guildAIConfig.enabled) {
+        return message.reply("Il modulo Sentry AI è momentaneamente disattivato in questo server.");
+      }
+
+      if (guild) {
+        const quota = DatabaseHelper.getAIQuotaStatus(guild.id);
+        if (quota.is_blocked) {
+          return message.reply(`⏳ **Quota AI Giornaliera Raggiunta**: Il server ha utilizzato tutte le **${quota.daily_limit}** richieste AI disponibili per oggi. Il limite si ripristinerà a mezzanotte!`);
+        }
+      }
+
+      const basePrompt = guildAIConfig.system_prompt || DEFAULT_IDENTITY;
+      const creatorId = CONFIG.CREATOR_ID;
+
+      const systemPrompt = `${basePrompt}
 
 INFORMAZIONI E STRUMENTI DISPONIBILI:
 - Puoi cercare sul web in tempo reale. Se la domanda richiede informazioni aggiornate o fatti non conosciuti, rispondi ESCLUSIVAMENTE con:
@@ -384,103 +394,104 @@ ISTRUZIONI NOMI E RUOLI DEGLI UTENTI:
   1. Il nome dell'utente è solo la parte "Utente: NOME". Rivolgiti all'utente ESCLUSIVAMENTE con il suo vero nome.
   2. Se l'utente ha ruolo "Creatore del bot", trattalo con rispetto come il tuo creatore pur mantenendo la tua fierezza cinica.`;
 
-    const messages = [];
-    const memory = DatabaseHelper.getChannelMemory(channel.id);
-    const resetTime = memory.reset_timestamp || 0;
+      const messages = [];
+      const memory = DatabaseHelper.getChannelMemory(channel.id);
+      const resetTime = memory.reset_timestamp || 0;
 
-    let messagesArray = [];
-    try {
-      const fetched = await channel.messages.fetch({ limit: 12 });
-      messagesArray = Array.from(fetched.values()).reverse();
-    } catch (err) {
-      messagesArray = [message];
-    }
-
-    for (const msg of messagesArray) {
-      if (msg.createdTimestamp < resetTime) continue;
-      if (msg.author.bot && msg.author.id !== client.user.id) continue;
-
-      if (msg.author.id === client.user.id) {
-        messages.push({
-          role: 'assistant',
-          content: msg.content
-        });
-      } else {
-        const authorId = msg.author.id;
-        const displayName = msg.member?.displayName || msg.author.username;
-        let roleDescription = "Utente del Server";
-
-        if (creatorId && authorId === creatorId) {
-          roleDescription = "Creatore del bot";
-        } else if (msg.member?.permissions.has('Administrator')) {
-          roleDescription = "Amministratore del Server";
-        }
-
-        const cleanText = (msg.content || "").replace(botMentionRegExp, '').trim();
-        if (!cleanText && msg.attachments.size === 0 && msg.embeds.length === 0) continue;
-
-        let replyContext = "";
-        if (msg.reference && msg.reference.messageId) {
-          let refMsg = messagesArray.find(m => m.id === msg.reference.messageId);
-          if (!refMsg) {
-            try { refMsg = await channel.messages.fetch(msg.reference.messageId); } catch (e) {}
-          }
-          if (refMsg) {
-            const refAuthor = refMsg.member?.displayName || refMsg.author.username;
-            let refContent = refMsg.content || "[Allegato]";
-            if (refContent.length > 80) refContent = refContent.substring(0, 77) + "...";
-            replyContext = `[In risposta a @${refAuthor}: "${refContent}"] `;
-          }
-        }
-
-        let msgText = cleanText || "[Allegato/Immagine]";
-        messages.push({
-          role: 'user',
-          content: `${replyContext}[Utente: ${displayName} | Ruolo: ${roleDescription}]: ${msgText}`
-        });
-      }
-    }
-
-    let reply = "";
-    let imageBuffer = null;
-
-    if (targetImageUrl) {
+      let messagesArray = [];
       try {
-        const imgRes = await fetch(targetImageUrl, {
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-          }
-        });
-        if (imgRes.ok) {
-          const ab = await imgRes.arrayBuffer();
-          if (ab.byteLength > 0 && ab.byteLength <= 10 * 1024 * 1024) {
-            imageBuffer = Buffer.from(ab);
-          }
-        }
-      } catch (e) {
-        console.warn('[Sentry Vision] Errore scaricamento immagine:', e.message);
+        const fetched = await channel.messages.fetch({ limit: 12 });
+        messagesArray = Array.from(fetched.values()).reverse();
+      } catch (err) {
+        messagesArray = [message];
       }
-    }
 
-    if (imageBuffer) {
-      reply = await this.getVisionResponse(imageBuffer, targetImageMime, question, systemPrompt);
-    } else {
-      reply = await this.getAIResponse(messages, systemPrompt, guildAIConfig.model);
+      for (const msg of messagesArray) {
+        if (msg.createdTimestamp < resetTime) continue;
+        if (msg.author.bot && msg.author.id !== client.user.id) continue;
 
-      // Check if AI requested Web Search
-      const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
-      if (searchMatch) {
-        const searchQuery = searchMatch[1].trim();
-        console.log(`[Sentry AI] Ricerca web attivata per: "${searchQuery}"`);
+        if (msg.author.id === client.user.id) {
+          messages.push({
+            role: 'assistant',
+            content: msg.content
+          });
+        } else {
+          const authorId = msg.author.id;
+          const displayName = msg.member?.displayName || msg.author.username;
+          let roleDescription = "Utente del Server";
 
-        const searchResults = await this.performWebSearch(searchQuery);
+          if (creatorId && authorId === creatorId) {
+            roleDescription = "Creatore del bot";
+          } else if (msg.member?.permissions.has('Administrator')) {
+            roleDescription = "Amministratore del Server";
+          }
 
-        messages.push({
-          role: 'assistant',
-          content: `Ricerco informazioni sul web per: "${searchQuery}".`
-        });
+          const cleanText = (msg.content || "").replace(botMentionRegExp, '').trim();
+          if (!cleanText && msg.attachments.size === 0 && msg.embeds.length === 0) continue;
 
-        const finalSystemPrompt = `${basePrompt}
+          let replyContext = "";
+          if (msg.reference && msg.reference.messageId) {
+            let refMsg = messagesArray.find(m => m.id === msg.reference.messageId);
+            if (!refMsg) {
+              try { refMsg = await channel.messages.fetch(msg.reference.messageId); } catch (e) {}
+            }
+            if (refMsg) {
+              const refAuthor = refMsg.member?.displayName || refMsg.author.username;
+              let refContent = refMsg.content || "[Allegato]";
+              if (refContent.length > 80) refContent = refContent.substring(0, 77) + "...";
+              replyContext = `[In risposta a @${refAuthor}: "${refContent}"] `;
+            }
+          }
+
+          let msgText = cleanText || "[Allegato/Immagine]";
+          messages.push({
+            role: 'user',
+            content: `${replyContext}[Utente: ${displayName} | Ruolo: ${roleDescription}]: ${msgText}`
+          });
+        }
+      }
+
+      let reply = "";
+      let imageBuffer = null;
+
+      if (targetImageUrl) {
+        try {
+          const imgRes = await fetch(targetImageUrl, {
+            headers: {
+              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            },
+            signal: AbortSignal.timeout(10000)
+          });
+          if (imgRes.ok) {
+            const ab = await imgRes.arrayBuffer();
+            if (ab.byteLength > 0 && ab.byteLength <= 10 * 1024 * 1024) {
+              imageBuffer = Buffer.from(ab);
+            }
+          }
+        } catch (e) {
+          console.warn('[Sentry Vision] Errore o timeout scaricamento immagine:', e.message);
+        }
+      }
+
+      if (imageBuffer) {
+        reply = await this.getVisionResponse(imageBuffer, targetImageMime, question, systemPrompt);
+      } else {
+        reply = await this.getAIResponse(messages, systemPrompt, guildAIConfig.model);
+
+        // Check if AI requested Web Search
+        const searchMatch = reply.match(/\[CERCA:\s*(.*?)\]/i);
+        if (searchMatch) {
+          const searchQuery = searchMatch[1].trim();
+          console.log(`[Sentry AI] Ricerca web attivata per: "${searchQuery}"`);
+
+          const searchResults = await this.performWebSearch(searchQuery);
+
+          messages.push({
+            role: 'assistant',
+            content: `Ricerco informazioni sul web per: "${searchQuery}".`
+          });
+
+          const finalSystemPrompt = `${basePrompt}
 
 ISTRUZIONI PER LA RISPOSTA FINALE:
 Hai appena eseguito la ricerca web. Ecco i dati aggiornati trovati per "${searchQuery}":
@@ -489,39 +500,43 @@ ${searchResults}
 
 Utilizza questi dati per rispondere all'utente. Esprimi la tua opinione cinica, spietata e sarcastica basandoti sui fatti riportati qui sopra. Rispondi in italiano in modo sintetico (massimo 300 caratteri). NON usare comandi o tag di ricerca nella risposta.`;
 
-        reply = await this.getAIResponse(messages, finalSystemPrompt, guildAIConfig.model);
-        reply = reply.replace(/\[CERCA:\s*.*?\]/gi, '').trim();
+          reply = await this.getAIResponse(messages, finalSystemPrompt, guildAIConfig.model);
+          reply = reply.replace(/\[CERCA:\s*.*?\]/gi, '').trim();
+        }
       }
-    }
 
-    if (!reply || reply.trim().length === 0) {
-      reply = "Ho analizzato i dati ma l'elaborazione non ha prodotto un risultato valido. Riformula la richiesta.";
-    }
+      if (!reply || reply.trim().length === 0) {
+        reply = "Ho analizzato i dati ma l'elaborazione non ha prodotto un risultato valido. Riformula la richiesta.";
+      }
 
-    // Save in DB channel memory
-    DatabaseHelper.addChannelLog(channel.id, 'user', `${author.username}: ${question}`);
-    DatabaseHelper.addChannelLog(channel.id, 'assistant', reply);
+      // Save in DB channel memory
+      DatabaseHelper.addChannelLog(channel.id, 'user', `${author.username}: ${question}`);
+      DatabaseHelper.addChannelLog(channel.id, 'assistant', reply);
 
-    // Update Quota and check warning threshold
-    let quotaNotice = "";
-    if (guild) {
-      const updatedQuota = DatabaseHelper.incrementAIUsage(guild.id);
-      if (updatedQuota.is_warning) {
-        quotaNotice = `\n\n> ⚠️ *Nota Quota AI: rimangono solo **${updatedQuota.remaining}** richieste disponibili per oggi (usate ${updatedQuota.used}/${updatedQuota.daily_limit}).*`;
+      // Update Quota and check warning threshold
+      let quotaNotice = "";
+      if (guild) {
+        const updatedQuota = DatabaseHelper.incrementAIUsage(guild.id);
+        if (updatedQuota.is_warning) {
+          quotaNotice = `\n\n> ⚠️ *Nota Quota AI: rimangono solo **${updatedQuota.remaining}** richieste disponibili per oggi (usate ${updatedQuota.used}/${updatedQuota.daily_limit}).*`;
 
-        const warningTarget = Math.floor(updatedQuota.daily_limit * (updatedQuota.threshold_pct / 100));
-        if (updatedQuota.warning_channel_id && updatedQuota.used === warningTarget) {
-          const staffCh = guild.channels.cache.get(updatedQuota.warning_channel_id);
-          if (staffCh) {
-            staffCh.send({
-              content: `⚠️ **Allerta Quota AI Server**: È stato raggiunto il **${updatedQuota.threshold_pct}%** del limite giornaliero AI (${updatedQuota.used}/${updatedQuota.daily_limit} richieste). Rimangono solo **${updatedQuota.remaining}** richieste prima del blocco.`
-            }).catch(() => {});
+          const warningTarget = Math.floor(updatedQuota.daily_limit * (updatedQuota.threshold_pct / 100));
+          if (updatedQuota.warning_channel_id && updatedQuota.used === warningTarget) {
+            const staffCh = guild.channels.cache.get(updatedQuota.warning_channel_id);
+            if (staffCh) {
+              staffCh.send({
+                content: `⚠️ **Allerta Quota AI Server**: È stato raggiunto il **${updatedQuota.threshold_pct}%** del limite giornaliero AI (${updatedQuota.used}/${updatedQuota.daily_limit} richieste). Rimangono solo **${updatedQuota.remaining}** richieste prima del blocco.`
+              }).catch(() => {});
+            }
           }
         }
       }
-    }
 
-    await message.reply(reply + quotaNotice).catch(() => {});
+      await message.reply(reply + quotaNotice).catch(() => {});
+    } catch (criticalErr) {
+      console.error('[Sentry AI] Errore critico handleMention:', criticalErr);
+      await message.reply("Ho riscontrato un'interruzione interna durante l'elaborazione della richiesta. Riformula la tua domanda.").catch(() => {});
+    }
   }
 };
 

@@ -46,6 +46,7 @@ export default {
 
     // Detect if user is replying to a welcomer message or chatting in the welcomer channel
     let isReplyingToWelcomer = false;
+    let isDirectReplyToBot = false;
     const welcomerConfig = DatabaseHelper.getWelcomerConfig(message.guild.id);
     const isWelcomeChannel = Boolean(welcomerConfig?.welcome_enabled && welcomerConfig?.welcome_channel_id === message.channel.id);
 
@@ -65,10 +66,13 @@ export default {
           (e.footer?.text && /benvenut|welcome/i.test(e.footer.text))
         );
         const hasWelcomeText = refMsg.content && /benvenut|welcome/i.test(refMsg.content);
-        const isWelcomerFormat = refMsg.author.id === message.client.user.id && (refMsg.content?.startsWith('<@') && refMsg.embeds?.length > 0);
 
-        if (isFromBot && (hasWelcomeEmbed || hasWelcomeText || isWelcomeChannel || isWelcomerFormat)) {
+        // Only classify as welcomer if it has explicit welcome keywords or is inside the dedicated welcome channel
+        if (isFromBot && (hasWelcomeEmbed || hasWelcomeText || (isWelcomeChannel && !hasWelcomeEmbed && !hasWelcomeText))) {
           isReplyingToWelcomer = true;
+        } else if (refMsg.author.id === message.client.user.id) {
+          // Direct reply to a regular conversational message by Sentry
+          isDirectReplyToBot = true;
         }
       } else if (isWelcomeChannel) {
         isReplyingToWelcomer = true;
@@ -82,7 +86,9 @@ export default {
     }
 
     const isBotMentioned = message.mentions.has(message.client.user) && !message.mentions.everyone;
-    if (isBotMentioned && !isReplyingToWelcomer) {
+    const shouldTriggerAI = (isBotMentioned || isDirectReplyToBot) && !isReplyingToWelcomer;
+
+    if (shouldTriggerAI) {
       try {
         await AIManager.handleMention(message);
         return;
