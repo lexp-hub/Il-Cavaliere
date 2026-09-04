@@ -36,6 +36,21 @@ try {
   }
 }
 
+const sanitizeRow = (row) => {
+  if (!row || typeof row !== 'object') return row;
+  for (const key of Object.keys(row)) {
+    const val = row[key];
+    if (typeof val === 'bigint') {
+      if (val >= -9007199254740991n && val <= 9007199254740991n) {
+        row[key] = Number(val);
+      } else {
+        row[key] = val > 0n ? Number.MAX_SAFE_INTEGER : -Number.MAX_SAFE_INTEGER;
+      }
+    }
+  }
+  return row;
+};
+
 class UniversalDatabase {
   constructor(instance, isNode) {
     this.raw = instance;
@@ -55,24 +70,95 @@ class UniversalDatabase {
 
   prepare(sql) {
     const stmt = this.raw.prepare(sql);
-    if (!this.isNode) return stmt;
+    if (typeof stmt.setReadBigInts === 'function') {
+      try {
+        stmt.setReadBigInts(true);
+      } catch (e) {}
+    }
+
+    if (!this.isNode) {
+      return {
+        get: (...args) => {
+          try {
+            return sanitizeRow(stmt.get(...args));
+          } catch (err) {
+            console.warn('[Database] Statement get warning:', err.message);
+            return undefined;
+          }
+        },
+        all: (...args) => {
+          try {
+            const rows = stmt.all(...args);
+            if (Array.isArray(rows)) {
+              for (let i = 0; i < rows.length; i++) {
+                sanitizeRow(rows[i]);
+              }
+            }
+            return rows;
+          } catch (err) {
+            console.warn('[Database] Statement all warning:', err.message);
+            return [];
+          }
+        },
+        run: (...args) => stmt.run(...args),
+        raw: stmt
+      };
+    }
 
     return {
-      get: (...args) => stmt.get(...args),
-      all: (...args) => stmt.all(...args),
+      get: (...args) => {
+        try {
+          return sanitizeRow(stmt.get(...args));
+        } catch (err) {
+          console.warn('[Database] Statement get warning:', err.message);
+          return undefined;
+        }
+      },
+      all: (...args) => {
+        try {
+          const rows = stmt.all(...args);
+          if (Array.isArray(rows)) {
+            for (let i = 0; i < rows.length; i++) {
+              sanitizeRow(rows[i]);
+            }
+          }
+          return rows;
+        } catch (err) {
+          console.warn('[Database] Statement all warning:', err.message);
+          return [];
+        }
+      },
       run: (...args) => {
         const res = stmt.run(...args);
         return {
           changes: Number(res?.changes || 0),
           lastInsertRowid: Number(res?.lastInsertRowid || 0)
         };
-      }
+      },
+      raw: stmt
     };
   }
 }
 
 export const db = new UniversalDatabase(rawDb, isNodeSqlite);
 db.exec(SCHEMA);
+
+// Safe data sanitization to prevent SQLite 64-bit integer overflow issues
+try {
+  db.exec(`
+    UPDATE fishing_profiles 
+    SET coins = 1000000000000000 
+    WHERE coins > 1000000000000000;
+
+    UPDATE fishing_profiles 
+    SET coins = 0 
+    WHERE coins < 0;
+
+    UPDATE levels 
+    SET xp = 1000000000000000 
+    WHERE xp > 1000000000000000;
+  `);
+} catch (e) {}
 
 // Safe dynamic column migrations for ticket_panels
 try { db.exec("ALTER TABLE ticket_panels ADD COLUMN color TEXT DEFAULT '#ea580c';"); } catch (e) {}
@@ -988,18 +1074,35 @@ export const DatabaseHelper = {
 
   // === Fishing & Medieval Economy Helpers ===
   getFishingProfile(guildId, userId) {
-    let row = db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? AND user_id = ?').get(guildId, userId);
+    let row;
+    try {
+      row = db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? AND user_id = ?').get(guildId, userId);
+    } catch (e) {
+      console.warn(`[Database] Error querying fishing_profiles for ${userId}:`, e.message);
+    }
     if (!row) {
-      db.prepare('INSERT INTO fishing_profiles (guild_id, user_id, rod_level, coins, total_fish_caught, last_fished, last_daily, inventory) VALUES (?, ?, 1, 100, 0, 0, 0, ?)').run(guildId, userId, JSON.stringify([]));
+      try {
+        db.prepare('INSERT INTO fishing_profiles (guild_id, user_id, rod_level, coins, total_fish_caught, last_fished, last_daily, inventory) VALUES (?, ?, 1, 100, 0, 0, 0, ?)').run(guildId, userId, JSON.stringify([]));
+      } catch (e) {}
       row = { guild_id: guildId, user_id: userId, rod_level: 1, coins: 100, total_fish_caught: 0, last_fished: 0, last_daily: 0, inventory: '[]' };
+    }
+    let parsedInventory = [];
+    try {
+      parsedInventory = typeof row.inventory === 'string' ? JSON.parse(row.inventory || '[]') : (row.inventory || []);
+    } catch (e) {
+      parsedInventory = [];
     }
     return {
       ...row,
-      inventory: typeof row.inventory === 'string' ? JSON.parse(row.inventory || '[]') : (row.inventory || [])
+      coins: Math.max(0, Math.min(1000000000000000, Number(row.coins) || 0)),
+      rod_level: Math.max(1, Number(row.rod_level) || 1),
+      total_fish_caught: Math.max(0, Number(row.total_fish_caught) || 0),
+      inventory: parsedInventory
     };
   },
 
   saveFishingProfile(guildId, userId, profile) {
+    const safeCoins = Math.max(0, Math.min(1000000000000000, Math.floor(Number(profile.coins) || 0)));
     return db.prepare(`
       INSERT INTO fishing_profiles (guild_id, user_id, rod_level, coins, total_fish_caught, last_fished, last_daily, inventory)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -1013,29 +1116,37 @@ export const DatabaseHelper = {
     `).run(
       guildId,
       userId,
-      profile.rod_level || 1,
-      profile.coins ?? 100,
-      profile.total_fish_caught || 0,
-      profile.last_fished || 0,
-      profile.last_daily || 0,
+      Math.max(1, Math.floor(Number(profile.rod_level) || 1)),
+      safeCoins,
+      Math.max(0, Math.floor(Number(profile.total_fish_caught) || 0)),
+      Math.max(0, Math.floor(Number(profile.last_fished) || 0)),
+      Math.max(0, Math.floor(Number(profile.last_daily) || 0)),
       JSON.stringify(profile.inventory || [])
     );
   },
 
   getFishingLeaderboard(guildId, limit = 10) {
-    return db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? ORDER BY coins DESC, total_fish_caught DESC LIMIT ?').all(guildId, limit);
+    const rows = db.prepare('SELECT * FROM fishing_profiles WHERE guild_id = ? ORDER BY coins DESC, total_fish_caught DESC LIMIT ?').all(guildId, limit);
+    return rows.map(r => ({
+      ...r,
+      coins: Math.max(0, Math.min(1000000000000000, Number(r.coins) || 0))
+    }));
   },
 
   modifyUserCoins(guildId, userId, amount, operation = 'add') {
     const profile = this.getFishingProfile(guildId, userId);
-    const numAmount = Math.max(0, Math.floor(Number(amount) || 0));
+    let numAmount = Math.max(0, Math.floor(Number(amount) || 0));
+    const MAX_COINS = 1000000000000000;
+    if (!Number.isFinite(numAmount) || numAmount > MAX_COINS) {
+      numAmount = MAX_COINS;
+    }
 
     if (operation === 'add') {
-      profile.coins = (profile.coins || 0) + numAmount;
+      profile.coins = Math.min(MAX_COINS, (Number(profile.coins) || 0) + numAmount);
     } else if (operation === 'remove') {
-      profile.coins = Math.max(0, (profile.coins || 0) - numAmount);
+      profile.coins = Math.max(0, (Number(profile.coins) || 0) - numAmount);
     } else if (operation === 'set') {
-      profile.coins = numAmount;
+      profile.coins = Math.min(MAX_COINS, numAmount);
     }
 
     this.saveFishingProfile(guildId, userId, profile);
@@ -1043,8 +1154,12 @@ export const DatabaseHelper = {
   },
 
   getUserCoins(guildId, userId) {
-    const profile = this.getFishingProfile(guildId, userId);
-    return profile.coins || 0;
+    try {
+      const profile = this.getFishingProfile(guildId, userId);
+      return Math.max(0, Math.floor(Number(profile?.coins) || 0));
+    } catch (e) {
+      return 0;
+    }
   },
 
   addCoins(guildId, userId, amount) {

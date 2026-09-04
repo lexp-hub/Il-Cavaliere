@@ -868,8 +868,13 @@ export function createApiRouter(botClient, broadcastToGuild = () => {}) {
       return res.status(400).json({ error: 'ID utente non valido.' });
     }
 
+    const parsedAmount = Math.max(0, Math.floor(Number(amount) || 0));
+    if (parsedAmount > 1000000000000000) {
+      return res.status(400).json({ error: 'L\'importo non può superare 1.000.000.000.000.000 monete.' });
+    }
+
     try {
-      const profile = DatabaseHelper.modifyUserCoins(guildId, cleanUserId, amount, operation || 'add');
+      const profile = DatabaseHelper.modifyUserCoins(guildId, cleanUserId, parsedAmount, operation || 'add');
       res.json({ success: true, profile });
     } catch (e) {
       res.status(500).json({ error: e.message });

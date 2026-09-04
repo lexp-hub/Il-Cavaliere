@@ -131,37 +131,35 @@ export function createGuildsRouter(botClient) {
       }))
       .sort((a, b) => b.position - a.position);
 
+    const mapMember = (m) => {
+      let coins = 0;
+      try {
+        coins = DatabaseHelper.getUserCoins(guild.id, m.id);
+      } catch (err) {
+        coins = 0;
+      }
+      return {
+        id: m.id,
+        name: m.user?.username || m.id,
+        displayName: m.displayName || m.user?.username || m.id,
+        avatar: m.user?.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
+        coins: coins
+      };
+    };
+
     let members = [];
     try {
       const fetched = await guild.members.fetch().catch(() => guild.members.cache);
       const memberCollection = (fetched && typeof fetched.values === 'function') ? fetched : guild.members.cache;
       members = Array.from(memberCollection.values())
         .filter(m => !m.user?.bot)
-        .map(m => {
-          const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
-          return {
-            id: m.id,
-            name: m.user?.username || m.id,
-            displayName: m.displayName || m.user?.username || m.id,
-            avatar: m.user?.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
-            coins: coins
-          };
-        })
+        .map(mapMember)
         .sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name));
     } catch (e) {
       console.warn('[Guilds] Member fetch fallback notice:', e.message);
       members = Array.from(guild.members.cache.values())
         .filter(m => !m.user?.bot)
-        .map(m => {
-          const coins = DatabaseHelper.getUserCoins(guild.id, m.id);
-          return {
-            id: m.id,
-            name: m.user?.username || m.id,
-            displayName: m.displayName || m.user?.username || m.id,
-            avatar: m.user?.displayAvatarURL ? m.user.displayAvatarURL({ size: 64 }) : null,
-            coins: coins
-          };
-        })
+        .map(mapMember)
         .sort((a, b) => (a.displayName || a.name).localeCompare(b.displayName || b.name));
     }
 
@@ -173,7 +171,12 @@ export function createGuildsRouter(botClient) {
 
       for (const u of dbUsers) {
         if (!members.some(m => m.id === u.user_id)) {
-          const coins = DatabaseHelper.getUserCoins(guild.id, u.user_id);
+          let coins = 0;
+          try {
+            coins = DatabaseHelper.getUserCoins(guild.id, u.user_id);
+          } catch (err) {
+            coins = 0;
+          }
           members.push({
             id: u.user_id,
             name: `Utente ${u.user_id.slice(-4)}`,
